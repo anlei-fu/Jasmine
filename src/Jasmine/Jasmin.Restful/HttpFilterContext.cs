@@ -1,0 +1,32 @@
+﻿using Jasmine.Common;
+using Microsoft.AspNetCore.Http;
+using System;
+using System.Collections.Generic;
+
+namespace Jasmine.Restful
+{
+    public class HttpFilterContext:IContext
+    {
+        public HttpContext HttpContext { get; set; }
+        public Exception Exception { get; set; }
+        public object ReturnValue { get; set; }
+        public Type ReturnValueType { get; set; }
+        public IDictionary<string, object> Datas { get; set; } = new Dictionary<string, object>();
+        public IDispatcher<IContext> Dispatcher { get; internal set; }
+        public string Path => HttpContext.Request.Path;
+
+        public void Init(HttpContext context)
+        {
+            HttpContext = context;
+            Exception = null;
+            ReturnValue = null;
+            ReturnValueType = null;
+            Datas.Clear();
+            Dispatcher = null;
+        }
+        public void Reset()
+        {
+            HttpContext = null;
+        }
+    }
+}

@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="log4net" Version="2.0.8" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Jasmine.Common\Jasmine.Commom.csproj" />
+    <ProjectReference Include="..\Jasmine.ConfigCenter\Jasmine.ConfigCenter.csproj" />
+    <ProjectReference Include="..\Jasmine.Serialization\Jasmine.Serialization.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="log4net">
+      <HintPath>..\Test\bin\Debug\log4net.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+</Project>
