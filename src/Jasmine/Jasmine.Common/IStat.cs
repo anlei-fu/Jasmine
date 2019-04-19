@@ -1,8 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace Jasmine.Common
 {
-    public  interface IStat<TItem>:IEnumerable<TItem>
+    public  interface IStat<TItem>:IReadOnlyCollection<TItem>
         where TItem:IStatItem
     {
         int Avarage { get; }
@@ -13,6 +14,9 @@ namespace Jasmine.Common
         int Slowest { get; }
         float FaileRate { get; }
         float SuccesRate { get; }
+        DateTime LastCaculateTime { get; }
         void Add(TItem item);
+        void Caculate();
+        void Clear();
     }
 }

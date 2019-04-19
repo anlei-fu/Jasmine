@@ -6,6 +6,6 @@ namespace Jasmine.Common
     {
         Task FiltAsync(T context);
 
-        IFilter<T> Next { get; }
+        IFilter<T> Next { get; set; }
     }
 }
