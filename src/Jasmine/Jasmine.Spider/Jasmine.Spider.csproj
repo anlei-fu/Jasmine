@@ -11,12 +11,12 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Jamine.Parsing\Jamine.Parser.csproj" />
+    <Folder Include="Drivers\Java\" />
+    <Folder Include="Drivers\Python\" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Drivers\Java\" />
-    <Folder Include="Drivers\Python\" />
+    <ProjectReference Include="..\Jamine.HtmlParser\Jasmine.Parser.csproj" />
   </ItemGroup>
 
 </Project>
