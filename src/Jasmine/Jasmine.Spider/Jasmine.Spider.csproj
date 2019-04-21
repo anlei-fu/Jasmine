@@ -1,0 +1,22 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Controller\dksnmjcm.zit~" />
+    <None Remove="Worker\Excutor\Downloader\ogft3s1f.31t~" />
+    <None Remove="Worker\ISpiderWorker.cs~RF68d27854.TMP" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Jamine.Parsing\Jamine.Parser.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Drivers\Java\" />
+    <Folder Include="Drivers\Python\" />
+  </ItemGroup>
+
+</Project>
