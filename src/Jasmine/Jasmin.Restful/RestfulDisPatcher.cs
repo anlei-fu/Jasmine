@@ -31,7 +31,7 @@ namespace Jasmine.Restful
                 {
                     context.Exception = ex;
                     _logger?.Error(ex);
-                    await pipeline.ErrorFilter.FiltAsync(context);
+                    await pipeline.Error.FiltAsync(context);
                 }
                 
             }

@@ -12,13 +12,13 @@ namespace Jasmine.Ioc
             RelatedType = serviceType;
         }
         public ITypeCache Cache { get; }
-        public Type ImplType { get; set; }
+        public Type Impl { get; set; }
         public ServiceScope Scope { get; internal set; }
         public string TypeName => RelatedType.Name;
         public string TypeFullName => RelatedType.FullName;
         public bool LazyLoad { get; internal set; }
-        public Func<object,object[],object> InitMethod { get;internal set; }
-        public Func<object, object[], object> DestroyMethod { get; internal set; }
+        public IocMethodMetaData InitMethod { get;internal set; }
+        public IocMethodMetaData DestroyMethod { get; internal set; }
         public IocConstructorMetaData ConstrctorMetaData { get; internal set; }
         public IocPropertyMetaData[] Properties { get; set; }
       

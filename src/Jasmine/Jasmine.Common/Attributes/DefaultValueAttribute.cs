@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Jasmine.Ioc.Attributes
+namespace Jasmine.Common.Attributes
 {
     public   class DefaultValueAttribute:Attribute
     {

@@ -1,12 +1,13 @@
 ﻿namespace Jasmine.Common
 {
-   public interface IFilterPipelineBuilder<T>
+   public interface IFilterPipelineBuilder<TContext>
     {
-        IFilterPipelineBuilder<T> AddErrorFirst(IFilter<T> filter);
-        IFilterPipelineBuilder<T> AddErrorLast(IFilter<T> filter);
-        IFilterPipelineBuilder<T> AddFirst(IFilter<T> filter);
-        IFilterPipelineBuilder<T> AddLast(IFilter<T> filter);
-        IFilterPipeline<T> Build();
+        IFilterPipelineBuilder<TContext> AddErrorFirst(IFilter<TContext> filter);
+        IFilterPipelineBuilder<TContext> AddErrorLast(IFilter<TContext> filter);
+        IFilterPipelineBuilder<TContext> AddFirst(IFilter<TContext> filter);
+        IFilterPipelineBuilder<TContext> AddLast(IFilter<TContext> filter);
+        IFilterPipelineBuilder<TContext> SetStat();
+        IFilterPipeline<TContext> Build();
 
     }
 }

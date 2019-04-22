@@ -12,12 +12,12 @@
 
         public IFilterPipelineBuilder<T> AddErrorFirst(IFilter<T> filter)
         {
-            if (_pipeline.ErrorFilter.Next == null)
-                _pipeline.ErrorFilter.Next = filter;
+            if (_pipeline.Error.Next == null)
+                _pipeline.Error.Next = filter;
             else
             {
-                filter.Next = _pipeline.ErrorFilter.Next;
-                _pipeline.ErrorFilter.Next = filter;
+                filter.Next = _pipeline.Error.Next;
+                _pipeline.Error.Next = filter;
             }
 
             return this;
@@ -25,11 +25,11 @@
 
         public IFilterPipelineBuilder<T> AddErrorLast(IFilter<T> filter)
         {
-            if (_pipeline.ErrorFilter.Next == null)
-                _pipeline.ErrorFilter.Next = filter;
+            if (_pipeline.Error.Next == null)
+                _pipeline.Error.Next = filter;
             else
             {
-                var last = _pipeline.ErrorFilter;
+                var last = _pipeline.Error;
 
                 while (last.Next != null)
                     last = last.Next;

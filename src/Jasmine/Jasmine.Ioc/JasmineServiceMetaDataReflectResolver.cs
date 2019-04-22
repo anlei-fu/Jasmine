@@ -1,4 +1,5 @@
 ﻿using Jasmine.Common;
+using Jasmine.Common.Attributes;
 using Jasmine.Ioc.Attributes;
 using Jasmine.Reflection;
 using System;
@@ -46,7 +47,7 @@ namespace Jasmine.Ioc
             if (type.IsInterfaceOrAbstraClass())
             {
                 if (typeAttrs.Contains(typeof(DefaultImplementAttribute)))
-                    DefaultServiceMetaDataManager.Instance.SetImplementation(type, typeAttrs.GetAttribute<DefaultImplementAttribute>().Implement);
+                    DefaultServiceMetaDataManager.Instance.SetImplementation(type, typeAttrs.GetAttribute<DefaultImplementAttribute>().Impl);
 
                 return null;
             }
@@ -80,7 +81,7 @@ namespace Jasmine.Ioc
                 defaultConstructor = _reflection.GetItem(type).Constructors.GetDefaultConstructor() ??
                                                                                                  constructors[0];
 
-            metaData.ConstrctorMetaData = generateConstructor(defaultConstructor);
+            metaData.ConstrctorMetaData = resolveConstructor(defaultConstructor);
 
 
             var properties = new List<IocPropertyMetaData>();
@@ -94,9 +95,60 @@ namespace Jasmine.Ioc
 
             metaData.Properties = properties.ToArray();
 
+            foreach (var item in _reflection.GetItem(type).Methods)
+            {
+                if (item.Attributes.Contains(typeof(InitiaMethodAttribute)))
+                {
+                    metaData.InitMethod = resolveMethod(item);
+                }
+
+                if (item.Attributes.Contains(typeof(DestroyAttribute)))
+                {
+                    metaData.DestroyMethod = resolveMethod(item);
+                }
+
+            }
+
+
+
             return metaData;
         }
-        private IocConstructorMetaData generateConstructor(Constructor constructor)
+
+        private IocMethodMetaData resolveMethod(Method method)
+        {
+            var metaData = new IocMethodMetaData();
+
+            var parameters = method.Parameters.ToArray();
+
+            Array.Sort(parameters, (x, y) => x.Index.CompareTo(y.Index));
+
+            metaData.Parameters = new IocParameterMetaData[parameters.Length];
+
+            for (var i = 0; i < parameters.Length; i++)
+            {
+                metaData.Parameters[i] = new IocParameterMetaData();
+
+                metaData.Parameters[i].RelatedType = parameters[i].ParameterType;
+                metaData.Parameters[i].Name = parameters[i].Name;
+                metaData.Parameters[i].Index = i;
+
+                if (parameters[i].Attributes.Contains(typeof(DefaultValueAttribute)))
+                    metaData.Parameters[i].DefaultValue = parameters[i].Attributes.GetAttribute<DefaultValueAttribute>().Value;
+
+                if (parameters[i].Attributes.Contains(typeof(DefaultImplementAttribute)))
+                    metaData.Parameters[i].Impl = parameters[i].Attributes.GetAttribute<DefaultImplementAttribute>().Impl;
+
+                if (parameters[i].Attributes.Contains(typeof(FromConfigAttribute)))
+                    metaData.Parameters[i].ConfigKey = parameters[i].Attributes.GetAttribute<FromConfigAttribute>().PropertyName;
+
+                if (parameters[i].Attributes.Contains(typeof(NotNullAttribute)))
+                    metaData.Parameters[i].NotNull = true;
+            }
+
+
+            return metaData;
+        }
+        private IocConstructorMetaData resolveConstructor(Constructor constructor)
         {
             var metaData = new IocConstructorMetaData(constructor);
 
@@ -118,10 +170,10 @@ namespace Jasmine.Ioc
                     metaData.Parameters[i].DefaultValue = parameters[i].Attributes.GetAttribute<DefaultValueAttribute>().Value;
 
                 if (parameters[i].Attributes.Contains(typeof(DefaultImplementAttribute)))
-                    metaData.Parameters[i].ImplType = parameters[i].Attributes.GetAttribute<DefaultImplementAttribute>().Implement;
+                    metaData.Parameters[i].Impl = parameters[i].Attributes.GetAttribute<DefaultImplementAttribute>().Impl;
 
                 if (parameters[i].Attributes.Contains(typeof(FromConfigAttribute)))
-                    metaData.Parameters[i].PropertyKey = parameters[i].Attributes.GetAttribute<FromConfigAttribute>().PropertyName;
+                    metaData.Parameters[i].ConfigKey = parameters[i].Attributes.GetAttribute<FromConfigAttribute>().PropertyName;
 
                 if (parameters[i].Attributes.Contains(typeof(NotNullAttribute)))
                     metaData.Parameters[i].NotNull = true;
@@ -142,15 +194,15 @@ namespace Jasmine.Ioc
                 metaData.DefaultValue = filed.Attributes.GetAttribute<DefaultValueAttribute>().Value;
 
             if (filed.Attributes.Contains(typeof(DefaultImplementAttribute)))
-                metaData.ImplType = filed.Attributes.GetAttribute<DefaultImplementAttribute>().Implement;
+                metaData.Impl = filed.Attributes.GetAttribute<DefaultImplementAttribute>().Impl;
 
             if (filed.Attributes.Contains(typeof(FromConfigAttribute)))
-                metaData.PropertyKey = filed.Attributes.GetAttribute<FromConfigAttribute>().PropertyName;
+                metaData.ConfigKey = filed.Attributes.GetAttribute<FromConfigAttribute>().PropertyName;
 
             return metaData;
         }
 
-    
+
 
 
     }

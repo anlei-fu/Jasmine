@@ -18,6 +18,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Jasmine.Extensions\Jasmine.Extensions.csproj" />
     <ProjectReference Include="..\Jasmine.Reflection\Jasmine.Reflection.csproj" />
   </ItemGroup>
 

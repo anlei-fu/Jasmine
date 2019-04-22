@@ -7,7 +7,7 @@ namespace Jasmine.Common
     {
         
 
-        public IFilter<T> ErrorFilter => throw new System.NotImplementedException();
+        public IFilter<T> Error => throw new System.NotImplementedException();
 
         public IFilter<T> Root => throw new System.NotImplementedException();
 

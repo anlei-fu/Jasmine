@@ -25,10 +25,13 @@ namespace Jasmine.Ioc
             {
                 if (constructor.Parameters[i].IsFromConfig)//config key
                 {
-                    var type = constructor.Parameters[i].IsAbstract ? constructor.Parameters[i].ImplType :
+                    var type = constructor.Parameters[i].IsAbstract ? constructor.Parameters[i].Impl :
                                                                       constructor.Parameters[i].RelatedType;
 
-                    paramsInstances[i] = JasminePropertyStringConvertor.Convert(type,_propertyManager.GetValue(constructor.Parameters[i].PropertyKey));
+                    if (type == null)
+                        throw new ImplementationNotFoundException("");
+
+                    paramsInstances[i] = JasminePropertyStringConvertor.Convert(type,_propertyManager.GetValue(constructor.Parameters[i].ConfigKey));
                 }
                 else if (constructor.Parameters[i].HasDefaultValue)//default value
                 {
@@ -38,14 +41,14 @@ namespace Jasmine.Ioc
                 {
                     if (constructor.Parameters[i].HasImplementType)//instructed  implementation type
                     {
-                        paramsInstances[i] = JasmineServiceProvider.Instance.GetService(constructor.Parameters[i].ImplType, newNode);
+                        paramsInstances[i] = JasmineServiceProvider.Instance.GetService(constructor.Parameters[i].Impl, newNode);
                     }
                     else
                     {
                         var impl = _manager.GetImplementation(constructor.Parameters[i].RelatedType);//try find impl 
 
                         if (impl == null)
-                            throw new ImplementationNotFoundException($"construct({constructor}) parameter({constructor.Parameters[i]}) {1}");
+                            throw new ImplementationNotFoundException($"construct({constructor}) parameter({constructor.Parameters[i]}) ");
 
                         paramsInstances[i] = JasmineServiceProvider.Instance.GetService(impl, newNode);
                     }

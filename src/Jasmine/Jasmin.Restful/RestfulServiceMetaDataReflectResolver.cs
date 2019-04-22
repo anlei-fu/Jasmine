@@ -1,4 +1,5 @@
 ﻿using Jasmine.Common;
+using Jasmine.Common.Attributes;
 using Jasmine.Reflection;
 using Jasmine.Restful.Attributes;
 using System;
@@ -30,19 +31,19 @@ namespace Jasmine.Restful
                 }
                 else if (attrType == typeof(BeforeInterceptorAttribute))
                 {
-
+                    metaData.BeforeFilters.Add(((BeforeInterceptorAttribute)item).Name);
                 }
                 else if (attrType == typeof(AfterInterceptorAttribute))
                 {
-
+                    metaData.AfterFilters.Add(((AfterInterceptorAttribute)item).Name);
                 }
                 else if (attrType == typeof(AroundInterceptorAttribute))
                 {
-
+                    metaData.AroundFilters.Add(((AroundInterceptorAttribute)item).Name);
                 }
                 else if (attrType == typeof(ErrorInterceptor))
                 {
-
+                    metaData.ErrorFilters.Add(((ErrorInterceptor)item).Name);
                 }
 
             }
@@ -71,38 +72,36 @@ namespace Jasmine.Restful
 
         public RestfulRequestMetaData resolveMethodMetaData(Method method)
         {
+            var metaData = new RestfulRequestMetaData();
 
+            metaData.Method = method;
             foreach (var item in method.Attributes)
             {
                 var attrType = item.GetType();
 
-                if(attrType==typeof(PathAttribute))
+                if (attrType == typeof(PathAttribute))
                 {
-
+                    metaData.Path = ((PathAttribute)item).Path;
                 }
-                else if(attrType==typeof(HttpMethodAttribute))
+                else if (attrType == typeof(HttpMethodAttribute))
                 {
-
+                    metaData.HttpMethod = ((HttpMethodAttribute)item).Method;
                 }
-                else if(attrType==typeof(BeforeInterceptorAttribute))
+                else if (attrType == typeof(BeforeInterceptorAttribute))
                 {
-
+                    metaData.BeforeFilters.Add(((BeforeInterceptorAttribute)item).Name);
                 }
-                else if(attrType==typeof(AfterInterceptorAttribute))
+                else if (attrType == typeof(AfterInterceptorAttribute))
                 {
-
+                    metaData.AfterFilters.Add(((AfterInterceptorAttribute)item).Name);
                 }
-                else if(attrType==typeof(AroundInterceptorAttribute))
+                else if (attrType == typeof(AroundInterceptorAttribute))
                 {
-
+                    metaData.AroundFilters.Add(((AroundInterceptorAttribute)item).Name);
                 }
-                else if(attrType==typeof(ErrorInterceptor))
+                else if (attrType == typeof(ErrorInterceptor))
                 {
-
-                }
-                else if(attrType==typeof(SerializationModeAtribute))
-                {
-
+                    metaData.ErrorFilters.Add(((ErrorInterceptor)item).Name);
                 }
 
             }
@@ -119,27 +118,35 @@ namespace Jasmine.Restful
 
                     if(attrType==typeof(BodyAttribute))
                     {
-
+                        parameterMetaData.FromBody = true;
                     }
                     else if(attrType==typeof(QueryStringAttribute))
                     {
-
+                        parameterMetaData.QueryString = ((QueryStringAttribute)attr).Name;
                     }
                     else if (attrType == typeof(DataAttribute))
                     {
-
+                        parameterMetaData.DataString = ((DataAttribute)attr).Name;
                     }
                     else if(attrType==typeof(FormAttribute))
                     {
-
+                        parameterMetaData.DataString = ((FormAttribute)attr).Name;
                     }
                     else if(attrType==typeof(PathVariableAttribute))
                     {
-
+                        parameterMetaData.PathVariable= ((PathVariableAttribute)attr).Name;
                     }
-                    else if(attrType==typeof(defaultvalue))
+                    else if(attrType==typeof(DefaultValueAttribute))
                     {
-
+                        parameterMetaData.DefaultValue = ((DefaultValueAttribute)attr).Value;
+                    }
+                    else if(attrType==typeof(NotNullAttribute))
+                    {
+                        parameterMetaData.NotNull = true;
+                    }
+                    else if(attrType==typeof(DefaultImplementAttribute))
+                    {
+                        parameterMetaData.ImplType = ((DefaultImplementAttribute)attr).Impl;
                     }
 
 

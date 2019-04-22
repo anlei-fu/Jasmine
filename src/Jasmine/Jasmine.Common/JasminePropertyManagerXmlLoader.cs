@@ -1,4 +1,5 @@
 ﻿using Jasmine.Common.Exceptions;
+using Jasmine.Extensions;
 using System.IO;
 using System.Xml;
 
@@ -6,7 +7,7 @@ namespace Jasmine.Common
 {
     public class JasminePropertyManagerXmlLoader
     {
-        private const string JASMINE_MANAGER_TAG = "jasmine-property-manager";
+        private const string PROPERTIES = "jasmine-property-manager";
         private const string NAME = "name";
         private const string IMPORT = "import";
         private const string REF = "ref";
@@ -21,7 +22,7 @@ namespace Jasmine.Common
 
             xd.Load(path);
 
-            foreach (var item in xd.GetElementsByTagName(JASMINE_MANAGER_TAG))
+            foreach (var item in xd.GetElementsByTagName(PROPERTIES))
             {
                 manager = load(item as XmlNode);
             }
@@ -51,40 +52,42 @@ namespace Jasmine.Common
 
                     var subManager = Load(subNode.Attributes[REF].Value);
 
-                    manager.SubManagers.Add(subManager.Name, subManager);
-                }
-                else if (subNode.Name == PROPERTY)//property
-                {
-                    if (subNode.Attributes.GetNamedItem(NAME) == null)//name requird
-                        throw new JasminePropertyException("property-tag's name property is required!");
-
-                    var key = subNode.Attributes[NAME].Value;
-                    var value = string.Empty;
-
-                    if (subNode.Attributes.GetNamedItem(VALUE) == null)//load value from subchild innertext,for big value content
+                    foreach (var property in subManager)
                     {
-                        if (subNode.FirstChild.Name != VALUE)
-                            throw new JasminePropertyException("property-tag'first child must be <value></value> tag!");
-
-                        value = subNode.FirstChild.InnerText;
+                        manager.SetValue($"{subManager.Name}.{property.Key}", property.Value);
                     }
-                    else
-                    {
-                        if (subNode.Attributes.GetNamedItem(VALUE) == null)
-                            throw new JasminePropertyException("property's value attribute is required,or first child is tag <value></value>");
-
-                        value = subNode.Attributes[VALUE].Value;
-                    }
-
-                    manager.Properties.Add(key.Trim(), value.Trim());
-
+                   
+                  
                 }
-                else if (subNode.Name == JASMINE_MANAGER_TAG)//load sub manager
+                else if (subNode.Name == PROPERTIES)//property
                 {
-                    var subManager = load(subNode);
 
-                    manager.SubManagers.Add(subManager.Name, subManager);
+                    foreach (var property in subNode.GetDirectChildrenByTagName(PROPERTY))
+                    {
+                        if (property.Attributes.GetNamedItem(NAME) == null)//name requird
+                            throw new JasminePropertyException("property-tag's name property is required!");
+
+                        var key = subNode.Attributes[NAME].Value;
+                        var value = string.Empty;
+
+                        if (property.Attributes.GetNamedItem(VALUE) != null)//load value from subchild innertext,for big value content
+                        {
+                            value = subNode.FirstChild.InnerText;
+                        }
+                        else
+                        {
+                            if (property.FirstChild == null||property.FirstChild.Name!=VALUE)
+                                throw new JasminePropertyException("value not found");
+
+                            value = property.FirstChild.InnerText;
+                        }
+
+                        manager.SetValue($"{manager.Name}.{key}", value);
+                      
+                    }
+
                 }
+               
 
             }
 
@@ -99,35 +102,9 @@ namespace Jasmine.Common
 
         public static XmlNode getNode(JasminePropertyManager manager)
         {
-            var xml = new XmlDocument();
-            var node = xml.CreateElement(JASMINE_MANAGER_TAG);
-            var attr = xml.CreateAttribute(NAME);
-            attr.Value = manager.Name;
-            node.Attributes.Append(attr);
-            node.AppendChild(node);
+            
 
-            foreach (var item in manager.Properties)
-            {
-                var property = xml.CreateElement(PROPERTY);
-                var property_name = xml.CreateAttribute(NAME);
-                property_name.Value = item.Key;
-
-                var value = xml.CreateElement(VALUE);
-                value.InnerText = item.Value;
-
-                property.AppendChild(value);
-
-                node.AppendChild(property);
-            }
-
-            foreach (var item in manager.SubManagers)
-            {
-                node.AppendChild(getNode(item.Value));
-            }
-
-
-
-            return node;
+            return null;
 
         }
     }

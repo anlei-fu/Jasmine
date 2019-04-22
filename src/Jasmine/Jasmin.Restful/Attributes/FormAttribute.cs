@@ -6,5 +6,10 @@ namespace Jasmine.Restful.Attributes
 {
    public class FormAttribute:Attribute
     {
+        public FormAttribute(string name)
+        {
+            Name = name;
+        }
+        public string Name { get; }
     }
 }

@@ -6,7 +6,7 @@ namespace Jasmine.Common
     {
         public string Name { get; set; }
         public Type RelatedType { get; set; }
-        public bool Nullable { get; set; }
+        public bool NotNull { get; set; }
         public bool IsAbstract { get; set; }
         public Type ImplType { get; set; }
         public int Index { get; set; }
