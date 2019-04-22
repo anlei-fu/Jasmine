@@ -7,7 +7,7 @@ namespace Jasmine.Orm.Implements
 {
     public class DefaultCursor : ICursor
     {
-        public DefaultCursor(SqlResultContext context, ISqlConvertorProvider sqlConvertorProvider, SqlConnection connection, ISqlConnectionProvider provider)
+        public DefaultCursor(SqlResultContext context, ISqlConvertorProvider sqlConvertorProvider, SqlConnection connection, IDbConnectionProvider provider)
         {
             _context = context;
             _provider = provider;
@@ -16,7 +16,7 @@ namespace Jasmine.Orm.Implements
         }
         private SqlConnection _connection;
         private SqlResultContext _context;
-        private ISqlConnectionProvider _provider;
+        private IDbConnectionProvider _provider;
         private ISqlConvertorProvider _convertorProvider;
         private IUnknowTypeConvertor _unknowTypeConvertor;
         public bool Closed { get; private set; }

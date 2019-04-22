@@ -2,7 +2,7 @@
 
 namespace Jasmine.Orm.Model
 {
-    public  class SqlResultColumn
+    public  class SqlQueryResultColumnMetaData
     {
         public Type RelatedType { get; set; }
         public int Index { get; set; }

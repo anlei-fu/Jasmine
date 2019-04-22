@@ -2,7 +2,7 @@
 
 namespace Jasmine.Orm.Interfaces
 {
-    public interface ISqlConnectionProvider
+    public interface IDbConnectionProvider
     {
         DbConnection Rent();
         void Recycle(DbConnection connection);

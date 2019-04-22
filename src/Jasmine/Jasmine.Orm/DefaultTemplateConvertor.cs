@@ -49,7 +49,7 @@ namespace Jasmine.Orm.Implements
             return Convert(DefaultTemplateParser.Instance.Parse(template), parameters);
         }
 
-        public string Convert(IEnumerable<TemplateSegment> segments, object parameter)
+        public string Convert(IEnumerable<SqlTemplateSegment> segments, object parameter)
         {
             var type = parameter.GetType();
 
@@ -67,7 +67,7 @@ namespace Jasmine.Orm.Implements
 
         }
 
-        public string Convert(IEnumerable<TemplateSegment> segments, IEnumerable<IDictionary<string, object>> parameters)
+        public string Convert(IEnumerable<SqlTemplateSegment> segments, IEnumerable<IDictionary<string, object>> parameters)
         {
             var sb = new StringBuilder();
 
@@ -79,7 +79,7 @@ namespace Jasmine.Orm.Implements
             return sb.ToString();
         }
 
-        public string Convert(IEnumerable<TemplateSegment> segments, IEnumerable<object> parameters)
+        public string Convert(IEnumerable<SqlTemplateSegment> segments, IEnumerable<object> parameters)
         {
 
             var sb = new StringBuilder();
@@ -91,7 +91,7 @@ namespace Jasmine.Orm.Implements
 
             return sb.ToString();
         }
-        public string Convert(IEnumerable<TemplateSegment> segments, IDictionary<string, object> parameters)
+        public string Convert(IEnumerable<SqlTemplateSegment> segments, IDictionary<string, object> parameters)
         {
             var sb = new StringBuilder();
 

@@ -680,11 +680,11 @@ namespace Jasmine.Orm
         {
             return this;
         }
-        public SqlBuilder AddColumn(string table, Column column)
+        public SqlBuilder AddColumn(string table, ColumnMetaData column)
         {
             return this;
         }
-        public SqlBuilder AddColumn(string table,IEnumerable<Column>column)
+        public SqlBuilder AddColumn(string table,IEnumerable<ColumnMetaData>column)
         {
             return this;
         }
@@ -738,22 +738,22 @@ namespace Jasmine.Orm
             return Append(DefaultTemplateConvertor.Instance.Convert(template, parameters));
         }
 
-        public SqlBuilder BuildTemplate(IEnumerable<TemplateSegment> segments, object parameter)
+        public SqlBuilder BuildTemplate(IEnumerable<SqlTemplateSegment> segments, object parameter)
         {
             return Append(DefaultTemplateConvertor.Instance.Convert(segments, parameter));
         }
 
-        public SqlBuilder BuildTemplate(IEnumerable<TemplateSegment> segments, IDictionary<string, object> parameter)
+        public SqlBuilder BuildTemplate(IEnumerable<SqlTemplateSegment> segments, IDictionary<string, object> parameter)
         {
             return Append(DefaultTemplateConvertor.Instance.Convert(segments, parameter));
         }
 
-        public SqlBuilder BuildTemplate(IEnumerable<TemplateSegment> segments, IEnumerable<IDictionary<string, object>> parameters)
+        public SqlBuilder BuildTemplate(IEnumerable<SqlTemplateSegment> segments, IEnumerable<IDictionary<string, object>> parameters)
         {
             return Append(DefaultTemplateConvertor.Instance.Convert(segments, parameters));
         }
 
-        public SqlBuilder BuildTemplate(IEnumerable<TemplateSegment> segments, IEnumerable<object> parameters)
+        public SqlBuilder BuildTemplate(IEnumerable<SqlTemplateSegment> segments, IEnumerable<object> parameters)
         {
             return Append(DefaultTemplateConvertor.Instance.Convert(segments, parameters));
         }

@@ -41,7 +41,6 @@
       <HintPath>..\packages\MySql.Data.8.0.15\lib\net452\MySql.Data.dll</HintPath>
     </Reference>
     <Reference Include="System" />
-    <Reference Include="System.ComponentModel, Version=4.0.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Configuration.Install" />
@@ -75,6 +74,7 @@
     <Compile Include="ISqlConvertor.cs" />
     <Compile Include="ISqlExcuter.cs" />
     <Compile Include="ITableInfoCache.cs" />
+    <Compile Include="ITableOrdinaryOperateTemplateGenarator.cs" />
     <Compile Include="ITemplateProvider.cs" />
     <Compile Include="IUnknowTypeConvertor.cs" />
     <Compile Include="ITemplateConvertor.cs" />
@@ -94,19 +94,22 @@
     <Compile Include="JasmineOrmConfig.cs" />
     <Compile Include="JasmineOrmXmlConfig.cs" />
     <Compile Include="JasmineSqlExcutor.cs" />
-    <Compile Include="Column.cs" />
+    <Compile Include="ColumnMetaData.cs" />
     <Compile Include="DataSorceType.cs" />
     <Compile Include="Expression.cs" />
+    <Compile Include="SqlParameters.cs" />
     <Compile Include="SqlResultColumn.cs" />
     <Compile Include="SqlResultContext.cs" />
-    <Compile Include="Table.cs" />
-    <Compile Include="Template.cs" />
+    <Compile Include="SqlTemplate.cs" />
+    <Compile Include="TableMetaData.cs" />
+    <Compile Include="TableInfoReflectResolver.cs" />
+    <Compile Include="TableInfoXmlResolver.cs" />
     <Compile Include="SqlBuilder.cs" />
     <Compile Include="ISqlBaseTypeConvertor.cs" />
     <Compile Include="Attributes\NotNullAttribute.cs" />
     <Compile Include="Attributes\PrimaryKeyAttribute.cs" />
     <Compile Include="ITemplateParser.cs" />
-    <Compile Include="TemplateSegment.cs" />
+    <Compile Include="SqlTemplateSegment.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Attributes\SqlColumnNameAttribute.cs" />
     <Compile Include="SqlConnectionStringBuilderExtension.cs" />
@@ -117,8 +120,12 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\SimpleOrm.Reflection\Jasmine.Reflection.csproj">
-      <Project>{176C7B1A-B130-48A0-9AC5-0C7E6AAF00C4}</Project>
+    <ProjectReference Include="..\Jasmine.Common\Jasmine.Commom.csproj">
+      <Project>{27722F7A-0E0D-42A5-961A-7AF15FA0A1C8}</Project>
+      <Name>Jasmine.Commom</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Jasmine.Reflection\Jasmine.Reflection.csproj">
+      <Project>{C0525DCB-8593-421B-A8AD-1DE365216F7E}</Project>
       <Name>Jasmine.Reflection</Name>
     </ProjectReference>
   </ItemGroup>

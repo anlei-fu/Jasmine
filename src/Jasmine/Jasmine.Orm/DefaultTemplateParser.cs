@@ -25,11 +25,11 @@ namespace Jasmine.Orm.Implements
         }
         public static readonly ISegmentParser Instance=new DefaultTemplateParser();
 
-        public IEnumerable<TemplateSegment> Parse(string template)
+        public IEnumerable<SqlTemplateSegment> Parse(string template)
         {
             template = template.Trim();
 
-            var result = new List<TemplateSegment>();
+            var result = new List<SqlTemplateSegment>();
 
             var leftFound = false;
             var lastIndex = 0;
@@ -39,16 +39,16 @@ namespace Jasmine.Orm.Implements
             {
                 if(template[i]=='{'&&!leftFound)
                 {
-                    result.Add(new TemplateSegment(template.Substring(lastIndex, i - lastIndex), false,true));
+                    result.Add(new SqlTemplateSegment(template.Substring(lastIndex, i - lastIndex), false,true));
                     lastIndex = i;
                     leftFound = true;
                 }
                 else if(template[i]=='}'&&leftFound)
                 {
                     if(lastIndex!=0&&template[lastIndex-1]=='@')
-                       result.Add(new TemplateSegment(template.Substring(lastIndex+1, i - lastIndex-1).Trim(), true,false));
+                       result.Add(new SqlTemplateSegment(template.Substring(lastIndex+1, i - lastIndex-1).Trim(), true,false));
                     else
-                        result.Add(new TemplateSegment(template.Substring(lastIndex + 1, i - lastIndex - 1).Trim(), true, true));
+                        result.Add(new SqlTemplateSegment(template.Substring(lastIndex + 1, i - lastIndex - 1).Trim(), true, true));
 
                     lastIndex = i+1;
                     leftFound = false;
@@ -56,7 +56,7 @@ namespace Jasmine.Orm.Implements
             }
 
             if (lastIndex != template.Length)
-                result.Add(new TemplateSegment(template.Substring(lastIndex, template.Length - lastIndex), false,true));
+                result.Add(new SqlTemplateSegment(template.Substring(lastIndex, template.Length - lastIndex), false,true));
 
             return result;
         }

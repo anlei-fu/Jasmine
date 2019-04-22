@@ -1,7 +1,6 @@
-﻿using Jasmine.Orm.Model;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
-namespace Jasmine.Orm.Interfaces
+namespace Jasmine.Orm
 {
     public  interface ITemplateConvertor
     {
@@ -9,9 +8,7 @@ namespace Jasmine.Orm.Interfaces
         string Convert(string template, IDictionary<string, object> parameter);
         string Convert(string template, IEnumerable<IDictionary<string, object>> parameters);
         string Convert(string template, IEnumerable<object> parameters);
-        string Convert(IEnumerable<TemplateSegment> segments, object parameter);
-        string Convert(IEnumerable<TemplateSegment> segments, IDictionary<string, object> parameter);
-        string Convert(IEnumerable<TemplateSegment> segments, IEnumerable<IDictionary<string, object>> parameters);
-        string Convert(IEnumerable<TemplateSegment> segments, IEnumerable<object> parameters);
+        string Convert(SqlTemplate template, SqlParameters parameters);
+      
     }
 }

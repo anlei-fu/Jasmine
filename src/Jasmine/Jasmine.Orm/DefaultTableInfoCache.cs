@@ -2,7 +2,6 @@
 using Jasmine.Orm.Interfaces;
 using Jasmine.Orm.Model;
 using Jasmine.Reflection;
-using Jasmine.Reflection.Interfaces;
 using System;
 using System.Collections.Concurrent;
 
@@ -15,8 +14,8 @@ namespace Jasmine.Orm.Implements
 
         }
 
-        private readonly ConcurrentDictionary<Type, Table> _tables = new ConcurrentDictionary<Type, Table>();
-        private readonly ITypeCache _reflection =DefaultReflectionCache.Instance;
+        private readonly ConcurrentDictionary<Type, TableMetaData> _tables = new ConcurrentDictionary<Type, TableMetaData>();
+        private readonly ITypeCache _reflection =JasmineReflectionCache.Instance;
 
         public static readonly ITableInfoCache Instance = new DefaultTableInfoCache();
         public void Cache(Type type)
@@ -30,7 +29,7 @@ namespace Jasmine.Orm.Implements
 
             var typeMataData = _reflection.GetItem(type);
 
-            var table = new Table();
+            var table = new TableMetaData();
             table.RelatedType = type;
 
             var constructor = typeMataData.Constructors.GetDefaultConstructor();
@@ -45,9 +44,9 @@ namespace Jasmine.Orm.Implements
                 if (item.Attributes.Contains(typeof(SqlIgnoreAttribute)))
                     continue;
 
-                var column = new Column();
+                var column = new ColumnMetaData();
 
-                column.ModelName = column.SqlName = item.Name;
+                column.ModelName = column.ColumnName = item.Name;
 
                 foreach (var attr in item.Attributes)
                 {
@@ -61,7 +60,7 @@ namespace Jasmine.Orm.Implements
                     }
                     else if (attr is SqlColumnNameAttributeAttribute)
                     {
-                        column.SqlName = ((SqlColumnNameAttributeAttribute)attr).SqlName;
+                        column.ColumnName = ((SqlColumnNameAttributeAttribute)attr).SqlName;
                     }
                     else if (attr is SqlDataTypeAttribute)
                     {
@@ -75,7 +74,7 @@ namespace Jasmine.Orm.Implements
                 column.Setter = item.Setter;
                 column.RelatedType = item.PropertyType;
 
-                _tables[type].Columns.Add(column.SqlName, column);
+                _tables[type].Columns.Add(column.ColumnName, column);
             }
 
             _tables[type].RelatedType = type;
@@ -88,7 +87,7 @@ namespace Jasmine.Orm.Implements
             return _tables.ContainsKey(type);
         }
 
-        public Table GetTable(Type type)
+        public TableMetaData GetTable(Type type)
         {
             Cache(type);
             return _tables.TryGetValue(type, out var result) ? result : null;
@@ -99,7 +98,7 @@ namespace Jasmine.Orm.Implements
             Cache(typeof(T));
         }
 
-        public Table GetTable<T>()
+        public TableMetaData GetTable<T>()
         {
             return GetTable(typeof(T));
         }

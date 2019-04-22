@@ -1,10 +1,7 @@
-﻿using Jasmine.Orm.Model;
-using System.Collections.Generic;
-
-namespace Jasmine.Components
+﻿namespace Jasmine.Orm
 {
     public   interface ISegmentParser
     {
-        IEnumerable<TemplateSegment> Parse(string template);
+        SqlTemplate Parse(string template);
     }
 }

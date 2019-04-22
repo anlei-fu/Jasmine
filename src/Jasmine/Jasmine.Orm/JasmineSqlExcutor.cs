@@ -18,21 +18,21 @@ namespace Jasmine.Orm.Implements
         private ITemplateConvertor _templateBuilder=>DefaultTemplateConvertor.Instance;
         private IUnknowTypeConvertor _unknowTypeConvertor=>DefaultUnkowTypeConvertor.Instance;
 
-        public int Excute(string template, object parameter, ISqlConnectionProvider provider)
+        public int Excute(string template, object parameter, IDbConnectionProvider provider)
         {
             return Excute(_templateBuilder.Convert(template, parameter), provider);
         }
 
-        public int Excute(IEnumerable<TemplateSegment> segments, IDictionary<string, object> parameter, ISqlConnectionProvider provider)
+        public int Excute(IEnumerable<SqlTemplateSegment> segments, IDictionary<string, object> parameter, IDbConnectionProvider provider)
         {
             return Excute(_templateBuilder.Convert(segments, parameter), provider);
         }
 
-        public int Excute(IEnumerable<TemplateSegment> segments, IEnumerable<IDictionary<string, object>> parameters, ISqlConnectionProvider provider)
+        public int Excute(IEnumerable<SqlTemplateSegment> segments, IEnumerable<IDictionary<string, object>> parameters, IDbConnectionProvider provider)
         {
             return Excute(_templateBuilder.Convert(segments, parameters), provider);
         }
-        public int Excute(string sql, ISqlConnectionProvider provider)
+        public int Excute(string sql, IDbConnectionProvider provider)
         {
             var connection = provider.Rent();
             try
@@ -55,7 +55,7 @@ namespace Jasmine.Orm.Implements
             }
         }
 
-        public IEnumerable<T> Query<T>(string sql, ISqlConnectionProvider provider)
+        public IEnumerable<T> Query<T>(string sql, IDbConnectionProvider provider)
         {
             var connection = provider.Rent();
 
@@ -94,7 +94,7 @@ namespace Jasmine.Orm.Implements
             }
         }
 
-        public IEnumerable<IEnumerable<object>> Query(string sql, ISqlConnectionProvider provider)
+        public IEnumerable<IEnumerable<object>> Query(string sql, IDbConnectionProvider provider)
         {
             var connection = provider.Rent();
 
@@ -132,67 +132,67 @@ namespace Jasmine.Orm.Implements
             }
         }
 
-        public IEnumerable<T> Query<T>(string template, IDictionary<string, object> paramter, ISqlConnectionProvider provider)
+        public IEnumerable<T> Query<T>(string template, IDictionary<string, object> paramter, IDbConnectionProvider provider)
         {
             return Query<T>(_templateBuilder.Convert(template, paramter), provider);
         }
 
-        public IEnumerable<IEnumerable<object>> Query(string template, IDictionary<string, object> paramter, ISqlConnectionProvider provider)
+        public IEnumerable<IEnumerable<object>> Query(string template, IDictionary<string, object> paramter, IDbConnectionProvider provider)
         {
             return Query(_templateBuilder.Convert(template, paramter), provider);
         }
 
-        public IEnumerable<T> Query<T>(string template, IEnumerable<IDictionary<string, object>> parameters, ISqlConnectionProvider provider)
+        public IEnumerable<T> Query<T>(string template, IEnumerable<IDictionary<string, object>> parameters, IDbConnectionProvider provider)
         {
             return Query<T>(_templateBuilder.Convert(template, parameters), provider);
         }
 
-        public IEnumerable<IEnumerable<object>> Query(string template, IEnumerable<IDictionary<string, object>> parameters, ISqlConnectionProvider provider)
+        public IEnumerable<IEnumerable<object>> Query(string template, IEnumerable<IDictionary<string, object>> parameters, IDbConnectionProvider provider)
         {
             return Query(_templateBuilder.Convert(template, parameters), provider);
         }
 
-        public IEnumerable<T> Query<T>(IEnumerable<TemplateSegment> segments, IDictionary<string, object> parameter, ISqlConnectionProvider provider)
+        public IEnumerable<T> Query<T>(IEnumerable<SqlTemplateSegment> segments, IDictionary<string, object> parameter, IDbConnectionProvider provider)
         {
             return Query<T>(_templateBuilder.Convert(segments, parameter), provider);
         }
 
-        public IEnumerable<IEnumerable<object>> Query(IEnumerable<TemplateSegment> segments, IDictionary<string, object> parameters, ISqlConnectionProvider provider)
+        public IEnumerable<IEnumerable<object>> Query(IEnumerable<SqlTemplateSegment> segments, IDictionary<string, object> parameters, IDbConnectionProvider provider)
         {
             return Query(_templateBuilder.Convert(segments, parameters), provider);
         }
 
-        public IEnumerable<T> Query<T>(IEnumerable<TemplateSegment> segments, IEnumerable<IDictionary<string, object>> parameters, ISqlConnectionProvider provider)
+        public IEnumerable<T> Query<T>(IEnumerable<SqlTemplateSegment> segments, IEnumerable<IDictionary<string, object>> parameters, IDbConnectionProvider provider)
         {
             return Query<T>(_templateBuilder.Convert(segments, parameters), provider);
         }
 
-        public IEnumerable<IEnumerable<object>> Query(IEnumerable<TemplateSegment> segments, IEnumerable<IDictionary<string, object>> parameters, ISqlConnectionProvider provider)
+        public IEnumerable<IEnumerable<object>> Query(IEnumerable<SqlTemplateSegment> segments, IEnumerable<IDictionary<string, object>> parameters, IDbConnectionProvider provider)
         {
             return Query(_templateBuilder.Convert(segments, parameters), provider);
         }
 
       
-        public ICursor QueryCursor(string template, IDictionary<string, object> paramter, ISqlConnectionProvider provider)
+        public ICursor QueryCursor(string template, IDictionary<string, object> paramter, IDbConnectionProvider provider)
         {
             return QueryCursor(_templateBuilder.Convert(template, paramter), provider);
         }
 
-        public ICursor QueryCursor(IEnumerable<TemplateSegment> segments, IEnumerable<IDictionary<string, object>> parameters, ISqlConnectionProvider provider)
+        public ICursor QueryCursor(IEnumerable<SqlTemplateSegment> segments, IEnumerable<IDictionary<string, object>> parameters, IDbConnectionProvider provider)
         {
             return QueryCursor(_templateBuilder.Convert(segments, parameters), provider);
         }
 
-        public ICursor QueryCursor(IEnumerable<TemplateSegment> segments, IDictionary<string, object> parameter, ISqlConnectionProvider provider)
+        public ICursor QueryCursor(IEnumerable<SqlTemplateSegment> segments, IDictionary<string, object> parameter, IDbConnectionProvider provider)
         {
             return QueryCursor(_templateBuilder.Convert(segments, parameter), provider);
         }
 
-        public ICursor QueryCusor(string template, IEnumerable<IDictionary<string, object>> parameters, ISqlConnectionProvider provider)
+        public ICursor QueryCusor(string template, IEnumerable<IDictionary<string, object>> parameters, IDbConnectionProvider provider)
         {
             return QueryCursor(_templateBuilder.Convert(template, parameters), provider);
         }
-        public ICursor QueryCursor(string sql, ISqlConnectionProvider provider)
+        public ICursor QueryCursor(string sql, IDbConnectionProvider provider)
         {
             var connetion = provider.Rent();
 
