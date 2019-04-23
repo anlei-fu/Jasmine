@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.28729.10
+# Visual Studio 15
+VisualStudioVersion = 15.0.28010.2019
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Test", "Test", "{A7BB9AAF-EF71-4F9C-8541-77B523D5DFBF}"
 EndProject
@@ -44,6 +44,8 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Jasmine.Spider", "Jasmine.Spider\Jasmine.Spider.csproj", "{42E591AB-8D38-49CB-88A8-456F4DF2B7E8}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Jasmine.Parser", "Jamine.HtmlParser\Jasmine.Parser.csproj", "{416D3751-2C3C-4349-A8E2-320B0062214A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GrammerTest", "GrammerTest\GrammerTest.csproj", "{C51DE4A6-277C-478A-BCE3-5F47FDFFCDC9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -131,6 +133,10 @@ Global
 		{416D3751-2C3C-4349-A8E2-320B0062214A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{416D3751-2C3C-4349-A8E2-320B0062214A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{416D3751-2C3C-4349-A8E2-320B0062214A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C51DE4A6-277C-478A-BCE3-5F47FDFFCDC9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C51DE4A6-277C-478A-BCE3-5F47FDFFCDC9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C51DE4A6-277C-478A-BCE3-5F47FDFFCDC9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C51DE4A6-277C-478A-BCE3-5F47FDFFCDC9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

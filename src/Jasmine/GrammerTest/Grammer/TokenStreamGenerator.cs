@@ -11,23 +11,26 @@ namespace Jasmine.Spider.Grammer
         private const string EQUEL = "==";
 
 
+    
+        private const string FOR = "for";
+        private const string IN = "in";
+        private const string IF = "if";
+        private const string ELSEIF = "elif";
+        private const string ELSE = "else";
+        private const string BREAK = "break";
+        private const string NEW = "new";
+        private const string VAR = "var";
+        private const string CONTINUE = "continue";
+        private const string TRUE = "true";
+        private const string FALSE = "false";
+        private const string NULL = "null";
 
-        private const string FOR = "";
-        private const string IN = "";
-        private const string IF = "";
-        private const string ELSEIF = "";
-        private const string ELSE = "";
-        private const string BREAK = "";
-        private const string NEW = "";
-        private const string VAR = "";
-        private const string CONTINUE = "";
-
-
-        private StringBuilder _stringBuilder;
-        private StringBuilder _identifierBuilder;
+        private StringBuilder _numberBuilder = new StringBuilder();
+        private StringBuilder _stringBuilder=new StringBuilder();
+        private StringBuilder _identifierBuilder=new StringBuilder();
         private string _input;
-        private int _currentIndex;
-        private char _currentChar;
+        private int _currentIndex=-1;
+        private char _currentChar=>_input[_currentIndex];
         private bool hasNext()
         {
             return _currentIndex+1<_input.Length;
@@ -90,15 +93,46 @@ namespace Jasmine.Spider.Grammer
             }
         }
 
+        private void parseAssignment(OperatorType single,OperatorType bi)
+        {
+            if(hasNext())
+            {
+                if(next()=='=')
+                {
+                    pushOperator(bi);
+                }
+                else
+                {
+                    previous();
+                    pushOperator(single);
+                }
+            }
+            else
+            {
+                pushOperator(single);
+            }
+        }
+
         public IList<Token> GetTokenStream(string input)
         {
             _input = input;
 
             while (hasNext())
             {
+                next();
+
                 switch (_currentChar)
                 {
                     case '+':
+
+                        if(hasNext())
+                        {
+
+                        }
+                        else
+                        {
+                            pushOperator(OperatorType.Add)
+                        }
 
                         break;
 
@@ -112,13 +146,37 @@ namespace Jasmine.Spider.Grammer
 
                     case '/':
 
+                        if(hasNext())
+                        {
+                            next();
+
+                            if (_currentChar == '/')
+                                skipSingleAnnotation();
+                            else if (_currentChar == '*')
+                                skipMutipleAnnotation();
+                            else
+                            {
+                                previous();
+                                pushOperator(OperatorType.Reduce);
+                            }
+                        }
+                        else
+                        {
+                            pushOperator(OperatorType.Reduce);
+                        }
+
+
                         break;
 
                     case ':':
 
+                        pushOperator(OperatorType.Semicolon);
+
                         break;
 
                     case '*':
+
+                        pushOperator(OperatorType.Mutiply);
 
                         break;
 
@@ -264,18 +322,29 @@ namespace Jasmine.Spider.Grammer
         {
             _tokens.Add(new Token(keywords, TokenType.Keyword));
         }
+        private void pushNull()
+        {
+
+        }
+        private void pushBool(string value)
+        {
+
+        }
 
         private HashSet<string> _keyWords = new HashSet<string>()
         {
             FOR,
             IN,
-            VAR,
             IF,
             ELSE,
             ELSEIF,
-            BREAK,
-            CONTINUE
-
+        };
+        private Dictionary<string, OperatorType> _operators = new Dictionary<string, OperatorType>()
+        {
+            {NEW,OperatorType.New },
+            {VAR,OperatorType.Var },
+            {BREAK,OperatorType.Break},
+            {CONTINUE,OperatorType.Continue},
         };
 
         private HashSet<char> _operatorChars = new HashSet<char>()
@@ -283,37 +352,124 @@ namespace Jasmine.Spider.Grammer
             '=','!','&','|','.','(',')','*','/','<','>',';','"','\'',',','%','+','-','%'
 
         };
-        private HashSet<char> _whiteSpice = new HashSet<char>();
+        private HashSet<char> _whiteSpice = new HashSet<char>()
+        {
+            ' ','\n','\r','\t'
+
+        };
+
+        private void pushNumberToken(string value)
+        {
+            _tokens.Add(new Token(value, TokenType.Number));
+        }
+
+
+        private void skipSingleAnnotation()
+        {
+            while(hasNext())
+            {
+                if (next() == '\n')
+                    return;
+            }
+        }
+        private void skipMutipleAnnotation()
+        {
+            while(hasNext())
+            {
+                if (next() == '/' && _input[_currentIndex - 1] == '*')
+                    return;
+            }
+        }
+
+
 
         private void parseIdentifierOrKeyword()
         {
-            _identifierBuilder.Append(_currentChar);
 
-            while (hasNext())
+            if (_currentChar>='0'&&_currentChar<='9')
             {
-                next();
+                bool isDotFound = false;
+                _numberBuilder.Append(_currentChar);
 
-                if ((_currentChar >= 'a' && _currentChar <= 'z') || (_currentChar >= 'A' && _currentChar <= 'Z') || _currentChar == '_' || (_currentChar > '0' && _currentChar < '9'))
-                    _identifierBuilder.Append(_currentChar);
-                else
+                while (hasNext())
                 {
-                    if(!_operatorChars.Contains(_currentChar)||_whiteSpice.Contains(_currentChar))
+                    if(_currentChar=='.'&&!isDotFound)
                     {
+                        _numberBuilder.Append(_currentChar);
+                        isDotFound = true;
 
+                        previous();
+
+                        pushNumberToken(_numberBuilder.ToString());
+
+                        _numberBuilder.Clear();
                     }
-
-                    if(_keyWords.Contains(_identifierBuilder.ToString()))
+                    else if(_currentChar >= '0' && _currentChar <= '9')
                     {
-                        pushKeyWord(_identifierBuilder.ToString());
+                        _numberBuilder.Append(_currentChar);
                     }
                     else
                     {
-                        pushIdentifier(_identifierBuilder.ToString());
+                        pushNumberToken(_numberBuilder.ToString());
+                        _numberBuilder.Clear();
+                        previous();
                     }
 
-                    _identifierBuilder.Clear();
                 }
 
+            }
+            else
+            {
+                _identifierBuilder.Append(_currentChar);
+
+                while (hasNext())
+                {
+                    next();
+
+                    if ((_currentChar >= 'a' && _currentChar <= 'z') || (_currentChar >= 'A' && _currentChar <= 'Z') || _currentChar == '_' || (_currentChar > '0' && _currentChar < '9'))
+                        _identifierBuilder.Append(_currentChar);
+                    else
+                    {
+                        if (!_operatorChars.Contains(_currentChar) && !_whiteSpice.Contains(_currentChar))
+                        {
+                            throw new System.Exception();
+                        }
+
+                        var identifier = _identifierBuilder.ToString();
+
+                        if(identifier==NULL)
+                        {
+                            pushNull();
+                        }
+                        else if(identifier==TRUE)
+                        {
+                            pushBool(TRUE);
+                        }
+                        else if(identifier==FALSE)
+                        {
+                            pushBool(FALSE);
+                        }
+                        else if (_keyWords.Contains(identifier))//keyword
+                        {
+                            pushKeyWord(identifier);
+                        }
+                        else if (_operators.ContainsKey(identifier))//operator 
+                        {
+                            pushOperator(_operators[identifier]);
+                        }
+                        else
+                        {
+                            pushIdentifier(_identifierBuilder.ToString());
+                        }
+
+                        previous();
+
+                        _identifierBuilder.Clear();
+
+                        return;
+                    }
+
+                }
             }
         }
 
@@ -330,6 +486,8 @@ namespace Jasmine.Spider.Grammer
                 if(next()=='"'&&_input[_currentIndex-1]!='\\')
                 {
                     pushString(_stringBuilder.ToString());
+                    _stringBuilder.Clear();
+                    return;
                 }
                 else
                 {
@@ -337,7 +495,7 @@ namespace Jasmine.Spider.Grammer
                 }
             }
 
-            _stringBuilder.Clear();
+         
 
         }
     }

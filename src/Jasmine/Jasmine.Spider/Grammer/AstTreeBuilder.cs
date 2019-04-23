@@ -96,7 +96,7 @@ namespace Jasmine.Spider.Grammer
                         break;
                     case TokenType.String:
                         break;
-                    case TokenType.Numble:
+                    case TokenType.Number:
                         break;
                     case TokenType.Bool:
                         break;

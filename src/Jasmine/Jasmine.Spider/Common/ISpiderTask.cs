@@ -1,4 +1,6 @@
-﻿namespace Jasmine.Spider.Common
+﻿using Jasmine.Spider.Worker;
+
+namespace Jasmine.Spider.Common
 {
     public  interface ISpiderTask
     {

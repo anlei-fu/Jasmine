@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Jasmine.Spider.Grammer
 {
-    class DeclareExpression
+  public  class MethodCallExpression:Expression
     {
     }
 }
