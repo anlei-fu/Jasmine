@@ -2,6 +2,7 @@
 using GrammerTest.Grammer.Exceptions;
 using System;
 using System.Collections.Generic;
+using System.Linq.Expressions;
 
 namespace Jasmine.Spider.Grammer
 {
@@ -58,7 +59,7 @@ namespace Jasmine.Spider.Grammer
         private OperatorNode _currentOperatorNode;
         private OperandNode _currentOperandNode;
         private Scope _currentScope;
-        private bool _isExpressionStart;
+        private bool _isExpressionStarted;
 
 
         private OperandNode _currentLeftOperend;
@@ -68,12 +69,162 @@ namespace Jasmine.Spider.Grammer
 
         private Token _lastToken;
 
+
+        private void pushIntoScopeStack(Scope scope)
+        {
+
+        }
+
         private void checkExpressionEnd()
         {
-            if(_isExpressionStart)
+            if(_isExpressionStarted)
             {
                 throw new GrammerException();
             }
+
+            _currentScope
+
+        }
+
+        private void checkOperator()
+        {
+
+        }
+        private void checkKeyword()
+        {
+            if(_isExpressionStarted)
+            {
+                
+            }
+
+        }
+   
+
+
+        private void checkExpressionOperatorStart()
+        {
+
+        }
+
+        private Operand _expressionStartOperand;
+       
+        private void buildExpression()
+        {
+            var expression = new Expression()
+            {
+                Parent = _currentScope,
+            };
+
+            _currentScope = expression;
+
+            pushIntoScopeStack(expression);
+
+            previous();
+
+            while (hasNext())
+            {
+                switch (next().TokenType)
+                {
+                    case TokenType.Keyword:
+                        //throw error
+                        break;
+                    case TokenType.Operator:
+
+                        if (!_isExpressionStarted)
+                            checkExpressionOperatorStart();
+
+                        switch (_currentToken.OperatorType)
+                        {
+                            case OperatorType.Assignment:
+                                break;
+                            case OperatorType.And:
+                                break;
+                            case OperatorType.Or:
+                                break;
+                            case OperatorType.Not:
+                                break;
+                            case OperatorType.Equel:
+                                break;
+                            case OperatorType.Member:
+                                break;
+                            case OperatorType.NotEquel:
+                                break;
+                            case OperatorType.Call:
+                                break;
+                            case OperatorType.LeftParenn:
+                                break;
+                            case OperatorType.RightParenn:
+                                break;
+                            case OperatorType.LeftBrace:
+                                break;
+                            case OperatorType.RightBrace:
+                                break;
+                            case OperatorType.LeftSquare:
+                                break;
+                            case OperatorType.RightSquare:
+                                break;
+                            case OperatorType.Add:
+                                break;
+                            case OperatorType.Reduce:
+                                break;
+                            case OperatorType.Mode:
+                                break;
+                            case OperatorType.Mutiply:
+                                break;
+                            case OperatorType.Devide:
+                                break;
+                            case OperatorType.LeftIncrement:
+                                break;
+                            case OperatorType.RightIncrement:
+                                break;
+                            case OperatorType.LeftDecrement:
+                                break;
+                            case OperatorType.RightDecrement:
+                                break;
+                            case OperatorType.Semicolon:
+                                break;
+                            case OperatorType.Coma:
+                                break;
+                            case OperatorType.ExpressionEnd:
+                                break;
+                            case OperatorType.Bigger:
+                                break;
+                            case OperatorType.BiggerEquel:
+                                break;
+                            case OperatorType.Less:
+                                break;
+                            case OperatorType.LessEquel:
+                                break;
+                            case OperatorType.QueryObJect:
+                                break;
+                            case OperatorType.New:
+                                break;
+                            case OperatorType.Var:
+                                break;
+                            case OperatorType.Break:
+                                break;
+                            case OperatorType.Continue:
+                                break;
+                            default:
+                                break;
+                        }
+
+                        break;
+                    case TokenType.Identifier:
+
+                        break;
+                    case TokenType.String:
+                        break;
+                    case TokenType.Number:
+                        break;
+                    case TokenType.Bool:
+                        break;
+                    default:
+                        break;
+                }
+            }
+
+          
 
         }
 
@@ -104,20 +255,12 @@ namespace Jasmine.Spider.Grammer
                         }
                         else if (_currentToken.Value == "elif")
                         {
-
+                            buildElif();
 
                         }
                         else if (_currentToken.Value == "else")
                         {
-
-
-                        }
-                        else if (_currentToken.Value == "break")
-                        {
-
-                        }
-                        else if (_currentToken.Value == "continue")
-                        {
+                            buildElse();
 
                         }
                         else
@@ -125,49 +268,18 @@ namespace Jasmine.Spider.Grammer
                             Console.WriteLine(" un surpported keyword!");
                         }
 
-                        
-
-
-
                         break;
+
 
                     case TokenType.Operator:
-
-                        requirePreviousIdentifier();
-
-                        buildOperator(_currentToken.OperatorType);
-
-                        break;
-
-
                     case TokenType.Identifier:
-                        
-                        if(_currentOperandNode==null)
-                        {
-                            checkIdentifierExists(_currentToken.Value);
-
-                            _currentOperandNode = new OperandNode() { Name = _currentToken.Value };
-
-                            _currentOperatorNode = new OperatorNode(OperatorType.QueryObJect);
-
-                            rightBide();
-                        }
-                        else
-                        {
-                            chekGrammer();
-
-                        }
-
-
-
+                        buildExpression();
                         break;
+
                     case TokenType.String:
-                        break;
                     case TokenType.Number:
-                        break;
                     case TokenType.Bool:
-                        break;
-                    default:
+
                         break;
                 }
 

@@ -1,8 +1,8 @@
 ﻿namespace Jasmine.Spider.Grammer
 {
-    public class Expression:Excutor
+    public class Expression:Scope
     {
-        public Scope Statement { get; set; }
+       
 
         public AstTree Tree { get; set; }
 

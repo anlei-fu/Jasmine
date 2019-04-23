@@ -58,6 +58,7 @@
     <Compile Include="Grammer\IfScope0.cs" />
     <Compile Include="Grammer\InvalidNameException.cs" />
     <Compile Include="Grammer\JObject.cs" />
+    <Compile Include="Grammer\KeywordType.cs" />
     <Compile Include="Grammer\MethodCallExpression.cs" />
     <Compile Include="Grammer\NameFearture.cs" />
     <Compile Include="Grammer\OperandNode.cs" />

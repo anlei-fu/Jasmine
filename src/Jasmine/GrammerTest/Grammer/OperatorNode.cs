@@ -31,6 +31,9 @@ namespace Jasmine.Spider.Grammer
         public OperatorNode Operator { get; set; }
     }
     
+    /// <summary>
+    /// only one operand
+    /// </summary>
     public abstract class SingleOperatorNode:OperatorNode
     {
         public sealed override void Excute()
@@ -42,6 +45,9 @@ namespace Jasmine.Spider.Grammer
         
     }
 
+    /// <summary>
+    /// tow operands
+    /// </summary>
     public abstract class BinaryOperatorNode:OperatorNode
     {
        
@@ -54,7 +60,9 @@ namespace Jasmine.Spider.Grammer
         protected abstract void excuteBinary(JObject obj1,JObject obj2);
     }
 
-    public abstract class BoolOperatorNode:BinaryOperatorNode
+
+
+    public abstract class LogicOperatorNode:BinaryOperatorNode
     {
         public override OperatorResultType ResultType => OperatorResultType.Bool;
         protected override void excuteBinary(JObject obj1, JObject obj2)
@@ -71,7 +79,7 @@ namespace Jasmine.Spider.Grammer
        
     }
 
-    public class AndOperatorNode : BoolOperatorNode
+    public class AndOperatorNode : LogicOperatorNode
     {
         protected override bool caculate(bool flag1, bool flag2)
         {
@@ -79,7 +87,7 @@ namespace Jasmine.Spider.Grammer
         }
     }
 
-    public class OrOperatorNode:BoolOperatorNode
+    public class OrOperatorNode:LogicOperatorNode
     {
         protected override bool caculate(bool flag1, bool flag2)
         {
@@ -153,6 +161,111 @@ namespace Jasmine.Spider.Grammer
         protected override void excuteBinary(JObject obj1, JObject obj2)
         {
             obj1 = obj2;
+        }
+    }
+
+    public abstract class AsignmentNumberOperatorNode:AssignmentOperatorNode
+    {
+        protected override void excuteBinary(JObject obj1, JObject obj2)
+        {
+            caculate(obj1,((JNumber)obj1).Value ,((JNumber)obj2).Value);
+        }
+
+        protected abstract void caculate(JObject obj1,float param1,  float param2);
+    }
+
+    public abstract class BinaryNumberOperatorNode : BinaryOperatorNode
+    {
+        public override OperatorResultType ResultType => OperatorResultType.Number;
+
+        protected override void excuteBinary(JObject obj1, JObject obj2)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        protected abstract float caulate(float param1, float param2);
+
+
+       
+    }
+    public class AddOperatornNode : BinaryNumberOperatorNode
+    {
+        protected override float caulate(float param1, float param2)
+        {
+            return param1 + param2;
+        }
+    }
+    public class ReduceOperatorNode : BinaryNumberOperatorNode
+    {
+        protected override float caulate(float param1, float param2)
+        {
+            throw new System.NotImplementedException();
+        }
+    }
+
+    public class MutiplyOperatorNode : BinaryNumberOperatorNode
+    {
+        protected override float caulate(float param1, float param2)
+        {
+            throw new System.NotImplementedException();
+        }
+    }
+
+    public class DevideOperatorNode : BinaryNumberOperatorNode
+    {
+        public override OperatorResultType ResultType => throw new System.NotImplementedException();
+
+        protected override float caulate(float param1, float param2)
+        {
+            throw new System.NotImplementedException();
+        }
+    }
+
+    public class ModOperatorNode : BinaryNumberOperatorNode
+    {
+        public override OperatorResultType ResultType => throw new System.NotImplementedException();
+
+        protected override float caulate(float param1, float param2)
+        {
+            throw new System.NotImplementedException();
+        }
+    }
+
+    public class AddAsignmentNode : AsignmentNumberOperatorNode
+    {
+        protected override void caculate(JObject obj1, float param1, float param2)
+        {
+            throw new System.NotImplementedException();
+        }
+    }
+    public class ReduceAsignmentNode : AsignmentNumberOperatorNode
+    {
+        protected override void caculate(JObject obj1, float param1, float param2)
+        {
+            throw new System.NotImplementedException();
+        }
+    }
+    public class MutiplyAsignOperatorNode : AsignmentNumberOperatorNode
+    {
+        protected override void caculate(JObject obj1, float param1, float param2)
+        {
+            throw new System.NotImplementedException();
+        }
+    }
+
+    public class DevideAsignOperatorNode : AsignmentNumberOperatorNode
+    {
+        protected override void caculate(JObject obj1, float param1, float param2)
+        {
+            throw new System.NotImplementedException();
+        }
+    }
+
+    public class ModAsignmentOperatorNode : AsignmentNumberOperatorNode
+    {
+        protected override void caculate(JObject obj1, float param1, float param2)
+        {
+            throw new System.NotImplementedException();
         }
     }
 }
