@@ -167,7 +167,7 @@ namespace Jasmine.Spider.Grammer
                                 break;
                             case OperatorType.Reduce:
                                 break;
-                            case OperatorType.Mode:
+                            case OperatorType.Mod:
                                 break;
                             case OperatorType.Mutiply:
                                 break;
@@ -374,7 +374,7 @@ namespace Jasmine.Spider.Grammer
 
                 case OperatorType.Add:
                 case OperatorType.Reduce:
-                case OperatorType.Mode:
+                case OperatorType.Mod:
                 case OperatorType.Mutiply:
                 case OperatorType.Devide:
                 case OperatorType.LeftIncrement:

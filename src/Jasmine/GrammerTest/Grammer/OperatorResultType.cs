@@ -1,6 +1,6 @@
 ﻿namespace GrammerTest.Grammer
 {
-    public enum OperatorResultType
+    public enum OutputType
     {
         Number,
         String,

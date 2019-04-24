@@ -42,7 +42,7 @@ namespace GrammerTest.Grammer
                     break;
                 case OperatorType.Reduce:
                     break;
-                case OperatorType.Mode:
+                case OperatorType.Mod:
                     break;
                 case OperatorType.Mutiply:
                     break;
@@ -101,7 +101,7 @@ namespace GrammerTest.Grammer
 
                 case OperatorType.Mutiply:
                 case OperatorType.Devide:
-                case OperatorType.Mode:
+                case OperatorType.Mod:
                 case OperatorType.Add:
                 case OperatorType.Reduce:
                     return OperatorOprandType.Binary;
@@ -154,7 +154,7 @@ namespace GrammerTest.Grammer
             }
         }
 
-        public static OperatorResultType GetResultType(this OperatorType op)
+        public static OutputType GetResultType(this OperatorType op)
         {
             switch (op)
             {
@@ -167,25 +167,25 @@ namespace GrammerTest.Grammer
                 case OperatorType.Not:
                 case OperatorType.Equel:
                 case OperatorType.NotEquel:
-                    return OperatorResultType.Bool;
+                    return OutputType.Bool;
 
                 case OperatorType.QueryObJect:
                 case OperatorType.New:
                 case OperatorType.Var:
                 case OperatorType.Member:
                 case OperatorType.Call:
-                    return OperatorResultType.Variable;
+                    return OutputType.Variable;
 
                 case OperatorType.Add:
                 case OperatorType.Reduce:
-                case OperatorType.Mode:
+                case OperatorType.Mod:
                 case OperatorType.Mutiply:
                 case OperatorType.Devide:
                 case OperatorType.LeftIncrement:
                 case OperatorType.RightIncrement:
                 case OperatorType.LeftDecrement:
                 case OperatorType.RightDecrement:
-                    return OperatorResultType.Number;
+                    return OutputType.Number;
 
                 case OperatorType.Assignment:
                 case OperatorType.LeftParenn:
@@ -199,7 +199,7 @@ namespace GrammerTest.Grammer
                 case OperatorType.Break:
                 case OperatorType.Continue:
                 default:
-                    return OperatorResultType.None;
+                    return OutputType.None;
             }
         }
 
@@ -220,7 +220,7 @@ namespace GrammerTest.Grammer
             {OperatorType.Reduce,OperatorConstraint.Number},
             {OperatorType.Mutiply,OperatorConstraint.Number},
             {OperatorType.Devide,OperatorConstraint.Number},
-            {OperatorType.Mode,OperatorConstraint.Number},
+            {OperatorType.Mod,OperatorConstraint.Number},
             {OperatorType.Var,OperatorConstraint.String},
             {OperatorType.New,OperatorConstraint.String},
             {OperatorType.Member,OperatorConstraint.String},
@@ -231,5 +231,9 @@ namespace GrammerTest.Grammer
             
         }
         
+        public static bool CanBeStartWithNoOperand(this OperatorType op)
+        {
+            return true;
+        }
     }
 }

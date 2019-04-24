@@ -5,7 +5,7 @@ namespace Jasmine.Spider.Grammer
 {
     public abstract class OperatorNode:Excutor
     {
-        public abstract OperatorResultType ResultType { get; }
+        public abstract OutputType OutputType { get; }
         public Scope Scope { get; set; }
         public JObject Output { get; set; }
         public OperatorNode Parent { get; set; }
@@ -64,7 +64,7 @@ namespace Jasmine.Spider.Grammer
 
     public abstract class LogicOperatorNode:BinaryOperatorNode
     {
-        public override OperatorResultType ResultType => OperatorResultType.Bool;
+        public override OutputType OutputType => OutputType.Bool;
         protected override void excuteBinary(JObject obj1, JObject obj2)
         {
             var result = caculate(((JBool)obj1).Value, ((JBool)obj2).Value);
@@ -96,7 +96,7 @@ namespace Jasmine.Spider.Grammer
     }
     public class NotOperatorNode : SingleOperatorNode
     {
-        public override OperatorResultType ResultType => OperatorResultType.Bool;
+        public override OutputType OutputType => OutputType.Bool;
         protected override void excuteSingle(JObject obj)
         {
             var jbool = obj as JBool;
@@ -117,7 +117,7 @@ namespace Jasmine.Spider.Grammer
     /// </summary>
     public class MemberOperaterNode : BinaryOperatorNode
     {
-        public override OperatorResultType ResultType => OperatorResultType.Variable;
+        public override OutputType OutputType => OutputType.Variable;
         protected override void excuteBinary(JObject obj1, JObject obj2)
         {
             var jstring = obj2 as JString;
@@ -144,7 +144,7 @@ namespace Jasmine.Spider.Grammer
 
     public class DeclareOperator : SingleOperatorNode
     {
-        public override OperatorResultType ResultType => OperatorResultType.Variable;
+        public override OutputType OutputType => OutputType.Variable;
 
         protected override void excuteSingle(JObject obj)
         {
@@ -156,7 +156,7 @@ namespace Jasmine.Spider.Grammer
 
     public class AssignmentOperatorNode : BinaryOperatorNode
     {
-        public override OperatorResultType ResultType => OperatorResultType.None;
+        public override OutputType OutputType => OutputType.None;
 
         protected override void excuteBinary(JObject obj1, JObject obj2)
         {
@@ -176,7 +176,7 @@ namespace Jasmine.Spider.Grammer
 
     public abstract class BinaryNumberOperatorNode : BinaryOperatorNode
     {
-        public override OperatorResultType ResultType => OperatorResultType.Number;
+        public override OutputType OutputType => OutputType.Number;
 
         protected override void excuteBinary(JObject obj1, JObject obj2)
         {
@@ -213,7 +213,7 @@ namespace Jasmine.Spider.Grammer
 
     public class DevideOperatorNode : BinaryNumberOperatorNode
     {
-        public override OperatorResultType ResultType => throw new System.NotImplementedException();
+        public override OutputType OutputType => throw new System.NotImplementedException();
 
         protected override float caulate(float param1, float param2)
         {
@@ -223,7 +223,7 @@ namespace Jasmine.Spider.Grammer
 
     public class ModOperatorNode : BinaryNumberOperatorNode
     {
-        public override OperatorResultType ResultType => throw new System.NotImplementedException();
+        public override OutputType OutputType => throw new System.NotImplementedException();
 
         protected override float caulate(float param1, float param2)
         {

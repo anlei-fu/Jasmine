@@ -19,7 +19,7 @@
 
         Add,
         Reduce,
-        Mode,
+        Mod,
         Mutiply,
         Devide,
         LeftIncrement,
