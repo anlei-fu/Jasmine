@@ -22,10 +22,9 @@
         Mod,
         Mutiply,
         Devide,
-        LeftIncrement,
-        RightIncrement,
-        LeftDecrement,
-        RightDecrement,
+        Increment,
+        Decrement,
+      
 
         Semicolon,
         Coma,
