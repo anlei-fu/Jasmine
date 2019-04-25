@@ -6,7 +6,15 @@ using System.Threading.Tasks;
 
 namespace GrammerTest.Grammer
 {
-    class FunctionStatementBuilder
+    public class FunctionScopeBuilder : BuilderBase
     {
+        public FunctionScopeBuilder(TokenStreamReader reader) : base(reader)
+        {
+        }
+
+        public FunctionScope Build()
+        {
+
+        }
     }
 }

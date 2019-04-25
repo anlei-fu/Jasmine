@@ -6,5 +6,11 @@
         If,
         Elif,
         Else,
+        While,
+        Foreach,
+        Do,
+        Try,
+        Catch,
+        Finally
     }
 }

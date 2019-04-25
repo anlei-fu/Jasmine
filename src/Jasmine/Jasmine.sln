@@ -47,6 +47,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Jasmine.Parser", "Jamine.Ht
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GrammerTest", "GrammerTest\GrammerTest.csproj", "{C51DE4A6-277C-478A-BCE3-5F47FDFFCDC9}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ActionReflectTest", "ActionReflectTest\ActionReflectTest.csproj", "{91D38630-5E57-4C45-85D8-37C33203D528}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -137,6 +139,10 @@ Global
 		{C51DE4A6-277C-478A-BCE3-5F47FDFFCDC9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C51DE4A6-277C-478A-BCE3-5F47FDFFCDC9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C51DE4A6-277C-478A-BCE3-5F47FDFFCDC9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{91D38630-5E57-4C45-85D8-37C33203D528}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{91D38630-5E57-4C45-85D8-37C33203D528}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{91D38630-5E57-4C45-85D8-37C33203D528}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{91D38630-5E57-4C45-85D8-37C33203D528}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -147,6 +153,7 @@ Global
 		{8091D29A-F7A5-402C-91E0-EB2C675B7490} = {A7BB9AAF-EF71-4F9C-8541-77B523D5DFBF}
 		{6FC1AE0C-0460-4636-A559-F4CB690FB4CD} = {A7BB9AAF-EF71-4F9C-8541-77B523D5DFBF}
 		{9D6CFA6D-5194-4CF3-9653-BA83B9F07D7F} = {A7BB9AAF-EF71-4F9C-8541-77B523D5DFBF}
+		{91D38630-5E57-4C45-85D8-37C33203D528} = {A7BB9AAF-EF71-4F9C-8541-77B523D5DFBF}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {A6D5FE91-3BE8-420B-A942-4CFE27F92901}

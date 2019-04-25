@@ -27,7 +27,7 @@ namespace Jasmine.Spider.Grammer
             return obj;
         }
 
-        public void Declare(string name, JObject obj )
+        public JObject Declare(string name, JObject obj )
         {
             if (_loacals.ContainsKey(name))
             {
@@ -35,6 +35,8 @@ namespace Jasmine.Spider.Grammer
             }
 
             _loacals.Add(name, obj);
+
+            return null;
         }
 
 

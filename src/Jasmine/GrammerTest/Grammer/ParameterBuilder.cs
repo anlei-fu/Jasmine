@@ -1,12 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace GrammerTest.Grammer
+﻿namespace GrammerTest.Grammer
 {
-    class ParameterBuilder
+    public class ParameterBuilder:AstNodeBuilder
     {
+        protected override void beforeWork()
+        {
+            base.beforeWork();
+        }
+        protected override bool intercept()
+        {
+            return base.intercept();
+        }
     }
 }

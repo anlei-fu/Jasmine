@@ -1,33 +1,42 @@
 ﻿using Jasmine.Spider.Grammer;
+using System.Collections.Generic;
 
 namespace GrammerTest.Grammer
 {
-    public  class TokenStreamReader
+    public class TokenStreamReader
     {
-        private Token[] _tokens;
 
-        public Token Next(int step=1)
+        public TokenStreamReader(List<Token> tokens)
         {
-            CurrentIndex = CurrentIndex + step;
-
-            return CurrentToken;
+            _tokens = tokens;
         }
 
-        public Token PreviousToken(int step=1)
+        private List<Token> _tokens;
+        public int CurrentIndex { get; private set; } = -1;
+        public bool HasNext(int step=1)
+        {
+            return CurrentIndex+step<_tokens.Count;
+        }
+
+        public Token PreviouceToken(int step=1)
         {
             return _tokens[CurrentIndex - step];
         }
+
+
+        public Token Next(int step=1)
+        {
+            CurrentIndex += step;
+            return  _tokens[CurrentIndex];
+        }
+
         public Token Previous(int step=1)
         {
-            CurrentIndex = CurrentIndex -step;
+            CurrentIndex -= step;
+            return _tokens[CurrentIndex];
+        }
 
-            return CurrentToken;
-        }
-        public bool HasNext(int step=1)
-        {
-            return CurrentIndex + step < _tokens.Length;
-        }
-        public int CurrentIndex { get; private set; }
+
         public Token CurrentToken => _tokens[CurrentIndex];
     }
 }

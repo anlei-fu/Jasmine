@@ -43,9 +43,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ActionJFunctionAdapter.cs" />
     <Compile Include="Grammer\ArrayIndexBuilder.cs" />
     <Compile Include="Grammer\ArrayLiteralBuilder.cs" />
     <Compile Include="Grammer\AstGrammerException.cs" />
+    <Compile Include="Grammer\AstNodeBuilder.cs" />
     <Compile Include="Grammer\AstTree.cs" />
     <Compile Include="Grammer\AstTreeBuilder.cs" />
     <Compile Include="Grammer\AstTreeExcutor.cs" />
@@ -60,6 +62,7 @@
     <Compile Include="Grammer\ExpressionBuilder.cs" />
     <Compile Include="Grammer\ForScope.cs" />
     <Compile Include="Grammer\ForScopeBuilder.cs" />
+    <Compile Include="Grammer\FunctionScope.cs" />
     <Compile Include="Grammer\FunctionScopeBuilder.cs" />
     <Compile Include="Grammer\IfScope.cs" />
     <Compile Include="Grammer\IfScope0.cs" />
@@ -69,7 +72,6 @@
     <Compile Include="Grammer\KeywordType.cs" />
     <Compile Include="Grammer\NameFearture.cs" />
     <Compile Include="Grammer\ObjectLiteralBuilder.cs" />
-    <Compile Include="Grammer\OperandNode.cs" />
     <Compile Include="Grammer\OperaterShape.cs" />
     <Compile Include="Grammer\OperatorConstraintExtension.cs" />
     <Compile Include="Grammer\OperatorExtension.cs" />
@@ -79,12 +81,14 @@
     <Compile Include="Grammer\OperatorType.cs" />
     <Compile Include="Grammer\ParameterBuilder.cs" />
     <Compile Include="Grammer\ParenthesisBuilder.cs" />
+    <Compile Include="Grammer\PriorityBuilder.cs" />
     <Compile Include="Grammer\Scope.cs" />
     <Compile Include="Grammer\SpiderExtractor.cs" />
     <Compile Include="Grammer\Token.cs" />
     <Compile Include="Grammer\TokenStreamGenerator.cs" />
     <Compile Include="Grammer\TokenStreamReader.cs" />
     <Compile Include="Grammer\TokenType.cs" />
+    <Compile Include="Grammer\OperatorNodeFactory.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

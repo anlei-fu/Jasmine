@@ -11,229 +11,74 @@ namespace GrammerTest.Grammer
             switch (type)
             {
                 case OperatorType.Assignment:
-                    break;
-                case OperatorType.And:
-                    break;
-                case OperatorType.Or:
-                    break;
-                case OperatorType.Not:
-                    break;
-                case OperatorType.Equel:
-                    break;
-                case OperatorType.Member:
-                    break;
-                case OperatorType.NotEquel:
-                    break;
-                case OperatorType.Call:
-                    break;
-                case OperatorType.LeftParenn:
-                    break;
-                case OperatorType.RightParenn:
-                    break;
-                case OperatorType.LeftBrace:
-                    break;
-                case OperatorType.RightBrace:
-                    break;
-                case OperatorType.LeftSquare:
-                    break;
-                case OperatorType.RightSquare:
-                    break;
-                case OperatorType.Add:
-                    break;
-                case OperatorType.Reduce:
-                    break;
-                case OperatorType.Mod:
-                    break;
-                case OperatorType.Mutiply:
-                    break;
-                case OperatorType.Devide:
-                    break;
-                case OperatorType.LeftIncrement:
-                    break;
-                case OperatorType.RightIncrement:
-                    break;
-                case OperatorType.LeftDecrement:
-                    break;
-                case OperatorType.RightDecrement:
-                    break;
-                case OperatorType.Coma:
-                    break;
-                case OperatorType.ExpressionEnd:
-                    break;
-                case OperatorType.Bigger:
-                    break;
-                case OperatorType.BiggerEquel:
-                    break;
-                case OperatorType.Less:
-                    break;
-                case OperatorType.LessEquel:
-                    break;
-                case OperatorType.QueryObJect:
-                    break;
+                case OperatorType.AddAsignment:
+                case OperatorType.ReduceAsignment:
+                case OperatorType.MutiplyAsignment:
+                case OperatorType.DevideAsignment:
+                case OperatorType.ModAsignment:
+                    return 0;
                 case OperatorType.New:
-                    break;
                 case OperatorType.Var:
-                    break;
+                case OperatorType.Function:
+                    return 1;
+                case OperatorType.And:
+                case OperatorType.Or:
+                    return 2;
+                case OperatorType.Not:
+                    return 3;
+                case OperatorType.Bigger:
+                case OperatorType.BiggerEquel:
+                case OperatorType.Less:
+                case OperatorType.LessEquel:
+                case OperatorType.NotEquel:
+                case OperatorType.Equel:
+                    return 4;
+              
+             
+                case OperatorType.Add:
+                case OperatorType.Reduce:
+                    return 5;
+                case OperatorType.Mod:
+                case OperatorType.Mutiply:
+                case OperatorType.Devide:
+                    return 6;
+                case OperatorType.Increment:
+                case OperatorType.Decrement:
+                    return 7;
+                case OperatorType.Member:
+                    return 8;
+                //never mind
                 case OperatorType.Break:
-                    break;
                 case OperatorType.Continue:
-                    break;
-                default:
-                    break;
-            }
-        }
-        public static OperatorOprandType GetOperandType(this OperatorType type)
-        {
-            switch (type)
-            {
-                case OperatorType.Bigger:
-                case OperatorType.BiggerEquel:
-                case OperatorType.Less:
-                case OperatorType.LessEquel:
-
-                case OperatorType.Assignment:
-                case OperatorType.Not:
-                case OperatorType.And:
-                case OperatorType.Or:
-                case OperatorType.Equel:
-                case OperatorType.NotEquel:
-
-
-                case OperatorType.Mutiply:
-                case OperatorType.Devide:
-                case OperatorType.Mod:
-                case OperatorType.Add:
-                case OperatorType.Reduce:
-                    return OperatorOprandType.Binary;
-
-                case OperatorType.LeftIncrement:
-                case OperatorType.RightIncrement:
-                case OperatorType.LeftDecrement:
-                case OperatorType.RightDecrement:
-                case OperatorType.Var:
-                case OperatorType.Member:
-                    return OperatorOprandType.Single;
-
-                case OperatorType.Call:
-                    return OperatorOprandType.Mutiple;
-
-
-
-                case OperatorType.LeftParenn:
-                    break;
-                case OperatorType.RightParenn:
-                    break;
-                case OperatorType.LeftBrace:
-                    break;
-                case OperatorType.RightBrace:
-                    break;
-                case OperatorType.LeftSquare:
-                    break;
-                case OperatorType.RightSquare:
-                    break;
-
-
+                case OperatorType.Question:
+                case OperatorType.Semicolon:
                 case OperatorType.Coma:
-                    break;
-                case OperatorType.QueryObJect:
-                    break;
-
-
                 case OperatorType.ExpressionEnd:
-                case OperatorType.New:
-
-                    break;
-
-
-                case OperatorType.Break:
-                    break;
-                case OperatorType.Continue:
-                    break;
-                default:
-                    break;
-            }
-        }
-
-        public static OutputType GetResultType(this OperatorType op)
-        {
-            switch (op)
-            {
-                case OperatorType.Bigger:
-                case OperatorType.BiggerEquel:
-                case OperatorType.Less:
-                case OperatorType.LessEquel:
-                case OperatorType.And:
-                case OperatorType.Or:
-                case OperatorType.Not:
-                case OperatorType.Equel:
-                case OperatorType.NotEquel:
-                    return OutputType.Bool;
-
-                case OperatorType.QueryObJect:
-                case OperatorType.New:
-                case OperatorType.Var:
-                case OperatorType.Member:
-                case OperatorType.Call:
-                    return OutputType.Variable;
-
-                case OperatorType.Add:
-                case OperatorType.Reduce:
-                case OperatorType.Mod:
-                case OperatorType.Mutiply:
-                case OperatorType.Devide:
-                case OperatorType.LeftIncrement:
-                case OperatorType.RightIncrement:
-                case OperatorType.LeftDecrement:
-                case OperatorType.RightDecrement:
-                    return OutputType.Number;
-
-                case OperatorType.Assignment:
                 case OperatorType.LeftParenn:
                 case OperatorType.RightParenn:
                 case OperatorType.LeftBrace:
                 case OperatorType.RightBrace:
                 case OperatorType.LeftSquare:
                 case OperatorType.RightSquare:
-                case OperatorType.Coma:
-                case OperatorType.ExpressionEnd:
-                case OperatorType.Break:
-                case OperatorType.Continue:
                 default:
-                    return OutputType.None;
+                    return -1;
             }
         }
+   
+
+    
 
 
-        private static Dictionary<OperatorType, OperatorConstraint> _dic = new Dictionary<OperatorType, OperatorConstraint>()
-        {
-            {OperatorType.Assignment,OperatorConstraint.Varible},
-            {OperatorType.And,OperatorConstraint.Bool},
-            {OperatorType.Or,OperatorConstraint.Bool},
-            {OperatorType.Not,OperatorConstraint.Bool},
-            {OperatorType.Equel,OperatorConstraint.Varible},
-            {OperatorType.NotEquel,OperatorConstraint.Varible},
-            {OperatorType.Bigger,OperatorConstraint.Number},
-            {OperatorType.BiggerEquel,OperatorConstraint.Number},
-            { OperatorType.Less,OperatorConstraint.Number},
-            {OperatorType.LessEquel,OperatorConstraint.Number},
-            {OperatorType.Add,OperatorConstraint.Number},
-            {OperatorType.Reduce,OperatorConstraint.Number},
-            {OperatorType.Mutiply,OperatorConstraint.Number},
-            {OperatorType.Devide,OperatorConstraint.Number},
-            {OperatorType.Mod,OperatorConstraint.Number},
-            {OperatorType.Var,OperatorConstraint.String},
-            {OperatorType.New,OperatorConstraint.String},
-            {OperatorType.Member,OperatorConstraint.String},
-
-        };
-        public static  OperatorConstraint GetInpuConstraint(this OperatorType op)
-        { 
-            
-        }
+ 
         
         public static bool CanBeStartWithNoOperand(this OperatorType op)
         {
             return true;
+        }
+
+        public static bool ComparePriority(this OperatorType op,OperatorType other)
+        {
+            return other.GetPriority()==op.GetPriority();
         }
     }
 }
