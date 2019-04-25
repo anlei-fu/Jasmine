@@ -1,12 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Jasmine.Spider.Grammer;
 
 namespace GrammerTest.Grammer
 {
-    class BuilderBase
+    public class BuilderBase
     {
+        public  BuilderBase(TokenStreamReader reader)
+        {
+            _reader = reader;
+        }
+        protected TokenStreamReader _reader;
+
+        protected OperatorNode _currentNode;
+        protected OperatorNode _currentOperand;
+        protected OperatorNode _firstOperand;
     }
 }

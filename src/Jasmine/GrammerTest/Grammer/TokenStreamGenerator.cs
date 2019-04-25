@@ -17,6 +17,23 @@ namespace Jasmine.Spider.Grammer
         private const string IF = "if";
         private const string ELSEIF = "elif";
         private const string ELSE = "else";
+        private const string DO = "";
+        private const string WHILE = "";
+        private const string FOREACH = "";
+        private const string CASE = "";
+        private const string SWITCH = "";
+        private const string OUT = "";
+        private const string DEFAULT = "";
+        private const string TRY = "";
+        private const string CATCH = "";
+        private const string FINALLY = "";
+        private const string THROW = "";
+
+
+
+
+
+        private const string FUNCTION = "";
         private const string BREAK = "break";
         private const string NEW = "new";
         private const string VAR = "var";

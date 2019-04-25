@@ -7,6 +7,7 @@
         Bool,
         Variable,
         None,
+        Void,
 
     }
 }

@@ -1,12 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Jasmine.Spider.Grammer;
 
 namespace GrammerTest.Grammer
 {
-    class FunctionScope
+    public class FunctionScope : Scope
     {
+        public string FunctionName { get; set; }
+        public string[] ParameterNames { get; set; }
+        public override void Excute()
+        {
+            throw new System.NotImplementedException();
+        }
     }
 }

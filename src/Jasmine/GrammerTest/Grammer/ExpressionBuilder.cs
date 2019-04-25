@@ -1,12 +1,25 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Jasmine.Spider.Grammer;
 
 namespace GrammerTest.Grammer
 {
-    class ExpressionStatementBuilder
+    public class ExpressionBuilder:BuilderBase
     {
+
+
+        public  Expression Build()
+        {
+            var expression = new Expression()
+            {
+
+            };
+
+
+            return expression;
+
+        }
+
+      
+
+
     }
 }

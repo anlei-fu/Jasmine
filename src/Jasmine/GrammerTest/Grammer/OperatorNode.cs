@@ -5,30 +5,45 @@ namespace Jasmine.Spider.Grammer
 {
     public abstract class OperatorNode:Excutor
     {
+        public virtual bool IsOperator { get; } 
         public abstract OutputType OutputType { get; }
         public Scope Scope { get; set; }
         public JObject Output { get; set; }
         public OperatorNode Parent { get; set; }
+        public OperatorType OperatorType { get; set; }
         public bool Excuted { get; protected set; }
-        public List<Operand> Operands { get; set; }
-        protected JObject getOperandObject(Operand operand)
+        public bool NeedExcute { get; set; }
+        public List<OperatorNode> Children { get; set; }
+        protected JObject getOperandObject(OperatorNode node)
         {
-            if (operand.IsOperator)
-            {
-                operand.Operator.Excute();
+            if (node.NeedExcute)
+                node. Excute();
 
-                return operand.Operator.Output;
-            }
-
-            return operand.Object;
+            return node.Output;
         }
     }
 
-    public class Operand
+
+    public sealed class OperandNode : OperatorNode
     {
-        public bool IsOperator { get; set; }
-        public JObject Object { get; set; }
-        public OperatorNode Operator { get; set; }
+        public OperandNode(JObject obj)
+        {
+            Output = obj;
+        }
+        public override OutputType OutputType => throw new System.NotImplementedException();
+        public override void Excute()
+        {
+           
+        }
+    }
+
+
+
+    public abstract class NoneOperatorNode:OperatorNode
+    {
+        public override OutputType OutputType => throw new System.NotImplementedException();
+
+        
     }
     
     /// <summary>
@@ -38,7 +53,7 @@ namespace Jasmine.Spider.Grammer
     {
         public sealed override void Excute()
         {
-            excuteSingle(getOperandObject(Operands[0]));
+            excuteSingle(getOperandObject(Children[0]));
         }
 
         protected abstract void excuteSingle(JObject obj);
@@ -54,7 +69,7 @@ namespace Jasmine.Spider.Grammer
 
         public sealed override void Excute()
         {
-            excuteBinary(getOperandObject(Operands[0]), getOperandObject(Operands[1]));
+            excuteBinary(getOperandObject(Children[0]), getOperandObject(Children[1]));
         }
 
         protected abstract void excuteBinary(JObject obj1,JObject obj2);
@@ -128,16 +143,19 @@ namespace Jasmine.Spider.Grammer
             }
             else
             {
-                var obj = obj1.GetItem(jstring.Value);
-
-                if(obj==null)
+                if(obj1 is JObjectMapping mapping)
                 {
-                    obj = new JObject();
+
+                    var result=  mapping.GetProperty(jstring.Value);
+
+                    Output = result;
                 }
+                else
+                {
+                    var result = obj1.GetProperty((string)jstring);
 
-                obj1.AddItem(jstring.Value, obj);
-
-                Output = obj;
+                    Output = result;
+                }
             }
         }
     }
@@ -171,7 +189,7 @@ namespace Jasmine.Spider.Grammer
             caculate(obj1,((JNumber)obj1).Value ,((JNumber)obj2).Value);
         }
 
-        protected abstract void caculate(JObject obj1,float param1,  float param2);
+        protected abstract void caculate(JObject obj1,double param1,  double param2);
     }
 
     public abstract class BinaryNumberOperatorNode : BinaryOperatorNode
@@ -268,4 +286,63 @@ namespace Jasmine.Spider.Grammer
             throw new System.NotImplementedException();
         }
     }
+
+    public class BiggerOperatorNode : BinaryNumberOperatorNode
+    {
+        protected override float caulate(float param1, float param2)
+        {
+            throw new System.NotImplementedException();
+        }
+    }
+
+    public class BiggerEquelOperatorNode : BinaryNumberOperatorNode
+    {
+        protected override float caulate(float param1, float param2)
+        {
+            throw new System.NotImplementedException();
+        }
+    }
+
+    public class LessOperatorNode : BinaryNumberOperatorNode
+    {
+        protected override float caulate(float param1, float param2)
+        {
+            throw new System.NotImplementedException();
+        }
+    }
+
+
+    public class LessEquelOperatorNode : BinaryNumberOperatorNode
+    {
+        protected override float caulate(float param1, float param2)
+        {
+            throw new System.NotImplementedException();
+        }
+    }
+
+    public abstract class CompareNode:BinaryOperatorNode
+    {
+
+    }
+
+    public class CompareEquelOperatorNode : CompareNode
+    {
+        public override OutputType OutputType => throw new System.NotImplementedException();
+
+        protected override void excuteBinary(JObject obj1, JObject obj2)
+        {
+            throw new System.NotImplementedException();
+        }
+    }
+
+    public class ComareNotEquelNode : CompareNode
+    {
+        public override OutputType OutputType => throw new System.NotImplementedException();
+
+        protected override void excuteBinary(JObject obj1, JObject obj2)
+        {
+            throw new System.NotImplementedException();
+        }
+    }
+  
 }
