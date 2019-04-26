@@ -44,6 +44,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ActionJFunctionAdapter.cs" />
+    <Compile Include="DoWhileScopeBuilder.cs" />
     <Compile Include="Grammer\ArrayIndexBuilder.cs" />
     <Compile Include="Grammer\ArrayLiteralBuilder.cs" />
     <Compile Include="Grammer\AstGrammerException.cs" />
@@ -53,13 +54,17 @@
     <Compile Include="Grammer\AstTreeExcutor.cs" />
     <Compile Include="Grammer\BreakableScope.cs" />
     <Compile Include="Grammer\BuilderBase.cs" />
+    <Compile Include="Grammer\DoWhileScope.cs" />
     <Compile Include="Grammer\ElseIfStatement.cs" />
     <Compile Include="Grammer\ElseStatement.cs" />
     <Compile Include="Grammer\ElseStatementBuilder.cs" />
     <Compile Include="Grammer\Exceptions\GrammerException.cs" />
     <Compile Include="Grammer\Excutor.cs" />
+    <Compile Include="Grammer\ExcutorScope.cs" />
     <Compile Include="Grammer\Expression.cs" />
     <Compile Include="Grammer\ExpressionBuilder.cs" />
+    <Compile Include="Grammer\ForeachBuilder.cs" />
+    <Compile Include="Grammer\ForeachScope.cs" />
     <Compile Include="Grammer\ForScope.cs" />
     <Compile Include="Grammer\ForScopeBuilder.cs" />
     <Compile Include="Grammer\FunctionScope.cs" />
@@ -89,8 +94,10 @@
     <Compile Include="Grammer\TokenStreamReader.cs" />
     <Compile Include="Grammer\TokenType.cs" />
     <Compile Include="Grammer\OperatorNodeFactory.cs" />
+    <Compile Include="Grammer\WhileScope.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="WhileScopeBuild.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

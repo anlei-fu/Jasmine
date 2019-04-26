@@ -4,7 +4,11 @@ namespace GrammerTest.Grammer
 {
     public  class ForScopeBuilder:BuilderBase
     {
-       public  ForScope Build()
+        public ForScopeBuilder(TokenStreamReader reader) : base(reader)
+        {
+        }
+
+        public  ForScope Build()
         {
             return null;
         }
