@@ -11,7 +11,11 @@ namespace GrammerTest.Grammer
         protected TokenStreamReader _reader;
 
         protected OperatorNode _currentNode;
-        protected OperatorNode _currentOperand;
-        protected OperatorNode _firstOperand;
+       
+
+        protected void throwError(string msg)
+        {
+
+        }
     }
 }

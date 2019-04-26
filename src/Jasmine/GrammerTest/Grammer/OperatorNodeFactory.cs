@@ -92,7 +92,37 @@ namespace GrammerTest.Grammer
             return null;
         }
 
+    
+        public static CompareEquelOperatorNode CreateCompareEquel()
+        {
+            return null;
+        }
 
+        public static ComareNotEquelNode CreateCompareNotEquel()
+        {
+            return null;
+        }
 
+        public static MemberOperaterNode CreateMemeber()
+        {
+            return null;
+        }
+
+        public static IncrementNode  CreateIncrement()
+        {
+            return null;
+        }
+
+        public static DcrementNode CreateDecremnet()
+        {
+            return null;
+        }
+
+        public static NewOperatorNode CreateNew()
+        {
+            return null;
+        }
+
+        
     }
 }

@@ -81,9 +81,9 @@ namespace Jasmine.Spider.Grammer
             {typeof(JObject),JType.Object },
             {typeof(JProperty),JType.Property },
             {typeof(JFunction),JType.Function},
-            {typeof(JObjectMapping),JType.MappingObject },
-            {typeof(JPropertyMapping),JType.MappingProperty},
-            {typeof(JFunctionMapping),JType.MappingFunction },
+            {typeof(JMappingObject),JType.MappingObject },
+            {typeof(JMappingProperty),JType.MappingProperty},
+            {typeof(JMappingFunction),JType.MappingFunction },
             {typeof(JString),JType.String },
             {typeof(JNumber),JType.Number },
             {typeof(JBool),JType.Bool },
@@ -357,19 +357,19 @@ namespace Jasmine.Spider.Grammer
         public bool Value { get; set; }
 
     }
-    public class JObjectMapping:JObject
+    public class JMappingObject:JObject
     {
         public object Instance { get; set; }
         public Type InstanceType { get; set; }
 
-        public Dictionary<string, JPropertyMapping> Properties { get; set; }
-        public Dictionary<KeyValuePair<string, int>, JFunctionMapping> Methods { get; set; }
+        public new Dictionary<string, JMappingProperty> Properties { get; set; }
+        public Dictionary<KeyValuePair<string, int>, JMappingFunction> Methods { get; set; }
 
-        public JPropertyMapping GetProperty(string name)
+        public new JMappingProperty GetProperty(string name)
         {
             return null;
         }
-        public JFunctionMapping GetFunction(string name,int length)
+        public JMappingFunction GetFunction(string name,int length)
         {
             return null;
         }
@@ -377,10 +377,10 @@ namespace Jasmine.Spider.Grammer
 
     }
 
-    public class JPropertyMapping:JObjectMapping
+    public class JMappingProperty:JMappingObject
     {
 
-        public JObjectMapping Parent { get; }
+        public JMappingObject Parent { get; }
 
         public Func<object> Getter { get; private set; }
         public Action<object, object> Setter { get; private set; }
@@ -395,9 +395,9 @@ namespace Jasmine.Spider.Grammer
         }
         
     }
-    public class JFunctionMapping:JObject
+    public class JMappingFunction:JObject
     {
-        public JObjectMapping Parent { get; }
+        public JMappingObject Parent { get; }
         public string Name { get; set; }
         public int ParameterLength { get; set; }
 

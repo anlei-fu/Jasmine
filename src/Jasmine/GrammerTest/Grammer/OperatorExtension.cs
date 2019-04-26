@@ -64,10 +64,25 @@ namespace GrammerTest.Grammer
                     return -1;
             }
         }
-   
 
+        public static bool IsBinaryOperator(this OperatorType type) => !(type.IsUnaryOperator() || type.IsMutipleOperator());
+
+        public static bool IsMutipleOperator(this OperatorType type) => type == OperatorType.Call;
     
+        public static bool IsUnaryOperator(this OperatorType type)
+        {
+            switch (type)
+            {
 
+                case OperatorType.Var:
+                case OperatorType.Not:
+                case OperatorType.Increment:
+                case OperatorType.Decrement:
+                    return true;
+                default:
+                    return false;
+            }
+        }
 
  
         

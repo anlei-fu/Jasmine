@@ -1,102 +1,138 @@
 ﻿using Jasmine.Spider.Grammer;
 using System;
+using System.Diagnostics;
 
 namespace GrammerTest.Grammer
 {
     public  class AstNodeBuilder:BuilderBase
     {
+        public AstNodeBuilder(TokenStreamReader reader,
+                              bool hasParent,
+                              Func<Token,bool> interceptor) : base(reader)
 
-        private Func<Token, bool> _interceptor;
-
-        public AstNodeBuilder(TokenStreamReader reader) : base(reader)
         {
         }
 
         /// <summary>
-        /// is the current token canbe first token
-        /// ++,
-        /// --,
-        /// !,
+        ///  set for priority
         /// </summary>
-        private void checkStartWithOperator()
-        {
-            switch (_reader.CurrentToken.OperatorType)
-            {
-               
-                case OperatorType.Not:
-                case OperatorType.Increment:
-                case OperatorType.Decrement:
-                case OperatorType.Break:
-                case OperatorType.Continue:
-                    break;
-                default:
+        private bool _hasParent;
+        /// <summary>
+        /// current priority
+        /// </summary>
+        private int _currentPrority;
+        /// <summary>
+        /// higherlevel intercepter
+        /// </summary>
+        public Func<Token, bool> Interceptor { get; }
+         
 
-                    break;
-            }
-
-        }
-
-        private void checkOutputType( OutputType type)
-        {
-
-        }
-
-        private OperatorNode buildArrayIndex()
-        {
-            return null;
-        }
-        private OperatorNode buildFunctionCall()
-        {
-            return null;
-        }
-        private void checkPreviceIsOperator()
-        {
-
-        }
+     
+    
 
     
         private OperatorNode finishBuild()
         {
-            return null;
+            if (_currentNode != null) //expression empty;
+            {
+                _currentNode.DoCheck();
+            }
+
+            if (_hasParent)
+                _reader.Previous();
+
+
+
+            return _currentNode;
         }
         
-        private void pushOperator(OperatorType op)
-        {
 
+        private void pushNew(NewOperatorNode node)
+        {
+            Debug.Assert(_currentNode == null);
+
+            _currentNode = node;
+        }
+       
+
+        private void pushNot(NotOperatorNode node)
+        {
+            Debug.Assert(_currentNode == null);
+
+            _currentNode = node;
         }
 
-        public OperatorNode Build(TokenStreamReader reader,Scope scope)
-        {
 
-          
+        private void pushOrderedNode(OperatorNode node)
+        {
+            Debug.Assert(_currentNode != null);
+
+            _currentNode.DoCheck();
+
+            node.Children.Add(_currentNode);
+
+            _currentNode = node;
+        }
+
+       
+
+      
+        public OperatorNode Build()
+        {
 
             while (_reader.HasNext())
             {
 
-                if (_interceptor(reader.CurrentToken))
+                if (Interceptor(reader.CurrentToken))
                 {
-
                     return finishBuild();
                 }
 
                 switch (_reader.Next().TokenType)
                 {
                     case TokenType.Keyword:
+
                         throw new Exception();
 
                     case TokenType.Operator:
 
-                        checkOperator(_reader.CurrentToken.OperatorType);
 
+                        /*
+                         * check priority
+                         *
+                         * 1. if current operator is higher than current
+                         * start a build,previouce and reset current operator 's right operand
+                         * 2. if current operator's priority is lower than current and has parent builder ,previous one token and return 
+                         * 3. main work
+                         */
+                        var priority = _reader.CurrentToken.OperatorType.GetPriority();
+
+                        if(priority>_currentPrority)
+                        {
+                            _reader.Previous(2);
+
+                            _currentNode.Children.RemoveAt(1);
+
+
+                            //reset current operand
+                        }
+                        else if(priority<_currentPrority&&_hasParent)
+                        {
+                            _reader.Previous();
+
+                            return _currentNode;
+
+                        }
+                      
                         switch (_reader.CurrentToken.OperatorType)
                         {
                             //can not post to here  
                             //those operator should be handled or intercepted by higher level builder
                             case OperatorType.Assignment:
-
-
-
-
+                            case OperatorType.AddAsignment:
+                            case OperatorType.ReduceAsignment:
+                            case OperatorType.MutiplyAsignment:
+                            case OperatorType.DevideAsignment:
                             case OperatorType.Var:
                             case OperatorType.Semicolon:
                             case OperatorType.Question:
@@ -115,44 +151,76 @@ namespace GrammerTest.Grammer
 
                             //logic check
                             case OperatorType.And:
-                                pushLogicOperator(OperatorNodeFactory.CreateAnd());
+
+                                pushOrderedNode(OperatorNodeFactory.CreateAnd());
+
                                 break;
                                     
                             case OperatorType.Or:
-                                pushLogicOperator(OperatorNodeFactory.CreateOr());
+
+                                pushOrderedNode(OperatorNodeFactory.CreateOr());
+
                                 break;
 
                             case OperatorType.Not:
-                                checkOutputType( OutputType.Bool);
 
+                                pushNot(OperatorNodeFactory.CreateNot());
 
                                 break;
 
                             case OperatorType.Equel:
 
-                            case OperatorType.Member:
+                                pushOrderedNode(OperatorNodeFactory.CreateCompareEquel());
+
+                                break;
+
                             case OperatorType.NotEquel:
+
+                                pushOrderedNode(OperatorNodeFactory.CreateCompareNotEquel());
+
+                                break;
+
+                            case OperatorType.Member:
+
+                                pushOrderedNode(OperatorNodeFactory.CreateMemeber());
+                            
                                 break;
 
                             case OperatorType.LeftParenn:
 
-                                if (_reader.PreviouceToken().TokenType != TokenType.Operator)
+                                /*
+                                 *  maybe new heighest priority operator or method call
+                                 *  
+                                 *  method call intercepted by push identifier
+                                 * 
+                                 */ 
+
+
+                                if (_reader.PreviouceToken().TokenType != TokenType.Operator)//"ssss"(5+8)
                                 {
+
                                     ThrowError($" grammer error! ( must after a operator or be first token! ");
                                 }
                                 else
                                 {
+                                    //start a  new builder
+
                                     var node = new ParenthesisBuilder(_reader).Build();
+
                                 }
 
 
 
                                 break;
 
-                            //object literal
+                           
+                                /*
+                                 *  can just be object literal
+                                 */ 
+
                             case OperatorType.LeftBrace:
 
-                                if(_firstOperand!=null)
+                                if(_currentNode!=null)
                                 {
                                     ThrowError("{ must be start token of a expression!");
                                 }
@@ -164,11 +232,17 @@ namespace GrammerTest.Grammer
 
                                 break;
 
-                            //array index call or array literal
+                            /*
+                             * array index call or array literal
+                             * 
+                             * array index call intercepted by pushidentifier
+                             * 
+                             */
+
                             case OperatorType.LeftSquare:
 
 
-                                if (_firstOperand != null)
+                                if (_currentNode!= null)
                                 {
                                     ThrowError("[ must be start token of a expression!");
                                 }
@@ -179,72 +253,80 @@ namespace GrammerTest.Grammer
                          
                                 break;
 
-                            //number check
+                       
                             case OperatorType.Add:
 
-                                pushAlgrothmOperator(OperatorNodeFactory.CreateAdd());
+                                pushOrderedNode(OperatorNodeFactory.CreateAdd());
 
                                 break;
 
                             case OperatorType.Reduce:
 
-                                pushAlgrothmOperator(OperatorNodeFactory.CreateReduce());
+                                pushOrderedNode(OperatorNodeFactory.CreateReduce());
 
                                 break;
 
                             case OperatorType.Mod:
 
-                                pushAlgrothmOperator(OperatorNodeFactory.CreateMod());
+                                pushOrderedNode(OperatorNodeFactory.CreateMod());
 
                                 break;
 
                             case OperatorType.Mutiply:
 
-                                pushAlgrothmOperator(OperatorNodeFactory.CreateMutiply());
+                                pushOrderedNode(OperatorNodeFactory.CreateMutiply());
 
                                 break;
 
                             case OperatorType.Devide:
 
-                                pushAlgrothmOperator(OperatorNodeFactory.CreateDevide());
+                                pushOrderedNode(OperatorNodeFactory.CreateDevide());
 
                                 break;
 
                             case OperatorType.Bigger:
 
-                                pushAlgrothmOperator(OperatorNodeFactory.CreateBigger());
+                                pushOrderedNode(OperatorNodeFactory.CreateBigger());
 
                                 break;
 
                             case OperatorType.BiggerEquel:
 
-                                pushAlgrothmOperator(OperatorNodeFactory.CreateBiggerEquelNode());
+                                pushOrderedNode(OperatorNodeFactory.CreateBiggerEquelNode());
 
                                 break;
 
                             case OperatorType.Less:
 
-                                pushAlgrothmOperator(OperatorNodeFactory.CreateLess());
+                                pushOrderedNode(OperatorNodeFactory.CreateLess());
 
                                 break;
 
 
                             case OperatorType.LessEquel:
 
-                                pushAlgrothmOperator(OperatorNodeFactory.CreateLessEquel());
+                                pushOrderedNode(OperatorNodeFactory.CreateLessEquel());
 
                                 break;
 
 
+                            // just suppoort left increment and decrement 
                             case OperatorType.Increment:
+
+                                pushUnaryNumber(OperatorNodeFactory.CreateIncrement());
+                                break;
+
                             case OperatorType.Decrement:
-                                if (_firstOperand != null && _reader.PreviouceToken().TokenType != TokenType.Operator)
-                                    throw new Exception();
+
+                                pushUnaryNumber(OperatorNodeFactory.CreateDecremnet());
 
                                 break;
+
 
                             case OperatorType.New:
-                            
+
+                                pushNew(OperatorNodeFactory.CreateNew());
+
                                 break;
                         }
 
@@ -255,38 +337,37 @@ namespace GrammerTest.Grammer
 
                     case TokenType.Identifier:
 
-                        checkIdentifer();
-
                         pushIdentifier(OperatorNodeFactory.CreateOperrand(new JString(_reader.CurrentToken.Value)));
 
                         break;
+
                     case TokenType.String:
 
-                        checkIdentifer();
-
-                        pushString(OperatorNodeFactory.CreateOperrand(new JString(_reader.CurrentToken.Value)));
+                        pushValue(OperatorNodeFactory.CreateOperrand(new JString(_reader.CurrentToken.Value)));
 
                         break;
 
                     case TokenType.Number:
 
-                        checkIdentifer();
 
-                        pushNumber(OperatorNodeFactory.CreateOperrand(new JNumber(_reader.CurrentToken.Value)));
+                        pushValue(OperatorNodeFactory.CreateOperrand(new JNumber(_reader.CurrentToken.Value)));
 
                         break;
 
                     case TokenType.Bool:
 
-                        checkIdentifer();
 
-                        pushBool(OperatorNodeFactory.CreateOperrand(new JBool(_reader.CurrentToken.Value)));
+                         pushValue(OperatorNodeFactory.CreateOperrand(new JBool(_reader.CurrentToken.Value)));
 
                         break;
                 }
             }
 
-
+            /*
+             *this builder should finish by interceptor not by  finsh iteration
+             *
+             *
+             */ 
 
             throw new Exception();
         }
@@ -296,30 +377,33 @@ namespace GrammerTest.Grammer
         {
             if(_reader.PreviouceToken().IsOperator())
             {
-                if (!(_reader.CurrentToken.OperatorType == OperatorType.Increment ||
-                    _reader.CurrentToken.OperatorType == OperatorType.Decrement ||
-                    _reader.CurrentToken.OperatorType == OperatorType.Not)) 
+                if(type==OperatorType.Not)
                 {
-                    ThrowError("two operator repeat ");
+
+                }
+                else if(type==OperatorType.Increment||type==OperatorType.Decrement)
+                {
+                    
+                }
+                else
+                {
+                    ThrowError("");
                 }
               
             }
-            else
-            {
-
-            }
+          
         }
 
+        /// <summary>
+        /// tow identifier one by one is a syntax error 
+        /// </summary>
         private void checkIdentifer()
         {
             if (!_reader.PreviouceToken().IsOperator())
                 ThrowError($" syntax error, two identifer repeat");
         }
 
-        private void pushCompare()
-        {
-
-        }
+      
         
 
         private void pushUnaryNumber(OperatorNode node)
@@ -330,72 +414,53 @@ namespace GrammerTest.Grammer
             }
            else
             {
-              
+                pushOrderedNode(node);
             }
 
         }
 
 
 
-        private void pushAlgrothmOperator(OperatorNode node)
-        {
-            checkOutputType(OutputType.Number);
-
-            if (_currentNode.IsOperator)
-            {
-              
-            }
-            else
-            {
-
-            }
-        }
+      
 
         private bool ComparePriority(OperatorType type)
         {
             return true;
         }
 
-        private void pushLogicOperator(LogicOperatorNode node)
+      
+        private void pushIdentifier(OperandNode node)
         {
-            checkOutputType(OutputType.Bool);
+            checkIdentifer();
 
-            if(_currentNode.IsOperator)
+            //query object first identifier that means this is a variable
+
+            if(_currentNode==null)
             {
-                if(ComparePriority(node.OperatorType))
-                {
-
-                }
-                else
-                {
-
-                }
-
+                _currentNode = node;
             }
             else
             {
-
+                _currentNode.Children.Add(node);
             }
-
         }
-        private void pushIdentifier(OperandNode node)
+
+
+        private void pushValue(OperandNode node)
         {
+            checkIdentifer();
 
+            if (_currentNode == null)
+            {
+                _currentNode = node;
+            }
+            else
+            {
+                _currentNode.Children.Add(node);
+            }
         }
 
-        private void pushNumber(OperandNode node)
-        {
-
-        }
-        private void pushString(OperandNode node)
-        {
-
-        }
-
-        private void pushBool(OperandNode node)
-        {
-
-        }
+       
 
         private void ThrowError(string msg)
         {

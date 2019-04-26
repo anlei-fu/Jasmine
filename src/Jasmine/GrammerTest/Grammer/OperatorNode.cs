@@ -21,6 +21,8 @@ namespace Jasmine.Spider.Grammer
 
             return node.Output;
         }
+
+        public abstract void DoCheck();
     }
 
 
@@ -143,7 +145,7 @@ namespace Jasmine.Spider.Grammer
             }
             else
             {
-                if(obj1 is JObjectMapping mapping)
+                if(obj1 is JMappingObject mapping)
                 {
 
                     var result=  mapping.GetProperty(jstring.Value);
@@ -344,5 +346,20 @@ namespace Jasmine.Spider.Grammer
             throw new System.NotImplementedException();
         }
     }
+
+    public class IncrementNode:OperatorNode
+    {
+
+    }
+
+    public class DcrementNode:OperatorNode
+    {
+
+    }
   
+
+    public class NewOperatorNode:OperatorNode
+    {
+
+    }
 }
