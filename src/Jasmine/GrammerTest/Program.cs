@@ -13,7 +13,7 @@ namespace GrammerTest
         {
             TokenStreamGenerator tg = new TokenStreamGenerator();
 
-            foreach (var item in tg.GetTokenStream("var a= new object();"))
+            foreach (var item in tg.GetTokenStream("var /*a*/++!//788978.7878= new object();"))
             {
                 Console.WriteLine(item.TokenType + "   " + item.Value + "   " + item.OperatorType.ToString());
             }

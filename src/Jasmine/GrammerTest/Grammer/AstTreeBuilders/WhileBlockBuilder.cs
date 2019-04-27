@@ -1,15 +1,14 @@
-﻿using GrammerTest.Grammer;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace GrammerTest
+namespace GrammerTest.Grammer.AstTreeBuilders
 {
-    public class WhileScopeBuilder : BuilderBase
+    public class WhileBlockBuilder : BuilderBase
     {
-        public WhileScopeBuilder(TokenStreamReader reader) : base(reader)
+        public WhileBlockBuilder(TokenStreamReader reader) : base(reader)
         {
         }
 
