@@ -1,10 +1,10 @@
-﻿using Jasmine.Spider.Grammer;
+﻿using GrammerTest.Grammer.AstTree;
+using Jasmine.Spider.Grammer;
 
 namespace GrammerTest.Grammer.AstTreeBuilders
 {
     public class If0BlockBuilder : BuilderBase
     {
-
         private static readonly string[] _interceptChars = new string[]
         {
             ")"
@@ -26,13 +26,17 @@ namespace GrammerTest.Grammer.AstTreeBuilders
 
                 var node = new AstNodeBuilder(_reader, _interceptChars).Build();
 
+                //check is out bool or object
+                if (!node.OutputType.IsBool())
+                    throwError("");
+
                 var expression = new Expression();
 
                 expression.Root = node;
 
                 if0Block.CheckExpression = expression;
 
-                if0Block.Block = new BlockBuilder(_reader).Build();
+                if0Block.Body = new BlockBuilder(_reader).Build();
 
                 return if0Block;
 

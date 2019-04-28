@@ -33,7 +33,7 @@ namespace Jasmine.Spider.Grammer
 
 
 
-        private const string FUNCTION = "";
+        private const string FUNCTION = "function";
         private const string BREAK = "break";
         private const string NEW = "new";
         private const string VAR = "var";
@@ -171,7 +171,7 @@ namespace Jasmine.Spider.Grammer
         public IList<Token> GetTokenStream(string input)
         {
             _input = input;
-
+            _tokens.Clear();
             while (hasNext())
             {
                 next();
@@ -255,13 +255,13 @@ namespace Jasmine.Spider.Grammer
 
                     case '(':
 
-                        pushOperator(OperatorType.LeftBrace);
+                        pushOperator(OperatorType.LeftParenthesis);
 
                         break;
 
                     case ')':
 
-                        pushOperator(OperatorType.RightBrace);
+                        pushOperator(OperatorType.RightParenthesis);
 
                         break;
 
@@ -399,6 +399,7 @@ namespace Jasmine.Spider.Grammer
             {VAR,OperatorType.Var },
             {BREAK,OperatorType.Break},
             {CONTINUE,OperatorType.Continue},
+            {FUNCTION,OperatorType.Function }
         };
 
         private HashSet<char> _operatorChars = new HashSet<char>()

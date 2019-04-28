@@ -1,5 +1,6 @@
 ﻿using GrammerTest.Grammer;
 using GrammerTest.Grammer.AstTree;
+using GrammerTest.Grammer.Scopes;
 using System.Collections.Generic;
 
 namespace Jasmine.Spider.Grammer
@@ -34,7 +35,7 @@ namespace Jasmine.Spider.Grammer
         /// <summary>
         /// operands
         /// </summary>
-        public List<AstNode> Operands { get; set; }
+        public List<AstNode> Operands { get; set; } = new List<AstNode>();
         
         /// <summary>
         /// get  jobjcts that excuting needs
@@ -65,7 +66,7 @@ namespace Jasmine.Spider.Grammer
         {
             Output = obj;
         }
-        public override OutputType OutputType => throw new System.NotImplementedException();
+        public override OutputType OutputType => OutputType.Object;
 
         public override bool NeedExcute => false;
 
@@ -236,7 +237,7 @@ namespace Jasmine.Spider.Grammer
     }
     public class DeclareOperator : SingleOperatorNode
     {
-        public Scope Scope { get; }
+        public Block Scope { get; }
         public override OutputType OutputType => OutputType.Object;
 
         public override void DoCheck()
@@ -246,7 +247,7 @@ namespace Jasmine.Spider.Grammer
 
         protected override void excuteSingle(JObject obj)
         {
-            Output = Scope.Declare((string)obj);
+            
         }
     }
 
@@ -291,7 +292,7 @@ namespace Jasmine.Spider.Grammer
                 trowOutputTypeIncorrectError();
         }
     }
-    public class AddOperatornNode : BinaryNumberOperatorNode
+    public class AddOperatorNode : BinaryNumberOperatorNode
     {
         protected override JNumber caulate(JNumber param1, JNumber param2)
         {
@@ -500,7 +501,7 @@ namespace Jasmine.Spider.Grammer
 
         public override void DoCheck()
         {
-            throw new System.NotImplementedException();
+            
         }
 
         protected override void excuteSingle(JObject obj)
@@ -562,11 +563,11 @@ namespace Jasmine.Spider.Grammer
         {
 
         }
-        public override OutputType OutputType => throw new System.NotImplementedException();
+        public override OutputType OutputType => OutputType.Object;
 
         public override void DoCheck()
         {
-            throw new System.NotImplementedException();
+            
         }
 
         protected override void excuteSingle(JObject obj)

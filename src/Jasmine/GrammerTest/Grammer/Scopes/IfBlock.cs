@@ -1,6 +1,7 @@
 ﻿
 
 using System.Collections.Generic;
+using GrammerTest.Grammer.TypeSystem;
 
 namespace Jasmine.Spider.Grammer
 {
@@ -33,6 +34,24 @@ namespace Jasmine.Spider.Grammer
 
         }
 
+        public override void Break()
+        {
+            throw new System.NotImplementedException();
+        }
 
+        public override void Continue()
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public override void Catch(JError error)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public override void Return(JObject result)
+        {
+            throw new System.NotImplementedException();
+        }
     }
 }

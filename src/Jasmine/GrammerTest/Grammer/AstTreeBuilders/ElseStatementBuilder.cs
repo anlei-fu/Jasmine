@@ -1,9 +1,5 @@
-﻿using Jasmine.Spider.Grammer;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using GrammerTest.Grammer.AstTreeBuilders;
+using Jasmine.Spider.Grammer;
 
 namespace GrammerTest.Grammer
 {
@@ -15,7 +11,11 @@ namespace GrammerTest.Grammer
 
         public ElseBlock Build()
         {
-            return null;
+            var elseBlock = new ElseBlock();
+
+            elseBlock.Body = new BlockBuilder(_reader).Build();
+
+            return elseBlock;
         }
     }
 }

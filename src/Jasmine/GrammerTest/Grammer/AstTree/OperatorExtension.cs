@@ -95,5 +95,97 @@ namespace GrammerTest.Grammer
         {
             return other.GetPriority()==op.GetPriority();
         }
+
+        public static string Tostring0(this OperatorType type)
+        {
+            switch (type)
+            {
+                case OperatorType.Assignment:
+                    return "=";
+                case OperatorType.AddAsignment:
+                   return "+=";
+                case OperatorType.ReduceAsignment:
+                   return "-=";
+                case OperatorType.MutiplyAsignment:
+                   return "*=";
+                case OperatorType.DevideAsignment:
+                   return "/=";
+                case OperatorType.ModAsignment:
+                   return "%=";
+                case OperatorType.And:
+                   return "&&";
+                case OperatorType.Or:
+                   return "||";
+                case OperatorType.Not:
+                   return "!";
+                case OperatorType.Equel:
+                   return "==";
+                case OperatorType.Member:
+                   return ".";
+                case OperatorType.NotEquel:
+                   return "!=";
+                case OperatorType.LeftParenthesis:
+                   return "(";
+                case OperatorType.RightParenthesis:
+                   return ")";
+                case OperatorType.LeftBrace:
+                   return "{";
+                case OperatorType.RightBrace:
+                   return "}";
+                case OperatorType.LeftSquare:
+                   return "[";
+                case OperatorType.RightSquare:
+                   return "]";
+                case OperatorType.Add:
+                   return "+";
+                case OperatorType.Reduce:
+                   return "-";
+                case OperatorType.Mod:
+                   return "%";
+                case OperatorType.Mutiply:
+                   return "*";
+                case OperatorType.Devide:
+                   return "/";
+                case OperatorType.Increment:
+                   return "++";
+                case OperatorType.Decrement:
+                   return "--";
+                case OperatorType.Question:
+                   return "?";
+                case OperatorType.Semicolon:
+                   return ":";
+                case OperatorType.Coma:
+                   return ",";
+                case OperatorType.ExpressionEnd:
+                   return ";";
+                case OperatorType.Bigger:
+                   return ">";
+                case OperatorType.BiggerEquel:
+                   return ">=";
+                case OperatorType.Less:
+                   return "<";
+                case OperatorType.LessEquel:
+                   return "<=";
+                case OperatorType.New:
+                   return "new";
+                case OperatorType.Var:
+                   return "var";
+                case OperatorType.Function:
+                   return "function";
+                case OperatorType.Break:
+                   return "break";
+                case OperatorType.Continue:
+                   return "continue";
+                case OperatorType.Call:
+                   return "call";
+                case OperatorType.QueryScope:
+                   return "";
+                case OperatorType.Minus:
+                   return "-";
+                default:
+                    return string.Empty;
+            }
+        }
+
     }
 }

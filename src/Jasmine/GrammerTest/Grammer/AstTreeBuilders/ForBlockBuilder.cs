@@ -20,7 +20,10 @@ namespace GrammerTest.Grammer.AstTreeBuilders
                     throwError("");
                 else
                 {
-                    
+                    throwErrorIfHasNoNextAndNext();
+
+                    throwErrorIfOperatorTypeNotMatch(OperatorType.Var);
+
                     forBlock.DeclareExpression = new DeclareExpressionBuilder(_reader).Build();
 
                     forBlock.CheckExpression = new ExpressionBuilder(_reader).Build();

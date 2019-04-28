@@ -1,4 +1,6 @@
-﻿namespace Jasmine.Spider.Grammer
+﻿using GrammerTest.Grammer;
+
+namespace Jasmine.Spider.Grammer
 {
     public class Token
     {
@@ -12,7 +14,9 @@
             TokenType = TokenType.Operator;
 
             OperatorType = _operator;
+            Value = _operator.Tostring0();
         }
+
 
         public int Line { get; set; }
         public int LineNumber { get; set; }

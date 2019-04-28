@@ -1,10 +1,5 @@
 ﻿using GrammerTest.Grammer.Scopes;
 using Jasmine.Spider.Grammer;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace GrammerTest.Grammer.AstTreeBuilders
 {
@@ -14,123 +9,163 @@ namespace GrammerTest.Grammer.AstTreeBuilders
         {
         }
 
-        public Block Build()
+        public OrderdedBlock Build()
         {
-            Scope _scope = null;
+           OrderdedBlock orderingBlock = new OrderdedBlock();
 
-            while (_reader.HasNext())
+            throwErrorIfHasNoNextAndNext();
+
+            /*
+             * to check ,the block is single expression or mutiple expression 
+             * 
+             */
+             
+            if(_reader.CurrentToken.OperatorType==OperatorType.LeftBrace)
             {
-                switch (_reader.Next().TokenType)
+                while (_reader.HasNext())
                 {
-                    case Jasmine.Spider.Grammer.TokenType.Keyword:
+                    switch (_reader.Next().TokenType)
+                    {
+                        case TokenType.Keyword:
 
-                        if (_reader.CurrentToken.Value == Keywords.FOR)
-                        {
-                            var block = new ForBlockBuilder(_reader).Build();
+                            if (_reader.CurrentToken.Value == Keywords.FOR)
+                            {
+                                var block = new ForBlockBuilder(_reader).Build();
 
-                            _scope.Children.Add(block);
-                        }
-                        else if (_reader.CurrentToken.Value == Keywords.IF)
-                        {
-                            var block = new IfBlockBuilder(_reader).Build();
+                                orderingBlock.Children.Add(block);
+                            }
+                            else if (_reader.CurrentToken.Value == Keywords.IF)
+                            {
+                                var block = new IfBlockBuilder(_reader).Build();
 
-                            _scope.Children.Add(block);
-                        }
-                        else if (_reader.CurrentToken.Value == Keywords.FOREACH)
-                        {
-                            var block = new ForeachBlockBuilder(_reader).Build();
+                                orderingBlock.Children.Add(block);
+                            }
+                            else if (_reader.CurrentToken.Value == Keywords.FOREACH)
+                            {
+                                var block = new ForeachBlockBuilder(_reader).Build();
 
-                            _scope.Children.Add(block);
-                        }
-                        else if (_reader.CurrentToken.Value == Keywords.DO)
-                        {
-                            var block = new DoWhileScopeBuilder(_reader).Build();
+                                orderingBlock.Children.Add(block);
+                            }
+                            else if (_reader.CurrentToken.Value == Keywords.DO)
+                            {
+                                var block = new DoWhileScopeBuilder(_reader).Build();
 
-                            _scope.Children.Add(block);
-                        }
-                        else if (_reader.CurrentToken.Value == Keywords.WHILE)
-                        {
-                            var block = new WhileBlockBuilder(_reader).Build();
+                                orderingBlock.Children.Add(block);
+                            }
+                            else if (_reader.CurrentToken.Value == Keywords.WHILE)
+                            {
+                                var block = new WhileBlockBuilder(_reader).Build();
 
-                            _scope.Children.Add(block);
-                        }
-                        else if (_reader.CurrentToken.Value == Keywords.TRY)
-                        {
-                            var block = new TryCatchFinallyBlockBuilder(_reader).Build();
+                                orderingBlock.Children.Add(block);
+                            }
+                            else if (_reader.CurrentToken.Value == Keywords.TRY)
+                            {
+                                var block = new TryCatchFinallyBlockBuilder(_reader).Build();
 
-                            _scope.Children.Add(block);
-                        }
-                        else
-                        {
-                            throwError("");
-                        }
-
-                        break;
-
-                    case Jasmine.Spider.Grammer.TokenType.Operator:
-
-                        switch (_reader.CurrentToken.OperatorType)
-                        {
-
-                            case Jasmine.Spider.Grammer.OperatorType.Var:
-
-                                var decExpression = new DeclareExpressionBuilder(_reader).Build();
-
-                                _scope.Children.Add(decExpression);
-
-                                break;
-
-                            case OperatorType.RightBrace:
-                                return _scope;
-
-                            case OperatorType.Break:
-                                break;
-
-                            case OperatorType.Continue:
-                                break;
-
-                            case Jasmine.Spider.Grammer.OperatorType.Increment:
-                            case Jasmine.Spider.Grammer.OperatorType.Decrement:
-                                _reader.Previous();
-
-                                break;
-
-                            default:
-
+                                orderingBlock.Children.Add(block);
+                            }
+                            else
+                            {
                                 throwError("");
+                            }
 
-                                break;
-                        }
+                            break;
 
-                        break;
+                            /*
+                             *  the operators that  a expression  can start with
+                             *  new;
+                             *  break;
+                             *  continue;
+                             *  throw;
+                             *  ++;
+                             *  --;
+                             *  new;
+                             *  var;
+                             *  identifier;
+                             *  
+                             *  function operator is not allowed ,it's just allowed in topiest block
+                             */ 
+
+                        case TokenType.Operator:
+
+                            switch (_reader.CurrentToken.OperatorType)
+                            {
+
+                                case OperatorType.Var:
+
+                                    var decExpression = new DeclareExpressionBuilder(_reader).Build();
+
+                                    orderingBlock.Children.Add(decExpression);
+
+                                    break;
+                                   
+                                    //block finishd
+                                case OperatorType.RightBrace:
+
+                                    return orderingBlock;
+
+                                case OperatorType.Break:
+
+                                    break;
+
+                                case OperatorType.Continue:
+
+                                    break;
+
+                                case OperatorType.Increment:
+                                case OperatorType.Decrement:
+
+                                    _reader.Previous();
+
+                                    var expression0 = new ExpressionBuilder(_reader).Build();
+                                    orderingBlock.Children.Add(expression0);
+
+                                    break;
+
+                                default:
+
+                                    throwError("");
+
+                                    break;
+                            }
+
+                            break;
 
 
-                    case Jasmine.Spider.Grammer.TokenType.Identifier:
+                        case TokenType.Identifier:
 
-                        _reader.Previous();
+                            _reader.Previous();
 
-                        var expression = new ExpressionBuilder(_reader).Build();
+                            var expression = new ExpressionBuilder(_reader).Build();
 
-                        _scope.Children.Add(expression);
+                            orderingBlock.Children.Add(expression);
 
-                        break;
+                            break;
 
-                    case Jasmine.Spider.Grammer.TokenType.String:
-                    case Jasmine.Spider.Grammer.TokenType.Number:
-                    case Jasmine.Spider.Grammer.TokenType.Bool:
-                    case Jasmine.Spider.Grammer.TokenType.Null:
-                    default:
+                        case TokenType.String:
+                        case TokenType.Number:
+                        case TokenType.Bool:
+                        case TokenType.Null:
+                        default:
 
-                        throwError("");
+                            throwError("");
 
-                        break;
+                            break;
+                    }
                 }
             }
+            else
+            {
+                _reader.Previous();
+            }
+
+
+          
 
 
             throwError("blcok unfinishedn exception");
 
-            return _scope;
+            return orderingBlock;
         }
     }
 }

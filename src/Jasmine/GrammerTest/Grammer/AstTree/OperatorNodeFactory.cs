@@ -13,62 +13,62 @@ namespace GrammerTest.Grammer
         }
         public static OrOperatorNode CreateOr()
         {
-            return null;
+            return new OrOperatorNode();
         }
 
         public static NotOperatorNode CreateNot()
         {
-            return null;
+            return new NotOperatorNode();
         }
 
-        public static AddOperatornNode CreateAdd()
+        public static AddOperatorNode CreateAdd()
         {
-            return null;
+            return  new AddOperatorNode();
         }
 
         public static ReduceOperatorNode CreateReduce()
         {
-            return null;
+            return new ReduceOperatorNode();
         }
 
         public static MutiplyOperatorNode CreateMutiply()
         {
-            return null;
+            return new MutiplyOperatorNode();
         }
 
         public static DevideOperatorNode CreateDevide()
         {
-            return null;
+            return new DevideOperatorNode();
         }
 
         public static AssignmentOperatorNode CreateAssigment()
         {
-            return null;
+            return new AssignmentOperatorNode();
         }
 
         public static ModOperatorNode CreateMod()
         {
-            return null;
+            return  new ModOperatorNode();
         }
 
         public static  BiggerOperatorNode CreateBigger()
         {
-            return null;
+            return new BiggerOperatorNode();
         }
 
         public static BiggerEquelOperatorNode CreateBiggerEquelNode()
         {
-            return null;
+            return new BiggerEquelOperatorNode();
         }
 
         public static LessOperatorNode CreateLess()
         {
-            return null;
+            return new LessOperatorNode();
         }
 
         public static LessEquelOperatorNode CreateLessEquel()
         {
-            return null;
+            return new LessEquelOperatorNode();
         }
 
 
@@ -83,7 +83,7 @@ namespace GrammerTest.Grammer
             return new OperandNode(obj);
         }
 
-        public static AstNode CreateNumberNode(string value)
+        public static OperandNode CreateNumberNode(string value)
         {
             return null;
         }
@@ -91,32 +91,32 @@ namespace GrammerTest.Grammer
     
         public static CompareEquelOperatorNode CreateCompareEquel()
         {
-            return null;
+            return  new CompareEquelOperatorNode();
         }
 
         public static ComareNotEquelNode CreateCompareNotEquel()
         {
-            return null;
+            return new ComareNotEquelNode();
         }
 
         public static MemberOperaterNode CreateMemeber()
         {
-            return null;
+            return new MemberOperaterNode();
         }
 
         public static IncrementNode  CreateIncrement()
         {
-            return null;
+            return new IncrementNode();
         }
 
         public static DcrementNode CreateDecremnet()
         {
-            return null;
+            return new DcrementNode();
         }
 
         public static NewOperatorNode CreateNew()
         {
-            return null;
+            return new NewOperatorNode();
         }
 
         

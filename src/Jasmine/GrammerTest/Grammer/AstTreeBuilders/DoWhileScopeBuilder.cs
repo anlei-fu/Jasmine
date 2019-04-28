@@ -6,42 +6,44 @@ namespace GrammerTest
 {
     public class DoWhileScopeBuilder : BuilderBase
     {
+        private static readonly string[] _interceptChars = new string[]
+        {
+            ")"
+        };
         public DoWhileScopeBuilder(TokenStreamReader reader) : base(reader)
         {
         }
 
         public DoWhileBlock Build()
         {
-            var scope = new BlockBuilder(_reader).Build();
+            var doWhileBlock = new DoWhileBlock();
 
-            if(_reader.HasNext())
+            throwErrorIfHasNoNextAndNext();
+
+            if(_reader.CurrentToken.OperatorType!=OperatorType.LeftBrace)
             {
-                if(_reader.Next().OperatorType==OperatorType.LeftParenthesis)
-                {
-                    var expression = new AstNodeBuilder(_reader,  null).Build();
+                _reader.Previous();
 
-                    if(_reader.HasNext())
-                    {
-                        if(_reader.Next().OperatorType==OperatorType.RightParenthesis)
-                        {
-
-                        }
-                        else
-                        {
-
-                        }
-                    }
-                    else
-                    {
-
-                    }
-
-                }
+                doWhileBlock.Body.Children.Add(new ExpressionBuilder(_reader).Build());
+            }
+            else
+            {
+                doWhileBlock.Body = new BlockBuilder(_reader).Build();
             }
 
+            throwErrorIfHasNoNextAndNext();
+
+            throwIf(x => x.Value != Keywords.WHILE);
+
+            throwErrorIfHasNoNextAndNext();
+
+            throwErrorIfOperatorTypeNotMatch(OperatorType.LeftParenthesis);
 
 
-            return null;
+            doWhileBlock.CheckExpression.Root = new AstNodeBuilder(_reader,_interceptChars).Build();
+
+
+            return doWhileBlock;
         }
     }
 }

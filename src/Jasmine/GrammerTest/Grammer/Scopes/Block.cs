@@ -1,10 +1,9 @@
-﻿using Jasmine.Spider.Grammer;
-
-namespace GrammerTest.Grammer.Scopes
+﻿namespace GrammerTest.Grammer.Scopes
 {
-    public abstract class Block : Scope
+    public abstract class Block : AbstractExcutor
     {
-       
-      
+        public override string Name => ".Block";
+        public IVariableTable VariableTable { get; set; }
+
     }
 }

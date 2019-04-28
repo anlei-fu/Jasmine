@@ -1,62 +1,89 @@
 ﻿using GrammerTest.Grammer.AstTreeBuilders;
+using GrammerTest.Grammer.Scopes;
 using Jasmine.Spider.Grammer;
 
 namespace GrammerTest.Grammer
 {
     public class ForeachBuilder : BuilderBase
     {
+        private static readonly string[] _interceptChars = new string[]
+        {
+            ")"
+        };
         public ForeachBuilder(TokenStreamReader reader) : base(reader)
         {
         }
 
+
         public ForeachBlock Build()
         {
-            if(_reader.HasNext())
+            var foreachBlock = new ForeachBlock();
+
+
+            /*
+             *  resolve header
+             * 
+             */
+             
+            throwErrorIfHasNoNextAndNext();
+
+            throwErrorIfOperatorTypeNotMatch(OperatorType.LeftParenthesis);//(
+
+            throwErrorIfHasNoNextAndNext();
+
+            throwErrorIfOperatorTypeNotMatch(OperatorType.Var);//(var
+
+            throwErrorIfHasNoNextAndNext();
+
+            throwIf(x => x.IsIdentifier(), " sytanx error");//(var item
+
+            var name = _reader.CurrentToken.Value;
+
+            throwErrorIfHasNoNextAndNext();
+
+            throwIf(x => x.Value != Keywords.IN);//(var item in
+
+            foreachBlock.DeclareExpression = new DeclareExpression()
             {
-                var token = _reader.Next();
+                Root = new DeclareOperator()
+            };
 
-                if(token.OperatorType==OperatorType.LeftParenthesis)
-                {
-                    if(_reader.HasNext()&&_reader.Next().TokenType==TokenType.Identifier)
-                    {
-                        if(_reader.HasNext()&&_reader.Next().Value=="in")
-                        {
-
-                            var expression = new AstNodeBuilder(_reader,  null).Build();
-
-                            var scope = new BlockBuilder(_reader).Build();
-
-                        }
-                        else
-                        {
-
-                        }
+            foreachBlock.DeclareExpression.Root.Operands.Add(new OperandNode(new JString(name)));//(var item in 
 
 
-                    }
-                    else
-                    {
+            foreachBlock.GetCollectionExpression = new Expression()
+            {
+                Root = new AstNodeBuilder(_reader, _interceptChars).Build()
+            };
 
-                    }
+            throwErrorIfHasNoNextAndNext();
+
+            var token = _reader.Next();
 
 
-                }
-                else
-                {
-                    throwError("");
-                }
+            /*
+             * Resolve body
+             * 
+             */ 
 
+            if (token.OperatorType == OperatorType.LeftBrace)
+            {
+                foreachBlock.Body = new BlockBuilder(_reader).Build();
             }
             else
             {
+                _reader.Previous();
 
+                foreachBlock.Body = new OrderdedBlock();
+
+                var exp = new ExpressionBuilder(_reader).Build();
+                foreachBlock.Body.Children.Add(exp);
             }
 
 
+            return foreachBlock;
 
 
-
-            return null;
         }
     }
 }

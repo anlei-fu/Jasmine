@@ -19,7 +19,7 @@ namespace GrammerTest
 
         public void Excute()
         {
-            _function.Excute(null, null);
+            //_function.Excute(null, null);
         }
     }
 

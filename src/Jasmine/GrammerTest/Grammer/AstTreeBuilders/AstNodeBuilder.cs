@@ -9,11 +9,16 @@ namespace GrammerTest.Grammer
     public  class AstNodeBuilder:BuilderBase
     {
         public AstNodeBuilder(TokenStreamReader reader,
-                               string[] intercepChars) : base(reader)
+                              string[] intercepChars,
+                              bool hasparent=false) : base(reader)
 
         {
             _interceptChars = intercepChars;
+            _hasParent = hasparent;
         }
+
+       
+
 
 
         /// <summary>
@@ -23,7 +28,7 @@ namespace GrammerTest.Grammer
         /// <summary>
         /// current priority
         /// </summary>
-        private int _currentPrority;
+        private int _currentPrority=-2;
         /// <summary>
         /// higherlevel intercepter
         /// </summary>
@@ -36,15 +41,13 @@ namespace GrammerTest.Grammer
     
         private OperatorNode finishBuild()
         {
-            if (_currentNode != null) //expression empty;
+            if (_currentNode != null) //is expression empty;
             {
-                _currentNode.DoCheck();
+                _currentNode.DoCheck();//check current operator's operands is ok
             }
 
             if (_hasParent)
                 _reader.Previous();
-
-
 
             return _currentNode;
         }
@@ -66,6 +69,7 @@ namespace GrammerTest.Grammer
         {
             /*
             * must be first operator node
+            * cause its priority is higher than && || ,it's always a new stack 
             */
             Debug.Assert(_currentNode == null);
 
@@ -75,7 +79,7 @@ namespace GrammerTest.Grammer
 
         private void pushOrderedNode(OperatorNode node)
         {
-            /*
+           /*
             * must be first operator node
             */
             Debug.Assert(_currentNode != null);
@@ -95,13 +99,14 @@ namespace GrammerTest.Grammer
 
             while (_reader.HasNext())
             {
+                _reader.Next();
 
                 if (_interceptChars.Contains(_reader.CurrentToken.Value))
                 {
                     return finishBuild();
                 }
 
-                switch (_reader.Next().TokenType)
+                switch (_reader.CurrentToken.TokenType)
                 {
 
                     /*
@@ -124,34 +129,48 @@ namespace GrammerTest.Grammer
                          */
                         var priority = _reader.CurrentToken.OperatorType.GetPriority();
 
-                        if(priority>_currentPrority)
+                        if (_currentPrority == -2)
                         {
-                            _reader.Previous(2);
-
-                            _currentNode.Operands.RemoveAt(1);
-
-
-                            //reset current operand
+                            _currentPrority = priority;
                         }
-                        else if(priority<_currentPrority&&_hasParent)
+                        else
                         {
-                            return finishBuild();
 
+                            if (priority > _currentPrority)
+                            {
+                                _reader.Previous(2);
+
+                                _currentNode.Operands.RemoveAt(1);
+
+                                var node = new AstNodeBuilder(_reader, _interceptChars, true).Build();
+
+                                _currentNode.Operands.Add(node);
+
+                                //reset current operand
+                            }
+                            else if (priority < _currentPrority && _hasParent)
+                            {
+                                return finishBuild();
+
+                            }
                         }
-                      
+
+
                         switch (_reader.CurrentToken.OperatorType)
                         {
-                            //can not post to here  
-                            //those operator should be handled or intercepted by higher level builder
+                          
                             case OperatorType.Assignment:
                             case OperatorType.AddAsignment:
                             case OperatorType.ReduceAsignment:
                             case OperatorType.MutiplyAsignment:
                             case OperatorType.DevideAsignment:
-                            case OperatorType.Var:
                             case OperatorType.Semicolon:
                             case OperatorType.Question:
+
+                            //can not post to here  
+                            //those operator should be handled or intercepted by higher level builder
                             case OperatorType.Coma:
+                            case OperatorType.Var:
                             case OperatorType.ExpressionEnd:
                             case OperatorType.Break:
                             case OperatorType.Continue:
@@ -225,7 +244,7 @@ namespace GrammerTest.Grammer
 
                                         var node = new CallBuilder(_reader).Build();
 
-                                        node.Operands.Add(_currentNode);
+                                        node.Operands.Insert(0,_currentNode);
                                         _currentNode = node;
 
                                     }
@@ -430,7 +449,7 @@ namespace GrammerTest.Grammer
         /// </summary>
         private void checkIdentifer()
         {
-            if (!_reader.PreviouceToken().IsOperator())
+            if (_reader.HasPrevious()&&!_reader.PreviouceToken().IsOperator())
                 ThrowError($" syntax error, two identifer repeat");
         }
 

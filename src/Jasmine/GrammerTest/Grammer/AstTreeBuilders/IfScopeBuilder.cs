@@ -17,6 +17,7 @@ namespace GrammerTest.Grammer
             var ifBlock = new IfBlock();
 
             var if0Block = new If0BlockBuilder(_reader).Build();
+
             ifBlock.If0Blocks.Add(if0Block);
 
             while (_reader.HasNext())

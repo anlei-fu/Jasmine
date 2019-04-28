@@ -1,4 +1,6 @@
 ﻿using Jasmine.Spider.Grammer;
+using System;
+using System.Diagnostics;
 
 namespace GrammerTest.Grammer
 {
@@ -15,7 +17,26 @@ namespace GrammerTest.Grammer
 
         protected void throwError(string msg)
         {
+            Debug.Assert(false);
+        }
 
+        protected void throwErrorIfHasNoNextAndNext(string msg="")
+        {
+            if (!_reader.HasNext())
+                Debug.Assert(false);
+
+            _reader.Next();
+        }
+        protected void throwErrorIfOperatorTypeNotMatch(OperatorType type, string msg="")
+        {
+
+            if (_reader.CurrentToken.OperatorType != type)
+                Debug.Assert(false);
+        }
+        protected void throwIf(Func<Token,bool> predict,string msg="")
+        {
+            if (predict(_reader.CurrentToken))
+                Debug.Assert(false);
         }
     }
 }

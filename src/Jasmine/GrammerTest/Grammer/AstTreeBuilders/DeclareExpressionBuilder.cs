@@ -13,6 +13,12 @@ namespace GrammerTest.Grammer.AstTreeBuilders
         {
         }
 
+        private void requirePreviousIsIdentifier()
+        {
+            if (_reader.PreviouceToken().TokenType != TokenType.Identifier)
+                throwError("");
+        }
+
         public DeclareExpression Build()
         {
             var expression = new DeclareExpression();
@@ -25,17 +31,25 @@ namespace GrammerTest.Grammer.AstTreeBuilders
 
                 var token = _reader.CurrentToken;
 
+                /*
+                 *  In this loop,tokens type  can only be ',', 'identifer',';','='
+                 *  ',',';','=', requires previous token must be an  Identifier
+                 * 
+                 */ 
+
                 if (token.TokenType == TokenType.Identifier)
                 {
                     node.Operands.Add(new OperandNode(new JString(token.Value)));
                 }
-
-               else if (token.OperatorType == OperatorType.Coma)
-                    continue;
-               else if(token.OperatorType==OperatorType.ExpressionEnd)
+                else if (token.OperatorType == OperatorType.Coma)//mutiple  variable declaration
                 {
-                    if (_reader.PreviouceToken().OperatorType == OperatorType.Coma)
-                        throwError("");
+                    requirePreviousIsIdentifier();
+
+                    continue;
+                }
+                else if (token.OperatorType == OperatorType.ExpressionEnd)//declaration ends
+                {
+                    requirePreviousIsIdentifier();
 
                     node.DoCheck();
 
@@ -43,12 +57,10 @@ namespace GrammerTest.Grammer.AstTreeBuilders
 
                     return expression;
                 }
-                else if(token.OperatorType==OperatorType.Assignment)
+                else if (token.OperatorType == OperatorType.Assignment)// this expression is a  declare-assignment expression
                 {
 
-                    if (_reader.PreviouceToken().OperatorType == OperatorType.Coma)
-                        throwError("");
-
+                    requirePreviousIsIdentifier();
 
                     var assign = new DeclareAsignmentNode();
 
@@ -68,13 +80,15 @@ namespace GrammerTest.Grammer.AstTreeBuilders
                 }
                 else
                 {
+                    //invalid token type
+
                     throwError("");
                 }
 
 
             }
 
-
+            // expression incomplete
             throwError("");
 
             return null;

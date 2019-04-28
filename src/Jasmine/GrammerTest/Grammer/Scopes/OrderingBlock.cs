@@ -1,16 +1,13 @@
-﻿using GrammerTest.Grammer.Scopes;
-using GrammerTest.Grammer.TypeSystem;
+﻿using GrammerTest.Grammer.TypeSystem;
 using Jasmine.Spider.Grammer;
 using System;
+using System.Collections.Generic;
 
-namespace GrammerTest.Grammer
+namespace GrammerTest.Grammer.Scopes
 {
-    public class TryCatchFinallyBlock : BreakableBlock
+    public class OrderdedBlock : BreakableBlock
     {
-        public TryBlock TryBlock { get; set; }
-        public CatchBlock CatchBlock { get; set; }
-        public TryCatchFinallyBlock FinallyBlock { get; set; }
-
+        public IList<IExcutor> Children { get; set; } = new List<IExcutor>();
         public override void Break()
         {
             throw new NotImplementedException();

@@ -6,13 +6,18 @@ namespace GrammerTest.Grammer
     public class TokenStreamReader
     {
 
-        public TokenStreamReader(List<Token> tokens)
+        public TokenStreamReader(IList<Token> tokens)
         {
             _tokens = tokens;
         }
 
-        private List<Token> _tokens;
+        private IList<Token> _tokens=new List<Token>();
         public int CurrentIndex { get; private set; } = -1;
+
+        public bool HasPrevious(int step=1)
+        {
+            return CurrentIndex - step > -1;
+        }
         public bool HasNext(int step=1)
         {
             return CurrentIndex+step<_tokens.Count;

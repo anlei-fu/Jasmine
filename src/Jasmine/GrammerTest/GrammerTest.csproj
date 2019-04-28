@@ -45,11 +45,16 @@
   <ItemGroup>
     <Compile Include="Grammer\AstTreeBuilders\BlockBuilder.cs" />
     <Compile Include="Grammer\AstTreeBuilders\CallBuilder.cs" />
+    <Compile Include="Grammer\AstTreeBuilders\CatchBlockBuilder.cs" />
     <Compile Include="Grammer\AstTreeBuilders\DeclareExpressionBuilder.cs" />
+    <Compile Include="Grammer\AstTreeBuilders\FinalyBuilder.cs" />
     <Compile Include="Grammer\AstTreeBuilders\ForBlockBuilder.cs" />
     <Compile Include="Grammer\AstTreeBuilders\ForeachBlockBuilder.cs" />
     <Compile Include="Grammer\AstTreeBuilders\If0BlockBuilder.cs" />
+    <Compile Include="Grammer\AstTreeBuilders\Instruct.cs" />
     <Compile Include="Grammer\AstTreeBuilders\TopScopeBuilder.cs" />
+    <Compile Include="Grammer\AstTreeBuilders\TripleOperatorBuilder.cs" />
+    <Compile Include="Grammer\AstTreeBuilders\TryBlockBuilder.cs" />
     <Compile Include="Grammer\AstTreeBuilders\TryCatchFinallyBlockBuilder.cs" />
     <Compile Include="Grammer\AstTreeBuilders\WhileBlockBuilder.cs" />
     <Compile Include="Grammer\AstTree\AsignmnetOperatorNode.cs" />
@@ -63,10 +68,15 @@
     <Compile Include="Grammer\AstTree\ThreeOperatorNode.cs" />
     <Compile Include="Grammer\Exceptions\ExcutingException.cs" />
     <Compile Include="Grammer\Exceptions\NotConvertableException.cs" />
+    <Compile Include="Grammer\Scopes\AbstractExcutor.cs" />
     <Compile Include="Grammer\Scopes\Block.cs" />
+    <Compile Include="Grammer\Scopes\BodyBlock.cs" />
+    <Compile Include="Grammer\Scopes\CatchBlock.cs" />
+    <Compile Include="Grammer\Scopes\IVariableManager.cs" />
     <Compile Include="Grammer\Scopes\DeclareExpression.cs" />
     <Compile Include="Grammer\Exceptions\PropertyNotDeclareException.cs" />
     <Compile Include="Grammer\Scopes\FunctionDefineExpression.cs" />
+    <Compile Include="Grammer\Scopes\OrderingBlock.cs" />
     <Compile Include="Grammer\Scopes\TopScope.cs" />
     <Compile Include="Grammer\Tokenizers\AbstractSequenceReader.cs" />
     <Compile Include="Grammer\Tokenizers\CharSequenceReader.cs" />
@@ -114,10 +124,7 @@
     <Compile Include="Grammer\AstTree\OperatorNode.cs" />
     <Compile Include="Grammer\AstTree\OutputType.cs" />
     <Compile Include="Grammer\AstTree\OperatorType.cs" />
-    <Compile Include="Grammer\AstTreeBuilders\ParameterBuilder.cs" />
     <Compile Include="Grammer\AstTreeBuilders\ParenthesisBuilder.cs" />
-    <Compile Include="Grammer\AstTreeBuilders\PriorityBuilder.cs" />
-    <Compile Include="Grammer\Scopes\Scope.cs" />
     <Compile Include="Grammer\Scopes\SpiderExtractor.cs" />
     <Compile Include="Grammer\Tokenizers\Token.cs" />
     <Compile Include="Grammer\Tokenizers\Tokenizer.cs" />

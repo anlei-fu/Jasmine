@@ -1,10 +1,9 @@
-﻿using GrammerTest.Grammer.Scopes;
-using GrammerTest.Grammer.TypeSystem;
+﻿using GrammerTest.Grammer.TypeSystem;
 using Jasmine.Spider.Grammer;
 
-namespace GrammerTest.Grammer
+namespace GrammerTest.Grammer.Scopes
 {
-    public class TryBlock : BodyBlock
+    public class CatchBlock : BodyBlock
     {
         public override void Break()
         {

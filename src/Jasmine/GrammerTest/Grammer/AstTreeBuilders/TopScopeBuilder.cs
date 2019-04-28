@@ -5,7 +5,7 @@ namespace GrammerTest.Grammer.AstTreeBuilders
 {
     public class TopScopeBuilder : BuilderBase
     {
-        public TopScope _scope;
+        public OrderdedBlock _scope=new OrderdedBlock();
         public TopScopeBuilder(TokenStreamReader reader) : base(reader)
         {
         }
@@ -85,7 +85,7 @@ namespace GrammerTest.Grammer.AstTreeBuilders
 
                             case OperatorType.Function:
 
-                                var function = new FunctionScopeBuilder(_reader).Build();
+                                var function = new FunctionBuilder(_reader).Build();
 
                                 var funcDefineExp = new FunctionDefineExpression();
 

@@ -6,6 +6,6 @@ namespace Jasmine.Common
 {
     public class LoginPair
     {
-        public string User {get }
+        public string User { get; }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using GrammerTest.Grammer;
+using GrammerTest.Grammer.Scopes;
 using System;
 using System.Collections.Generic;
 
@@ -184,34 +185,36 @@ namespace Jasmine.Spider.Grammer
     }
     public class JFunction : JObject
     {
-        private string _returnName => Scope.FunctionName + "_return";
+        public string Name { get; set; }
+       // private string _returnName => Scope.FunctionName + "_return";
         public FunctionBlock Scope { get; set; }
+        public string[] Paramenters { get; set; }
+        public Block Body { get; set; }
+
+        //public JObject Excute(Block parent, params JObject[] parameters)
+        //{
+
+        //    Scope.Parent = parent;
+
+        //    var ret = Scope.Declare(_returnName, new JVoid());
+
+        //    if (Scope.ParameterNames.Length != parameters.Length)
+        //    {
+
+        //    }
 
 
-        public JObject Excute(Scope parent, params JObject[] parameters)
-        {
+        //    for (int i = 0; i < parameters.Length; i++)
+        //    {
+        //        Scope.Declare(Scope.ParameterNames[i], parameters[i]);
+        //    }
 
-            Scope.Parent = parent;
-
-            var ret = Scope.Declare(_returnName, new JVoid());
-
-            if (Scope.ParameterNames.Length != parameters.Length)
-            {
-
-            }
+        //    Scope.Excute();
 
 
-            for (int i = 0; i < parameters.Length; i++)
-            {
-                Scope.Declare(Scope.ParameterNames[i], parameters[i]);
-            }
+        //    return ret;
 
-            Scope.Excute();
-
-
-            return ret;
-
-        }
+        //}
 
 
     }
