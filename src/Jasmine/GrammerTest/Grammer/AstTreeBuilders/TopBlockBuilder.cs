@@ -1,54 +1,61 @@
 ﻿using GrammerTest.Grammer.Scopes;
+using GrammerTest.Grammer.Tokenizers;
 using Jasmine.Spider.Grammer;
 
 namespace GrammerTest.Grammer.AstTreeBuilders
 {
-    public class TopScopeBuilder : BuilderBase
+    public class TopBlockBuilder : BuilderBase
     {
         public OrderdedBlock _scope=new OrderdedBlock();
-        public TopScopeBuilder(TokenStreamReader reader) : base(reader)
+
+        public TopBlockBuilder(ISequenceReader<Token> reader) : base(reader)
         {
         }
+
+        public override string Name => "TopBuilder";
 
         public void Build()
         {
             while (_reader.HasNext())
             {
-                switch (_reader.Next().TokenType)
+                _reader.Next();
+                var token = _reader.Current();
+
+                switch (token.TokenType)
                 {
                     case TokenType.Keyword:
 
-                        if (_reader.CurrentToken.Value==Keywords.FOR)
+                        if (_reader.Current().Value==Keywords.FOR)
                         {
                             var block = new ForBlockBuilder(_reader).Build();
 
                             _scope.Children.Add(block);
                         }
-                        else if(_reader.CurrentToken.Value==Keywords.IF)
+                        else if(_reader.Current().Value==Keywords.IF)
                         {
                             var block = new IfBlockBuilder(_reader).Build();
 
                             _scope.Children.Add(block);
                         }
-                        else if(_reader.CurrentToken.Value==Keywords.FOREACH)
+                        else if(_reader.Current().Value==Keywords.FOREACH)
                         {
-                            var block = new ForeachBlockBuilder(_reader).Build();
+                            var block = new ForeachBuilder(_reader).Build();
 
                             _scope.Children.Add(block);
                         }
-                        else if(_reader.CurrentToken.Value==Keywords.DO)
+                        else if(_reader.Current().Value==Keywords.DO)
                         {
                             var block = new DoWhileScopeBuilder(_reader).Build();
 
                             _scope.Children.Add(block);
                         }
-                        else if(_reader.CurrentToken.Value==Keywords.WHILE)
+                        else if(_reader.Current().Value==Keywords.WHILE)
                         {
                             var block = new WhileBlockBuilder(_reader).Build();
 
                             _scope.Children.Add(block);
                         }
-                        else if(_reader.CurrentToken.Value==Keywords.TRY)
+                        else if(_reader.Current().Value==Keywords.TRY)
                         {
                             var block = new TryCatchFinallyBlockBuilder(_reader).Build();
 
@@ -63,14 +70,14 @@ namespace GrammerTest.Grammer.AstTreeBuilders
 
                     case TokenType.Operator:
 
-                        switch (_reader.CurrentToken.OperatorType)
+                        switch (_reader.Current().OperatorType)
                         {
                           
                             /*
                              *  variable declare 
                              */
                              
-                            case OperatorType.Var:
+                            case OperatorType.Declare:
 
                                 var decExpression = new DeclareExpressionBuilder(_reader).Build();
 
@@ -100,7 +107,7 @@ namespace GrammerTest.Grammer.AstTreeBuilders
                             /*
                              *  New expression
                              */ 
-                            case OperatorType.New:
+                            case OperatorType.NewInstance:
                             /*
                              * Increament  expression
                              *
@@ -108,9 +115,9 @@ namespace GrammerTest.Grammer.AstTreeBuilders
                             case OperatorType.Increment:
                             case OperatorType.Decrement:
 
-                                _reader.Previous();
+                                _reader.Back();
 
-                                var crementExpression = new ExpressionBuilder(_reader).Build();
+                                var crementExpression = new ExpressionBuilder(_reader,false).Build();
 
                                 _scope.Children.Add(crementExpression);
 
@@ -137,9 +144,9 @@ namespace GrammerTest.Grammer.AstTreeBuilders
                       
                     case TokenType.Identifier:
 
-                        _reader.Previous();
+                        _reader.Back();
 
-                        var expression = new ExpressionBuilder(_reader).Build();
+                        var expression = new ExpressionBuilder(_reader,true).Build();
 
                         _scope.Children.Add(expression);
 

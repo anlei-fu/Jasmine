@@ -9,7 +9,7 @@ namespace GrammerTest.Grammer
     {
         public TryBlock TryBlock { get; set; }
         public CatchBlock CatchBlock { get; set; }
-        public TryCatchFinallyBlock FinallyBlock { get; set; }
+        public FinallyBlock FinallyBlock { get; set; }
 
         public override void Break()
         {

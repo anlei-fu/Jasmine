@@ -1,4 +1,5 @@
 ﻿using GrammerTest.Grammer.Scopes;
+using GrammerTest.Grammer.Tokenizers;
 using Jasmine.Spider.Grammer;
 
 namespace GrammerTest.Grammer.AstTreeBuilders
@@ -9,13 +10,18 @@ namespace GrammerTest.Grammer.AstTreeBuilders
         {
             ";"
         };
-        public DeclareExpressionBuilder(TokenStreamReader reader) : base(reader)
+
+        public DeclareExpressionBuilder(ISequenceReader<Token> reader) : base(reader)
         {
         }
 
+        public override string Name => "DeclareExpressionBuilder";
+
+       
+
         private void requirePreviousIsIdentifier()
         {
-            if (_reader.PreviouceToken().TokenType != TokenType.Identifier)
+            if (_reader.Last().TokenType != TokenType.Identifier)
                 throwError("");
         }
 
@@ -29,7 +35,7 @@ namespace GrammerTest.Grammer.AstTreeBuilders
             {
                 _reader.Next();
 
-                var token = _reader.CurrentToken;
+                var token = _reader.Current();
 
                 /*
                  *  In this loop,tokens type  can only be ',', 'identifer',';','='

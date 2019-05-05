@@ -8,24 +8,24 @@ namespace GrammerTest.Grammer
          *Using 
          *
          */
-        public const string FUNCTION = "";
-        public const string FOR = "";
-        public const string FOREACH = "";
-        public const string DO = "";
-        public const string WHILE = "";
-        public const string BREAK = "";
-        public const string CONTINUE = "";
-        public const string VAR = "";
-        public const string IF = "";
-        public const string ELSE = "";
-        public const string ELIF = "";
-        public const string TRY = "";
-        public const string CATCH = "";
-        public const string FINALLY = "";
-        public const string IN = "";
-        public const string RETURN = "";
-        public const string NEW = "";
-        public const string THROW = "";
+        public const string FUNCTION = "function";
+        public const string FOR = "for";
+        public const string FOREACH = "foreach";
+        public const string DO = "do";
+        public const string WHILE = "while";
+        public const string BREAK = "break";
+        public const string CONTINUE = "continue";
+        public const string VAR = "var";
+        public const string IF = "if";
+        public const string ELSE = "else";
+        public const string ELIF = "elif";
+        public const string TRY = "try";
+        public const string CATCH = "catch";
+        public const string FINALLY = "finally";
+        public const string IN = "in";
+        public const string RETURN = "return";
+        public const string NEW = "new";
+        public const string THROW = "throw";
 
 
         /*

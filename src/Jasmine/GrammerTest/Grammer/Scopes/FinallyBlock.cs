@@ -1,12 +1,10 @@
-﻿using GrammerTest.Grammer.Scopes;
-using GrammerTest.Grammer.TypeSystem;
+﻿using GrammerTest.Grammer.TypeSystem;
 using Jasmine.Spider.Grammer;
 
-namespace GrammerTest.Grammer
+namespace GrammerTest.Grammer.Scopes
 {
-    public class WhileBlock : BodyBlock
+    public class FinallyBlock : BodyBlock
     {
-        public Expression CheckExpression { get; set; } = new Expression();
         public override void Break()
         {
             throw new System.NotImplementedException();

@@ -4,26 +4,29 @@ namespace Jasmine.Spider.Grammer
 {
     public class Token
     {
-        public Token(string value,TokenType type)
+        internal Token(string value,TokenType type,int line,int lineNumber)
         {
             Value = value;
             TokenType = type;
+            Line = line;
+            LineNumber = lineNumber;
         }
-        public Token(OperatorType _operator)
+        internal Token(OperatorType _operator, int line, int lineNumber)
         {
             TokenType = TokenType.Operator;
 
             OperatorType = _operator;
             Value = _operator.Tostring0();
+            Line = line;
+            LineNumber = lineNumber;
         }
 
+        public int Line { get; internal set; }
+        public int LineNumber { get;internal set; }
 
-        public int Line { get; set; }
-        public int LineNumber { get; set; }
-
-        public TokenType TokenType { get; set; }
-        public OperatorType OperatorType { get; set; }
-        public string Value { get; set; }
+        public TokenType TokenType { get;internal set; }
+        public OperatorType OperatorType { get; internal set; }
+        public string Value { get; internal set; }
 
         public bool IsIdentifier() => TokenType == TokenType.Identifier;
 

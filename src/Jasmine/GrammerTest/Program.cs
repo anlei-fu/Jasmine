@@ -1,8 +1,10 @@
 ﻿using GrammerTest.Grammer;
 using GrammerTest.Grammer.AstTreeBuilders;
+using GrammerTest.Grammer.Tokenizers;
 using Jasmine.Spider.Grammer;
 using System;
 using System.Diagnostics;
+using System.Text;
 
 namespace GrammerTest
 {
@@ -11,7 +13,7 @@ namespace GrammerTest
         static void Main(string[] args)
         {
 
-            testParenthisis();
+            testTopBuilder();
 
             Console.WriteLine("finished!");
 
@@ -19,11 +21,28 @@ namespace GrammerTest
         }
 
 
+        static void testAst()
+        {
+            var pattern = "7+8;";
+
+            Tokenizer tg = new Tokenizer();
+            var reader = new SequenceReader<Token>(tg.Tokenize(pattern));
+            var watch = new Stopwatch();
+
+            watch.Start();
+
+            var builder = new ExpressionBuilder(reader,true);
+
+
+            var result = builder.Build();
+
+            Console.WriteLine($"ast:{watch.ElapsedMilliseconds} ");
+        }
 
         static void testDeclare()
         {
-            TokenStreamGenerator tg = new TokenStreamGenerator();
-            var reader = new TokenStreamReader(tg.GetTokenStream("a,b,c=35*7-89-y.x+9;"));
+            Tokenizer tg = new Tokenizer();
+            var reader = new SequenceReader<Token>(tg.Tokenize("a,b,c=35*7-89-y.x+9;"));
             var watch = new Stopwatch();
 
             var builder = new DeclareExpressionBuilder(reader);
@@ -36,11 +55,62 @@ namespace GrammerTest
 
         static void testTopBuilder()
         {
-            TokenStreamGenerator tg = new TokenStreamGenerator();
-            var reader = new TokenStreamReader(tg.GetTokenStream("function a(){a+b;}"));
-            var watch = new Stopwatch();
 
-            var builder = new TopScopeBuilder(reader);
+            var pettern = @"
+try
+{
+  a=a()+6;
+}
+catch(var ex)
+{
+
+}
+finally
+{
+}
+
+a=c.b(9*5-9*8)+6>7?b?v:h:d?j:k;
+
+function a()
+{
+     
+}
+for(var i=0;i<10;++i)
+{
+   if(i>9)
+      break;
+  elif(v<10)
+     break;
+  else
+   continue;
+}
+
+while(true)
+  ++a[y*7];
+
+do
+{
+}while(true)
+
+  h=(f()+6)*g;
+++i;
+
+foreach(var d in a.getAll())
+{
+}
+
+++a.b(s,7+8)+b.b.b;
+            ";
+            var s = new StringBuilder();
+            for (int i = 0; i < 5000; i++)
+            {
+                s .Append( pettern);
+            }
+            Tokenizer tg = new Tokenizer();
+            var reader = new SequenceReader<Token>(tg.Tokenize(s.ToString()));
+            var watch = new Stopwatch();
+            watch.Start();
+            var builder = new TopBlockBuilder(reader);
 
               builder.Build();
 
@@ -49,8 +119,8 @@ namespace GrammerTest
 
         static void testFprBuilder()
         {
-            TokenStreamGenerator tg = new TokenStreamGenerator();
-            var reader = new TokenStreamReader(tg.GetTokenStream("(var i=0;i<10;i++;){}"));
+            Tokenizer tg = new Tokenizer();
+            var reader = new SequenceReader<Token>(tg.Tokenize("(var i=0;i<10;i++;){}"));
             var watch = new Stopwatch();
 
             var builder = new ForBlockBuilder(reader);
@@ -63,7 +133,7 @@ namespace GrammerTest
 
         static void testParenthisis()
         {
-            TokenStreamGenerator tg = new TokenStreamGenerator();
+            Tokenizer tg = new Tokenizer();
 
 
             var pattern = "6*(3+5)-(5*(3-2));";
@@ -77,7 +147,7 @@ namespace GrammerTest
 
             for (int i = 0; i < 10000000; i++)
             {
-                var reader = new TokenStreamReader(tg.GetTokenStream(pattern));
+                var reader = new SequenceReader<Token>(tg.Tokenize(pattern));
                 var builder = new AstNodeBuilder(reader, new string[] { ";" });
                 var result = builder.Build();
                 t += pattern.Length;
@@ -89,5 +159,14 @@ namespace GrammerTest
             Console.WriteLine($"length is {t}");
             Console.WriteLine($"top build spend:{watch.ElapsedMilliseconds} ");
         }
+
+
+        static void testBlockbuilder()
+        {
+
+
+
+        }
+
     }
 }

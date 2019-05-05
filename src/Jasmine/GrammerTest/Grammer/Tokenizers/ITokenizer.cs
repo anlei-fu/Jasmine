@@ -4,6 +4,6 @@ namespace GrammerTest.Grammer.Tokenizers
 {
     public interface ITokenizer<TToken>
     {
-        List<TToken> Tokenize();
+        List<TToken> Tokenize(string input);
     }
 }

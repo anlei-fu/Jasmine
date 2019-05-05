@@ -1,4 +1,5 @@
-﻿using Jasmine.Spider.Grammer;
+﻿using GrammerTest.Grammer.Tokenizers;
+using Jasmine.Spider.Grammer;
 
 namespace GrammerTest.Grammer
 {
@@ -8,9 +9,12 @@ namespace GrammerTest.Grammer
         {
             ")"
         };
-        public ParenthesisBuilder(TokenStreamReader reader) : base(reader)
+
+        public ParenthesisBuilder(ISequenceReader<Token> reader) : base(reader)
         {
         }
+
+        public override string Name => "ParenthesisBuilder";
 
         public OperatorNode Build()
         {

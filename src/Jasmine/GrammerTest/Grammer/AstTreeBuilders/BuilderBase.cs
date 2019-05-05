@@ -1,42 +1,56 @@
-﻿using Jasmine.Spider.Grammer;
+﻿using GrammerTest.Grammer.AstTreeBuilders.Exceptions;
+using GrammerTest.Grammer.Tokenizers;
+using Jasmine.Spider.Grammer;
 using System;
-using System.Diagnostics;
+using System.Runtime.CompilerServices;
 
 namespace GrammerTest.Grammer
 {
-    public class BuilderBase
+    public abstract class BuilderBase
     {
-        public  BuilderBase(TokenStreamReader reader)
+        
+        public  BuilderBase(ISequenceReader<Token> reader)
         {
             _reader = reader;
         }
-        protected TokenStreamReader _reader;
-
+        protected ISequenceReader<Token> _reader;
         protected OperatorNode _currentNode;
-       
+        /// <summary>
+        /// mark current builder type
+        /// </summary>
+        public abstract string Name { get; }
 
-        protected void throwError(string msg)
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        protected void throwUnexceptedError()
         {
-            Debug.Assert(false);
+            throwError($"unexcepted '{_reader.Current().Value}';");
         }
 
-        protected void throwErrorIfHasNoNextAndNext(string msg="")
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        protected void throwError(string msg)
+        {
+            throw new BuilderException(msg, Name, _reader.Current().Line, _reader.Current().LineNumber);
+        }
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        protected void throwErrorIfHasNoNextAndNext(string msg)
         {
             if (!_reader.HasNext())
-                Debug.Assert(false);
+                throwError(msg);
 
             _reader.Next();
         }
-        protected void throwErrorIfOperatorTypeNotMatch(OperatorType type, string msg="")
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        protected void throwErrorIfOperatorTypeNotMatch(OperatorType type)
         {
 
-            if (_reader.CurrentToken.OperatorType != type)
-                Debug.Assert(false);
+            if (_reader.Current().OperatorType != type)
+                throwUnexceptedError();
         }
-        protected void throwIf(Func<Token,bool> predict,string msg="")
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        protected void throwIf(Func<Token,bool> predict)
         {
-            if (predict(_reader.CurrentToken))
-                Debug.Assert(false);
+            if (predict(_reader.Current()))
+                throwUnexceptedError();
         }
     }
 }

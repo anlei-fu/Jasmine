@@ -13,7 +13,7 @@ namespace Jasmine.Spider.Grammer
       
         public DeclareExpression DeclareExpression { get; set; }
         public Expression CheckExpression { get; set; }
-        public Expression OperateExpression { get; set; }
+        public Expression OperateExpression { get; set; } = new Expression();
 
         public Block Block { get; set; }
 

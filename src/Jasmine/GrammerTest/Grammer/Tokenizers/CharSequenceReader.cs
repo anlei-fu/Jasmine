@@ -4,18 +4,18 @@ namespace GrammerTest.Grammer.Tokenizers
 {
     public class CharSequenceReader : SequenceReader<char>
     {
-        public CharSequenceReader(IEnumerable<char> sequence) : base(sequence)
+        public CharSequenceReader(IEnumerable<char> sequence=null) : base(sequence)
         {
         }
         private IList<int> _lineNumbers = new List<int>();
         public int Line { get; private set; } = 1;
         public int LineNumber { get; private set; } = 1;
 
-        public override char Next(int step = 1)
+        public override void Next(int step = 1)
         {
             for (int i = 1; i <=step; i++)
             {
-                if(Forward(i)=='\n')
+                if(Forwards(i)=='\n')
                 {
                     Line++;
                     _lineNumbers.Add(LineNumber);
@@ -23,10 +23,11 @@ namespace GrammerTest.Grammer.Tokenizers
                 }
             }
 
-            return base.Next(step);
+            base.Next();
+            
         }
 
-        public override char Previouce(int step = 1)
+        public override void Back(int step = 1)
         {
             for (int i = 1; i <=step; i++)
             {
@@ -34,12 +35,12 @@ namespace GrammerTest.Grammer.Tokenizers
                 {
                     Line--;
                     _lineNumbers.RemoveAt(_lineNumbers.Count-1);
-                    LineNumber = _lineNumbers[_lineNumbers.Count-1];
+                    LineNumber = _lineNumbers.Count==0?0:_lineNumbers[_lineNumbers.Count-1];
                 }
             }
 
+            base.Back();
 
-            return base.Previouce(step);
         }
     }
 }

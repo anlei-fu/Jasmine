@@ -14,7 +14,7 @@
         /// <summary>
         /// -=
         /// </summary>
-        ReduceAsignment,
+        SubtractAsignment,
         /// <summary>
         /// *=
         /// </summary>
@@ -46,7 +46,7 @@
         /// <summary>
         /// .
         /// </summary>
-        Member,
+        MemberAccess,
         /// <summary>
         /// !=
         /// </summary>
@@ -82,7 +82,7 @@
         /// <summary>
         /// -
         /// </summary>
-        Reduce,
+        Subtract,
         /// <summary>
         /// %
         /// </summary>
@@ -106,11 +106,11 @@
         /// <summary>
         /// ?
         /// </summary>
-        Question,
+        Ternary,
         /// <summary>
         /// :
         /// </summary>
-        Semicolon,
+        Binary,
         /// <summary>
         /// ,
         /// </summary>
@@ -139,11 +139,11 @@
         /// <summary>
         /// new
         /// </summary>
-        New,
+        NewInstance,
         /// <summary>
         /// var
         /// </summary>
-        Var,
+        Declare,
         /// <summary>
         /// function
         /// </summary>
@@ -156,6 +156,10 @@
         /// continue
         /// </summary>
         Continue,
+        /// <summary>
+        /// return
+        /// </summary>
+        Return,
          /// <summary>
         /// 
         /// 
@@ -164,12 +168,14 @@
         /// <summary>
         /// 
         /// </summary>
-        QueryScope,
+        QueryObject,
         /// <summary>
         /// -
         /// </summary>
         Minus,
-
+        Operand,
+        ArrayIndex,
+        ObjectMember
 
 
     }

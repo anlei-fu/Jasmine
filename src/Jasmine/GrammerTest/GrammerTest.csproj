@@ -43,17 +43,17 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Grammer\AstTreeBuilders\BlockBuilder.cs" />
+    <Compile Include="Grammer\AstTreeBuilders\OrderedBlockBuilder.cs" />
     <Compile Include="Grammer\AstTreeBuilders\CallBuilder.cs" />
-    <Compile Include="Grammer\AstTreeBuilders\CatchBlockBuilder.cs" />
+    <Compile Include="Grammer\AstTreeBuilders\CatchBuilder.cs" />
     <Compile Include="Grammer\AstTreeBuilders\DeclareExpressionBuilder.cs" />
-    <Compile Include="Grammer\AstTreeBuilders\FinalyBuilder.cs" />
+    <Compile Include="Grammer\AstTreeBuilders\Exceptions\BuilderException.cs" />
+    <Compile Include="Grammer\AstTreeBuilders\FinalyBlockBuilder.cs" />
     <Compile Include="Grammer\AstTreeBuilders\ForBlockBuilder.cs" />
-    <Compile Include="Grammer\AstTreeBuilders\ForeachBlockBuilder.cs" />
     <Compile Include="Grammer\AstTreeBuilders\If0BlockBuilder.cs" />
     <Compile Include="Grammer\AstTreeBuilders\Instruct.cs" />
-    <Compile Include="Grammer\AstTreeBuilders\TopScopeBuilder.cs" />
-    <Compile Include="Grammer\AstTreeBuilders\TripleOperatorBuilder.cs" />
+    <Compile Include="Grammer\AstTreeBuilders\TerbaryBuilder.cs" />
+    <Compile Include="Grammer\AstTreeBuilders\TopBlockBuilder.cs" />
     <Compile Include="Grammer\AstTreeBuilders\TryBlockBuilder.cs" />
     <Compile Include="Grammer\AstTreeBuilders\TryCatchFinallyBlockBuilder.cs" />
     <Compile Include="Grammer\AstTreeBuilders\WhileBlockBuilder.cs" />
@@ -72,18 +72,24 @@
     <Compile Include="Grammer\Scopes\Block.cs" />
     <Compile Include="Grammer\Scopes\BodyBlock.cs" />
     <Compile Include="Grammer\Scopes\CatchBlock.cs" />
+    <Compile Include="Grammer\Scopes\FinallyBlock.cs" />
     <Compile Include="Grammer\Scopes\IVariableManager.cs" />
     <Compile Include="Grammer\Scopes\DeclareExpression.cs" />
     <Compile Include="Grammer\Exceptions\PropertyNotDeclareException.cs" />
     <Compile Include="Grammer\Scopes\FunctionDefineExpression.cs" />
     <Compile Include="Grammer\Scopes\OrderingBlock.cs" />
-    <Compile Include="Grammer\Scopes\TopScope.cs" />
+    <Compile Include="Grammer\Scopes\TopBlock.cs" />
     <Compile Include="Grammer\Tokenizers\AbstractSequenceReader.cs" />
     <Compile Include="Grammer\Tokenizers\CharSequenceReader.cs" />
+    <Compile Include="Grammer\Tokenizers\Exceptions\IncompletedOperatorException.cs" />
+    <Compile Include="Grammer\Tokenizers\Exceptions\InvalidIdentifierCharException.cs" />
+    <Compile Include="Grammer\Tokenizers\Exceptions\NotSurpportedOperatorException.cs" />
+    <Compile Include="Grammer\Tokenizers\Exceptions\TokenizerExcption.cs" />
     <Compile Include="Grammer\Tokenizers\ISequenceReader.cs" />
+    <Compile Include="Grammer\Tokenizers\ITokenFactory.cs" />
     <Compile Include="Grammer\Tokenizers\ITokenizer.cs" />
-    <Compile Include="Grammer\Tokenizers\Operators.cs" />
     <Compile Include="Grammer\Tokenizers\SequenceReader.cs" />
+    <Compile Include="Grammer\Tokenizers\TokenFactory.cs" />
     <Compile Include="Grammer\TypeSystem\ActionJFunctionAdapter.cs" />
     <Compile Include="Grammer\AstTreeBuilders\DoWhileScopeBuilder.cs" />
     <Compile Include="Grammer\AstTreeBuilders\ArrayIndexBuilder.cs" />
@@ -95,21 +101,20 @@
     <Compile Include="Grammer\AstTreeBuilders\BuilderBase.cs" />
     <Compile Include="Grammer\Scopes\DoWhileBlock.cs" />
     <Compile Include="Grammer\Scopes\ElseBlock.cs" />
-    <Compile Include="Grammer\AstTreeBuilders\ElseStatementBuilder.cs" />
+    <Compile Include="Grammer\AstTreeBuilders\ElseBlockBuilder.cs" />
     <Compile Include="Grammer\Exceptions\GrammerException.cs" />
     <Compile Include="Grammer\Scopes\Excutor.cs" />
     <Compile Include="Grammer\Scopes\ExcutorScope.cs" />
     <Compile Include="Grammer\AstTreeBuilders\ExpressionBuilder.cs" />
     <Compile Include="Grammer\Scopes\Expression.cs" />
-    <Compile Include="Grammer\AstTreeBuilders\ForeachBuilder.cs" />
+    <Compile Include="Grammer\AstTreeBuilders\ForeachBlockBuilder.cs" />
     <Compile Include="Grammer\Scopes\ForeachBlock.cs" />
     <Compile Include="Grammer\Scopes\ForBlock.cs" />
-    <Compile Include="Grammer\AstTreeBuilders\ForScopeBuilder.cs" />
     <Compile Include="Grammer\Scopes\FunctionBlock.cs" />
-    <Compile Include="Grammer\AstTreeBuilders\FunctionScopeBuilder.cs" />
+    <Compile Include="Grammer\AstTreeBuilders\FunctionBlockBuilder.cs" />
     <Compile Include="Grammer\Scopes\IfBlock.cs" />
     <Compile Include="Grammer\Scopes\If0Block.cs" />
-    <Compile Include="Grammer\AstTreeBuilders\IfScopeBuilder.cs" />
+    <Compile Include="Grammer\AstTreeBuilders\IfBlockBuilder.cs" />
     <Compile Include="Grammer\Exceptions\InvalidNameException.cs" />
     <Compile Include="Grammer\TypeSystem\IJobjectFactory.cs" />
     <Compile Include="Grammer\TypeSystem\IJObjectPool.cs" />
@@ -128,7 +133,6 @@
     <Compile Include="Grammer\Scopes\SpiderExtractor.cs" />
     <Compile Include="Grammer\Tokenizers\Token.cs" />
     <Compile Include="Grammer\Tokenizers\Tokenizer.cs" />
-    <Compile Include="Grammer\Tokenizers\TokenStreamReader.cs" />
     <Compile Include="Grammer\Tokenizers\TokenType.cs" />
     <Compile Include="Grammer\AstTree\OperatorNodeFactory.cs" />
     <Compile Include="Grammer\Scopes\TryCatchFinallyBlock.cs" />
@@ -137,7 +141,6 @@
     <Compile Include="Grammer\TypeSystem\JObJectExtension.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="WhileScopeBuild.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

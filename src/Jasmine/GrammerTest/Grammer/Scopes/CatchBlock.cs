@@ -5,6 +5,8 @@ namespace GrammerTest.Grammer.Scopes
 {
     public class CatchBlock : BodyBlock
     {
+
+        public string ErrorName { get; internal set; }
         public override void Break()
         {
             throw new System.NotImplementedException();
