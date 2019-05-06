@@ -5,8 +5,8 @@ namespace Jasmine.Spider.Grammer
 {
     public  class If0Block :BodyBlock
     {
-        
-        public Expression CheckExpression { get; set; }
+
+        public Expression CheckExpression { get; set; } = new Expression();
 
         public override void Break()
         {

@@ -11,9 +11,9 @@ namespace GrammerTest.Grammer
         {
             return new AndOperatorNode();
         }
-        public static OrOperatorNode CreateOr()
+        public static OrOperatOrNode CreateOr()
         {
-            return new OrOperatorNode();
+            return new OrOperatOrNode();
         }
 
         public static NotOperatorNode CreateNot()
@@ -26,9 +26,9 @@ namespace GrammerTest.Grammer
             return  new AddOperatorNode();
         }
 
-        public static ReduceOperatorNode CreateReduce()
+        public static SubtractOperatorNode CreateReduce()
         {
-            return new ReduceOperatorNode();
+            return new SubtractOperatorNode();
         }
 
         public static MutiplyOperatorNode CreateMutiply()
@@ -91,34 +91,94 @@ namespace GrammerTest.Grammer
     
         public static CompareEquelOperatorNode CreateCompareEquel()
         {
-            return  new CompareEquelOperatorNode();
+            return new CompareEquelOperatorNode();
+           
         }
 
         public static ComareNotEquelNode CreateCompareNotEquel()
         {
             return new ComareNotEquelNode();
+            
         }
 
         public static MemberOperaterNode CreateMemeber()
         {
             return new MemberOperaterNode();
+           
         }
 
         public static IncrementNode  CreateIncrement()
         {
             return new IncrementNode();
+            
         }
 
         public static DcrementNode CreateDecremnet()
         {
             return new DcrementNode();
+            
         }
 
         public static NewOperatorNode CreateNew()
         {
             return new NewOperatorNode();
+         
         }
 
+
+        public static BreakNode  CreateBreak()
+        {
+            return new BreakNode();
+            
+        }
         
+        public static ContinueNode CreateContinue()
+        {
+            return new ContinueNode();
+           
+        }
+
+        public static AssignmentOperatorNode CreateAssign()
+        {
+            return new AssignmentOperatorNode();
+           
+        }
+
+        public static CallNode CreateCall()
+        {
+            return new CallNode();
+            
+        }
+
+        public static  AddAsignmentNode CreateAddAssignment()
+        {
+            return new AddAsignmentNode();
+        }
+
+        public static SubtractAsignmentNode CreateSubtractAssignment()
+        {
+            return new SubtractAsignmentNode();
+        }
+
+        public static ModAsignmentOperatorNode CreateModAssignment()
+        {
+            return new ModAsignmentOperatorNode();
+        }
+
+        public static MutiplyAsignOperatorNode CreateMultiplyAssignment()
+        {
+            return new MutiplyAsignOperatorNode();
+        }
+
+        public static DevideAsignOperatorNode CreateDevideAsignmentOperatorNode()
+        {
+            return new DevideAsignOperatorNode();
+        }
+
+        public static  ReturnOperatorNode CreateReturn()
+        {
+            return new ReturnOperatorNode();
+        }
+
     }
 }

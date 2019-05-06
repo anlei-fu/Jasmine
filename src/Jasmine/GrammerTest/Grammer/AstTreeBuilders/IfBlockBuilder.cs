@@ -1,15 +1,16 @@
 ﻿using GrammerTest.Grammer.AstTreeBuilders;
+using GrammerTest.Grammer.Tokenizers;
 using Jasmine.Spider.Grammer;
 
 namespace GrammerTest.Grammer
 {
     public  class IfBlockBuilder:BuilderBase
     {
-       
-        public IfBlockBuilder(TokenStreamReader reader) : base(reader)
+        public IfBlockBuilder(ISequenceReader<Token> reader) : base(reader)
         {
-           
         }
+
+        public override string Name => "IfBuilder";
 
         public IfBlock Build()
         {
@@ -22,7 +23,8 @@ namespace GrammerTest.Grammer
 
             while (_reader.HasNext())
             {
-                var token = _reader.Next();
+                _reader.Next();
+                var token = _reader.Current();
 
                 if(token.Value==Keywords.ELIF)
                 {
@@ -33,13 +35,11 @@ namespace GrammerTest.Grammer
 
                     ifBlock.ElseBlock = new ElseBlockBuilder(_reader).Build();
 
-                    _reader.Previous();
-
                     return ifBlock;
                 }
                 else
                 {
-                    _reader.Previous();
+                    _reader.Back();
 
                     return ifBlock;
                 }

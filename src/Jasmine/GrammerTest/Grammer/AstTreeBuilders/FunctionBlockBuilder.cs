@@ -1,4 +1,5 @@
 ﻿using GrammerTest.Grammer.AstTreeBuilders;
+using GrammerTest.Grammer.Tokenizers;
 using Jasmine.Spider.Grammer;
 using System.Collections.Generic;
 
@@ -6,9 +7,11 @@ namespace GrammerTest.Grammer
 {
     public class FunctionBuilder : BuilderBase
     {
-        public FunctionBuilder(TokenStreamReader reader) : base(reader)
+        public FunctionBuilder(ISequenceReader<Token> reader) : base(reader)
         {
         }
+
+        public override string Name =>"FunctionBuilder";
 
         public JFunction Build()
         {
@@ -18,20 +21,17 @@ namespace GrammerTest.Grammer
             if(_reader.HasNext())
             {
                 //get name
+                _reader.Next();
 
-                var token = _reader.Next();
+                var token = _reader.Current();
 
-                if (!token.IsIdentifier())
-                    throwError("");
+                throwIf(x =>!x.IsIdentifier());
 
                 func.Name = token.Value;
 
+                throwErrorIfHasNoNextAndNext("incompleted function define;");
 
-                if (!_reader.HasNext())
-                    throwError("");
-
-                if (_reader.Next().OperatorType != OperatorType.LeftParenthesis)
-                    throwError("");
+                throwErrorIfOperatorTypeNotMatch(OperatorType.LeftParenthesis);
 
                 bool isParameterDefineFinished = false;
 
@@ -41,24 +41,26 @@ namespace GrammerTest.Grammer
 
                 while(_reader.HasNext())
                 {
-                    token = _reader.Next();
+                    _reader.Next();
+
+                    token = _reader.Current();
 
                     if(token.IsIdentifier())
                     {
-                        if (_reader.PreviouceToken().IsIdentifier())
-                            throwError("");
+                        if (_reader.Last().IsIdentifier())
+                            throwUnexceptedError();
 
                         parameters.Add(token.Value);
                     }
                     else if(token.OperatorType==OperatorType.Coma)
                     {
-                        if (!_reader.PreviouceToken().IsIdentifier())
-                            throwError("");
+                        if (!_reader.Last().IsIdentifier())
+                            throwUnexceptedError();
                     }
                     else if(token.OperatorType==OperatorType.RightParenthesis)
                     {
-                        if (_reader.PreviouceToken().OperatorType == OperatorType.LeftParenthesis
-                                                                 || _reader.PreviouceToken().IsIdentifier())
+                        if (_reader.Last().OperatorType == OperatorType.LeftParenthesis
+                                                                 || _reader.Last().IsIdentifier())
                         {
 
                             isParameterDefineFinished = true;
@@ -66,29 +68,29 @@ namespace GrammerTest.Grammer
                             break;
                         }
 
-                        throwError("");
+                        throwUnexceptedError();
 
 
                     }
                     else
                     {
-                        throwError("");
+                        throwUnexceptedError();
                     }
                 }
 
 
                 //check paramter is finished
                 if (!isParameterDefineFinished)
-                    throwError("");
+                    throwError("incompleted function define;");
 
                 //resolve function -body
-                func.Body = new BlockBuilder(_reader).Build();
+                func.Body = new OrderedBlockBuilder(_reader,"function").Build();
 
                 return func;
             }
             else
             {
-                throwError("");
+                throwError("incompleted function define;");
             }
 
 

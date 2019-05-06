@@ -1,12 +1,22 @@
-﻿using Jasmine.Spider.Grammer;
+﻿using GrammerTest.Grammer.AstTree;
+using GrammerTest.Grammer.Tokenizers;
+using Jasmine.Spider.Grammer;
 
 namespace GrammerTest.Grammer.AstTreeBuilders
 {
     public class ForBlockBuilder : BuilderBase
     {
-        public ForBlockBuilder(TokenStreamReader reader) : base(reader)
+
+        private static readonly string[] _interceptChars = new string[]
+        {
+            ")"
+        };
+
+        public ForBlockBuilder(ISequenceReader<Token> reader) : base(reader)
         {
         }
+
+        public override string Name =>"ForBuilder";
 
         public ForBlock Build()
         {
@@ -14,45 +24,43 @@ namespace GrammerTest.Grammer.AstTreeBuilders
 
             if(_reader.HasNext())
             {
-                var token = _reader.Next();
+                _reader.Next();
+                var token = _reader.Current();
 
                 if (token.OperatorType != OperatorType.LeftParenthesis)
-                    throwError("");
+                {
+                    throwUnexceptedError();
+                }
                 else
                 {
-                    throwErrorIfHasNoNextOrNext();
+                    throwErrorIfHasNoNextAndNext("incompleted for block;");
 
-                    throwErrorIfOperatorTypeNotMatch(OperatorType.Var);
+                    throwErrorIfOperatorTypeNotMatch(OperatorType.Declare);
 
                     forBlock.DeclareExpression = new DeclareExpressionBuilder(_reader).Build();
 
-                    forBlock.CheckExpression = new ExpressionBuilder(_reader).Build();
+                    forBlock.CheckExpression = new ExpressionBuilder(_reader, false).Build();
 
-                    forBlock.OperateExpression = new ExpressionBuilder(_reader).Build();
+                    if (!forBlock.CheckExpression.Root.OutputType.IsBool())
+                        throwError("second expression should be bool expression ,but it's not;");
+
+                    forBlock.OperateExpression.Root = new AstNodeBuilder(_reader, _interceptChars).Build();
 
                     if (_reader.HasNext())
                     {
-                        token = _reader.Next();
 
-                        /*
-                         *  check () finished
-                         */
-                        if (token.OperatorType != OperatorType.RightParenthesis)
-                            throwError("");
-
-                        forBlock.Block = new BlockBuilder(_reader).Build();
+                        forBlock.Block = new OrderedBlockBuilder(_reader, "for").Build();
 
                     }
                     else
                     {
-                        throwError("");
+                        throwError("incompleted for block;");
                     }
-
                 }
             }
             else
             {
-                throwError("incompletd block");
+                throwError("incompleted for block;");
             }
 
             return null;

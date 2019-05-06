@@ -3,7 +3,7 @@ using Jasmine.Spider.Grammer;
 
 namespace GrammerTest.Grammer.Scopes
 {
-    public class TopScope : BreakableBlock
+    public class TopBlock : BreakableBlock
     {
         public override void Break()
         {

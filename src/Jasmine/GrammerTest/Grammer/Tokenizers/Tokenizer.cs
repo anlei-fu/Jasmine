@@ -1,38 +1,32 @@
-﻿using System.Collections.Generic;
+﻿using GrammerTest.Grammer.Tokenizers;
+using GrammerTest.Grammer.Tokenizers.Exceptions;
+using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using System.Text;
 
 namespace Jasmine.Spider.Grammer
 {
-    public  class TokenStreamGenerator
+    public class Tokenizer : ITokenizer<Token>
     {
-        private const string AND = "&&";
-        private const string OR = "||";
-        private const string NOTEQUEL = "!=";
-        private const string EQUEL = "==";
-
-
-    
+        /*
+         * Keywords
+         */
         private const string FOR = "for";
         private const string IN = "in";
         private const string IF = "if";
         private const string ELSEIF = "elif";
         private const string ELSE = "else";
-        private const string DO = "";
-        private const string WHILE = "";
-        private const string FOREACH = "";
-        private const string CASE = "";
-        private const string SWITCH = "";
-        private const string OUT = "";
-        private const string DEFAULT = "";
-        private const string TRY = "";
-        private const string CATCH = "";
-        private const string FINALLY = "";
-        private const string THROW = "";
-
-
-
-
-
+        private const string DO = "do";
+        private const string WHILE = "while";
+        private const string FOREACH = "foreach";
+        private const string TRY = "try";
+        private const string CATCH = "catch";
+        private const string FINALLY = "finally";
+        private const string THROW = "throw";
+        private const string RETURN = "return";
+        /*
+         *  Literal Operators
+         */
         private const string FUNCTION = "function";
         private const string BREAK = "break";
         private const string NEW = "new";
@@ -42,214 +36,150 @@ namespace Jasmine.Spider.Grammer
         private const string FALSE = "false";
         private const string NULL = "null";
 
-        private StringBuilder _numberBuilder = new StringBuilder();
-        private StringBuilder _stringBuilder=new StringBuilder();
-        private StringBuilder _identifierBuilder=new StringBuilder();
-        private string _input;
-        private int _currentIndex=-1;
-        private char _currentChar=>_input[_currentIndex];
-        private bool hasNext()
-        {
-            return _currentIndex+1<_input.Length;
-        }
-        private char previous()
-        {
-            return _input[--_currentIndex];
-        }
+        private readonly ITokenFactory<Token> _tokenFactory = TokenFactory.Instance;
+        private readonly CharSequenceReader _reader = new CharSequenceReader();
 
-        private int _line = 1;
-        private int _lineNumber;
-        private char next()
-        {
-            if (_input[++_currentIndex] == '\n')
-            {
-                _line++;
-                _lineNumber = 1;
-            }
-            else
-            {
-                _lineNumber++;
-            }
-            return _currentChar;
-        }
+        private readonly StringBuilder _numberBuilder = new StringBuilder();
+        private readonly StringBuilder _stringBuilder = new StringBuilder();
+        private readonly StringBuilder _identifierBuilder = new StringBuilder();
 
-        private List<Token> _tokens=new List<Token>();
-        private void parseOperator(char end, OperatorType type)
+        private readonly Dictionary<string, OperatorType> _literalOperatorsMap = new Dictionary<string, OperatorType>()
         {
-            if (hasNext())
-            {
-                if (next() == '&')
-                {
-                    _tokens.Add(new Token(type));
-                }
-                else
-                {
-                    throw new AstGrammerException($"not supported operator (${_currentChar})");
-                }
-            }
-            else
-            {
-                throw new AstGrammerException($"not completed expression!");
-            }
-        }
+            {NEW,OperatorType.NewInstance },
+            {VAR,OperatorType.Declare },
+            {BREAK,OperatorType.Break},
+            {CONTINUE,OperatorType.Continue},
+            {FUNCTION,OperatorType.Function },
+            {RETURN,OperatorType.Return }
+        };
 
-        private void pushOperator(OperatorType type)
+        private readonly HashSet<char> _operatorCharsSet = new HashSet<char>()
         {
-            _tokens.Add(new Token(type));
-        }
-        private void throwExpressionInCompletedException()
+            '=','!','&','|','.','(',')','*','/','<','>',';','"','\'',',','%','+','-','[',']','?',':'
+        };
+
+        private readonly HashSet<char> _whiteSpiceSet = new HashSet<char>()
+        {
+            ' ','\n','\r','\t'
+
+        };
+
+        private readonly HashSet<string> _keyWordSet = new HashSet<string>()
+        {
+            FOR,
+            IN,
+            IF,
+            ELSE,
+            ELSEIF,
+            WHILE,
+            DO,
+            FOREACH,
+            TRY,
+            CATCH,
+            FINALLY,
+            THROW,
+        };
+
+
+        private readonly List<Token> _output = new List<Token>();
+
+
+        public List<Token> Tokenize(string input)
         {
 
-        }
-        private void parseMayBeDouble(char c,OperatorType d,OperatorType s)
-        {
-            if(hasNext())
+            _output.Clear();
+            _reader.Reset(input);
+
+            while (_reader.HasNext())
             {
-                if(next()==c)
-                {
-                    pushOperator(d);
-                }
-                else
-                {
-                    previous();
-                    pushOperator(s);
-                }
+                _reader.Next();
 
-            }
-            else
-            {
-                pushOperator(s);
-            }
-        }
-
-        private void parseAssignment(OperatorType single,OperatorType bi)
-        {
-            if(hasNext())
-            {
-                if(next()=='=')
-                {
-                    pushOperator(bi);
-                }
-                else
-                {
-                    previous();
-                    pushOperator(single);
-                }
-            }
-            else
-            {
-                pushOperator(single);
-            }
-        }
-
-        private void parseIncrement(char c,OperatorType single,OperatorType increment ,OperatorType assign)
-        {
-            if(hasNext())
-            {
-                var d = next();
-
-                if (d == c)
-                {
-                    pushOperator(increment);
-                }
-                else if (d == '=')
-                    pushOperator(assign);
-                else
-                {
-                    previous();
-
-                    pushOperator(single);
-                }
-
-            }
-            else
-            {
-                pushOperator(single);
-            }
-        }
-
-        public IList<Token> GetTokenStream(string input)
-        {
-            _input = input;
-            _tokens.Clear();
-            while (hasNext())
-            {
-                next();
-
-                switch (_currentChar)
+                switch (_reader.Current())
                 {
                     case '+':
 
-                        parseIncrement('+', OperatorType.Add, OperatorType.Increment, OperatorType.AddAsignment);
+                        parseIncrementOperator('+', OperatorType.Add, OperatorType.Increment, OperatorType.AddAsignment);
 
                         break;
 
                     case '-':
 
-                        parseIncrement('+', OperatorType.Reduce, OperatorType.Decrement, OperatorType.ReduceAsignment);
+                        parseIncrementOperator('-', OperatorType.Subtract, OperatorType.Decrement, OperatorType.SubtractAsignment);
 
                         break;
 
                     case '%':
 
-                        parseAssignment(OperatorType.Mod, OperatorType.ModAsignment);
+                        parseAssignmentOrSingleOperator(OperatorType.Mod, OperatorType.ModAsignment);
 
                         break;
 
                     case '/':
 
-                        if(hasNext())
+                        if (_reader.HasNext())
                         {
-                            next();
+                            _reader.Next();
 
-                            if (_currentChar == '/')
+                            if (_reader.Current() == '/')// single line annotation
+                            {
                                 skipSingleAnnotation();
-                            else if (_currentChar == '*')
-                                skipMutipleAnnotation();
-                            else if (_currentChar == '=')
+                            }
+                            else if (_reader.Current() == '*')// mutiple line annotation
+                            {
+                                skipMutipleLineAnnotation();
+                            }
+                            else if (_reader.Current() == '=')
+                            {
                                 pushOperator(OperatorType.DevideAsignment);
+                            }
                             else
                             {
-                                previous();
-                                pushOperator(OperatorType.Reduce);
+                                _reader.Back();
+                                pushOperator(OperatorType.Subtract);
                             }
                         }
                         else
                         {
-                            pushOperator(OperatorType.Reduce);
+                            pushOperator(OperatorType.Subtract);
                         }
 
+
+                        break;
+
+                    case '?':
+
+                        pushOperator(OperatorType.Ternary);
 
                         break;
 
                     case ':':
 
-                        pushOperator(OperatorType.Semicolon);
+                        pushOperator(OperatorType.Binary);
 
                         break;
 
                     case '*':
 
-                        parseAssignment(OperatorType.Mutiply,OperatorType.MutiplyAsignment);
+                        parseAssignmentOrSingleOperator(OperatorType.Mutiply, OperatorType.MutiplyAsignment);
 
                         break;
 
 
                     case '&':
 
-                        parseOperator('&', OperatorType.And);
+                        parseAndOrOperator('&', OperatorType.And);
 
                         break;
 
                     case '|':
 
-                        parseOperator('|', OperatorType.Or);
+                        parseAndOrOperator('|', OperatorType.Or);
 
                         break;
 
                     case '!':
 
-                        parseMayBeDouble('=', OperatorType.NotEquel, OperatorType.Not);
+                        parseSingleOrBiOperatorEndWithEquel('=', OperatorType.NotEquel, OperatorType.Not);
 
                         break;
 
@@ -267,7 +197,7 @@ namespace Jasmine.Spider.Grammer
 
                     case '=':
 
-                        parseMayBeDouble('=', OperatorType.Equel, OperatorType.Assignment);
+                        parseSingleOrBiOperatorEndWithEquel('=', OperatorType.Equel, OperatorType.Assignment);
 
                         break;
 
@@ -279,13 +209,13 @@ namespace Jasmine.Spider.Grammer
 
                     case '<':
 
-                        parseMayBeDouble('=', OperatorType.LessEquel, OperatorType.Less);
+                        parseSingleOrBiOperatorEndWithEquel('=', OperatorType.LessEquel, OperatorType.Less);
 
                         break;
 
                     case '>':
 
-                        parseMayBeDouble('=', OperatorType.BiggerEquel, OperatorType.Bigger);
+                        parseSingleOrBiOperatorEndWithEquel('=', OperatorType.BiggerEquel, OperatorType.Bigger);
 
                         break;
 
@@ -303,7 +233,7 @@ namespace Jasmine.Spider.Grammer
 
                     case '.':
 
-                        pushOperator(OperatorType.Member);
+                        pushOperator(OperatorType.MemberAccess);
 
                         break;
 
@@ -341,20 +271,24 @@ namespace Jasmine.Spider.Grammer
 
                     default:
 
-                        parseIdentifierOrKeyword();
+                        parseIdentifier();
 
                         break;
                 }
             }
 
-            return _tokens;
+
+            return _output;
         }
+
 
         private void skipWhiteSpice()
         {
-            while (hasNext())
+            while (_reader.HasNext())
             {
-                switch (next())
+                _reader.Next();
+
+                switch (_reader.Current())
                 {
                     case '\r':
                     case '\n':
@@ -362,174 +296,251 @@ namespace Jasmine.Spider.Grammer
                     case ' ':
                         break;
                     default:
-                        previous();
+
+                        _reader.Back();
+
                         return;
                 }
             }
         }
-
-        private void pushIdentifier(string identifier)
-        {
-            _tokens.Add(new Token(identifier, TokenType.Identifier));
-        }
-        private void pushKeyWord(string keywords)
-        {
-            _tokens.Add(new Token(keywords, TokenType.Keyword));
-        }
-        private void pushNull()
-        {
-
-        }
-        private void pushBool(string value)
-        {
-
-        }
-
-        private HashSet<string> _keyWords = new HashSet<string>()
-        {
-            FOR,
-            IN,
-            IF,
-            ELSE,
-            ELSEIF,
-        };
-        private Dictionary<string, OperatorType> _operators = new Dictionary<string, OperatorType>()
-        {
-            {NEW,OperatorType.New },
-            {VAR,OperatorType.Var },
-            {BREAK,OperatorType.Break},
-            {CONTINUE,OperatorType.Continue},
-            {FUNCTION,OperatorType.Function }
-        };
-
-        private HashSet<char> _operatorChars = new HashSet<char>()
-        {
-            '=','!','&','|','.','(',')','*','/','<','>',';','"','\'',',','%','+','-','%'
-
-        };
-        private HashSet<char> _whiteSpice = new HashSet<char>()
-        {
-            ' ','\n','\r','\t'
-
-        };
-
-        private void pushNumberToken(string value)
-        {
-            _tokens.Add(new Token(value, TokenType.Number));
-        }
-
-
         private void skipSingleAnnotation()
         {
-            while(hasNext())
+            while (_reader.HasNext())
             {
-                if (next() == '\n')
+                _reader.Next();
+
+                if (_reader.Current() == '\n')
                     return;
             }
         }
-        private void skipMutipleAnnotation()
+        private void skipMutipleLineAnnotation()
         {
-            while(hasNext())
+            while (_reader.HasNext())
             {
-                if (next() == '/' && _input[_currentIndex - 1] == '*')
+                _reader.Next();
+
+                if (_reader.Current() == '/' && _reader.Last() == '*')
                     return;
             }
         }
-
-
-
-        private void parseIdentifierOrKeyword()
+        private void parseString()
         {
-
-            if (_currentChar>='0'&&_currentChar<='9')
+            while (_reader.HasNext())
             {
-                bool isDotFound = false;
-                _numberBuilder.Append(_currentChar);
+                _reader.Next();
 
 
-
-                while (hasNext())
+                if (_reader.Current() == '"' && _reader.Last() != '\\')
                 {
-                    next();
+                    pushString(_stringBuilder.ToString());
+                    _stringBuilder.Clear();
 
-                    if(_currentChar=='.')
-                    {
-                        if (!isDotFound)
-                        {
-                            _numberBuilder.Append(_currentChar);
-                            isDotFound = true;
-                            
-                        }
-                        else
-                        {
-                            previous();
-                            pushNumberToken(_numberBuilder.ToString());
+                    return;
+                }
+                else
+                {
+                    _stringBuilder.Append(_reader.Current());
+                }
+            }
+        }
 
-                            _numberBuilder.Clear();
-                            return;
-                        }
-                    }
-                    else if(_currentChar >= '0' && _currentChar <= '9')
+        private void parseNumber()
+        {
+            bool isDotFound = false;
+
+            _numberBuilder.Append(_reader.Current());
+
+            while (_reader.HasNext())
+            {
+                _reader.Next();
+
+                if (_reader.Current() == '.')
+                {
+                    if (!isDotFound)
                     {
-                        _numberBuilder.Append(_currentChar);
+                        _numberBuilder.Append(_reader.Current());
+
+                        isDotFound = true;
+
                     }
                     else
                     {
+                        _reader.Back();
+
                         pushNumberToken(_numberBuilder.ToString());
+
                         _numberBuilder.Clear();
-                        previous();
 
                         return;
                     }
+                }
+                else if (_reader.Current() >= '0' && _reader.Current() <= '9')
+                {
+                    _numberBuilder.Append(_reader.Current());
+                }
+                else
+                {
+                    pushNumberToken(_numberBuilder.ToString());
+                    _numberBuilder.Clear();
+                    _reader.Back();
 
+                    return;
+                }
+
+            }
+        }
+
+        private void parseAndOrOperator(char end, OperatorType type)
+        {
+            if (_reader.HasNext())
+            {
+                if (_reader.Current() == end)
+                {
+                    _output.Add(_tokenFactory.Create(type, _reader.Line, _reader.LineNumber));
+                }
+                else
+                {
+                    throw new NotSurpportedOperatorException(_reader.Line, _reader.LineNumber, $" not supported operator (${_reader.Current()})");
+                }
+            }
+            else
+            {
+                throw new IncompletedOperatorException(_reader.Line, _reader.LineNumber, $" not completed Operator!");
+            }
+        }
+
+        private void parseSingleOrBiOperatorEndWithEquel(char c, OperatorType d, OperatorType s)
+        {
+            if (_reader.HasNext())
+            {
+                _reader.Next();
+
+                if (_reader.Current() == c)
+                {
+                    pushOperator(d);
+                }
+                else
+                {
+                    _reader.Back();
+                    pushOperator(s);
                 }
 
             }
             else
             {
-                _identifierBuilder.Append(_currentChar);
+                pushOperator(s);
+            }
+        }
 
-                while (hasNext())
+        private void parseAssignmentOrSingleOperator(OperatorType single, OperatorType bi)
+        {
+            if (_reader.HasNext())
+            {
+                _reader.Next();
+
+                if (_reader.Current() == '=')
                 {
-                    next();
+                    pushOperator(bi);
+                }
+                else
+                {
+                    _reader.Back();
+                    pushOperator(single);
+                }
+            }
+            else
+            {
+                pushOperator(single);
+            }
+        }
 
-                    if ((_currentChar >= 'a' && _currentChar <= 'z') || (_currentChar >= 'A' && _currentChar <= 'Z') || _currentChar == '_' || (_currentChar > '0' && _currentChar < '9'))
-                        _identifierBuilder.Append(_currentChar);
+        private void parseIncrementOperator(char c, OperatorType single, OperatorType increment, OperatorType assign)
+        {
+            if (_reader.HasNext())
+            {
+                _reader.Next();
+
+                if (_reader.Current() == c)
+                {
+                    pushOperator(increment);
+                }
+                else if (_reader.Current() == '=')
+                    pushOperator(assign);
+                else
+                {
+                    _reader.Back();
+
+                    pushOperator(single);
+                }
+
+            }
+            else
+            {
+                pushOperator(single);
+            }
+        }
+
+        private void parseIdentifier()
+        {
+
+            if (_reader.Current() >= '0' && _reader.Current() <= '9')
+            {
+                parseNumber();
+            }
+            else
+            {
+                _identifierBuilder.Append(_reader.Current());
+
+                while (_reader.HasNext())
+                {
+                    _reader.Next();
+
+                    /*
+                     *  identifier  required char set [a-zA-z0-9_]
+                     */
+                    if (checkIsValidIdentifierChar())
+                    {
+                        _identifierBuilder.Append(_reader.Current());
+                    }
                     else
                     {
-                        if (!_operatorChars.Contains(_currentChar) && !_whiteSpice.Contains(_currentChar))
+                        if (!_operatorCharsSet.Contains(_reader.Current()) && !_whiteSpiceSet.Contains(_reader.Current()))
                         {
-                            throw new System.Exception();
+                            throw new InvalidIdentifierCharException(_reader.Line, _reader.LineNumber, $"{_reader.Current()} can not use to build a identifier name");
                         }
 
                         var identifier = _identifierBuilder.ToString();
 
-                        if(identifier==NULL)
+                        /*
+                         * to check is really a identifier or literal value
+                         * 
+                         */
+                        if (identifier == NULL)
                         {
                             pushNull();
                         }
-                        else if(identifier==TRUE)
+                        else if (identifier == TRUE)
                         {
                             pushBool(TRUE);
                         }
-                        else if(identifier==FALSE)
+                        else if (identifier == FALSE)
                         {
                             pushBool(FALSE);
                         }
-                        else if (_keyWords.Contains(identifier))//keyword
+                        else if (_keyWordSet.Contains(identifier))//keyword
                         {
                             pushKeyWord(identifier);
                         }
-                        else if (_operators.ContainsKey(identifier))//operator 
+                        else if (_literalOperatorsMap.ContainsKey(identifier))//operator 
                         {
-                            pushOperator(_operators[identifier]);
+                            pushOperator(_literalOperatorsMap[identifier]);
                         }
                         else
                         {
                             pushIdentifier(_identifierBuilder.ToString());
                         }
 
-                        previous();
+                        _reader.Back();
 
                         _identifierBuilder.Clear();
 
@@ -540,30 +551,51 @@ namespace Jasmine.Spider.Grammer
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private bool checkIsValidIdentifierChar()
+        {
+            return (_reader.Current() >= 'a' && _reader.Current() <= 'z') ||
+                   (_reader.Current() >= 'A' && _reader.Current() <= 'Z') ||
+                   _reader.Current() == '_' ||
+                   (_reader.Current() > '0' && _reader.Current() < '9');
+        }
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private void pushIdentifier(string identifier)
+        {
+            _output.Add(_tokenFactory.Create(identifier, TokenType.Identifier, _reader.Line, _reader.LineNumber));
+
+        }
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private void pushKeyWord(string keyword)
+        {
+            _output.Add(_tokenFactory.Create(keyword, TokenType.Keyword, _reader.Line, _reader.LineNumber));
+        }
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private void pushNull()
+        {
+            _output.Add(_tokenFactory.Create("null", TokenType.Null, _reader.Line, _reader.LineNumber));
+        }
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private void pushBool(string value)
+        {
+            _output.Add(_tokenFactory.Create(value, TokenType.Bool, _reader.Line, _reader.LineNumber));
+        }
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private void pushNumberToken(string value)
+        {
+            _output.Add(_tokenFactory.Create(value, TokenType.Number, _reader.Line, _reader.LineNumber));
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void pushString(string str)
         {
-            _tokens.Add(new Token(str, TokenType.String));
+            _output.Add(_tokenFactory.Create(str, TokenType.String, _reader.Line, _reader.LineNumber));
         }
-
-       
-        private void parseString()
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private void pushOperator(OperatorType type)
         {
-            while(hasNext())
-            {
-                if(next()=='"'&&_input[_currentIndex-1]!='\\')
-                {
-                    pushString(_stringBuilder.ToString());
-                    _stringBuilder.Clear();
-                    return;
-                }
-                else
-                {
-                    _stringBuilder.Append(_currentChar);
-                }
-            }
-
-         
-
+            _output.Add(_tokenFactory.Create(type, _reader.Line, _reader.LineNumber));
         }
+
     }
 }

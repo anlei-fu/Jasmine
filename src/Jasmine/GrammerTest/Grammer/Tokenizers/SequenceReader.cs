@@ -8,46 +8,40 @@ namespace GrammerTest.Grammer.Tokenizers
         public SequenceReader(IEnumerable<T> sequence) : base(sequence)
         {
         }
-
-       
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override T Current()
         {
-            return _sequence[Readed];
+            return Sequence[Readed];
         }
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public override T Forward(int step = 1)
+        public override T Forwards(int step = 1)
         {
-            return _sequence[Readed + step];
+            return Sequence[Readed + step];
         }
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override bool HasNext(int step = 1)
         {
-            return step + Readed < _sequence.Length;
+            return step + Readed < Sequence.Length;
         }
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public override bool HasPreviouce(int step = 1)
+        public override bool HasPrevious(int step = 1)
         {
-            return step + Readed > -1;
+            return step + Readed > 1;
         }
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override T Last(int step = 1)
         {
-            return _sequence[Readed - step];
+            return Sequence[Readed - step];
         }
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public override T Next(int step = 1)
+        public override void Next(int step = 1)
         {
-            Readed = Readed + step;
-
-            return Current();
+            Readed +=  step;
         }
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public override T Previouce(int step = 1)
+        public override void Back(int step = 1)
         {
-            Readed = Readed - step;
-
-            return Current();
+            Readed -= step;
         }
     }
 }

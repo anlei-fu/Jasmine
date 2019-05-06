@@ -1,5 +1,6 @@
 ﻿using GrammerTest.Grammer;
 using GrammerTest.Grammer.AstTreeBuilders;
+using GrammerTest.Grammer.Tokenizers;
 using Jasmine.Spider.Grammer;
 
 namespace GrammerTest
@@ -10,32 +11,28 @@ namespace GrammerTest
         {
             ")"
         };
-        public DoWhileScopeBuilder(TokenStreamReader reader) : base(reader)
+
+        public DoWhileScopeBuilder(ISequenceReader<Token> reader) : base(reader)
         {
         }
+
+        public override string Name => "DoWhileBuilder";
 
         public DoWhileBlock Build()
         {
             var doWhileBlock = new DoWhileBlock();
 
-            throwErrorIfHasNoNextOrNext();
+            if (!_reader.HasNext())
+                throwError($"incompleted do-while block;");
 
-            if(_reader.CurrentToken.OperatorType!=OperatorType.LeftBrace)
-            {
-                _reader.Previous();
+            doWhileBlock.Body = new OrderedBlockBuilder(_reader,"do-while").Build();
+           
 
-                doWhileBlock.Body.Children.Add(new ExpressionBuilder(_reader).Build());
-            }
-            else
-            {
-                doWhileBlock.Body = new BlockBuilder(_reader).Build();
-            }
-
-            throwErrorIfHasNoNextOrNext();
+            throwErrorIfHasNoNextAndNext($"incompleted do-while block;");
 
             throwIf(x => x.Value != Keywords.WHILE);
 
-            throwErrorIfHasNoNextOrNext();
+            throwErrorIfHasNoNextAndNext($"incompleted do-while block;");
 
             throwErrorIfOperatorTypeNotMatch(OperatorType.LeftParenthesis);
 

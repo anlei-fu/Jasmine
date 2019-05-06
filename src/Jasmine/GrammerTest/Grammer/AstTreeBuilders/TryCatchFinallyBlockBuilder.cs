@@ -1,22 +1,86 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using GrammerTest.Grammer.Tokenizers;
+using Jasmine.Spider.Grammer;
 
 namespace GrammerTest.Grammer.AstTreeBuilders
 {
     public class TryCatchFinallyBlockBuilder : BuilderBase
     {
-        public TryCatchFinallyBlockBuilder(TokenStreamReader reader) : base(reader)
+        public TryCatchFinallyBlockBuilder(ISequenceReader<Token> reader) : base(reader)
         {
         }
 
+        public override string Name => "TryCatchFinallyBuilder";
+
         public TryCatchFinallyBlock Build()
         {
-            return null;
+            var tryCatchFinallyBlock = new TryCatchFinallyBlock();
 
-            
+
+            tryCatchFinallyBlock.TryBlock = new TryBlockBuilder(_reader).Build();
+
+            /*
+             * build catch block or finally block
+             * 
+             */ 
+            if (!_reader.HasNext())
+                return tryCatchFinallyBlock;
+
+            _reader.Next();
+
+            if (_reader.Current().Value == Keywords.FINALLY)
+            {
+                tryCatchFinallyBlock.FinallyBlock = new FinalyBlockBuilder(_reader).Build();
+
+                return tryCatchFinallyBlock;
+            }
+            else if (_reader.Current().Value == Keywords.CATCH)
+            {
+                tryCatchFinallyBlock.CatchBlock = new CatchBuilder(_reader).Build();
+            }
+            else
+            {
+                _reader.Back();
+
+                return tryCatchFinallyBlock;
+            }
+
+            /*
+             * build finally block
+             * 
+             */ 
+
+            if (!_reader.HasNext())
+                return tryCatchFinallyBlock;
+
+            _reader.Next();
+
+            if (_reader.Current().Value == Keywords.FINALLY)
+            {
+                /*
+                 * finally block has been set;
+                 */ 
+                if (tryCatchFinallyBlock.FinallyBlock != null)
+                    throwError("incorrect try-catch-finally block!");
+
+                tryCatchFinallyBlock.FinallyBlock = new FinalyBlockBuilder(_reader).Build();
+            }
+            else if (_reader.Current().Value == Keywords.CATCH)
+            {
+                /*
+                 * can not exist mutiple catch block  or finally block before catch block
+                 */ 
+                throwError("incorrect try-catch-finally block!");
+            }
+            else
+            {
+                _reader.Back();
+
+                return tryCatchFinallyBlock;
+            }
+
+
+            return tryCatchFinallyBlock;
+
         }
     }
 }

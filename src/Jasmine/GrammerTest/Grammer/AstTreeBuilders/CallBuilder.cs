@@ -1,4 +1,5 @@
-﻿using Jasmine.Spider.Grammer;
+﻿using GrammerTest.Grammer.Tokenizers;
+using Jasmine.Spider.Grammer;
 using System.Collections.Generic;
 
 namespace GrammerTest.Grammer.AstTreeBuilders
@@ -9,13 +10,16 @@ namespace GrammerTest.Grammer.AstTreeBuilders
         {
             ",",")"
         };
-        public CallBuilder(TokenStreamReader reader) : base(reader)
+
+        public CallBuilder(ISequenceReader<Token> reader) : base(reader)
         {
         }
 
+        public override string Name => "CallBuilder";
+
         public CallNode Build()
         {
-            var callNode = new CallNode();
+            var callNode =  OperatorNodeFactory.CreateCall();
 
             IList<OperatorNode> parameters = new List<OperatorNode>();
 
@@ -25,10 +29,10 @@ namespace GrammerTest.Grammer.AstTreeBuilders
             {
                 var node = new AstNodeBuilder(_reader, _interceptChars).Build();
 
-                if (node == null)
-                    throwError("");
+                if (node != null)
+                    parameters.Add(node);
 
-                if (_reader.CurrentToken.OperatorType == OperatorType.RightParenthesis)
+                if (_reader.Current().OperatorType == OperatorType.RightParenthesis)
                 {
                     isParameterCompleted=true;
 
@@ -38,7 +42,6 @@ namespace GrammerTest.Grammer.AstTreeBuilders
 
             if (!isParameterCompleted)
                 throwError("");
-
 
             callNode.Operands.AddRange(parameters);
 

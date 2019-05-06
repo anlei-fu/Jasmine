@@ -1,5 +1,5 @@
 ﻿using GrammerTest.Grammer.AstTree;
-using GrammerTest.Grammer.Scopes;
+using GrammerTest.Grammer.Tokenizers;
 using Jasmine.Spider.Grammer;
 
 namespace GrammerTest.Grammer.AstTreeBuilders
@@ -10,15 +10,18 @@ namespace GrammerTest.Grammer.AstTreeBuilders
         {
             ")"
         };
-        public WhileBlockBuilder(TokenStreamReader reader) : base(reader)
+
+        public WhileBlockBuilder(ISequenceReader<Token> reader) : base(reader)
         {
         }
+
+        public override string Name => "WhileBuilder";
 
         public WhileBlock Build()
         {
             var whileBlock = new WhileBlock();
 
-            throwErrorIfHasNoNextOrNext();
+            throwErrorIfHasNoNextAndNext("incompleted while block;");
 
             throwErrorIfOperatorTypeNotMatch(OperatorType.LeftParenthesis);
 
@@ -26,22 +29,13 @@ namespace GrammerTest.Grammer.AstTreeBuilders
             whileBlock.CheckExpression.Root = new AstNodeBuilder(_reader,_intercepChars).Build();
 
             if (!whileBlock.CheckExpression.Root.OutputType.IsBool())
-                throwError("");
+                throwError("inter check-expression requires a bool result,but it's not;");
 
-            throwErrorIfHasNoNextOrNext();
+            if (!_reader.HasNext())
+                throwError("incompleted while block;");
 
-            if(_reader.CurrentToken.OperatorType==OperatorType.LeftBrace)
-            {
-                whileBlock.Body = new BlockBuilder(_reader).Build();
-            }
-            else
-            {
-                _reader.Previous();
-
-                whileBlock.Body = new OrderdedBlock();
-
-                whileBlock.Body.Children.Add(new ExpressionBuilder(_reader).Build());
-            }
+            whileBlock.Body = new OrderedBlockBuilder(_reader,"while").Build();
+          
 
 
             return whileBlock;
