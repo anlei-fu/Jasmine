@@ -18,7 +18,7 @@ namespace GrammerTest.Grammer.AstTreeBuilders
         {
             var whileBlock = new WhileBlock();
 
-            throwErrorIfHasNoNextAndNext();
+            throwErrorIfHasNoNextOrNext();
 
             throwErrorIfOperatorTypeNotMatch(OperatorType.LeftParenthesis);
 
@@ -28,7 +28,7 @@ namespace GrammerTest.Grammer.AstTreeBuilders
             if (!whileBlock.CheckExpression.Root.OutputType.IsBool())
                 throwError("");
 
-            throwErrorIfHasNoNextAndNext();
+            throwErrorIfHasNoNextOrNext();
 
             if(_reader.CurrentToken.OperatorType==OperatorType.LeftBrace)
             {

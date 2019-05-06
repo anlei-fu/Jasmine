@@ -18,7 +18,7 @@ namespace GrammerTest
         {
             var doWhileBlock = new DoWhileBlock();
 
-            throwErrorIfHasNoNextAndNext();
+            throwErrorIfHasNoNextOrNext();
 
             if(_reader.CurrentToken.OperatorType!=OperatorType.LeftBrace)
             {
@@ -31,11 +31,11 @@ namespace GrammerTest
                 doWhileBlock.Body = new BlockBuilder(_reader).Build();
             }
 
-            throwErrorIfHasNoNextAndNext();
+            throwErrorIfHasNoNextOrNext();
 
             throwIf(x => x.Value != Keywords.WHILE);
 
-            throwErrorIfHasNoNextAndNext();
+            throwErrorIfHasNoNextOrNext();
 
             throwErrorIfOperatorTypeNotMatch(OperatorType.LeftParenthesis);
 

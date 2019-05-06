@@ -20,7 +20,7 @@ namespace GrammerTest.Grammer.AstTreeBuilders
                     throwError("");
                 else
                 {
-                    throwErrorIfHasNoNextAndNext();
+                    throwErrorIfHasNoNextOrNext();
 
                     throwErrorIfOperatorTypeNotMatch(OperatorType.Var);
 

@@ -25,21 +25,21 @@ namespace GrammerTest.Grammer
              * 
              */
              
-            throwErrorIfHasNoNextAndNext();
+            throwErrorIfHasNoNextOrNext();
 
             throwErrorIfOperatorTypeNotMatch(OperatorType.LeftParenthesis);//(
 
-            throwErrorIfHasNoNextAndNext();
+            throwErrorIfHasNoNextOrNext();
 
             throwErrorIfOperatorTypeNotMatch(OperatorType.Var);//(var
 
-            throwErrorIfHasNoNextAndNext();
+            throwErrorIfHasNoNextOrNext();
 
             throwIf(x => x.IsIdentifier(), " sytanx error");//(var item
 
             var name = _reader.CurrentToken.Value;
 
-            throwErrorIfHasNoNextAndNext();
+            throwErrorIfHasNoNextOrNext();
 
             throwIf(x => x.Value != Keywords.IN);//(var item in
 
@@ -56,7 +56,7 @@ namespace GrammerTest.Grammer
                 Root = new AstNodeBuilder(_reader, _interceptChars).Build()
             };
 
-            throwErrorIfHasNoNextAndNext();
+            throwErrorIfHasNoNextOrNext();
 
             var token = _reader.Next();
 

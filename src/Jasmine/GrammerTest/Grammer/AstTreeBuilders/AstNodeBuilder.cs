@@ -9,11 +9,11 @@ namespace GrammerTest.Grammer
     public  class AstNodeBuilder:BuilderBase
     {
         public AstNodeBuilder(TokenStreamReader reader,
-                              string[] intercepChars,
+                              string[] interceptChars,
                               bool hasparent=false) : base(reader)
 
         {
-            _interceptChars = intercepChars;
+            _interceptChars = interceptChars;
             _hasParent = hasparent;
         }
 

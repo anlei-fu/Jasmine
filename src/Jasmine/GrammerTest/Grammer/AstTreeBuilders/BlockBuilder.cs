@@ -13,7 +13,7 @@ namespace GrammerTest.Grammer.AstTreeBuilders
         {
            OrderdedBlock orderingBlock = new OrderdedBlock();
 
-            throwErrorIfHasNoNextAndNext();
+            throwErrorIfHasNoNextOrNext();
 
             /*
              * to check ,the block is single expression or mutiple expression 

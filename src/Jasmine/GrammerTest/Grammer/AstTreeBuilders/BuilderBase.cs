@@ -20,7 +20,7 @@ namespace GrammerTest.Grammer
             Debug.Assert(false);
         }
 
-        protected void throwErrorIfHasNoNextAndNext(string msg="")
+        protected void throwErrorIfHasNoNextOrNext(string msg="")
         {
             if (!_reader.HasNext())
                 Debug.Assert(false);
