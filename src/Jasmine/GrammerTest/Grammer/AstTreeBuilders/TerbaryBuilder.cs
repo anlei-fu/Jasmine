@@ -1,4 +1,5 @@
 ﻿using GrammerTest.Grammer.AstTree;
+using GrammerTest.Grammer.Scopes;
 using GrammerTest.Grammer.Tokenizers;
 using Jasmine.Spider.Grammer;
 
@@ -10,7 +11,7 @@ namespace GrammerTest.Grammer.AstTreeBuilders
         {
             "?",":",";"
         };
-        public TerbaryBuilder(ISequenceReader<Token> reader) : base(reader)
+        public TerbaryBuilder(ISequenceReader<Token> reader,Block block ):base(reader,block)
         {
         }
 
@@ -24,7 +25,7 @@ namespace GrammerTest.Grammer.AstTreeBuilders
 
             while (_reader.HasNext())
             {
-                var node = new AstNodeBuilder(_reader, _interceptChars).Build();
+                var node = new AstNodeBuilder(_reader,_block,_interceptChars).Build();
 
                 if (node == null)
                     throwError("ternary empty expression is not allowed!");
@@ -59,7 +60,7 @@ namespace GrammerTest.Grammer.AstTreeBuilders
                     if (!node.OutputType.IsBool())
                         throwError("before '?' require a expression which output is bool! ");
 
-                    var ternaryNode2 = new TerbaryBuilder(_reader).Build();
+                    var ternaryNode2 = new TerbaryBuilder(_reader,_block).Build();
                     ternaryNode2.Operands.Insert(0, node);
 
                     ternaryNode.Operands.Add(ternaryNode2);

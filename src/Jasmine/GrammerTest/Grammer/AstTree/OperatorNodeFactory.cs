@@ -1,4 +1,5 @@
-﻿using Jasmine.Spider.Grammer;
+﻿using GrammerTest.Grammer.Scopes;
+using Jasmine.Spider.Grammer;
 
 namespace GrammerTest.Grammer
 {
@@ -41,9 +42,9 @@ namespace GrammerTest.Grammer
             return new DevideOperatorNode();
         }
 
-        public static AssignmentOperatorNode CreateAssigment()
+        public static AssignmentOperatorNode CreateAssigment(Block block)
         {
-            return new AssignmentOperatorNode();
+            return new AssignmentOperatorNode(block);
         }
 
         public static ModOperatorNode CreateMod()
@@ -113,9 +114,9 @@ namespace GrammerTest.Grammer
             
         }
 
-        public static DcrementNode CreateDecremnet()
+        public static DecrementNode CreateDecremnet()
         {
-            return new DcrementNode();
+            return new DecrementNode();
             
         }
 
@@ -138,9 +139,9 @@ namespace GrammerTest.Grammer
            
         }
 
-        public static AssignmentOperatorNode CreateAssign()
+        public static AssignmentOperatorNode CreateAssign(Block block)
         {
-            return new AssignmentOperatorNode();
+            return new AssignmentOperatorNode(block);
            
         }
 
@@ -150,29 +151,29 @@ namespace GrammerTest.Grammer
             
         }
 
-        public static  AddAsignmentNode CreateAddAssignment()
+        public static  AddAsignmentNode CreateAddAssignment(Block block)
         {
-            return new AddAsignmentNode();
+            return new AddAsignmentNode(block);
         }
 
-        public static SubtractAsignmentNode CreateSubtractAssignment()
+        public static SubtractAsignmentNode CreateSubtractAssignment(Block block)
         {
-            return new SubtractAsignmentNode();
+            return new SubtractAsignmentNode(block);
         }
 
-        public static ModAsignmentOperatorNode CreateModAssignment()
+        public static ModAsignmentOperatorNode CreateModAssignment(Block block)
         {
-            return new ModAsignmentOperatorNode();
+            return new ModAsignmentOperatorNode(block);
         }
 
-        public static MutiplyAsignOperatorNode CreateMultiplyAssignment()
+        public static MutiplyAsignOperatorNode CreateMultiplyAssignment(Block block)
         {
-            return new MutiplyAsignOperatorNode();
+            return new MutiplyAsignOperatorNode(block);
         }
 
-        public static DevideAsignOperatorNode CreateDevideAsignmentOperatorNode()
+        public static DevideAsignOperatorNode CreateDevideAsignmentOperatorNode(Block block)
         {
-            return new DevideAsignOperatorNode();
+            return new DevideAsignOperatorNode(block);
         }
 
         public static  ReturnOperatorNode CreateReturn()

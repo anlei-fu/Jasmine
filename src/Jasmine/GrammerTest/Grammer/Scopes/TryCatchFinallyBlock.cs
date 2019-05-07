@@ -7,6 +7,10 @@ namespace GrammerTest.Grammer
 {
     public class TryCatchFinallyBlock : BreakableBlock
     {
+        public TryCatchFinallyBlock(Block parent) : base(parent)
+        {
+        }
+
         public TryBlock TryBlock { get; set; }
         public CatchBlock CatchBlock { get; set; }
         public FinallyBlock FinallyBlock { get; set; }

@@ -1,4 +1,5 @@
 ﻿using GrammerTest.Grammer.AstTreeBuilders;
+using GrammerTest.Grammer.Scopes;
 using GrammerTest.Grammer.Tokenizers;
 using Jasmine.Spider.Grammer;
 using System.Collections.Generic;
@@ -7,7 +8,7 @@ namespace GrammerTest.Grammer
 {
     public class FunctionBuilder : BuilderBase
     {
-        public FunctionBuilder(ISequenceReader<Token> reader) : base(reader)
+        public FunctionBuilder(ISequenceReader<Token> reader, Block block) : base(reader, block)
         {
         }
 
@@ -84,7 +85,7 @@ namespace GrammerTest.Grammer
                     throwError("incompleted function define;");
 
                 //resolve function -body
-                func.Body = new OrderedBlockBuilder(_reader,"function").Build();
+                func.Body = new OrderedBlockBuilder(_reader,"function",_block).Build();
 
                 return func;
             }

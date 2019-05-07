@@ -1,11 +1,12 @@
-﻿using GrammerTest.Grammer.Tokenizers;
+﻿using GrammerTest.Grammer.Scopes;
+using GrammerTest.Grammer.Tokenizers;
 using Jasmine.Spider.Grammer;
 
 namespace GrammerTest.Grammer
 {
     public  class ObjectLiteralBuilder:BuilderBase
     {
-        public ObjectLiteralBuilder(ISequenceReader<Token> reader) : base(reader)
+        public ObjectLiteralBuilder(ISequenceReader<Token> reader, Block block) : base(reader, block)
         {
         }
 

@@ -1,8 +1,10 @@
 ﻿using GrammerTest.Grammer;
 using GrammerTest.Grammer.AstTreeBuilders;
+using GrammerTest.Grammer.Scopes;
 using GrammerTest.Grammer.Tokenizers;
 using Jasmine.Spider.Grammer;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
 
@@ -13,6 +15,9 @@ namespace GrammerTest
         static void Main(string[] args)
         {
 
+
+
+
             testTopBuilder();
 
             Console.WriteLine("finished!");
@@ -20,6 +25,44 @@ namespace GrammerTest
             Console.Read();
         }
 
+
+        static void tsetExcute()
+        {
+            var pattern = "var c=b+(7+8*8-0)-8*7+9-8+78+9*8;";
+
+
+            Tokenizer tg = new Tokenizer();
+            var watch = new Stopwatch();
+
+            watch.Start();
+
+            for (int i = 0; i < 10000; i++)
+            {
+                var reader = new SequenceReader<Token>(tg.Tokenize(pattern));
+
+
+                var builder = new TopBlockBuilder(reader, new TopBlock());
+                builder.Build();
+
+                builder.Block.Excute();
+            }
+            Console.WriteLine($"spend:{watch.ElapsedMilliseconds} ");
+
+
+            var watch2 = new Stopwatch();
+
+            watch2.Start();
+            var a = 7;
+            var b = 9;
+
+            for (int i = 0; i < 10000; i++)
+            {
+                var c = (a+ b * b - a) - a * 7 + a - b + b + b * a;
+            }
+
+            Console.WriteLine(watch2.ElapsedMilliseconds);
+          
+        }
 
         static void testAst()
         {
@@ -31,7 +74,7 @@ namespace GrammerTest
 
             watch.Start();
 
-            var builder = new ExpressionBuilder(reader,true);
+            var builder = new ExpressionBuilder(reader,true,null);
 
 
             var result = builder.Build();
@@ -45,7 +88,7 @@ namespace GrammerTest
             var reader = new SequenceReader<Token>(tg.Tokenize("a,b,c=35*7-89-y.x+9;"));
             var watch = new Stopwatch();
 
-            var builder = new DeclareExpressionBuilder(reader);
+            var builder = new DeclareExpressionBuilder(reader,null);
 
 
             var result=    builder.Build();
@@ -102,7 +145,7 @@ foreach(var d in a.getAll())
 ++a.b(s,7+8)+b.b.b;
             ";
             var s = new StringBuilder();
-            for (int i = 0; i < 5000; i++)
+            for (int i = 0; i < 50000; i++)
             {
                 s .Append( pettern);
             }
@@ -110,11 +153,11 @@ foreach(var d in a.getAll())
             var reader = new SequenceReader<Token>(tg.Tokenize(s.ToString()));
             var watch = new Stopwatch();
             watch.Start();
-            var builder = new TopBlockBuilder(reader);
+            var builder = new TopBlockBuilder(reader,null);
 
               builder.Build();
 
-            Console.WriteLine($"top build spend:{watch.ElapsedMilliseconds} ");
+            Console.WriteLine($"total length ={s.Length}，top build spend:{watch.ElapsedMilliseconds} ");
         }
 
         static void testFprBuilder()
@@ -123,7 +166,7 @@ foreach(var d in a.getAll())
             var reader = new SequenceReader<Token>(tg.Tokenize("(var i=0;i<10;i++;){}"));
             var watch = new Stopwatch();
 
-            var builder = new ForBlockBuilder(reader);
+            var builder = new ForBlockBuilder(reader,null);
 
             builder.Build();
 
@@ -148,7 +191,7 @@ foreach(var d in a.getAll())
             for (int i = 0; i < 10000000; i++)
             {
                 var reader = new SequenceReader<Token>(tg.Tokenize(pattern));
-                var builder = new AstNodeBuilder(reader, new string[] { ";" });
+                var builder = new AstNodeBuilder(reader,null, new string[] { ";" });
                 var result = builder.Build();
                 t += pattern.Length;
             }

@@ -5,6 +5,8 @@ namespace GrammerTest.Grammer.Scopes
 {
     public class FunctionDefineExpression : Expression
     {
-      
+        public FunctionDefineExpression(Block parent) : base(parent)
+        {
+        }
     }
 }

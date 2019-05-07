@@ -1,4 +1,5 @@
 ﻿using GrammerTest.Grammer.AstTreeBuilders;
+using GrammerTest.Grammer.Scopes;
 using GrammerTest.Grammer.Tokenizers;
 using Jasmine.Spider.Grammer;
 using System;
@@ -11,8 +12,9 @@ namespace GrammerTest.Grammer
     public  class AstNodeBuilder:BuilderBase
     {
         public AstNodeBuilder(ISequenceReader<Token> reader,
+                              Block block,
                               string[] interceptChars,
-                              bool hasparent=false) : base(reader)
+                              bool hasparent=false) : base(reader,block)
 
         {
             _interceptChars = interceptChars;
@@ -20,8 +22,9 @@ namespace GrammerTest.Grammer
         }
 
         public AstNodeBuilder(ISequenceReader<Token> reader,
+                               Block block,
                                string[] interceptChars,
-                               OperatorNode node):base(reader)
+                               OperatorNode node):base(reader,block)
         {
             _interceptChars = interceptChars;
             _hasParent = true;
@@ -125,38 +128,38 @@ namespace GrammerTest.Grammer
 
                             case OperatorType.Assignment:
 
-                                pushOrderedNode(OperatorNodeFactory.CreateAssigment());
+                                pushOrderedNode(OperatorNodeFactory.CreateAssigment(_block));
 
                                 break;
 
                             case OperatorType.AddAsignment:
 
-                                pushOrderedNode(OperatorNodeFactory.CreateAddAssignment());
+                                pushOrderedNode(OperatorNodeFactory.CreateAddAssignment(_block));
 
                                 break;
 
                             case OperatorType.SubtractAsignment:
 
-                                pushOrderedNode(OperatorNodeFactory.CreateSubtractAssignment());
+                                pushOrderedNode(OperatorNodeFactory.CreateSubtractAssignment(_block));
 
                                 break;
 
                             case OperatorType.MutiplyAsignment:
 
-                                pushOrderedNode(OperatorNodeFactory.CreateMultiplyAssignment());
+                                pushOrderedNode(OperatorNodeFactory.CreateMultiplyAssignment(_block));
 
                                 break;
 
                             case OperatorType.DevideAsignment:
 
-                                pushOrderedNode(OperatorNodeFactory.CreateDevideAsignmentOperatorNode());
+                                pushOrderedNode(OperatorNodeFactory.CreateDevideAsignmentOperatorNode(_block));
 
                                 break;
 
 
                             case OperatorType.Ternary:
 
-                                var ternaryNode = new TerbaryBuilder(_reader).Build();
+                                var ternaryNode = new TerbaryBuilder(_reader,_block).Build();
 
                                 ternaryNode.Operands.Insert(0, _currentNode);
 
@@ -220,7 +223,7 @@ namespace GrammerTest.Grammer
                                     /*
                                      *  expressiomn starts with "("
                                      */ 
-                                    _currentNode = new ParenthesisBuilder(_reader).Build();
+                                    _currentNode = new ParenthesisBuilder(_reader,_block).Build();
                                     /*
                                      *  _current priority has been set by "(",we should ignore  that operator
                                      */ 
@@ -237,7 +240,7 @@ namespace GrammerTest.Grammer
                                          */ 
                                        if(_currentPrority==-1)
                                         {
-                                            var node = new CallBuilder(_reader).Build();
+                                            var node = new CallBuilder(_reader,_block).Build();
                                             node.Operands.Insert(0, _currentNode);
                                             _currentNode = node;
                                             _currentPrority = 8;
@@ -247,7 +250,7 @@ namespace GrammerTest.Grammer
                                         */ 
                                        else if(_currentPrority==8)
                                         {
-                                            var node = new CallBuilder(_reader).Build();
+                                            var node = new CallBuilder(_reader,_block).Build();
 
                                             node.Operands.Insert(0, _currentNode);
                                             _currentNode = node;
@@ -268,7 +271,7 @@ namespace GrammerTest.Grammer
                                     else
                                     {
                                         //start a  new builder
-                                        var node = new ParenthesisBuilder(_reader).Build();
+                                        var node = new ParenthesisBuilder(_reader,_block).Build();
                                         _currentNode.Operands.Add(node);
                                     }
                                 }
@@ -287,7 +290,7 @@ namespace GrammerTest.Grammer
                                 }
                                 else
                                 {
-                                    _currentNode = new OperandNode( new ObjectLiteralBuilder(_reader).Build());
+                                    _currentNode = new OperandNode( new ObjectLiteralBuilder(_reader,_block).Build());
                                 }
 
                                 break;
@@ -315,7 +318,7 @@ namespace GrammerTest.Grammer
                                         */
                                         if (_currentPrority == -1)
                                         {
-                                            var node = new ArrayIndexBuilder(_reader).Build();
+                                            var node = new ArrayIndexBuilder(_reader,_block).Build();
                                             node.Operands.Insert(0, _currentNode);
                                             _currentNode = node;
                                             _currentPrority = 8;
@@ -325,7 +328,7 @@ namespace GrammerTest.Grammer
                                          */
                                         else if (_currentPrority == 8)
                                         {
-                                            var node = new ArrayIndexBuilder(_reader).Build();
+                                            var node = new ArrayIndexBuilder(_reader,_block).Build();
 
                                             node.Operands.Insert(0, _currentNode);
                                             _currentNode = node;
@@ -341,7 +344,7 @@ namespace GrammerTest.Grammer
                                 }
                                 else
                                 {
-                                    _currentNode = new OperandNode( new ArrayLiteralBuilder(_reader).Build());
+                                    _currentNode = new OperandNode( new ArrayLiteralBuilder(_reader,_block).Build());
                                 }
                          
                                 break;
@@ -490,7 +493,7 @@ namespace GrammerTest.Grammer
 
             _reader.Back();//back one token
 
-            var node = new AstNodeBuilder(_reader, _interceptChars, lastOperand).Build();
+            var node = new AstNodeBuilder(_reader,_block, _interceptChars, lastOperand).Build();
 
             _currentNode.Operands.Add(node);
         }
@@ -588,11 +591,11 @@ namespace GrammerTest.Grammer
             //query object first identifier that means this is a variable
             if(_currentNode==null)
             {
-                _currentNode = new QueryScopeOperatorNode((string)node.Output);
+                _currentNode = new QueryScopeOperatorNode((string)node.Output,_block);
             }
             else
             {
-                _currentNode.Operands.Add(new QueryScopeOperatorNode((string)node.Output));
+                _currentNode.Operands.Add(new QueryScopeOperatorNode((string)node.Output,_block));
             }
         }
 

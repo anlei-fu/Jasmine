@@ -5,6 +5,9 @@ namespace GrammerTest.Grammer.Scopes
 {
     public class CatchBlock : BodyBlock
     {
+        public CatchBlock(Block parent) : base(parent)
+        {
+        }
 
         public string ErrorName { get; internal set; }
         public override void Break()

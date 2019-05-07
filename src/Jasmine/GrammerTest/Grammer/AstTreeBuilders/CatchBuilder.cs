@@ -6,7 +6,7 @@ namespace GrammerTest.Grammer.AstTreeBuilders
 {
     public class CatchBuilder : BuilderBase
     {
-        public CatchBuilder(ISequenceReader<Token> reader) : base(reader)
+        public CatchBuilder(ISequenceReader<Token> reader, Block block) : base(reader, block)
         {
         }
 
@@ -14,7 +14,7 @@ namespace GrammerTest.Grammer.AstTreeBuilders
 
         public CatchBlock Build()
         {
-            var catchBlock = new CatchBlock();
+            var catchBlock = new CatchBlock(_block);
 
             throwErrorIfHasNoNextAndNext("incompleted catch block!");
 
@@ -44,7 +44,7 @@ namespace GrammerTest.Grammer.AstTreeBuilders
             }
 
 
-            catchBlock.Body = new OrderedBlockBuilder(_reader,"catch").Build();
+            catchBlock.Body = new OrderedBlockBuilder(_reader,"catch",catchBlock).Build();
 
             return catchBlock;
 

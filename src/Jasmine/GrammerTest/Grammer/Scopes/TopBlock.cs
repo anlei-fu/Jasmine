@@ -5,6 +5,14 @@ namespace GrammerTest.Grammer.Scopes
 {
     public class TopBlock : BreakableBlock
     {
+        public TopBlock(Block parent) : base(parent)
+        {
+        }
+        public TopBlock():base(null)
+        {
+
+        }
+
         public override void Break()
         {
             throw new System.NotImplementedException();

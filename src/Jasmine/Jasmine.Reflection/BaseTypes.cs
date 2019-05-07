@@ -24,6 +24,28 @@ namespace Jasmine.Reflection
         public static readonly Type TString = typeof(string);
         public static readonly Type TGuid = typeof(Guid);
 
+
+        public static readonly HashSet<Type> Numbers = new HashSet<Type>()
+        {
+            TByte,
+            TSByte,
+            TShort,
+            TNShort,
+            TUShort,
+            TNUShort,
+            TInt,
+            TNInt,
+            TUInt,
+            TNUInt,
+            TLong,
+            TNULong,
+            TULong,
+            TDouble,
+            TDecimal,
+            TFloat,
+
+        };
+
         public static readonly Type TNByte = typeof(byte?);
         public static readonly Type TNSByte = typeof(sbyte?);
         public static readonly Type TNChar = typeof(char?);

@@ -6,8 +6,13 @@ namespace GrammerTest.Grammer
 {
     public class DoWhileBlock : BodyBlock
     {
+        public DoWhileBlock(Block parent) : base(parent)
+        {
+            CheckExpression = new Expression(parent);
+        }
+
         public override string Name => base.Name+".DoWhileBlock";
-        public Expression CheckExpression { get; set; } = new Expression();
+        public Expression CheckExpression { get; set; }
 
         public override void Break()
         {

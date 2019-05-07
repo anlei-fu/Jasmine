@@ -1,4 +1,5 @@
 ﻿using GrammerTest.Grammer.AstTreeBuilders;
+using GrammerTest.Grammer.Scopes;
 using GrammerTest.Grammer.Tokenizers;
 using Jasmine.Spider.Grammer;
 
@@ -6,7 +7,7 @@ namespace GrammerTest.Grammer
 {
     public class ElseBlockBuilder : BuilderBase
     {
-        public ElseBlockBuilder(ISequenceReader<Token> reader) : base(reader)
+        public ElseBlockBuilder(ISequenceReader<Token> reader, Block block) : base(reader, block)
         {
         }
 
@@ -14,9 +15,9 @@ namespace GrammerTest.Grammer
 
         public ElseBlock Build()
         {
-            var elseBlock = new ElseBlock();
+            var elseBlock = new ElseBlock(_block);
 
-            elseBlock.Body = new OrderedBlockBuilder(_reader,"else").Build();
+            elseBlock.Body = new OrderedBlockBuilder(_reader,"else",elseBlock).Build();
 
             return elseBlock;
         }

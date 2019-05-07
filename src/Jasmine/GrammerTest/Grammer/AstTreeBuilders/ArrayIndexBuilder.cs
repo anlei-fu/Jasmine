@@ -1,4 +1,5 @@
-﻿using GrammerTest.Grammer.Tokenizers;
+﻿using GrammerTest.Grammer.Scopes;
+using GrammerTest.Grammer.Tokenizers;
 using Jasmine.Spider.Grammer;
 
 namespace GrammerTest.Grammer
@@ -7,7 +8,7 @@ namespace GrammerTest.Grammer
     {
         private static readonly string[] _intercptChars = new string[] {"]" };
 
-        public ArrayIndexBuilder(ISequenceReader<Token> reader) : base(reader)
+        public ArrayIndexBuilder(ISequenceReader<Token> reader,Block block) : base(reader,block)
         {
         }
 
@@ -15,7 +16,7 @@ namespace GrammerTest.Grammer
 
         public OperatorNode Build()
         {
-           return  new AstNodeBuilder(_reader,_intercptChars).Build();
+           return  new AstNodeBuilder(_reader,_block,_intercptChars).Build();
         }
     }
 }

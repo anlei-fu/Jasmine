@@ -5,6 +5,10 @@ namespace GrammerTest.Grammer.Scopes
 {
     public class FinallyBlock : BodyBlock
     {
+        public FinallyBlock(Block parent) : base(parent)
+        {
+        }
+
         public override void Break()
         {
             throw new System.NotImplementedException();

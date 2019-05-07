@@ -1,6 +1,7 @@
 ﻿
 
 using System.Collections.Generic;
+using GrammerTest.Grammer.Scopes;
 using GrammerTest.Grammer.TypeSystem;
 
 namespace Jasmine.Spider.Grammer
@@ -11,6 +12,10 @@ namespace Jasmine.Spider.Grammer
         public ElseBlock ElseBlock { get; set; }
 
        private bool _isMatchFound;
+
+        public IfBlock(Block parent) : base(parent)
+        {
+        }
 
         public void SetMatchFound()
         {

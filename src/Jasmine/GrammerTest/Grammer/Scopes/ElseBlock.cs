@@ -5,6 +5,10 @@ namespace Jasmine.Spider.Grammer
 {
     public class ElseBlock : BodyBlock
     {
+        public ElseBlock(Block parent) : base(parent)
+        {
+        }
+
         public override void Break()
         {
             throw new System.NotImplementedException();

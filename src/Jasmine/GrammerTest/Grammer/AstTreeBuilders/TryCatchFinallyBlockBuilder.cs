@@ -1,11 +1,12 @@
-﻿using GrammerTest.Grammer.Tokenizers;
+﻿using GrammerTest.Grammer.Scopes;
+using GrammerTest.Grammer.Tokenizers;
 using Jasmine.Spider.Grammer;
 
 namespace GrammerTest.Grammer.AstTreeBuilders
 {
     public class TryCatchFinallyBlockBuilder : BuilderBase
     {
-        public TryCatchFinallyBlockBuilder(ISequenceReader<Token> reader) : base(reader)
+        public TryCatchFinallyBlockBuilder(ISequenceReader<Token> reader, Block block) : base(reader, block)
         {
         }
 
@@ -13,10 +14,10 @@ namespace GrammerTest.Grammer.AstTreeBuilders
 
         public TryCatchFinallyBlock Build()
         {
-            var tryCatchFinallyBlock = new TryCatchFinallyBlock();
+            var tryCatchFinallyBlock = new TryCatchFinallyBlock(_block);
 
 
-            tryCatchFinallyBlock.TryBlock = new TryBlockBuilder(_reader).Build();
+            tryCatchFinallyBlock.TryBlock = new TryBlockBuilder(_reader,_block).Build();
 
             /*
              * build catch block or finally block
@@ -29,13 +30,13 @@ namespace GrammerTest.Grammer.AstTreeBuilders
 
             if (_reader.Current().Value == Keywords.FINALLY)
             {
-                tryCatchFinallyBlock.FinallyBlock = new FinalyBlockBuilder(_reader).Build();
+                tryCatchFinallyBlock.FinallyBlock = new FinalyBlockBuilder(_reader,_block).Build();
 
                 return tryCatchFinallyBlock;
             }
             else if (_reader.Current().Value == Keywords.CATCH)
             {
-                tryCatchFinallyBlock.CatchBlock = new CatchBuilder(_reader).Build();
+                tryCatchFinallyBlock.CatchBlock = new CatchBuilder(_reader,_block).Build();
             }
             else
             {
@@ -62,7 +63,7 @@ namespace GrammerTest.Grammer.AstTreeBuilders
                 if (tryCatchFinallyBlock.FinallyBlock != null)
                     throwError("incorrect try-catch-finally block!");
 
-                tryCatchFinallyBlock.FinallyBlock = new FinalyBlockBuilder(_reader).Build();
+                tryCatchFinallyBlock.FinallyBlock = new FinalyBlockBuilder(_reader,_block).Build();
             }
             else if (_reader.Current().Value == Keywords.CATCH)
             {

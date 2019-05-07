@@ -6,6 +6,10 @@ namespace GrammerTest.Grammer
 {
     public class TryBlock : BodyBlock
     {
+        public TryBlock(Block parent) : base(parent)
+        {
+        }
+
         public override void Break()
         {
             throw new System.NotImplementedException();

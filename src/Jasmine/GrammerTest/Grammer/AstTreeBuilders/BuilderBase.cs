@@ -1,4 +1,5 @@
 ﻿using GrammerTest.Grammer.AstTreeBuilders.Exceptions;
+using GrammerTest.Grammer.Scopes;
 using GrammerTest.Grammer.Tokenizers;
 using Jasmine.Spider.Grammer;
 using System;
@@ -9,10 +10,12 @@ namespace GrammerTest.Grammer
     public abstract class BuilderBase
     {
         
-        public  BuilderBase(ISequenceReader<Token> reader)
+        public  BuilderBase(ISequenceReader<Token> reader,Block block)
         {
             _reader = reader;
+            _block = block;
         }
+        protected Block _block;
         protected ISequenceReader<Token> _reader;
         protected OperatorNode _currentNode;
         /// <summary>

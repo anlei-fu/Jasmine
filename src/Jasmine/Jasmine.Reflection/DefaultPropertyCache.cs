@@ -1,5 +1,4 @@
-﻿using Jasmine.Reflection.Models;
-using System;
+﻿using System;
 using System.Reflection;
 
 namespace Jasmine.Reflection.Implements

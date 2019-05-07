@@ -1,4 +1,5 @@
-﻿using GrammerTest.Grammer.Tokenizers;
+﻿using GrammerTest.Grammer.Scopes;
+using GrammerTest.Grammer.Tokenizers;
 using Jasmine.Spider.Grammer;
 using System.Collections.Generic;
 
@@ -11,7 +12,7 @@ namespace GrammerTest.Grammer.AstTreeBuilders
             ",",")"
         };
 
-        public CallBuilder(ISequenceReader<Token> reader) : base(reader)
+        public CallBuilder(ISequenceReader<Token> reader, Block block) : base(reader, block)
         {
         }
 
@@ -27,7 +28,7 @@ namespace GrammerTest.Grammer.AstTreeBuilders
 
             while (_reader.HasNext())
             {
-                var node = new AstNodeBuilder(_reader, _interceptChars).Build();
+                var node = new AstNodeBuilder(_reader,_block, _interceptChars).Build();
 
                 if (node != null)
                     parameters.Add(node);

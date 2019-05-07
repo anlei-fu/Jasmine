@@ -7,6 +7,10 @@ namespace GrammerTest.Grammer.Scopes
 {
     public class OrderdedBlock : BreakableBlock
     {
+        public OrderdedBlock(Block parent) : base(parent)
+        {
+        }
+
         public IList<IExcutor> Children { get; set; } = new List<IExcutor>();
         public override void Break()
         {
@@ -25,7 +29,10 @@ namespace GrammerTest.Grammer.Scopes
 
         public override void Excute()
         {
-            throw new NotImplementedException();
+            foreach (var item in Children)
+            {
+                item.Excute();
+            }
         }
 
         public override void Return(JObject result)

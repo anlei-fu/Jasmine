@@ -1,4 +1,5 @@
-﻿using GrammerTest.Grammer.Tokenizers;
+﻿using GrammerTest.Grammer.Scopes;
+using GrammerTest.Grammer.Tokenizers;
 using Jasmine.Spider.Grammer;
 
 namespace GrammerTest.Grammer
@@ -11,7 +12,7 @@ namespace GrammerTest.Grammer
         {
             ";"
         };
-        public ExpressionBuilder(ISequenceReader<Token> reader,bool doCheck) : base(reader)
+        public ExpressionBuilder(ISequenceReader<Token> reader,bool doCheck, Block block) : base(reader, block)
         {
             _doCheck = doCheck;
         }
@@ -22,9 +23,9 @@ namespace GrammerTest.Grammer
         public  Expression Build()
         {
 
-            var expression = new Expression();
+            var expression = new Expression(_block);
 
-            expression.Root = new AstNodeBuilder(_reader, _interceptChars).Build();
+            expression.Root = new AstNodeBuilder(_reader,_block, _interceptChars).Build();
 
             //doCheck  test expression is useful or throw
             //ex 

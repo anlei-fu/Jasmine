@@ -6,9 +6,9 @@ namespace GrammerTest.Grammer.AstTreeBuilders
 {
     public class TopBlockBuilder : BuilderBase
     {
-        public OrderdedBlock _scope=new OrderdedBlock();
+        public OrderdedBlock Block=new OrderdedBlock(null);
 
-        public TopBlockBuilder(ISequenceReader<Token> reader) : base(reader)
+        public TopBlockBuilder(ISequenceReader<Token> reader,Block block) : base(reader,block)
         {
         }
 
@@ -27,39 +27,39 @@ namespace GrammerTest.Grammer.AstTreeBuilders
 
                         if (_reader.Current().Value==Keywords.FOR)
                         {
-                            var block = new ForBlockBuilder(_reader).Build();
+                            var block = new ForBlockBuilder(_reader,_block).Build();
 
-                            _scope.Children.Add(block);
+                            Block.Children.Add(block);
                         }
                         else if(_reader.Current().Value==Keywords.IF)
                         {
-                            var block = new IfBlockBuilder(_reader).Build();
+                            var block = new IfBlockBuilder(_reader,_block).Build();
 
-                            _scope.Children.Add(block);
+                            Block.Children.Add(block);
                         }
                         else if(_reader.Current().Value==Keywords.FOREACH)
                         {
-                            var block = new ForeachBuilder(_reader).Build();
+                            var block = new ForeachBuilder(_reader,_block).Build();
 
-                            _scope.Children.Add(block);
+                            Block.Children.Add(block);
                         }
                         else if(_reader.Current().Value==Keywords.DO)
                         {
-                            var block = new DoWhileScopeBuilder(_reader).Build();
+                            var block = new DoWhileScopeBuilder(_reader,_block).Build();
 
-                            _scope.Children.Add(block);
+                            Block.Children.Add(block);
                         }
                         else if(_reader.Current().Value==Keywords.WHILE)
                         {
-                            var block = new WhileBlockBuilder(_reader).Build();
+                            var block = new WhileBlockBuilder(_reader,_block).Build();
 
-                            _scope.Children.Add(block);
+                            Block.Children.Add(block);
                         }
                         else if(_reader.Current().Value==Keywords.TRY)
                         {
-                            var block = new TryCatchFinallyBlockBuilder(_reader).Build();
+                            var block = new TryCatchFinallyBlockBuilder(_reader,_block).Build();
 
-                            _scope.Children.Add(block);
+                            Block.Children.Add(block);
                         }
                         else
                         {
@@ -79,9 +79,9 @@ namespace GrammerTest.Grammer.AstTreeBuilders
                              
                             case OperatorType.Declare:
 
-                                var decExpression = new DeclareExpressionBuilder(_reader).Build();
+                                var decExpression = new DeclareExpressionBuilder(_reader,_block).Build();
 
-                                _scope.Children.Add(decExpression);
+                                Block.Children.Add(decExpression);
 
                                 break;
 
@@ -92,15 +92,15 @@ namespace GrammerTest.Grammer.AstTreeBuilders
 
                             case OperatorType.Function:
 
-                                var function = new FunctionBuilder(_reader).Build();
+                                var function = new FunctionBuilder(_reader,_block).Build();
 
-                                var funcDefineExp = new FunctionDefineExpression();
+                                var funcDefineExp = new FunctionDefineExpression(_block);
 
                                 funcDefineExp.Root = new FunctionDefineNode();
 
                                 funcDefineExp.Root.Operands.Add(new OperandNode(function));
 
-                                _scope.Children.Add(funcDefineExp);
+                                Block.Children.Add(funcDefineExp);
 
                                 break;
 
@@ -117,9 +117,9 @@ namespace GrammerTest.Grammer.AstTreeBuilders
 
                                 _reader.Back();
 
-                                var crementExpression = new ExpressionBuilder(_reader,false).Build();
+                                var crementExpression = new ExpressionBuilder(_reader,false,_block).Build();
 
-                                _scope.Children.Add(crementExpression);
+                                Block.Children.Add(crementExpression);
 
                                 break;
 
@@ -146,9 +146,9 @@ namespace GrammerTest.Grammer.AstTreeBuilders
 
                         _reader.Back();
 
-                        var expression = new ExpressionBuilder(_reader,true).Build();
+                        var expression = new ExpressionBuilder(_reader,true,_block).Build();
 
-                        _scope.Children.Add(expression);
+                        Block.Children.Add(expression);
 
                         break;
 

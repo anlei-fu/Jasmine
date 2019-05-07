@@ -1,5 +1,6 @@
 ﻿using GrammerTest.Grammer;
 using GrammerTest.Grammer.AstTree;
+using GrammerTest.Grammer.AstTree.Exceptions;
 using GrammerTest.Grammer.Scopes;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
@@ -8,6 +9,7 @@ namespace Jasmine.Spider.Grammer
 {
     public abstract class AstNode
     {
+        public abstract string Name { get; }
         public JObject Output { get; internal set; }
         public abstract OutputType OutputType { get; }
 
@@ -22,7 +24,7 @@ namespace Jasmine.Spider.Grammer
 
         protected void trowOutputTypeIncorrectError()
         {
-
+            throw new IncorrectOperatorException();
         }
     }
 
@@ -33,6 +35,7 @@ namespace Jasmine.Spider.Grammer
     /// </summary>
     public abstract class OperatorNode : AstNode, IExcutor
     {
+        public override string Name => OperatorType.Tostring0();
         public abstract OperatorType OperatorType { get; }
         /// <summary>
         /// operands
@@ -66,6 +69,7 @@ namespace Jasmine.Spider.Grammer
     /// </summary>
     public sealed class OperandNode : OperatorNode
     {
+
         public OperandNode(JObject obj)
         {
             Output = obj;
@@ -75,6 +79,8 @@ namespace Jasmine.Spider.Grammer
         public override bool NeedExcute => false;
 
         public override OperatorType OperatorType => OperatorType.Operand;
+
+        public override string Name => "Operand";
 
         public override void DoCheck()
         {
@@ -134,10 +140,6 @@ namespace Jasmine.Spider.Grammer
             {
                 trowOutputTypeIncorrectError();
             }
-               
-            
-
-
         }
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         protected override void excuteBinary(JObject obj1, JObject obj2)
@@ -155,6 +157,8 @@ namespace Jasmine.Spider.Grammer
     public class AndOperatorNode : LogicOperatorNode
     {
         public override OperatorType OperatorType =>OperatorType.Add;
+
+        public override string Name => throw new System.NotImplementedException();
 
         protected override JBool caculate(JBool para1, JBool para2)
         {
@@ -213,70 +217,81 @@ namespace Jasmine.Spider.Grammer
 
         protected override void excuteBinary(JObject obj1, JObject obj2)
         {
-            var jstring = obj2 as JString;
-
-            if (obj1 == null)
+            if(Operands[1].Output is JMappingObject jm)
             {
-                //throw a exception ,variable must be declared and property can dynamic add or remove
+                Output = jm.GetProperty((string)obj2);
             }
             else
             {
-                if (obj1 is JMappingObject mapping)
-                {
-
-                    var result = mapping.GetProperty(jstring.Value);
-
-                    Output = result;
-                }
-                else
-                {
-                    var result = obj1.GetProperty((string)jstring);
-
-                    Output = result;
-                }
+                Output = obj1.GetProperty((string)obj2);
             }
+
         }
     }
 
     public class DeclareAsignmentNode : OperatorNode
     {
+        public DeclareAsignmentNode(Block block)
+        {
+            Block = block;
+        }
+        public Block Block { get; set; }
         public override OutputType OutputType => OutputType.None;
 
         public override OperatorType OperatorType => OperatorType.Assignment;
 
         public override void DoCheck()
         {
-            throw new System.NotImplementedException();
+            
         }
 
         public override void Excute()
         {
-            throw new System.NotImplementedException();
-        }
+
+            var result = getOperand(Operands[Operands.Count - 1]);
+
+            Block.Declare((string)getOperand(Operands[0]), result);
+         }
     }
-    public class DeclareOperator : SingleOperatorNode
+    public class DeclareOperator : OperatorNode
     {
-        public Block Scope { get; }
+        public DeclareOperator(Block block)
+        {
+            Block = block;
+        }
+        public Block Block { get; }
         public override OutputType OutputType => OutputType.Object;
 
         public override OperatorType OperatorType => OperatorType.Declare;
 
         public override void DoCheck()
         {
-          
+            if(Operands.Count==0)
+            {
+
+            }
         }
 
-        protected override void excuteSingle(JObject obj)
+        public override void Excute()
         {
-            
+            foreach (var item in Operands)
+            {
+                Block.Declare((string)item.Output);
+            }
+          
         }
     }
 
 
 
 
-    public class AssignmentOperatorNode : OperatorNode
+    public class AssignmentOperatorNode : BinaryOperatorNode
     {
+        public AssignmentOperatorNode(Block block)
+        {
+            Block = block;
+        }
+        public Block Block { get; set; }
         public override OutputType OutputType => OutputType.None;
 
         public override OperatorType OperatorType => OperatorType.Assignment;
@@ -287,13 +302,20 @@ namespace Jasmine.Spider.Grammer
                 trowOutputTypeIncorrectError();
         }
 
-        public override void Excute()
+        protected override void excuteBinary(JObject obj1, JObject obj2)
         {
-            // reference  exception
-            Operands[1].Output = Operands[2].Output;
-        }
+            if(obj1 is JMappingObject jm)
+            {
+                jm.SetProperty(jm.Name, obj2.GetObject());
+            }
+            else
+            {
+                if (obj1.HasParent)
+                    obj1.Parent.SetProperty(obj1.Name, obj2);
 
-      
+               
+            }
+        }
     }
 
 
@@ -321,7 +343,7 @@ namespace Jasmine.Spider.Grammer
 
         protected override JNumber caulate(JNumber param1, JNumber param2)
         {
-            return new JNumber(param1.Value + param1.Value);
+            return new JNumber(param1.Value + param2.Value);
         }
     }
     public class SubtractOperatorNode : BinaryNumberOperatorNode
@@ -330,7 +352,7 @@ namespace Jasmine.Spider.Grammer
 
         protected override JNumber caulate(JNumber param1, JNumber param2)
         {
-            return new JNumber(param1.Value - param1.Value);
+            return new JNumber(param1.Value - param2.Value);
         }
     }
 
@@ -340,7 +362,7 @@ namespace Jasmine.Spider.Grammer
 
         protected override JNumber caulate(JNumber param1, JNumber param2)
         {
-            return new JNumber(param1.Value * param1.Value);
+            return new JNumber(param1.Value * param2.Value);
         }
     }
 
@@ -350,7 +372,7 @@ namespace Jasmine.Spider.Grammer
 
         protected override JNumber caulate(JNumber param1, JNumber param2)
         {
-            return new JNumber(param1.Value / param1.Value);
+            return new JNumber(param1.Value / param2.Value);
         }
     }
 
@@ -360,69 +382,114 @@ namespace Jasmine.Spider.Grammer
 
         protected override JNumber caulate(JNumber param1, JNumber param2)
         {
-            return new JNumber((int)(param1.Value) % (int)(param1.Value));
+            return new JNumber((int)(param1.Value) % (int)(param2.Value));
         }
     }
 
 
-    public class AsignmentNumberOperatorNode : AssignmentOperatorNode
+    public abstract class AsignmentNumberOperatorNode : AssignmentOperatorNode
     {
+        public AsignmentNumberOperatorNode(Block block) : base(block)
+        {
+        }
 
+        protected override void excuteBinary(JObject obj1, JObject obj2)
+        {
+            var result = caculate((JNumber)obj1, (JNumber)obj2);
+
+
+            if (obj1 is JMappingObject jm)
+            {
+                jm.SetProperty(jm.Name, result.GetObject());
+            }
+            else
+            {
+                obj1.SetProperty("", result);
+            }
+        }
+
+        protected abstract JNumber caculate(JNumber num1, JNumber num2);
     }
     public class AddAsignmentNode : AsignmentNumberOperatorNode
     {
+        public AddAsignmentNode(Block block) : base(block)
+        {
+        }
+
         public override void DoCheck()
         {
             throw new System.NotImplementedException();
         }
 
-
-
-
+        protected override JNumber caculate(JNumber num1, JNumber num2)
+        {
+            return new JNumber(num1.Value + num2.Value);
+        }
     }
     public class SubtractAsignmentNode : AsignmentNumberOperatorNode
     {
+        public SubtractAsignmentNode(Block block) : base(block)
+        {
+        }
+
         public override void DoCheck()
         {
             throw new System.NotImplementedException();
         }
 
-
+        protected override JNumber caculate(JNumber num1, JNumber num2)
+        {
+            return new JNumber(num1.Value -num2.Value);
+        }
     }
     public class MutiplyAsignOperatorNode : AsignmentNumberOperatorNode
     {
+        public MutiplyAsignOperatorNode(Block block) : base(block)
+        {
+        }
+
         public override void DoCheck()
         {
             throw new System.NotImplementedException();
         }
 
-
-
-
+        protected override JNumber caculate(JNumber num1, JNumber num2)
+        {
+            return new JNumber(num1.Value * num2.Value);
+        }
     }
 
     public class DevideAsignOperatorNode : AsignmentNumberOperatorNode
     {
+        public DevideAsignOperatorNode(Block block) : base(block)
+        {
+        }
+
         public override void DoCheck()
         {
             throw new System.NotImplementedException();
         }
 
-
-
-
+        protected override JNumber caculate(JNumber num1, JNumber num2)
+        {
+            return new JNumber(num1.Value / num2.Value);
+        }
     }
 
     public class ModAsignmentOperatorNode : AsignmentNumberOperatorNode
     {
-        public override void DoCheck()
+        public ModAsignmentOperatorNode(Block block) : base(block)
         {
-            throw new System.NotImplementedException();
         }
 
+        public override void DoCheck()
+        {
+        }
 
-
-
+        protected override JNumber caculate(JNumber num1, JNumber num2)
+        {
+            return new JNumber((int)num1.Value%(int)num2.Value);
+        }
     }
 
 
@@ -451,7 +518,7 @@ namespace Jasmine.Spider.Grammer
 
         protected override JBool caculate(JNumber number1, JNumber number2)
         {
-            throw new System.NotImplementedException();
+            return new JBool(number1 > number2);
         }
     }
 
@@ -461,7 +528,7 @@ namespace Jasmine.Spider.Grammer
 
         protected override JBool caculate(JNumber number1, JNumber number2)
         {
-            throw new System.NotImplementedException();
+            return new JBool(number1 >= number2);
         }
     }
 
@@ -471,7 +538,7 @@ namespace Jasmine.Spider.Grammer
 
         protected override JBool caculate(JNumber number1, JNumber number2)
         {
-            throw new System.NotImplementedException();
+            return new JBool(number1 < number2);
         }
     }
 
@@ -482,7 +549,7 @@ namespace Jasmine.Spider.Grammer
 
         protected override JBool caculate(JNumber number1, JNumber number2)
         {
-            throw new System.NotImplementedException();
+            return new JBool(number1 < number2);
         }
     }
 
@@ -492,7 +559,6 @@ namespace Jasmine.Spider.Grammer
 
         public override void DoCheck()
         {
-            throw new System.NotImplementedException();
         }
     }
 
@@ -504,7 +570,7 @@ namespace Jasmine.Spider.Grammer
 
         protected override void excuteBinary(JObject obj1, JObject obj2)
         {
-            throw new System.NotImplementedException();
+            Output = new JBool(obj1.Equals(obj2));
         }
     }
 
@@ -522,7 +588,7 @@ namespace Jasmine.Spider.Grammer
 
         protected override void excuteSingle(JObject obj)
         {
-            throw new System.NotImplementedException();
+            Output = new JNumber((0 - ((JNumber)obj).Value));
         }
     }
 
@@ -533,7 +599,7 @@ namespace Jasmine.Spider.Grammer
 
         protected override void excuteBinary(JObject obj1, JObject obj2)
         {
-            throw new System.NotImplementedException();
+            Output = new JBool(obj1.Equals(obj2));
         }
     }
 
@@ -550,11 +616,18 @@ namespace Jasmine.Spider.Grammer
 
         protected override void excuteSingle(JObject obj)
         {
-            throw new System.NotImplementedException();
+            if(obj is JMappingObject jm)
+            {
+                jm.SetProperty(jm.Name, ((JNumber)obj).Value += 1);
+            }
+            else
+            {
+                obj.SetProperty(obj.Name,new JNumber((((JNumber)obj).Value += 1)));
+            }
         }
     }
 
-    public class DcrementNode : SingleOperatorNode
+    public class DecrementNode : SingleOperatorNode
     {
         public override OutputType OutputType => OutputType.Object;
 
@@ -567,7 +640,14 @@ namespace Jasmine.Spider.Grammer
 
         protected override void excuteSingle(JObject obj)
         {
-            throw new System.NotImplementedException();
+            if (obj is JMappingObject jm)
+            {
+                jm.SetProperty(jm.Name, ((JNumber)obj).Value -= 1);
+            }
+            else
+            {
+                obj.SetProperty(obj.Name, new JNumber((((JNumber)obj).Value -= 1)));
+            }
         }
     }
 
@@ -580,12 +660,10 @@ namespace Jasmine.Spider.Grammer
 
         public override void DoCheck()
         {
-            throw new System.NotImplementedException();
         }
 
         protected override void excuteSingle(JObject obj)
         {
-            throw new System.NotImplementedException();
         }
     }
 
@@ -597,23 +675,22 @@ namespace Jasmine.Spider.Grammer
 
         public override void DoCheck()
         {
-            throw new System.NotImplementedException();
         }
 
         protected override void excuteBinary(JObject obj1, JObject obj2)
         {
-            throw new System.NotImplementedException();
         }
     }
 
-    public class QueryScopeOperatorNode : SingleOperatorNode
+    public class QueryScopeOperatorNode : OperatorNode
     {
 
-        public QueryScopeOperatorNode(string name)
+        public QueryScopeOperatorNode(string name,Block block)
         {
             ObjectName = name;
+            Block = block;
         }
-
+        public Block Block { get; }
         public string ObjectName { get; set; }
         public override OutputType OutputType => OutputType.Object;
 
@@ -624,10 +701,12 @@ namespace Jasmine.Spider.Grammer
             
         }
 
-        protected override void excuteSingle(JObject obj)
+        public override void Excute()
         {
-            throw new System.NotImplementedException();
+            Output = Block.GetVariable(ObjectName);
         }
+
+     
     }
     public class CallNode : OperatorNode
     {
@@ -654,12 +733,10 @@ namespace Jasmine.Spider.Grammer
 
         public override void DoCheck()
         {
-            throw new System.NotImplementedException();
         }
 
         public override void Excute()
         {
-            throw new System.NotImplementedException();
         }
     }
 
@@ -676,7 +753,6 @@ namespace Jasmine.Spider.Grammer
 
         public override void Excute()
         {
-            throw new System.NotImplementedException();
         }
     }
 
@@ -697,12 +773,10 @@ namespace Jasmine.Spider.Grammer
 
         public override void DoCheck()
         {
-            throw new System.NotImplementedException();
         }
 
         protected override void excuteSingle(JObject obj)
         {
-            throw new System.NotImplementedException();
         }
     }
 
@@ -714,12 +788,10 @@ namespace Jasmine.Spider.Grammer
 
         public override void DoCheck()
         {
-            throw new System.NotImplementedException();
         }
 
         public override void Excute()
         {
-            throw new System.NotImplementedException();
         }
     }
 }

@@ -11,7 +11,7 @@ namespace GrammerTest.Grammer.AstTreeBuilders
             ";"
         };
 
-        public DeclareExpressionBuilder(ISequenceReader<Token> reader) : base(reader)
+        public DeclareExpressionBuilder(ISequenceReader<Token> reader,Block block) : base(reader,block)
         {
         }
 
@@ -27,9 +27,9 @@ namespace GrammerTest.Grammer.AstTreeBuilders
 
         public DeclareExpression Build()
         {
-            var expression = new DeclareExpression();
+            var expression = new DeclareExpression(_block);
 
-            var node = new DeclareOperator();
+            var node = new DeclareOperator(_block);
 
             while (_reader.HasNext())
             {
@@ -68,9 +68,9 @@ namespace GrammerTest.Grammer.AstTreeBuilders
 
                     requirePreviousIsIdentifier();
 
-                    var assign = new DeclareAsignmentNode();
+                    var assign = new DeclareAsignmentNode(_block);
 
-                    var astNode = new AstNodeBuilder(_reader, _intercptChars).Build();
+                    var astNode = new AstNodeBuilder(_reader,_block ,_intercptChars).Build();
 
                     node.DoCheck();
 

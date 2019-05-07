@@ -1,4 +1,5 @@
-﻿using GrammerTest.Grammer.Tokenizers;
+﻿using GrammerTest.Grammer.Scopes;
+using GrammerTest.Grammer.Tokenizers;
 using Jasmine.Spider.Grammer;
 
 namespace GrammerTest.Grammer
@@ -10,7 +11,7 @@ namespace GrammerTest.Grammer
             ")"
         };
 
-        public ParenthesisBuilder(ISequenceReader<Token> reader) : base(reader)
+        public ParenthesisBuilder(ISequenceReader<Token> reader, Block block) : base(reader, block)
         {
         }
 
@@ -18,7 +19,7 @@ namespace GrammerTest.Grammer
 
         public OperatorNode Build()
         {
-            return new AstNodeBuilder(_reader,_interceptChars).Build();
+            return new AstNodeBuilder(_reader,_block,_interceptChars).Build();
         }
     }
 }

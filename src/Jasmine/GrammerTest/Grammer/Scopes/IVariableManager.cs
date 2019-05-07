@@ -10,5 +10,6 @@ namespace GrammerTest.Grammer.Scopes
          JObject GetVariable(string name);
          JObject Declare(string name);
          JObject Declare(string name, JObject obj);
+        void Reset(string name, JObject obj);
     }
 }

@@ -12,7 +12,7 @@ namespace GrammerTest.Grammer
             ")"
         };
 
-        public ForeachBuilder(ISequenceReader<Token> reader) : base(reader)
+        public ForeachBuilder(ISequenceReader<Token> reader, Block block) : base(reader, block)
         {
         }
 
@@ -20,7 +20,7 @@ namespace GrammerTest.Grammer
 
         public ForeachBlock Build()
         {
-            var foreachBlock = new ForeachBlock();
+            var foreachBlock = new ForeachBlock(_block);
 
             /*
              *  resolve header
@@ -45,16 +45,16 @@ namespace GrammerTest.Grammer
 
             throwIf(x => x.Value != Keywords.IN);//(var item in
 
-            foreachBlock.DeclareExpression = new DeclareExpression()
+            foreachBlock.DeclareExpression = new DeclareExpression(_block)
             {
-                Root = new DeclareOperator()
+                Root = new DeclareOperator(_block)
             };
 
             foreachBlock.DeclareExpression.Root.Operands.Add(new OperandNode(new JString(name)));//(var item in 
 
-            foreachBlock.GetCollectionExpression = new Expression();
+            foreachBlock.GetCollectionExpression = new Expression(_block);
 
-            foreachBlock.GetCollectionExpression.Root = new AstNodeBuilder(_reader, _interceptChars).Build();
+            foreachBlock.GetCollectionExpression.Root = new AstNodeBuilder(_reader,_block ,_interceptChars).Build();
 
             /*
              * Resolve body
@@ -64,7 +64,7 @@ namespace GrammerTest.Grammer
             if (!_reader.HasNext())
                 throwErrorIfHasNoNextAndNext("incompleted foreach block;");
 
-            foreachBlock.Body = new OrderedBlockBuilder(_reader,"foreach").Build();
+            foreachBlock.Body = new OrderedBlockBuilder(_reader,"foreach",foreachBlock).Build();
 
             return foreachBlock;
 

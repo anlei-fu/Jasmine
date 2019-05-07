@@ -6,7 +6,12 @@ namespace GrammerTest.Grammer
 {
     public class WhileBlock : BodyBlock
     {
-        public Expression CheckExpression { get; set; } = new Expression();
+        public WhileBlock(Block parent) : base(parent)
+        {
+            CheckExpression = new Expression(parent);
+        }
+
+        public Expression CheckExpression { get; set; }
         public override void Break()
         {
             throw new System.NotImplementedException();

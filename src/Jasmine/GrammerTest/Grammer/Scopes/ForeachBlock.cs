@@ -8,6 +8,9 @@ namespace GrammerTest.Grammer
 {
     public class ForeachBlock : BodyBlock
     {
+        public ForeachBlock(Block parent) : base(parent)
+        {
+        }
 
         public Expression GetCollectionExpression { get; set; }
         public DeclareExpression DeclareExpression { get; set; }

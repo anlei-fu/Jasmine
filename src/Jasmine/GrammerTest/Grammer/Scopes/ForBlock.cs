@@ -6,6 +6,11 @@ namespace Jasmine.Spider.Grammer
 {
     public  class ForBlock:BreakableBlock
     {
+        public ForBlock(Block parent) : base(parent)
+        {
+            OperateExpression = new Expression(this);
+        }
+
         public IEnumerable<object> Collection { get; set; }
 
         public IEnumerator<object> Enumerator { get; set; }
@@ -13,7 +18,7 @@ namespace Jasmine.Spider.Grammer
       
         public DeclareExpression DeclareExpression { get; set; }
         public Expression CheckExpression { get; set; }
-        public Expression OperateExpression { get; set; } = new Expression();
+        public Expression OperateExpression { get; set; } 
 
         public Block Block { get; set; }
 

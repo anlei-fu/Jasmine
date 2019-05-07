@@ -1,11 +1,12 @@
-﻿using GrammerTest.Grammer.Tokenizers;
+﻿using GrammerTest.Grammer.Scopes;
+using GrammerTest.Grammer.Tokenizers;
 using Jasmine.Spider.Grammer;
 
 namespace GrammerTest.Grammer.AstTreeBuilders
 {
     public class TryBlockBuilder : BuilderBase
     {
-        public TryBlockBuilder(ISequenceReader<Token> reader) : base(reader)
+        public TryBlockBuilder(ISequenceReader<Token> reader, Block block) : base(reader, block)
         {
         }
 
@@ -13,9 +14,9 @@ namespace GrammerTest.Grammer.AstTreeBuilders
 
         public TryBlock Build()
         {
-            var tryBlock = new TryBlock();
+            var tryBlock = new TryBlock(_block);
 
-            tryBlock.Body = new OrderedBlockBuilder(_reader,"try").Build();
+            tryBlock.Body = new OrderedBlockBuilder(_reader,"try",tryBlock).Build();
 
             return tryBlock;
         }
