@@ -1,5 +1,6 @@
 ﻿using GrammerTest.Grammer.Scopes;
 using GrammerTest.Grammer.TypeSystem;
+using System.Runtime.CompilerServices;
 
 namespace Jasmine.Spider.Grammer
 {
@@ -13,43 +14,19 @@ namespace Jasmine.Spider.Grammer
         public new IfBlock Parent { get; }
         public Expression CheckExpression { get; set; } 
 
-        public override void Break()
-        {
-            ((BreakableBlock)Parent).Break();
-
-        }
-
-        public override void Catch(JError error)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public override void Continue()
-        {
-            ((BreakableBlock)Parent).Continue();
-        }
-
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override void Excute()
         {
             CheckExpression.Excute();
 
-            if((bool)CheckExpression.Root.Output)
+            var match = (CheckExpression.Root.Output as JBool).Value;
+
+            if (match)
             {
                 Parent.SetMatchFound();
                 Body.Excute();
             }
         }
-
-        public bool IsMatch()
-        {
-            CheckExpression.Excute();
-
-            return (bool)CheckExpression.Root.Output;
-        }
-
-        public override void Return(JObject result)
-        {
-            throw new System.NotImplementedException();
-        }
+       
     }
 }

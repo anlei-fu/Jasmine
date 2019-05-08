@@ -8,7 +8,7 @@ namespace GrammerTest.Grammer
 {
     public class FunctionBuilder : BuilderBase
     {
-        public FunctionBuilder(ISequenceReader<Token> reader, Block block) : base(reader, block)
+        public FunctionBuilder(ISequenceReader<Token> reader, BreakableBlock block) : base(reader, block)
         {
         }
 

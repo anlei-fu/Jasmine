@@ -12,7 +12,7 @@ namespace GrammerTest.Grammer
     public  class AstNodeBuilder:BuilderBase
     {
         public AstNodeBuilder(ISequenceReader<Token> reader,
-                              Block block,
+                              BreakableBlock block,
                               string[] interceptChars,
                               bool hasparent=false) : base(reader,block)
 
@@ -22,7 +22,7 @@ namespace GrammerTest.Grammer
         }
 
         public AstNodeBuilder(ISequenceReader<Token> reader,
-                               Block block,
+                               BreakableBlock block,
                                string[] interceptChars,
                                OperatorNode node):base(reader,block)
         {

@@ -5,7 +5,7 @@ namespace GrammerTest.Grammer.Scopes
 {
     public class TopBlock : BreakableBlock
     {
-        public TopBlock(Block parent) : base(parent)
+        public TopBlock(BreakableBlock parent) : base(parent)
         {
         }
         public TopBlock():base(null)

@@ -6,7 +6,7 @@ namespace GrammerTest.Grammer.AstTreeBuilders
 {
     public class TryBlockBuilder : BuilderBase
     {
-        public TryBlockBuilder(ISequenceReader<Token> reader, Block block) : base(reader, block)
+        public TryBlockBuilder(ISequenceReader<Token> reader, BreakableBlock block) : base(reader, block)
         {
         }
 

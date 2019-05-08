@@ -12,7 +12,7 @@ namespace GrammerTest.Grammer
             ")"
         };
 
-        public ForeachBuilder(ISequenceReader<Token> reader, Block block) : base(reader, block)
+        public ForeachBuilder(ISequenceReader<Token> reader, BreakableBlock block) : base(reader, block)
         {
         }
 

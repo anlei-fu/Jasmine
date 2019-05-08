@@ -8,7 +8,7 @@ namespace GrammerTest.Grammer.AstTreeBuilders
     {
         public OrderdedBlock Block=new OrderdedBlock(null);
 
-        public TopBlockBuilder(ISequenceReader<Token> reader,Block block) : base(reader,block)
+        public TopBlockBuilder(ISequenceReader<Token> reader, BreakableBlock block) : base(reader,block)
         {
         }
 

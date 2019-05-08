@@ -7,7 +7,7 @@ namespace GrammerTest.Grammer
 {
     public class ElseBlockBuilder : BuilderBase
     {
-        public ElseBlockBuilder(ISequenceReader<Token> reader, Block block) : base(reader, block)
+        public ElseBlockBuilder(ISequenceReader<Token> reader, BreakableBlock block) : base(reader, block)
         {
         }
 

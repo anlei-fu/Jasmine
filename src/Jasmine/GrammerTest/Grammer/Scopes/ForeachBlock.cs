@@ -8,7 +8,7 @@ namespace GrammerTest.Grammer
 {
     public class ForeachBlock : BodyBlock
     {
-        public ForeachBlock(Block parent) : base(parent)
+        public ForeachBlock(BreakableBlock parent) : base(parent)
         {
         }
 

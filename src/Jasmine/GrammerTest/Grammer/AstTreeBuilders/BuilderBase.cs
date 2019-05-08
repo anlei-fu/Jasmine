@@ -10,12 +10,12 @@ namespace GrammerTest.Grammer
     public abstract class BuilderBase
     {
         
-        public  BuilderBase(ISequenceReader<Token> reader,Block block)
+        public  BuilderBase(ISequenceReader<Token> reader,BreakableBlock block)
         {
             _reader = reader;
             _block = block;
         }
-        protected Block _block;
+        protected BreakableBlock _block;
         protected ISequenceReader<Token> _reader;
         protected OperatorNode _currentNode;
         /// <summary>

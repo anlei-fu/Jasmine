@@ -7,7 +7,7 @@ namespace GrammerTest.Grammer
 {
     public  class IfBlockBuilder:BuilderBase
     {
-        public IfBlockBuilder(ISequenceReader<Token> reader, Block block) : base(reader, block)
+        public IfBlockBuilder(ISequenceReader<Token> reader, BreakableBlock block) : base(reader, block)
         {
         }
 

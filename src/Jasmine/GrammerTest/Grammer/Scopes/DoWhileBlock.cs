@@ -6,7 +6,7 @@ namespace GrammerTest.Grammer
 {
     public class DoWhileBlock : BodyBlock
     {
-        public DoWhileBlock(Block parent) : base(parent)
+        public DoWhileBlock(BreakableBlock parent) : base(parent)
         {
             CheckExpression = new Expression(parent);
         }
@@ -14,28 +14,35 @@ namespace GrammerTest.Grammer
         public override string Name => base.Name+".DoWhileBlock";
         public Expression CheckExpression { get; set; }
 
+        private bool _break;
         public override void Break()
         {
-            throw new System.NotImplementedException();
+            _break = true;
         }
-
-        public override void Catch(JError error)
-        {
-            throw new System.NotImplementedException();
-        }
-
         public override void Continue()
         {
-            throw new System.NotImplementedException();
-        }
 
+        }
         public override void Excute()
         {
-            throw new System.NotImplementedException();
+            Body.Excute();
+
+            CheckExpression.Excute();
+
+            var result = CheckExpression.Root.Output as JBool;
+
+            while(result.Value)
+            {
+                if (_break)
+                    break;
+
+                Body.Excute();
+
+                result = CheckExpression.Root.Output as JBool;
+            }
+
+            _break = false;
         }
-        public override void Return(JObject result)
-        {
-            throw new System.NotImplementedException();
-        }
+        
     }
 }

@@ -20,6 +20,7 @@ namespace Jasmine.Spider.Grammer
         /// <summary>
         /// do operate
         /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public abstract void Excute();
 
         protected void trowOutputTypeIncorrectError()
@@ -47,6 +48,7 @@ namespace Jasmine.Spider.Grammer
         /// </summary>
         /// <param name="node"></param>
         /// <returns></returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         protected JObject getOperand(AstNode node)
         {
             if (node is OperandNode)
@@ -54,14 +56,12 @@ namespace Jasmine.Spider.Grammer
 
             node.Excute();
 
-           
-
             return node.Output;
         }
 
        
 
-        public virtual bool NeedExcute => true;
+ 
     }
 
     /// <summary>
@@ -76,7 +76,7 @@ namespace Jasmine.Spider.Grammer
         }
         public override OutputType OutputType => OutputType.Object;
 
-        public override bool NeedExcute => false;
+        
 
         public override OperatorType OperatorType => OperatorType.Operand;
 
@@ -159,7 +159,7 @@ namespace Jasmine.Spider.Grammer
         public override OperatorType OperatorType =>OperatorType.Add;
 
         public override string Name => throw new System.NotImplementedException();
-
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         protected override JBool caculate(JBool para1, JBool para2)
         {
             if (!para1.Value)
@@ -175,7 +175,7 @@ namespace Jasmine.Spider.Grammer
     public class OrOperatOrNode : LogicOperatorNode
     {
         public override OperatorType OperatorType => OperatorType.Or;
-
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         protected override JBool caculate(JBool para1, JBool para2)
         {
             if (para1.Value)
@@ -200,7 +200,7 @@ namespace Jasmine.Spider.Grammer
             if (!Operands[0].OutputType.IsBool())
                 trowOutputTypeIncorrectError();
         }
-
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         protected override void excuteSingle(JObject obj)
         {
             Output = new JBool(!((JBool)obj).Value);
@@ -217,13 +217,13 @@ namespace Jasmine.Spider.Grammer
         public override OutputType OutputType => OutputType.Object;
 
         public override OperatorType OperatorType => OperatorType.MemberAccess;
-
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override void DoCheck()
         {
             if (!Operands[1].OutputType.IsString())
                 trowOutputTypeIncorrectError();
         }
-
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         protected override void excuteBinary(JObject obj1, JObject obj2)
         {
             if(Operands[1].Output is JMappingObject jm)
@@ -253,7 +253,7 @@ namespace Jasmine.Spider.Grammer
         {
             
         }
-
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override void Excute()
         {
 
@@ -312,7 +312,7 @@ namespace Jasmine.Spider.Grammer
             if (Operands[0].OutputType != OutputType.Object)
                 trowOutputTypeIncorrectError();
         }
-
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         protected override void excuteBinary(JObject obj1, JObject obj2)
         {
             if(obj1 is JMappingObject jm)
@@ -369,8 +369,8 @@ namespace Jasmine.Spider.Grammer
            
         }
 
-       
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         protected override void excuteBinary(JObject obj1, JObject obj2)
         {
             if(obj1 is JMappingObject jm)
@@ -395,7 +395,7 @@ namespace Jasmine.Spider.Grammer
     public class SubtractOperatorNode : BinaryNumberOperatorNode
     {
         public override OperatorType OperatorType => OperatorType.Subtract;
-
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         protected override JNumber caulate(JNumber param1, JNumber param2)
         {
             return new JNumber(param1.Value - param2.Value);
@@ -405,7 +405,7 @@ namespace Jasmine.Spider.Grammer
     public class MutiplyOperatorNode : BinaryNumberOperatorNode
     {
         public override OperatorType OperatorType => OperatorType.Mutiply;
-
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         protected override JNumber caulate(JNumber param1, JNumber param2)
         {
             return new JNumber(param1.Value * param2.Value);
@@ -415,7 +415,7 @@ namespace Jasmine.Spider.Grammer
     public class DevideOperatorNode : BinaryNumberOperatorNode
     {
         public override OperatorType OperatorType => OperatorType.Devide;
-
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         protected override JNumber caulate(JNumber param1, JNumber param2)
         {
             return new JNumber(param1.Value / param2.Value);
@@ -425,7 +425,7 @@ namespace Jasmine.Spider.Grammer
     public class ModOperatorNode : BinaryNumberOperatorNode
     {
         public override OperatorType OperatorType => OperatorType.Mod;
-
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         protected override JNumber caulate(JNumber param1, JNumber param2)
         {
             return new JNumber((int)(param1.Value) % (int)(param2.Value));
@@ -438,7 +438,7 @@ namespace Jasmine.Spider.Grammer
         public AsignmentNumberOperatorNode(Block block) : base(block)
         {
         }
-
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         protected override void excuteBinary(JObject obj1, JObject obj2)
         {
             var result = caculate((JNumber)obj1, (JNumber)obj2);
@@ -473,8 +473,8 @@ namespace Jasmine.Spider.Grammer
           
         }
 
-        
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         protected override void excuteBinary(JObject obj1, JObject obj2)
         {
             if (obj1 is JMappingObject jm)
@@ -533,7 +533,7 @@ namespace Jasmine.Spider.Grammer
         {
             throw new System.NotImplementedException();
         }
-
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         protected override JNumber caculate(JNumber num1, JNumber num2)
         {
             return new JNumber(num1.Value -num2.Value);
@@ -549,7 +549,7 @@ namespace Jasmine.Spider.Grammer
         {
             throw new System.NotImplementedException();
         }
-
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         protected override JNumber caculate(JNumber num1, JNumber num2)
         {
             return new JNumber(num1.Value * num2.Value);
@@ -566,7 +566,7 @@ namespace Jasmine.Spider.Grammer
         {
             throw new System.NotImplementedException();
         }
-
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         protected override JNumber caculate(JNumber num1, JNumber num2)
         {
             return new JNumber(num1.Value / num2.Value);
@@ -582,7 +582,7 @@ namespace Jasmine.Spider.Grammer
         public override void DoCheck()
         {
         }
-
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         protected override JNumber caculate(JNumber num1, JNumber num2)
         {
             return new JNumber((int)num1.Value%(int)num2.Value);
@@ -599,6 +599,7 @@ namespace Jasmine.Spider.Grammer
             if (!Operands[0].OutputType.IsNumber() || !Operands[1].OutputType.IsNumber())
                 trowOutputTypeIncorrectError();
         }
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         protected override void excuteBinary(JObject obj1, JObject obj2)
         {
             Output = caculate(((JNumber)obj1), ((JNumber)obj2));
@@ -612,7 +613,7 @@ namespace Jasmine.Spider.Grammer
     public class BiggerOperatorNode : BinaryNumerLogicOpeatorNode
     {
         public override OperatorType OperatorType => OperatorType.Bigger;
-
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         protected override JBool caculate(JNumber number1, JNumber number2)
         {
             return new JBool(number1 > number2);
@@ -622,7 +623,7 @@ namespace Jasmine.Spider.Grammer
     public class BiggerEquelOperatorNode : BinaryNumerLogicOpeatorNode
     {
         public override OperatorType OperatorType => OperatorType.BiggerEquel;
-
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         protected override JBool caculate(JNumber number1, JNumber number2)
         {
             return new JBool(number1 >= number2);
@@ -632,7 +633,7 @@ namespace Jasmine.Spider.Grammer
     public class LessOperatorNode : BinaryNumerLogicOpeatorNode
     {
         public override OperatorType OperatorType => OperatorType.Less;
-
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         protected override JBool caculate(JNumber number1, JNumber number2)
         {
             return new JBool(number1 < number2);
@@ -643,7 +644,7 @@ namespace Jasmine.Spider.Grammer
     public class LessEquelOperatorNode : BinaryNumerLogicOpeatorNode
     {
         public override OperatorType OperatorType => OperatorType.LessEquel;
-
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         protected override JBool caculate(JNumber number1, JNumber number2)
         {
             return new JBool(number1 < number2);
@@ -664,7 +665,7 @@ namespace Jasmine.Spider.Grammer
        
 
         public override OperatorType OperatorType =>OperatorType.Equel;
-
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         protected override void excuteBinary(JObject obj1, JObject obj2)
         {
             Output = new JBool(obj1.Equals(obj2));
@@ -682,7 +683,7 @@ namespace Jasmine.Spider.Grammer
             if (!Operands[0].OutputType.IsNumber())
                 trowOutputTypeIncorrectError();
         }
-
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         protected override void excuteSingle(JObject obj)
         {
             Output = new JNumber((0 - ((JNumber)obj).Value));
@@ -693,7 +694,7 @@ namespace Jasmine.Spider.Grammer
     public class ComareNotEquelNode : CompareNode
     {
         public override OperatorType OperatorType => OperatorType.NotEquel;
-
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         protected override void excuteBinary(JObject obj1, JObject obj2)
         {
             Output = new JBool(!obj1.Equals(obj2));
@@ -748,7 +749,7 @@ namespace Jasmine.Spider.Grammer
         {
             throw new System.NotImplementedException();
         }
-
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         protected override void excuteSingle(JObject obj)
         {
             if (obj is JMappingObject jm)
@@ -772,7 +773,7 @@ namespace Jasmine.Spider.Grammer
         public override void DoCheck()
         {
         }
-
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         protected override void excuteSingle(JObject obj)
         {
         }
@@ -787,7 +788,7 @@ namespace Jasmine.Spider.Grammer
         public override void DoCheck()
         {
         }
-
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         protected override void excuteBinary(JObject obj1, JObject obj2)
         {
         }
@@ -811,7 +812,7 @@ namespace Jasmine.Spider.Grammer
         {
             
         }
-
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override void Excute()
         {
             Output = Block.GetVariable(ObjectName);
@@ -834,7 +835,7 @@ namespace Jasmine.Spider.Grammer
         {
             
         }
-
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override void Excute()
         {
             var func = getOperand(Operands[0]);
@@ -882,7 +883,7 @@ namespace Jasmine.Spider.Grammer
         public override void DoCheck()
         {
         }
-
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override void Excute()
         {
             Block.Declare(((JFunction)Operands[0].Output).Name, Operands[0].Output);
@@ -904,7 +905,7 @@ namespace Jasmine.Spider.Grammer
         {
           
         }
-
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override void Excute()
         {
             Block.Break();
@@ -918,6 +919,7 @@ namespace Jasmine.Spider.Grammer
         }
 
         public override OperatorType OperatorType => OperatorType.Continue;
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override void Excute()
         {
             base.Excute();
@@ -934,7 +936,7 @@ namespace Jasmine.Spider.Grammer
         public override OperatorType OperatorType =>OperatorType.Return;
 
         public override OutputType OutputType => OutputType.Object;
-
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override void DoCheck()
         {
         }
@@ -950,7 +952,7 @@ namespace Jasmine.Spider.Grammer
         public override OperatorType OperatorType => throw new System.NotImplementedException();
 
         public override OutputType OutputType => throw new System.NotImplementedException();
-
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override void DoCheck()
         {
         }

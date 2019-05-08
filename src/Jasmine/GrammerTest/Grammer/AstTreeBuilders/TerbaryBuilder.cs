@@ -11,7 +11,7 @@ namespace GrammerTest.Grammer.AstTreeBuilders
         {
             "?",":",";"
         };
-        public TerbaryBuilder(ISequenceReader<Token> reader,Block block ):base(reader,block)
+        public TerbaryBuilder(ISequenceReader<Token> reader, BreakableBlock block ):base(reader,block)
         {
         }
 

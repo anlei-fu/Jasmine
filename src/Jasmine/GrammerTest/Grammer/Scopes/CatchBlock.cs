@@ -5,7 +5,7 @@ namespace GrammerTest.Grammer.Scopes
 {
     public class CatchBlock : BodyBlock
     {
-        public CatchBlock(Block parent) : base(parent)
+        public CatchBlock(BreakableBlock parent) : base(parent)
         {
         }
 

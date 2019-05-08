@@ -7,7 +7,7 @@ namespace GrammerTest.Grammer
     public class FunctionBlock : BodyBlock
     {
         public const string RETURN = "__RETURN__";
-        public FunctionBlock(Block parent) : base(parent)
+        public FunctionBlock(BreakableBlock parent) : base(parent)
         {
         }
 

@@ -5,7 +5,7 @@ namespace Jasmine.Spider.Grammer
 {
     public abstract class BreakableBlock : Block
     {
-        public BreakableBlock(Block parent) : base(parent)
+        public BreakableBlock(BreakableBlock parent) : base(parent)
         {
         }
 

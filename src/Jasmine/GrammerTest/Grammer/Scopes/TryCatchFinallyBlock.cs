@@ -7,7 +7,7 @@ namespace GrammerTest.Grammer
 {
     public class TryCatchFinallyBlock : BreakableBlock
     {
-        public TryCatchFinallyBlock(Block parent) : base(parent)
+        public TryCatchFinallyBlock(BreakableBlock parent) : base(parent)
         {
         }
 

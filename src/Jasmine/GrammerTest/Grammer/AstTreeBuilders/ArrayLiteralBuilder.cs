@@ -6,7 +6,7 @@ namespace GrammerTest.Grammer
 {
   public  class ArrayLiteralBuilder:BuilderBase
     {
-        public ArrayLiteralBuilder(ISequenceReader<Token> reader, Block block) : base(reader, block)
+        public ArrayLiteralBuilder(ISequenceReader<Token> reader, BreakableBlock block) : base(reader, block)
         {
         }
 

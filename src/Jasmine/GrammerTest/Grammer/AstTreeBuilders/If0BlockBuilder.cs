@@ -12,7 +12,7 @@ namespace GrammerTest.Grammer.AstTreeBuilders
             ")"
         };
 
-        public If0BlockBuilder(ISequenceReader<Token> reader, Block block) : base(reader, block)
+        public If0BlockBuilder(ISequenceReader<Token> reader, BreakableBlock block) : base(reader, block)
         {
         }
 

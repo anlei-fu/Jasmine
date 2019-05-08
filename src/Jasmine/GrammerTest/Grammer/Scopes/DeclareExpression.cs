@@ -4,7 +4,7 @@ namespace GrammerTest.Grammer.Scopes
 {
     public class DeclareExpression : Expression
     {
-        public DeclareExpression(Block parent) : base(parent)
+        public DeclareExpression(BreakableBlock parent) : base(parent)
         {
         }
 

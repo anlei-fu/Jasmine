@@ -11,7 +11,7 @@ namespace GrammerTest.Grammer
             ")"
         };
 
-        public ParenthesisBuilder(ISequenceReader<Token> reader, Block block) : base(reader, block)
+        public ParenthesisBuilder(ISequenceReader<Token> reader, BreakableBlock block) : base(reader, block)
         {
         }
 

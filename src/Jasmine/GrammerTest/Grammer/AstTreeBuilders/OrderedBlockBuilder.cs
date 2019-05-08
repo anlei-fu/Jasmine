@@ -13,7 +13,7 @@ namespace GrammerTest.Grammer.AstTreeBuilders
         };
 
         private string _parentName;
-        public OrderedBlockBuilder(ISequenceReader<Token> reader, string parentName, Block block) : base(reader, block)
+        public OrderedBlockBuilder(ISequenceReader<Token> reader, string parentName, BreakableBlock block) : base(reader, block)
         {
             _parentName = parentName;
         }
@@ -37,7 +37,7 @@ namespace GrammerTest.Grammer.AstTreeBuilders
             return exp;
         }
 
-        private Expression buildReturnExpression(Block block)
+        private Expression buildReturnExpression(BreakableBlock block)
         {
             var expNode = new AstNodeBuilder(_reader,block ,_interceptChars).Build();
 

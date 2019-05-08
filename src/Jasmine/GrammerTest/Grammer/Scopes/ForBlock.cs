@@ -1,11 +1,12 @@
 ﻿using GrammerTest.Grammer.Scopes;
 using GrammerTest.Grammer.TypeSystem;
+using System.Runtime.CompilerServices;
 
 namespace Jasmine.Spider.Grammer
 {
     public  class ForBlock:BodyBlock
     {
-        public ForBlock(Block parent) : base(parent)
+        public ForBlock(BreakableBlock parent) : base(parent)
         {
             OperateExpression = new Expression(this);
         }
@@ -16,23 +17,14 @@ namespace Jasmine.Spider.Grammer
         public Expression CheckExpression { get; set; }
         public Expression OperateExpression { get; set; }
 
-        private bool _break;
+        private  bool _break;
        
-
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override void Break()
         {
             _break = true;
         }
 
-        public override void Catch(JError error)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public override void Continue()
-        {
-            
-        }
 
         public override void Excute()
         {
@@ -64,9 +56,6 @@ namespace Jasmine.Spider.Grammer
             _break = false;
         }
 
-        public override void Return(JObject result)
-        {
-            throw new System.NotImplementedException();
-        }
+      
     }
 }

@@ -1,40 +1,51 @@
 ﻿using GrammerTest.Grammer.Scopes;
-using GrammerTest.Grammer.TypeSystem;
 using Jasmine.Spider.Grammer;
 
 namespace GrammerTest.Grammer
 {
     public class WhileBlock : BodyBlock
     {
-        public WhileBlock(Block parent) : base(parent)
+        public WhileBlock(BreakableBlock parent) : base(parent)
         {
             CheckExpression = new Expression(parent);
         }
 
         public Expression CheckExpression { get; set; }
+        private bool _break;
         public override void Break()
         {
-            throw new System.NotImplementedException();
+            _break = true;
         }
 
-        public override void Catch(JError error)
-        {
-            throw new System.NotImplementedException();
-        }
+       
 
         public override void Continue()
         {
-            throw new System.NotImplementedException();
+           
         }
 
         public override void Excute()
         {
-            throw new System.NotImplementedException();
+
+            CheckExpression.Excute();
+
+            var result = CheckExpression.Root.Output as JBool;
+            
+            while(result.Value)
+            {
+                if (_break)
+                    break;
+
+                Body.Excute();
+
+                CheckExpression.Excute();
+
+                 result = CheckExpression.Root.Output as JBool;
+            }
+
+            _break = false;
         }
 
-        public override void Return(JObject result)
-        {
-            throw new System.NotImplementedException();
-        }
+     
     }
 }

@@ -13,7 +13,7 @@ namespace GrammerTest
             ")"
         };
 
-        public DoWhileScopeBuilder(ISequenceReader<Token> reader, Block block) : base(reader, block)
+        public DoWhileScopeBuilder(ISequenceReader<Token> reader, BreakableBlock block) : base(reader, block)
         {
         }
 

@@ -4,7 +4,7 @@ namespace Jasmine.Spider.Grammer
 {
     public class Expression:AbstractExcutor
     {
-        public Expression(Block parent) : base(parent)
+        public Expression(BreakableBlock parent) : base(parent)
         {
         }
 

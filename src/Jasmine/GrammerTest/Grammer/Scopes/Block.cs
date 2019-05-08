@@ -7,7 +7,7 @@ namespace GrammerTest.Grammer.Scopes
     public abstract class Block : AbstractExcutor, IVariableTable
     {
         private Dictionary<string, JObject> _variables = new Dictionary<string, JObject>();
-        public Block(Block parent) : base(parent)
+        public Block(BreakableBlock parent) : base(parent)
         {
         }
 

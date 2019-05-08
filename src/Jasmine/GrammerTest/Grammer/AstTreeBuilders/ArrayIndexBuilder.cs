@@ -8,7 +8,7 @@ namespace GrammerTest.Grammer
     {
         private static readonly string[] _intercptChars = new string[] {"]" };
 
-        public ArrayIndexBuilder(ISequenceReader<Token> reader,Block block) : base(reader,block)
+        public ArrayIndexBuilder(ISequenceReader<Token> reader, BreakableBlock block) : base(reader,block)
         {
         }
 

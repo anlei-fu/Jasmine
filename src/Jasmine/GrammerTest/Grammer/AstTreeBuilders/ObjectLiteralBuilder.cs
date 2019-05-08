@@ -6,7 +6,7 @@ namespace GrammerTest.Grammer
 {
     public  class ObjectLiteralBuilder:BuilderBase
     {
-        public ObjectLiteralBuilder(ISequenceReader<Token> reader, Block block) : base(reader, block)
+        public ObjectLiteralBuilder(ISequenceReader<Token> reader, BreakableBlock block) : base(reader, block)
         {
         }
 

@@ -11,7 +11,7 @@ namespace GrammerTest.Grammer.AstTreeBuilders
             ";"
         };
 
-        public DeclareExpressionBuilder(ISequenceReader<Token> reader,Block block) : base(reader,block)
+        public DeclareExpressionBuilder(ISequenceReader<Token> reader, BreakableBlock block) : base(reader,block)
         {
         }
 

@@ -1,6 +1,7 @@
 ﻿
 
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using GrammerTest.Grammer.Scopes;
 using GrammerTest.Grammer.TypeSystem;
 
@@ -8,15 +9,15 @@ namespace Jasmine.Spider.Grammer
 {
     public class IfBlock: BreakableBlock
     {
+        public IfBlock(BreakableBlock parent) : base(parent)
+        {
+        }
+        private bool _isMatchFound;
         public List<If0Block> If0Blocks = new List<If0Block>();
         public ElseBlock ElseBlock { get; set; }
 
-       private bool _isMatchFound;
 
-        public IfBlock(Block parent) : base(parent)
-        {
-        }
-
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void SetMatchFound()
         {
             _isMatchFound = true;
@@ -31,8 +32,7 @@ namespace Jasmine.Spider.Grammer
                 if (_isMatchFound)
                     break;
 
-                if (_break)
-                    break;
+               
 
                 item.Excute();
 

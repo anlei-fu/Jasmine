@@ -12,7 +12,7 @@ namespace GrammerTest.Grammer
         {
             ";"
         };
-        public ExpressionBuilder(ISequenceReader<Token> reader,bool doCheck, Block block) : base(reader, block)
+        public ExpressionBuilder(ISequenceReader<Token> reader,bool doCheck, BreakableBlock block) : base(reader, block)
         {
             _doCheck = doCheck;
         }

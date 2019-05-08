@@ -7,7 +7,7 @@ namespace GrammerTest.Grammer.Scopes
 {
     public class OrderdedBlock : BreakableBlock
     {
-        public OrderdedBlock(Block parent) : base(parent)
+        public OrderdedBlock(BreakableBlock parent) : base(parent)
         {
         }
 
