@@ -1,4 +1,5 @@
-﻿using Jasmine.Spider.Grammer;
+﻿using GrammerTest.Grammer.TypeSystem.Exceptions;
+using Jasmine.Spider.Grammer;
 using System.Collections.Generic;
 
 namespace GrammerTest.Grammer.Scopes
@@ -19,7 +20,7 @@ namespace GrammerTest.Grammer.Scopes
                 throw new System.Exception();
             else
             {
-                _variables.Add(name, new JObject());
+                _variables.Add(name, new JObject(name));
             }
 
             return _variables[name];
@@ -52,12 +53,33 @@ namespace GrammerTest.Grammer.Scopes
 
         public void Reset(string name, JObject obj)
         {
-            _variables[name] = obj;
+            
+
+            if (_variables.ContainsKey(name))
+            {
+                obj.Name = name;
+                _variables[name] = obj;
+            }
+            else
+            {
+                if (Parent != null)
+                    Parent.Reset(name, obj);
+                else
+                    throw new VariableNotFoundException();
+
+
+            }
+
         }
 
         public void Unset(string name)
         {
             throw new System.NotImplementedException();
+        }
+
+        public void UnsetAll()
+        {
+            _variables.Clear();
         }
 
         public void UnsetAll(string name)

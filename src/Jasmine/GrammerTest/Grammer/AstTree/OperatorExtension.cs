@@ -34,8 +34,6 @@ namespace GrammerTest.Grammer
                 case OperatorType.NotEquel:
                 case OperatorType.Equel:
                     return 4;
-              
-             
                 case OperatorType.Add:
                 case OperatorType.Subtract:
                     return 5;

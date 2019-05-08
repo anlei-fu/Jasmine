@@ -20,7 +20,7 @@ namespace GrammerTest.Grammer.AstTreeBuilders
 
         public CallNode Build()
         {
-            var callNode =  OperatorNodeFactory.CreateCall();
+            var callNode =  OperatorNodeFactory.CreateCall(_block);
 
             IList<OperatorNode> parameters = new List<OperatorNode>();
 

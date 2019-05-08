@@ -166,8 +166,9 @@ namespace GrammerTest.Grammer
                                 /*
                                  * back one token ,because ';' has been intercepted by ternary builder;
                                  * 
-                                 */ 
-                                _reader.Back();
+                                 */
+                              
+                               //  _reader.Back();
 
                                 return ternaryNode;
 
@@ -406,7 +407,7 @@ namespace GrammerTest.Grammer
                             // just suppoort left increment and decrement 
                             case OperatorType.Increment:
 
-                                pushUnaryOperator(OperatorNodeFactory.CreateIncrement());
+                                pushUnaryOperator(OperatorNodeFactory.CreateIncrement(_block));
 
                                 break;
 
@@ -518,8 +519,10 @@ namespace GrammerTest.Grammer
             /*
              *  if the identifier  is not  first token of expression ,it should follow an operator or a keyword "in" in foreach block
              */
-            if (_reader.HasPrevious()&& _reader.Last().Value != Keywords.IN&& !_reader.Last().IsOperator())
+            if (_reader.HasPrevious())
             {
+                if(!(Keywords.KeyWordsUsing.Contains(_reader.Last().Value)||_reader.Last().IsOperator()))
+
                 throwUnexceptedError();
             }
         }

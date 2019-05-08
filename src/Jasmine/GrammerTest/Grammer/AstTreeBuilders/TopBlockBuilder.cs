@@ -96,7 +96,7 @@ namespace GrammerTest.Grammer.AstTreeBuilders
 
                                 var funcDefineExp = new FunctionDefineExpression(_block);
 
-                                funcDefineExp.Root = new FunctionDefineNode();
+                                funcDefineExp.Root = new FunctionDefineNode(_block);
 
                                 funcDefineExp.Root.Operands.Add(new OperandNode(function));
 

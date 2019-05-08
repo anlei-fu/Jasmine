@@ -5,16 +5,18 @@ namespace Jasmine.Spider.Grammer
 {
     public  class If0Block :BodyBlock
     {
-        public If0Block(Block parent) : base(parent)
+        public If0Block(IfBlock parent) : base(parent)
         {
+            Parent = parent;
             CheckExpression = new Expression(parent);
         }
-
+        public new IfBlock Parent { get; }
         public Expression CheckExpression { get; set; } 
 
         public override void Break()
         {
-            throw new System.NotImplementedException();
+            ((BreakableBlock)Parent).Break();
+
         }
 
         public override void Catch(JError error)
@@ -24,12 +26,18 @@ namespace Jasmine.Spider.Grammer
 
         public override void Continue()
         {
-            throw new System.NotImplementedException();
+            ((BreakableBlock)Parent).Continue();
         }
 
         public override void Excute()
         {
-            throw new System.NotImplementedException();
+            CheckExpression.Excute();
+
+            if((bool)CheckExpression.Root.Output)
+            {
+                Parent.SetMatchFound();
+                Body.Excute();
+            }
         }
 
         public bool IsMatch()

@@ -31,21 +31,21 @@ namespace GrammerTest.Grammer.AstTreeBuilders
 
             var exp = new Expression(_block);
 
-            exp.Root = isContinue ? OperatorNodeFactory.CreateContinue()
-                                    : OperatorNodeFactory.CreateBreak();
+            exp.Root = isContinue ? OperatorNodeFactory.CreateContinue((BreakableBlock)_block)
+                                    : OperatorNodeFactory.CreateBreak((BreakableBlock)_block);
 
             return exp;
         }
 
-        private Expression buildReturnExpression()
+        private Expression buildReturnExpression(Block block)
         {
-            var expNode = new AstNodeBuilder(_reader,_block ,_interceptChars).Build();
+            var expNode = new AstNodeBuilder(_reader,block ,_interceptChars).Build();
 
-            var retNode = OperatorNodeFactory.CreateReturn();
+            var retNode = OperatorNodeFactory.CreateReturn(block);
 
             retNode.Operands.Add(expNode);
 
-            var exp = new Expression(_block);
+            var exp = new Expression(block);
 
             exp.Root = retNode;
 
@@ -93,37 +93,37 @@ namespace GrammerTest.Grammer.AstTreeBuilders
 
                             if (_reader.Current().Value == Keywords.FOR)
                             {
-                                var block = new ForBlockBuilder(_reader,_block).Build();
+                                var block = new ForBlockBuilder(_reader,orderingBlock).Build();
 
                                 orderingBlock.Children.Add(block);
                             }
                             else if (_reader.Current().Value == Keywords.IF)
                             {
-                                var block = new IfBlockBuilder(_reader,_block).Build();
+                                var block = new IfBlockBuilder(_reader,orderingBlock).Build();
 
                                 orderingBlock.Children.Add(block);
                             }
                             else if (_reader.Current().Value == Keywords.FOREACH)
                             {
-                                var block = new ForeachBuilder(_reader,_block).Build();
+                                var block = new ForeachBuilder(_reader,orderingBlock).Build();
 
                                 orderingBlock.Children.Add(block);
                             }
                             else if (_reader.Current().Value == Keywords.DO)
                             {
-                                var block = new DoWhileScopeBuilder(_reader,_block).Build();
+                                var block = new DoWhileScopeBuilder(_reader,orderingBlock).Build();
 
                                 orderingBlock.Children.Add(block);
                             }
                             else if (_reader.Current().Value == Keywords.WHILE)
                             {
-                                var block = new WhileBlockBuilder(_reader,_block).Build();
+                                var block = new WhileBlockBuilder(_reader,orderingBlock).Build();
 
                                 orderingBlock.Children.Add(block);
                             }
                             else if (_reader.Current().Value == Keywords.TRY)
                             {
-                                var block = new TryCatchFinallyBlockBuilder(_reader,_block).Build();
+                                var block = new TryCatchFinallyBlockBuilder(_reader,orderingBlock).Build();
 
                                 orderingBlock.Children.Add(block);
                             }
@@ -172,7 +172,7 @@ namespace GrammerTest.Grammer.AstTreeBuilders
 
                                 case OperatorType.Declare:
 
-                                    var decExpression = new DeclareExpressionBuilder(_reader,_block).Build();
+                                    var decExpression = new DeclareExpressionBuilder(_reader,orderingBlock).Build();
 
                                     orderingBlock.Children.Add(decExpression);
 
@@ -180,7 +180,7 @@ namespace GrammerTest.Grammer.AstTreeBuilders
 
                                 case OperatorType.Return:
 
-                                    orderingBlock.Children.Add(buildReturnExpression());
+                                    orderingBlock.Children.Add(buildReturnExpression(orderingBlock));
 
                                     throwIfBlockNotFinish();
 
@@ -196,7 +196,7 @@ namespace GrammerTest.Grammer.AstTreeBuilders
 
                                     _reader.Back();
 
-                                    var expression0 = new ExpressionBuilder(_reader, true,_block).Build();
+                                    var expression0 = new ExpressionBuilder(_reader, true,orderingBlock).Build();
                                     orderingBlock.Children.Add(expression0);
 
                                     break;
@@ -214,7 +214,7 @@ namespace GrammerTest.Grammer.AstTreeBuilders
 
                             _reader.Back();
 
-                            var expression = new ExpressionBuilder(_reader, true,_block).Build();
+                            var expression = new ExpressionBuilder(_reader, true,orderingBlock).Build();
 
                             orderingBlock.Children.Add(expression);
 
@@ -249,7 +249,7 @@ namespace GrammerTest.Grammer.AstTreeBuilders
                 }
                 else if (_reader.Current().OperatorType == OperatorType.Return)
                 {
-                    orderingBlock.Children.Add(buildReturnExpression());
+                    orderingBlock.Children.Add(buildReturnExpression(orderingBlock));
 
                     return orderingBlock;
                 }
@@ -257,7 +257,7 @@ namespace GrammerTest.Grammer.AstTreeBuilders
                 {
                     _reader.Back();
 
-                    var expression = new ExpressionBuilder(_reader, true,_block).Build();
+                    var expression = new ExpressionBuilder(_reader, true,orderingBlock).Build();
 
                     orderingBlock.Children.Add(expression);
 

@@ -38,20 +38,21 @@ namespace GrammerTest.Grammer.AstTreeBuilders
 
                     throwErrorIfOperatorTypeNotMatch(OperatorType.Declare);
 
-                    forBlock.DeclareExpression = new DeclareExpressionBuilder(_reader,_block).Build();
+                    forBlock.DeclareExpression = new DeclareExpressionBuilder(_reader,forBlock).Build();
 
-                    forBlock.CheckExpression = new ExpressionBuilder(_reader, false,_block).Build();
+                    forBlock.CheckExpression = new ExpressionBuilder(_reader, false,forBlock).Build();
 
                     if (!forBlock.CheckExpression.Root.OutputType.IsBool())
                         throwError("second expression should be bool expression ,but it's not;");
 
-                    forBlock.OperateExpression.Root = new AstNodeBuilder(_reader,_block,_interceptChars).Build();
+                    forBlock.OperateExpression.Root = new AstNodeBuilder(_reader,forBlock,_interceptChars).Build();
 
                     if (_reader.HasNext())
                     {
 
-                        forBlock.Block = new OrderedBlockBuilder(_reader, "for",forBlock).Build();
+                        forBlock.Body= new OrderedBlockBuilder(_reader, "for",forBlock).Build();
 
+                        return forBlock;
                     }
                     else
                     {

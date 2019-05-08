@@ -14,30 +14,45 @@ namespace GrammerTest.Grammer.Scopes
         public IList<IExcutor> Children { get; set; } = new List<IExcutor>();
         public override void Break()
         {
-            throw new NotImplementedException();
+            ((BreakableBlock)Parent).Break();
+
+            _break = true;
         }
 
         public override void Catch(JError error)
         {
-            throw new NotImplementedException();
+            ((BreakableBlock)Parent).Continue();
+
+            _break = true;
         }
 
         public override void Continue()
         {
-            throw new NotImplementedException();
+            ((BreakableBlock)Parent).Continue();
+
+            _break = true;
         }
+        private bool _break;
 
         public override void Excute()
         {
             foreach (var item in Children)
             {
+                if (_break)
+                    break;
+
                 item.Excute();
             }
+
+
+            _break = false;
         }
 
         public override void Return(JObject result)
         {
-            throw new NotImplementedException();
+            ((BreakableBlock)Parent).Return(result);
+
+            _break = true;
         }
     }
 }

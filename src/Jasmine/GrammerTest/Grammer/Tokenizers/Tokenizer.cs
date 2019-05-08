@@ -394,6 +394,7 @@ namespace Jasmine.Spider.Grammer
         {
             if (_reader.HasNext())
             {
+                _reader.Next();
                 if (_reader.Current() == end)
                 {
                     _output.Add(_tokenFactory.Create(type, _reader.Line, _reader.LineNumber));

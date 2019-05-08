@@ -108,9 +108,9 @@ namespace GrammerTest.Grammer
            
         }
 
-        public static IncrementNode  CreateIncrement()
+        public static IncrementNode  CreateIncrement(Block block)
         {
-            return new IncrementNode();
+            return new IncrementNode(block);
             
         }
 
@@ -127,15 +127,15 @@ namespace GrammerTest.Grammer
         }
 
 
-        public static BreakNode  CreateBreak()
+        public static BreakNode  CreateBreak(BreakableBlock block)
         {
-            return new BreakNode();
+            return new BreakNode(block);
             
         }
         
-        public static ContinueNode CreateContinue()
+        public static ContinueNode CreateContinue(BreakableBlock block)
         {
-            return new ContinueNode();
+            return new ContinueNode(block);
            
         }
 
@@ -145,9 +145,9 @@ namespace GrammerTest.Grammer
            
         }
 
-        public static CallNode CreateCall()
+        public static CallNode CreateCall(Block block)
         {
-            return new CallNode();
+            return new CallNode(block);
             
         }
 
@@ -176,9 +176,9 @@ namespace GrammerTest.Grammer
             return new DevideAsignOperatorNode(block);
         }
 
-        public static  ReturnOperatorNode CreateReturn()
+        public static  ReturnOperatorNode CreateReturn(Block block)
         {
-            return new ReturnOperatorNode();
+            return new ReturnOperatorNode(block);
         }
 
     }

@@ -64,6 +64,11 @@ namespace GrammerTest.Grammer
 
         public static readonly HashSet<string> KeyWordsUsing = new HashSet<string>
         {
+            IN,
+            ELSE,
+            IF,
+            ELIF,
+            DO
 
         };
         public static readonly HashSet<string> KeyWordsReserved = new HashSet<string>()

@@ -20,7 +20,7 @@ namespace GrammerTest.Grammer.AstTreeBuilders
 
         public If0Block Build()
         {
-            var if0Block = new If0Block(_block);
+            var if0Block = new If0Block((IfBlock)_block);
 
             throwErrorIfHasNoNextAndNext("incompleted if block;");
 

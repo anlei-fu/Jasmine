@@ -19,6 +19,8 @@ namespace GrammerTest.Grammer
 
             var func = new JFunction();
 
+
+
             if(_reader.HasNext())
             {
                 //get name
@@ -84,8 +86,10 @@ namespace GrammerTest.Grammer
                 if (!isParameterDefineFinished)
                     throwError("incompleted function define;");
 
+                func.Parameters = parameters.ToArray();
+
                 //resolve function -body
-                func.Body = new OrderedBlockBuilder(_reader,"function",_block).Build();
+                func.Block.Body = new OrderedBlockBuilder(_reader,"function",func.Block).Build();
 
                 return func;
             }

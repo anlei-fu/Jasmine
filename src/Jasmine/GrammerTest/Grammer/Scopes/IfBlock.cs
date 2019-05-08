@@ -22,12 +22,16 @@ namespace Jasmine.Spider.Grammer
             _isMatchFound = true;
         }
 
+        private bool _break;
         public override void Excute()
         {
 
             foreach (var item in If0Blocks)
             {
                 if (_isMatchFound)
+                    break;
+
+                if (_break)
                     break;
 
                 item.Excute();
@@ -37,16 +41,22 @@ namespace Jasmine.Spider.Grammer
             if (!_isMatchFound && ElseBlock != null)
                 ElseBlock.Excute();
 
+            _break = false;
+            _isMatchFound = false;
         }
 
         public override void Break()
         {
-            throw new System.NotImplementedException();
+            ((BreakableBlock)Parent).Break();
+
+            _break = true;
         }
 
         public override void Continue()
         {
-            throw new System.NotImplementedException();
+            ((BreakableBlock)Parent).Continue();
+
+            _break = true;
         }
 
         public override void Catch(JError error)

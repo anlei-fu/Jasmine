@@ -18,7 +18,7 @@ namespace GrammerTest.Grammer
 
             var ifBlock = new IfBlock(_block);
 
-            var if0Block = new If0BlockBuilder(_reader,_block).Build();
+            var if0Block = new If0BlockBuilder(_reader,ifBlock).Build();
 
             ifBlock.If0Blocks.Add(if0Block);
 
@@ -29,12 +29,12 @@ namespace GrammerTest.Grammer
 
                 if(token.Value==Keywords.ELIF)
                 {
-                    ifBlock.If0Blocks.Add(new If0BlockBuilder(_reader,_block).Build());
+                    ifBlock.If0Blocks.Add(new If0BlockBuilder(_reader,ifBlock).Build());
                 }
                 else if(token.Value==Keywords.ELSE)
                 {
 
-                    ifBlock.ElseBlock = new ElseBlockBuilder(_reader,_block).Build();
+                    ifBlock.ElseBlock = new ElseBlockBuilder(_reader,ifBlock).Build();
 
                     return ifBlock;
                 }

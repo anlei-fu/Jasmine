@@ -11,12 +11,13 @@ namespace Jasmine.Spider.Grammer
 
         public override void Break()
         {
-            throw new System.NotImplementedException();
+            ((BreakableBlock)Parent).Break();
+
         }
 
         public override void Catch(JError error)
         {
-            throw new System.NotImplementedException();
+            ((BreakableBlock)Parent).Continue();
         }
 
         public override void Continue()
@@ -26,7 +27,7 @@ namespace Jasmine.Spider.Grammer
 
         public override void Excute()
         {
-            throw new System.NotImplementedException();
+            Body.Excute();
         }
 
         public override void Return(JObject result)

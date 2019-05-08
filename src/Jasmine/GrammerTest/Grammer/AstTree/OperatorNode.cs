@@ -162,7 +162,11 @@ namespace Jasmine.Spider.Grammer
 
         protected override JBool caculate(JBool para1, JBool para2)
         {
-            return new JBool(para1.Value && para2.Value);
+            if (!para1.Value)
+                return new JBool(false);
+            else if (!para2.Value)
+                return new JBool(false);
+            return new JBool(true);
         }
     }
     /// <summary>
@@ -174,7 +178,12 @@ namespace Jasmine.Spider.Grammer
 
         protected override JBool caculate(JBool para1, JBool para2)
         {
-            return new JBool(para1.Value || para2.Value);
+            if (para1.Value)
+                return new JBool(true);
+            else if (para1.Value)
+                return new JBool(true);
+            else
+                return new JBool(false);
         }
     }
     /// <summary>
@@ -249,8 +258,10 @@ namespace Jasmine.Spider.Grammer
         {
 
             var result = getOperand(Operands[Operands.Count - 1]);
+            var name = (string)getOperand(Operands[0]);
+            result.Name = name;
 
-            Block.Declare((string)getOperand(Operands[0]), result);
+            Block.Declare(name, result);
          }
     }
     public class DeclareOperator : OperatorNode
@@ -306,14 +317,24 @@ namespace Jasmine.Spider.Grammer
         {
             if(obj1 is JMappingObject jm)
             {
-                jm.SetProperty(jm.Name, obj2.GetObject());
+                jm.SetProperty(obj2.GetObject());
             }
             else
             {
-                if (obj1.HasParent)
-                    obj1.Parent.SetProperty(obj1.Name, obj2);
+                if(obj2.Type!=JType.Object)
+                {
+                    obj2 = obj2.Clone();
+                }
 
-               
+                if (obj1.HasParent)
+                {
+
+                    obj1.Parent.SetProperty(obj1.Name, obj2);
+                }
+                else
+                {
+                    Block.Reset(obj1.Name, obj2);
+                }
             }
         }
     }
@@ -400,7 +421,7 @@ namespace Jasmine.Spider.Grammer
 
             if (obj1 is JMappingObject jm)
             {
-                jm.SetProperty(jm.Name, result.GetObject());
+                jm.SetProperty(result.GetObject());
             }
             else
             {
@@ -599,12 +620,17 @@ namespace Jasmine.Spider.Grammer
 
         protected override void excuteBinary(JObject obj1, JObject obj2)
         {
-            Output = new JBool(obj1.Equals(obj2));
+            Output = new JBool(!obj1.Equals(obj2));
         }
     }
 
     public class IncrementNode : SingleOperatorNode
     {
+        public IncrementNode(Block block)
+        {
+            Block = block;
+        }
+        public Block Block { get; set; }
         public override OutputType OutputType => OutputType.Object;
 
         public override OperatorType OperatorType => OperatorType.Increment;
@@ -618,11 +644,20 @@ namespace Jasmine.Spider.Grammer
         {
             if(obj is JMappingObject jm)
             {
-                jm.SetProperty(jm.Name, ((JNumber)obj).Value += 1);
+                jm.SetProperty(((JNumber)obj).Value += 1);
             }
             else
             {
-                obj.SetProperty(obj.Name,new JNumber((((JNumber)obj).Value += 1)));
+                var jmnu = new JNumber((((JNumber)obj).Value + 1));
+                jmnu.Name = obj.Name;
+
+                if (obj.HasParent)
+                    obj.SetProperty(obj.Name, jmnu);
+                else
+                {
+                    Block.Reset(obj.Name, jmnu);
+                }
+                        
             }
         }
     }
@@ -642,7 +677,7 @@ namespace Jasmine.Spider.Grammer
         {
             if (obj is JMappingObject jm)
             {
-                jm.SetProperty(jm.Name, ((JNumber)obj).Value -= 1);
+                jm.SetProperty(((JNumber)obj).Value -= 1);
             }
             else
             {
@@ -710,6 +745,11 @@ namespace Jasmine.Spider.Grammer
     }
     public class CallNode : OperatorNode
     {
+        public CallNode(Block block)
+        {
+            Block = block;
+        }
+        public Block Block { get; set; }
         public override OutputType OutputType => OutputType.Object;
 
         public override OperatorType OperatorType => OperatorType.Call;
@@ -721,12 +761,44 @@ namespace Jasmine.Spider.Grammer
 
         public override void Excute()
         {
-            throw new System.NotImplementedException();
+            var func = getOperand(Operands[0]);
+
+           if(func is JFunction jsf)
+            {
+               
+
+                var ls = new List<JObject>();
+
+                for (int i = 1; i< Operands.Count; i++)
+                {
+                    ls.Add(getOperand(Operands[i]));
+                }
+
+
+                Output = jsf.Excute(ls.ToArray());
+
+            }
+           else if(func is JMappingFunction)
+            {
+
+            }
+           else
+            {
+                throw new System.Exception();
+            }
+
+
+
         }
     }
 
     public class FunctionDefineNode : OperatorNode
     {
+        public FunctionDefineNode(Block block)
+        {
+            Block = block;
+        }
+        public Block Block { get; set; }
         public override OutputType OutputType => OutputType.Object;
 
         public override OperatorType OperatorType => OperatorType.Function;
@@ -737,12 +809,18 @@ namespace Jasmine.Spider.Grammer
 
         public override void Excute()
         {
+            Block.Declare(((JFunction)Operands[0].Output).Name, Operands[0].Output);
         }
     }
 
     public class BreakNode : OperatorNode
     {
+        public BreakNode(BreakableBlock block)
+        {
+            Block = block;
+        }
         public override OutputType OutputType => OutputType.None;
+        public BreakableBlock Block { get; set; }
 
         public override OperatorType OperatorType => OperatorType.Break;
 
@@ -753,11 +831,16 @@ namespace Jasmine.Spider.Grammer
 
         public override void Excute()
         {
+            Block.Break();
         }
     }
 
     public class ContinueNode:BreakNode
     {
+        public ContinueNode(BreakableBlock block) : base(block)
+        {
+        }
+
         public override OperatorType OperatorType => OperatorType.Continue;
         public override void Excute()
         {
@@ -767,6 +850,11 @@ namespace Jasmine.Spider.Grammer
 
     public class ReturnOperatorNode : SingleOperatorNode
     {
+        public ReturnOperatorNode(Block block)
+        {
+            Block = block;
+        }
+        public Block Block { get; set; }
         public override OperatorType OperatorType =>OperatorType.Return;
 
         public override OutputType OutputType => OutputType.Object;
@@ -777,6 +865,7 @@ namespace Jasmine.Spider.Grammer
 
         protected override void excuteSingle(JObject obj)
         {
+            ((BreakableBlock)Block).Return(obj);
         }
     }
 
@@ -792,6 +881,13 @@ namespace Jasmine.Spider.Grammer
 
         public override void Excute()
         {
+            var result = getOperand(Operands[0]);
+
+            if ((bool)result)
+                Output = getOperand(Operands[1]);
+            else
+                Output = getOperand(Operands[2]);
+
         }
     }
 }

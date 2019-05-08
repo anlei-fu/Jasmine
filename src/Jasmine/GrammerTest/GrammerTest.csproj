@@ -60,6 +60,7 @@
     <Compile Include="Grammer\AstTree\AsignmnetOperatorNode.cs" />
     <Compile Include="Grammer\AstTree\AstNode.cs" />
     <Compile Include="Grammer\AstTree\BinaryOperatorNode.cs" />
+    <Compile Include="Grammer\AstTree\Exceptions\FunctionParameterCountNotMatchException.cs" />
     <Compile Include="Grammer\AstTree\Exceptions\IncorrectOperatorException.cs" />
     <Compile Include="Grammer\AstTree\LogicBinaryOperator.cs" />
     <Compile Include="Grammer\AstTree\NumberBinaryOperator.cs" />
@@ -119,8 +120,11 @@
     <Compile Include="Grammer\Exceptions\InvalidNameException.cs" />
     <Compile Include="Grammer\TypeSystem\Exceptions\CastException.cs" />
     <Compile Include="Grammer\TypeSystem\Exceptions\NotConvertableException.cs" />
+    <Compile Include="Grammer\TypeSystem\Exceptions\PropertyNotFoundException.cs" />
+    <Compile Include="Grammer\TypeSystem\Exceptions\VariableNotFoundException.cs" />
     <Compile Include="Grammer\TypeSystem\IJobjectFactory.cs" />
     <Compile Include="Grammer\TypeSystem\IJObjectPool.cs" />
+    <Compile Include="Grammer\TypeSystem\InvalidMethodCall.cs" />
     <Compile Include="Grammer\TypeSystem\JError.cs" />
     <Compile Include="Grammer\TypeSystem\JNumberExtension.cs" />
     <Compile Include="Grammer\TypeSystem\JObject.cs" />
