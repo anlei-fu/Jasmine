@@ -27,7 +27,7 @@ namespace GrammerTest
 
         static void tsetExcute()
         {
-            var pattern = " var a=15; function add(b,c){ var t=0; for(var i=b;i<c;++i) t=t+i*5;   return t;}  var c= add(1,4); ";
+            var pattern = " var d=\"hello\"+\" world!\"; var b=d==\"hello world!\";    var f=d+\" just for test! \";  var a=15; function add(b,c){ var t=0; for(var i=b;i<c;++i) t=t+i*5;   return t;}  var c= add(1,4); ";
 
 
             Tokenizer tg = new Tokenizer();
@@ -50,9 +50,9 @@ namespace GrammerTest
                 Console.WriteLine(watch.ElapsedMilliseconds);
                 Console.WriteLine("a is " + block.GetVariable("a"));
                 Console.WriteLine("c is " + block.GetVariable("c").ToString());
-             //   Console.WriteLine("b is " + block.GetVariable("b").ToString());
-              //  Console.WriteLine("d is " + block.GetVariable("d"));
-                //Console.WriteLine("f is " + block.GetVariable("f"));
+                Console.WriteLine("b is " + block.GetVariable("b").ToString());
+               Console.WriteLine("d is " + block.GetVariable("d"));
+                Console.WriteLine("f is " + block.GetVariable("f"));
                 Console.Read();
             }
             Console.WriteLine($"spend:{watch.ElapsedMilliseconds} ");

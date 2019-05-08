@@ -209,6 +209,22 @@ namespace Jasmine.Spider.Grammer
                
 
         }
+
+        public static explicit operator double(JObject obj)
+        {
+            if(obj is JNumber jnum)
+            {
+                return jnum.Value;
+            }
+            else if(obj is JMappingObject jma)
+            {
+                return (double)(jma.Getter.Invoke(jma.Parent.Instance));
+            }
+            else
+            {
+                throw new InvalidCastException();
+            }
+        }
      
         public static explicit operator bool(JObject obj)
         {

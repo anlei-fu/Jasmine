@@ -358,13 +358,38 @@ namespace Jasmine.Spider.Grammer
                 trowOutputTypeIncorrectError();
         }
     }
-    public class AddOperatorNode : BinaryNumberOperatorNode
+    public class AddOperatorNode : BinaryOperatorNode
     {
         public override OperatorType OperatorType => OperatorType.Add;
 
-        protected override JNumber caulate(JNumber param1, JNumber param2)
+        public override OutputType OutputType => throw new System.NotImplementedException();
+
+        public override void DoCheck()
         {
-            return new JNumber(param1.Value + param2.Value);
+           
+        }
+
+       
+
+        protected override void excuteBinary(JObject obj1, JObject obj2)
+        {
+            if(obj1 is JMappingObject jm)
+            {
+
+            }
+            else if(obj1 is JString jstr)
+            {
+                Output = new JString(jstr.Value + (string)obj2);
+            }
+            else if(obj1 is JNumber jnum)
+            {
+                Output = new JNumber(jnum.Value + (double)obj2);
+            }
+            else
+            {
+
+            }
+
         }
     }
     public class SubtractOperatorNode : BinaryNumberOperatorNode
@@ -431,20 +456,71 @@ namespace Jasmine.Spider.Grammer
 
         protected abstract JNumber caculate(JNumber num1, JNumber num2);
     }
-    public class AddAsignmentNode : AsignmentNumberOperatorNode
+    public class AddAsignmentNode :BinaryOperatorNode
     {
-        public AddAsignmentNode(Block block) : base(block)
+        public AddAsignmentNode(Block block) 
         {
+            Block = block;
         }
+        public Block Block { get; set; }
+
+        public override OperatorType OperatorType => OperatorType.AddAsignment;
+
+        public override OutputType OutputType => OutputType.Object;
 
         public override void DoCheck()
         {
-            throw new System.NotImplementedException();
+          
         }
 
-        protected override JNumber caculate(JNumber num1, JNumber num2)
+        
+
+        protected override void excuteBinary(JObject obj1, JObject obj2)
         {
-            return new JNumber(num1.Value + num2.Value);
+            if (obj1 is JMappingObject jm)
+            {
+                jm.SetProperty(obj2.GetObject());
+            }
+            else
+            {
+                if (obj2.Type != JType.Object)
+                {
+                    obj2 = obj2.Clone();
+                }
+
+                if (obj1.HasParent)
+                {
+                    if (obj1 is JString jstr)
+                    {
+
+                        obj1.Parent.SetProperty(obj1.Name, new JString(jstr.Value+ (string)obj2));
+                    }
+                    else if(obj1 is JNumber jnum)
+                    {
+                        obj1.Parent.SetProperty(obj1.Name, new JNumber(jnum.Value + (double)obj2));
+                    }
+                    else
+                    {
+
+                    }
+                }
+                else
+                {
+                    if (obj1 is JString jstr)
+                    {
+
+                        obj1.Parent.SetProperty(obj1.Name, new JString((string)obj2+jstr.Value));
+                    }
+                    else if (obj1 is JNumber jnum)
+                    {
+                        obj1.Parent.SetProperty(obj1.Name, new JNumber((double)obj2 + jnum.Value));
+                    }
+                    else
+                    {
+
+                    }
+                }
+            }
         }
     }
     public class SubtractAsignmentNode : AsignmentNumberOperatorNode
