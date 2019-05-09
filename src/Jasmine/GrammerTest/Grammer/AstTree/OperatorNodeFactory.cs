@@ -114,9 +114,9 @@ namespace GrammerTest.Grammer
             
         }
 
-        public static DecrementNode CreateDecremnet()
+        public static DecrementNode CreateDecremnet(Block block)
         {
-            return new DecrementNode();
+            return new DecrementNode(block);
             
         }
 

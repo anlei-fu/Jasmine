@@ -1,8 +1,7 @@
 ﻿using GrammerTest.Grammer.Scopes;
-using GrammerTest.Grammer.TypeSystem;
+using GrammerTest.Grammer.Scopes.Exceptions;
 using Jasmine.Spider.Grammer;
-using System;
-using System.Collections.Generic;
+using System.Collections;
 
 namespace GrammerTest.Grammer
 {
@@ -14,33 +13,56 @@ namespace GrammerTest.Grammer
 
         public Expression GetCollectionExpression { get; set; }
         public DeclareExpression DeclareExpression { get; set; }
-     
+        public IEnumerator Enumerabtor { get; set; }
+        public string IteratorName { get; set; }
 
-        public IEnumerator<object> Enumerabtor { get; set; }
-
+        private bool _break;
         public override void Break()
         {
-            throw new NotImplementedException();
+            _break = true;
         }
 
-        public override void Catch(JError error)
-        {
-            throw new NotImplementedException();
-        }
-
+        
+     
         public override void Continue()
         {
-            throw new NotImplementedException();
+           
         }
 
         public override void Excute()
         {
-            throw new NotImplementedException();
+
+            var result = GetCollectionExpression.Root.Output;
+
+
+            if (result is JMappingObject jma)
+            {
+                Enumerabtor = jma.Instance as IEnumerator;
+
+                while (Enumerabtor.MoveNext())
+                {
+                    if (_break)
+                        break;
+
+                    Reset(IteratorName, new JMappingObject(Enumerabtor.Current));
+                    Body.Excute();
+                }
+            }
+            else if(result.Type ==JType.Object)
+            {
+
+            }
+            else
+            {
+                throw new CanNotCastToEnumerableException();
+            }
+
+
+           
+
+            
         }
 
-        public override void Return(JObject result)
-        {
-            throw new NotImplementedException();
-        }
+        
     }
 }

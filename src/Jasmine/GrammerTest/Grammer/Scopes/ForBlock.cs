@@ -1,5 +1,4 @@
 ﻿using GrammerTest.Grammer.Scopes;
-using GrammerTest.Grammer.TypeSystem;
 using System.Runtime.CompilerServices;
 
 namespace Jasmine.Spider.Grammer
@@ -48,11 +47,12 @@ namespace Jasmine.Spider.Grammer
 
                 Body.Excute();
 
-                Body.UnsetAll();
+           
                 OperateExpression.Excute();
 
             }
 
+             UnsetAll();
             _break = false;
         }
 

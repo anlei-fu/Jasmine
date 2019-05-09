@@ -1,6 +1,5 @@
 ﻿using GrammerTest.Grammer.TypeSystem;
 using Jasmine.Spider.Grammer;
-using System;
 using System.Collections.Generic;
 
 namespace GrammerTest.Grammer.Scopes
@@ -14,21 +13,21 @@ namespace GrammerTest.Grammer.Scopes
         public IList<IExcutor> Children { get; set; } = new List<IExcutor>();
         public override void Break()
         {
-            ((BreakableBlock)Parent).Break();
+           Parent.Break();
 
             _break = true;
         }
 
         public override void Catch(JError error)
         {
-            ((BreakableBlock)Parent).Continue();
+            Parent.Catch(error);
 
             _break = true;
         }
 
         public override void Continue()
         {
-            ((BreakableBlock)Parent).Continue();
+            Parent.Continue();
 
             _break = true;
         }
@@ -46,11 +45,12 @@ namespace GrammerTest.Grammer.Scopes
 
 
             _break = false;
+            UnsetAll();
         }
 
         public override void Return(JObject result)
         {
-            ((BreakableBlock)Parent).Return(result);
+            Parent.Return(result);
 
             _break = true;
         }

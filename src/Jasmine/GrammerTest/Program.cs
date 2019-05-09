@@ -17,17 +17,57 @@ namespace GrammerTest
 
 
 
-            tsetExcute();
+            testMapping();
 
             Console.WriteLine("finished!");
 
             Console.Read();
         }
 
+        class Animal
+        {
+            public string Name { get; set; }
+            public int Age { get; set; }
+
+            public string Say()
+            {
+                return $"I'm a {Name}!";
+            }
+
+            public int Add()
+            {
+                return ++Age;
+            }
+        }
+        static void testMapping()
+        {
+          var pattern = "var f;  function a(){ var t=0; while(t<1) ++t; return t>3; } a(); var c=b.Name; var d=b.Age; b.Age=15; for(var i=0;i<100000;++i){ d=b.Age;b.Age=i; b.Name=\"cat\"; c=b.Say();b.Add(); f=a();}";
+
+            Tokenizer tg = new Tokenizer();
+            var watch = new Stopwatch();
+            var reader = new SequenceReader<Token>(tg.Tokenize(pattern));
+
+            var block = new TopBlock();
+            var p = new Animal { Name = "dog", Age = 10 };
+            block.Declare("b", new JMappingObject(p));
+            var builder = new TopBlockBuilder(reader, block);
+            builder.Build();
+
+            watch.Start();
+            builder.Block.Excute();
+            Console.WriteLine(watch.ElapsedMilliseconds);
+            Console.WriteLine("c is " + block.GetVariable("c"));
+            Console.WriteLine("d is " + block.GetVariable("d"));
+            Console.WriteLine("f is " + block.GetVariable("f"));
+            Console.WriteLine(p.Age);
+            Console.WriteLine(p.Name);
+            Console.Read();
+
+        }
 
         static void tsetExcute()
         {
-            var pattern = " var d=\"hello\"+\" world!\"; var b=d==\"hello world!\";    var f=d+\" just for test! \";  var a=15; function add(b,c){ var t=0; for(var i=b;i<c;++i) t=t+i*5;   return t;}  var c= add(1,100000); ";
+            var pattern = " var d=\"hello\"+\" world!\"; var b=d==\"hello world!\";var f=d+\" just for test! \";  var a=15; function add(b,c){ var t=0; for(var i=b;i<c;++i) t=t+i*5;   return t;}  var c= add(1,100000); ";
 
 
             Tokenizer tg = new Tokenizer();

@@ -1,4 +1,5 @@
-﻿using GrammerTest.Grammer.TypeSystem;
+﻿using GrammerTest.Grammer.Scopes.Exceptions;
+using GrammerTest.Grammer.TypeSystem;
 using Jasmine.Spider.Grammer;
 
 namespace GrammerTest.Grammer.Scopes
@@ -15,17 +16,17 @@ namespace GrammerTest.Grammer.Scopes
 
         public override void Break()
         {
-            throw new System.NotImplementedException();
+            throw new InvalidGrammerException();
         }
 
         public override void Catch(JError error)
         {
-            throw new System.NotImplementedException();
+            throw new InvalidGrammerException();
         }
 
         public override void Continue()
         {
-            throw new System.NotImplementedException();
+            throw new InvalidGrammerException();
         }
 
         public override void Excute()
@@ -35,7 +36,7 @@ namespace GrammerTest.Grammer.Scopes
 
         public override void Return(JObject result)
         {
-            throw new System.NotImplementedException();
+            throw new InvalidGrammerException();
         }
     }
 }

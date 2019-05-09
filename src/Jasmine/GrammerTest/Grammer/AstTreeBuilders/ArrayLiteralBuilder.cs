@@ -1,10 +1,10 @@
-﻿using GrammerTest.Grammer.Scopes;
-using GrammerTest.Grammer.Tokenizers;
+﻿using GrammerTest.Grammer.Tokenizers;
 using Jasmine.Spider.Grammer;
+using static GrammerTest.Grammer.TypeSystem.Collections;
 
 namespace GrammerTest.Grammer
 {
-  public  class ArrayLiteralBuilder:BuilderBase
+    public  class ArrayLiteralBuilder:BuilderBase
     {
         public ArrayLiteralBuilder(ISequenceReader<Token> reader, BreakableBlock block) : base(reader, block)
         {
@@ -12,7 +12,7 @@ namespace GrammerTest.Grammer
 
         public override string Name => "ArrayLiteralBuilder";
 
-        public JArray Build()
+        public Array Build()
         {
             return null;
         }

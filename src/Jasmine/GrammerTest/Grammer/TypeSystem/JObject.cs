@@ -5,27 +5,22 @@ using GrammerTest.Grammer.TypeSystem.Exceptions;
 using Jasmine.Reflection;
 using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 
 namespace Jasmine.Spider.Grammer
 {
     public enum JType
     {
         Object,
-        Property,
         Function,
 
         MappingObject,
-        MappingProperty,
         MappingFunction,
 
         //primitives
         String,
         Number,
         Bool,
-        Time,
-        Map,
-        Array,
-
         Undefined,
         Null,
         Void,
@@ -40,14 +35,10 @@ namespace Jasmine.Spider.Grammer
             {
                 case JType.Object:
                     return "object";
-                case JType.Property:
-                    return "property";
                 case JType.Function:
                     return "function";
                 case JType.MappingObject:
                     return "mappingobject";
-                case JType.MappingProperty:
-                    return "mappingproperty";
                 case JType.MappingFunction:
                     return "mappingfunction";
                 case JType.String:
@@ -56,12 +47,6 @@ namespace Jasmine.Spider.Grammer
                     return "primitives.numeric";
                 case JType.Bool:
                     return "primitives.bool";
-                case JType.Time:
-                    return "primitives.bool";
-                case JType.Map:
-                    return "primitives.map";
-                case JType.Array:
-                    return "primitives.array";
                 case JType.Undefined:
                     return "undefiened";
                 case JType.Null:
@@ -87,6 +72,7 @@ namespace Jasmine.Spider.Grammer
         {
             Name = name;
         }
+        private IDictionary<string, JObject> _properties;
         public string Name { get; set; }
 
         private static readonly Dictionary<Type, JType> _typeMapping = new Dictionary<Type, JType>()
@@ -98,10 +84,9 @@ namespace Jasmine.Spider.Grammer
             {typeof(JString),JType.String },
             {typeof(JNumber),JType.Number },
             {typeof(JBool),JType.Bool },
-            {typeof(JTime),JType.Time },
-            {typeof(JArray),JType.Array },
             {typeof(JNull),JType.Null },
             {typeof(JVoid),JType.Void },
+            {typeof(JUndefined),JType.Undefined },
         };
 
         public JObject Parent { get; set; }
@@ -112,93 +97,65 @@ namespace Jasmine.Spider.Grammer
             return null;
         }
         public JType Type => _typeMapping[GetType()];
-        public IDictionary<string, JObject> Properties { get; set; }
-        public bool HasProperty(string name)
+
+        public virtual bool HasProperty(string name)
         {
-            return Properties.ContainsKey(name);
+            return _properties.ContainsKey(name);
         }
-        public JObject GetProperty(string name)
+        public virtual JObject GetProperty(string name)
         {
-            return Properties[name];
+            if (!_properties.ContainsKey(name))
+                _properties.Add(name, new JUndefined(name));
+
+            return _properties[name];
         }
-        public void SetProperty(string name, JObject obj)
+        public virtual void SetProperty(string name, JObject obj)
         {
             obj.Name = name;
-            Properties[name] = obj;
+            obj.Parent = this;
+            _properties[name] = obj;
         }
 
-       public virtual void AddProperty(string name,JObject obj)
+        public virtual void AddProperty(string name, JObject obj)
         {
             obj.Name = name;
 
-            if (Properties.ContainsKey(name))
+            if (_properties.ContainsKey(name))
                 throw new Exception();
 
-            Properties.Add(name, obj);
+            obj.Parent = this;
+            _properties.Add(name, obj);
         }
-        public virtual void RemoveProperty(string name,JObject obj)
+        public virtual void RemoveProperty(string name, JObject obj)
         {
-            if (Properties.ContainsKey(name))
-                Properties.Remove(name);
-        }
-       
-
-        public virtual object  GetObject()
-        {
-            return this;
-        }
-        public override bool Equals(object obj)
-        {
-            switch (Type)
+            if (_properties.ContainsKey(name))
             {
-                case JType.String:
-
-                    JString str = this as JString;
-                    JString otherStr = obj as JString;
-
-                    if (otherStr == null)
-                    {
-                        return false;
-                    }
-
-                    return str.Value == otherStr.Value;
-
-                case JType.Number:
-
-                    JNumber num = this as JNumber;
-                    JNumber otherNumber = obj as JNumber;
-
-
-                    return num.Value == otherNumber.Value;
-
-
-                case JType.Bool:
-
-                    JBool jBool = this as JBool;
-                    JBool otherBool = obj as JBool;
-
-                    if (otherBool == null)
-                    {
-                        return false;
-                    }
-
-                    return jBool.Value == jBool.Value;
-
-                case JType.Time:
-                case JType.Map:
-                case JType.Array:
-                case JType.Object:
-                default:
-                    return this.Equals(obj);
+                obj.Parent = null;
+                _properties.Remove(name);
             }
+        }
 
+
+        public virtual object GetObject()
+        {
+            throw new NotImplementedException();
+        }
+        public virtual object ConvertToObject(Type type)
+        {
+            return null;
         }
 
         public static explicit operator string(JObject obj)
         {
-            if (obj is JString str)
+            if (obj is null)
+            {
+                return null;
+            }
+            else if (obj is JString str)
+            {
                 return str.Value;
-            else if(obj is JMappingObject jm)
+            }
+            else if (obj is JMappingObject jm)
             {
                 return (string)jm.Instance;
             }
@@ -206,17 +163,19 @@ namespace Jasmine.Spider.Grammer
             {
                 throw new InvalidCastException();
             }
-               
-
         }
 
         public static explicit operator double(JObject obj)
         {
-            if(obj is JNumber jnum)
+            if (obj is null)
+            {
+                throw new InvalidCastException();
+            }
+            else if (obj is JNumber jnum)
             {
                 return jnum.Value;
             }
-            else if(obj is JMappingObject jma)
+            else if (obj is JMappingObject jma)
             {
                 return (double)(jma.Getter.Invoke(jma.Parent.Instance));
             }
@@ -225,12 +184,17 @@ namespace Jasmine.Spider.Grammer
                 throw new InvalidCastException();
             }
         }
-     
+
         public static explicit operator bool(JObject obj)
         {
-            if (obj is JBool b)
+            if (obj is null)
+            {
+                throw new InvalidCastException();
+            }
+            else if (obj is JBool b)
+            {
                 return b.Value;
-
+            }
             else if (obj is JMappingObject jm)
             {
                 return (bool)jm.Instance;
@@ -244,15 +208,15 @@ namespace Jasmine.Spider.Grammer
 
     }
 
-   
-    public class JFunction : JObject
+
+    public sealed class JFunction : HideJObjectSomeProperties
     {
         public const string RETURN = "__RETURN__";
         public FunctionBlock Block { get; set; } = new FunctionBlock(null);
         public string[] Parameters { get; set; }
-      
 
-        public JObject Excute( params JObject[] parameters)
+
+        public JObject Excute(params JObject[] parameters)
         {
 
             if (parameters.Length != parameters.Length)
@@ -263,20 +227,78 @@ namespace Jasmine.Spider.Grammer
                 Block.Declare(Parameters[i], parameters[i]);
             }
 
-            
+            Block.Excute();
 
+            var result = Block.GetVariable(RETURN);
 
-             Block.Excute();
+            Block.UnsetAll();
 
-            return Block.GetVariable(RETURN);
+            return result;
 
         }
 
 
     }
-   
 
-    public class JString:JObject
+    public abstract class HideJObjectSomeProperties : JObject
+    {
+        public override JObject GetProperty(string name)
+        {
+            throw new OnlyJobjectSurpportThisMethodException();
+        }
+
+        public override void AddProperty(string name, JObject obj)
+        {
+            throw new OnlyJobjectSurpportThisMethodException();
+        }
+
+        public override bool HasProperty(string name)
+        {
+            throw new OnlyJobjectSurpportThisMethodException();
+        }
+
+        public override void RemoveProperty(string name, JObject obj)
+        {
+            throw new OnlyJobjectSurpportThisMethodException();
+        }
+        public override void SetProperty(string name, JObject obj)
+        {
+            throw new OnlyJobjectSurpportThisMethodException();
+        }
+
+        public override object ConvertToObject(Type type)
+        {
+            throw new OnlyJobjectSurpportThisMethodException();
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (obj is null)
+            {
+                return false;
+            }
+            else if (obj is JNull)
+            {
+                return false;
+            }
+            else if (obj is JVoid)
+            {
+                return false;
+            }
+            else if (obj is JUndefined)
+            {
+                return false;
+            }
+            else
+            {
+                return true;
+            }
+        }
+    }
+
+
+
+    public sealed class JString : HideJObjectSomeProperties
     {
         public JString(string value)
         {
@@ -284,8 +306,8 @@ namespace Jasmine.Spider.Grammer
         }
         public string Value { get; set; }
 
-     
-        public JString SubString(int index,int count)
+
+        public JString SubString(int index, int count)
         {
             return null;
         }
@@ -296,16 +318,26 @@ namespace Jasmine.Spider.Grammer
 
         public override bool Equals(object obj)
         {
-            if(obj.GetType()==typeof(string))
+            if (!base.Equals(obj))
             {
-                return Value == (string)obj;
+                return false;
+            }
+            else if (obj is JMappingObject jmapping)
+            {
+                if (jmapping.InstanceType == BaseTypes.TString)
+                    return (string)jmapping.Instance == Value;
+                else
+                    return false;
+            }
+            else if (obj is JString jstr)
+            {
+                return jstr.Value == Value;
+            }
+            else
+            {
+                return false;
             }
 
-            if (obj.GetType() != typeof(JString))
-                return false;
-
-
-            return Value==((JString)obj).Value;
         }
         public override int GetHashCode()
         {
@@ -331,18 +363,24 @@ namespace Jasmine.Spider.Grammer
         {
             return new JString(Value);
         }
+
+
     }
 
-    public class JNumber : JObject
+
+
+    public sealed class JNumber : HideJObjectSomeProperties
     {
+
         public JNumber(int value)
         {
-            Value = (double)value;
+            Value = value;
         }
         public JNumber(double value)
         {
             Value = value;
         }
+
 
         public JNumber(string str)
         {
@@ -353,66 +391,95 @@ namespace Jasmine.Spider.Grammer
 
             Value = value;
         }
-
+        public static JNumber CreateJNumber(object obj)
+        {
+            return new JNumber(Convert.ToDouble(obj));
+        }
         public double Value { get; set; }
 
+        public new JMappingFunction GetProperty(string name)
+        {
+            return null;
+        }
 
-       
 
+        public static explicit operator uint(JNumber number)
+        {
+            return Convert.ToUInt32(number.Value);
+        }
+
+        public static explicit operator short(JNumber number)
+        {
+            return Convert.ToInt16(number.Value);
+        }
+        public static explicit operator ushort(JNumber number)
+        {
+            return Convert.ToUInt16(number.Value);
+        }
+        public static explicit operator long(JNumber number)
+        {
+            return Convert.ToInt64(number.Value);
+        }
+        public static explicit operator ulong(JNumber number)
+        {
+            return Convert.ToUInt64(number.Value);
+        }
+
+        public static explicit operator decimal(JNumber number)
+        {
+            return Convert.ToDecimal(number.Value);
+        }
         public static explicit operator int(JNumber number)
         {
-
-            return (int)number;
+            return Convert.ToInt32(number.Value);
         }
 
         public static explicit operator float(JNumber number)
         {
-            return (float)number;
+            return Convert.ToSingle(number.Value);
         }
 
         public static explicit operator double(JNumber number)
         {
-            return (double)number;
+            return number.Value;
         }
 
-        public static bool operator>(JNumber num1,JNumber num2)
+        public static bool operator >(JNumber num1, JNumber num2)
         {
             if (num2 == null)
                 return false;
 
             return num1.Value > num2.Value;
         }
-        public static bool operator<(JNumber num1,JNumber num2)
+        public static bool operator <(JNumber num1, JNumber num2)
         {
             if (num2 == null)
                 return false;
 
             return num1.Value < num2.Value;
         }
-
-        public static bool operator ==(JNumber num1,JNumber num2)
+        public static bool operator ==(JNumber num1, JNumber num2)
         {
             if (num2 is null)
                 return false;
 
             return num1.Value == num2.Value;
         }
-
-        public static bool operator !=(JNumber num1,JNumber num2)
+        public static bool operator !=(JNumber num1, JNumber num2)
         {
             if (num2 == null)
                 return false;
 
             return num1.Value != num2.Value;
         }
-        public static bool operator >=(JNumber num1,JNumber num2)
+        public static bool operator >=(JNumber num1, JNumber num2)
         {
             if (num2 == null)
                 return false;
 
             return num1.Value >= num2.Value;
         }
-        public static bool operator<=(JNumber num1,JNumber num2)
+        public static bool operator <=(JNumber num1, JNumber num2)
         {
             if (num2 == null)
                 return false;
@@ -420,7 +487,34 @@ namespace Jasmine.Spider.Grammer
             return num1.Value <= num2.Value;
         }
 
+        public override bool Equals(object obj)
+        {
+            if (!base.Equals(obj))
+            {
+                return false;
+            }
+            else if (obj is JMappingObject jmapping)
+            {
+                if (BaseTypes.Numbers.Contains(jmapping.InstanceType))
+                {
+                    return JMappingObject.ToDouble(jmapping.InstanceType, jmapping.Instance) == Value;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            else if (obj is JNumber)
+            {
+                return ((JNumber)obj).Value == Value;
+            }
+            else
+            {
+                return false;
+            }
 
+
+        }
         public override int GetHashCode()
         {
             return base.GetHashCode();
@@ -442,52 +536,8 @@ namespace Jasmine.Spider.Grammer
             return new JNumber(Value);
         }
     }
-    public class JTime:JObject
-    {
-        public DateTime Value { get; set; }
 
-    }
-    public class JArray:JObject
-    {
-        public void Add(JObject obj)
-        {
-
-        }
-        public JObject GetItem(int index)
-        {
-            return null;
-        }
-
-        public void SetItem(int index,JObject obj)
-        {
-
-        }
-        public int Count()
-        {
-            return 0;
-        }
-    }
-    public class JMap:JObject
-    {
-
-        public void Add(string key,JObject obj)
-        {
-
-        }
-        public void Remove(string key)
-        {
-
-        }
-        public bool Contains(string key)
-        {
-            return true;
-        }
-        public  JObject GetValue(string key)
-        {
-            return null;
-        }
-    }
-    public class JBool:JObject
+    public sealed class JBool : HideJObjectSomeProperties
     {
         public JBool(bool value)
         {
@@ -506,6 +556,37 @@ namespace Jasmine.Spider.Grammer
         {
             return Value.ToString();
         }
+        public static explicit operator bool(JBool obj)
+        {
+            return obj.Value;
+        }
+        public override bool Equals(object obj)
+        {
+            if (!base.Equals(obj))
+            {
+                return false;
+            }
+            else if(obj is JMappingObject jmapping)
+            {
+                if (jmapping.InstanceType == BaseTypes.TBoolean)
+                    return Value == (bool)jmapping.Instance;
+                else
+                    return false;
+            }
+            else if(obj is JBool jb)
+            {
+                return jb.Value == Value;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        public override int GetHashCode()
+        {
+            return base.GetHashCode();
+        }
 
         public override JObject Clone()
         {
@@ -513,17 +594,21 @@ namespace Jasmine.Spider.Grammer
         }
 
     }
-    public class JMappingObject:JObject
+    public class JMappingObject : HideJObjectSomeProperties
     {
+        public JMappingObject(object instance)
+        {
+            Instance = instance;
+        }
         public JMappingObject()
         {
 
         }
         public JMappingObject(object instance,
                               JMappingObject parent,
-                               string name,
-                               Func<object,object>getter,
-                               Action<object,object>setter)
+                              string name,
+                              Func<object, object> getter,
+                              Action<object, object> setter)
         {
             Instance = instance;
             Parent = parent;
@@ -531,100 +616,102 @@ namespace Jasmine.Spider.Grammer
             Getter = getter;
             Setter = setter;
         }
+        private Dictionary<string, JMappingObject> _properties = new Dictionary<string, JMappingObject>();
+
         private static readonly ITypeCache _cache = JasmineReflectionCache.Instance;
         public new JMappingObject Parent { get; set; }
-        public Block Block { get; set; }
         public object Instance { get; set; }
-        public Type InstanceType => Instance.GetType();
-        private Type _instanceType;
-        public new Dictionary<string, JMappingObject> Properties { get; set; } = new Dictionary<string, JMappingObject>();
-
+        public virtual Type InstanceType => Instance.GetType();
         public Func<object, object> Getter { get; set; }
         public Action<object, object> Setter { get; set; }
-
-        public static explicit operator string(JMappingObject obj)
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static explicit operator JString(JMappingObject obj)
         {
-            return null;
+            return new JString((string)obj.Instance);
         }
-        public static explicit operator bool(JMappingObject obj)
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static explicit operator JBool(JMappingObject obj)
         {
-            return true;
-        }
-        public static explicit operator double(JMappingObject obj)
-        {
-            return 2d;
+            return new JBool((bool)obj.Instance);
         }
 
-        public  new JMappingObject GetProperty(string name)
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static explicit operator JNumber(JMappingObject obj)
+        {
+            return new JNumber(ToDouble(obj.InstanceType, obj.Instance));
+        }
+
+
+
+        public new virtual JMappingObject GetProperty(string name)
         {
 
             /*
-             *  search in the property cache
+             *  search in the properties cache
              */
-            if (Properties.ContainsKey(name))
-
-                if (Properties[name].Getter != null)
+            if (_properties.ContainsKey(name))
+            {
+                if (_properties[name].Getter != null)
                 {
                     /*
+                     * mutiple thread run
                      * must reget value ,avoid instance has changed in c# code,but we still cache the old value
-                     */ 
-                    Properties[name].Instance = Properties[name].Getter(Instance);
+                     */
+                    _properties[name].Instance = _properties[name].Getter(Instance);
 
-                    return Properties[name];
                 }
 
+                return _properties[name];
+            }
 
-
-            /*
-             * type is null
-             */ 
-            if (_instanceType == null)
-                _instanceType = Instance.GetType();
 
             var property = _cache.GetItem(InstanceType).Properties.GetItemByName(name);
 
             if (property != null)
             {
-                Properties.Add(name, new JMappingObject(property.GetValue(Instance), this,name,property.Getter,property.Setter));
 
-                return Properties[name];
+                var newItem = new JMappingObject(property.GetValue(Instance), this, name, property.Getter, property.Setter);
+                _properties.Add(name,newItem);
+
+                return _properties[name];
             }
 
 
             var field = _cache.GetItem(InstanceType).Fileds.GetItemByName(name);
 
-           if(field!=null)
+            if (field != null)
             {
-                Properties.Add(name, new JMappingObject(field.GetValue(Instance), this, name,field.Getter,field.Setter));
+                var newItem= new JMappingObject(field.GetValue(Instance), this, name, field.Getter, field.Setter);
 
-                return Properties[name];
+                _properties.Add(name,newItem);
+
+                return _properties[name];
             }
 
             var method = _cache.GetItem(InstanceType).Methods.GetItemByName(name);
 
-            if(method!=null)
+            if (method != null)
             {
-                Properties.Add(name, new JMappingFunction(Instance, method.Invoker, name));
+                _properties.Add(name, new JMappingFunction(this, Instance, method.Invoker, name));
 
-                return Properties[name];
+                return _properties[name];
             }
 
 
             throw new PropertyNotFoundException();
         }
 
-        public  void SetProperty(object obj)
+        public virtual void SetProperty(object obj)
         {
-            Instance = obj;
+            if (Setter == null)
+                throw new NotSettableException();
 
-            if(Parent!=null)
-            {
-                if (BaseTypes.Base.Contains(obj.GetType()))
-                    obj = ConverNumber(obj.GetType(), obj);
+            if (BaseTypes.Base.Contains(obj.GetType()))
+                Instance = EnsureCorrectNumberType(obj.GetType(), obj);
+            else
+                Instance = obj;
 
-                Setter.Invoke(Parent.Instance, obj);
-            }
-
+            Setter.Invoke(Parent.Instance, Instance);
         }
 
         public override object GetObject()
@@ -632,74 +719,199 @@ namespace Jasmine.Spider.Grammer
             return Instance;
         }
 
+        public JObject ToJObject()
+        {
+            if (BaseTypes.Numbers.Contains(InstanceType))
+            {
+                return new JNumber(ToDouble(InstanceType, Instance));
+            }
+            else if (BaseTypes.TBoolean == InstanceType)
+            {
+                return new JBool((bool)Instance);
+            }
+            else if (BaseTypes.TString == InstanceType)
+            {
+                return new JString((string)Instance);
+            }
+            else
+            {
+                return this;
+            }
+        }
 
-        public static object ConverNumber(Type type, object value)
+        public static double ToDouble(Type type, object instance)
         {
             switch (type.FullName)
             {
                 case BaseTypes.Int:
-                    return (int)value;
-                case BaseTypes.UInt:
-                    return (uint)value;
-                case BaseTypes.UShort:
-                    return (ushort)value;
+                    return Convert.ToInt32(instance);
                 case BaseTypes.Short:
-                    return (short)value;
-                case BaseTypes.Long:
-                    return (long)value;
-                case BaseTypes.ULong:
-                    return (ulong)value;
+                    return Convert.ToInt16(instance);
+                case BaseTypes.Byte:
+                    return Convert.ToByte(instance);
                 case BaseTypes.Float:
-                    return (float)value;
-
+                    return Convert.ToSingle(instance);
                 case BaseTypes.Decimal:
-                    return (decimal)value;
+                    return (double)Convert.ToDecimal(instance);
+                case BaseTypes.SByte:
+                    return Convert.ToSByte(instance);
+                case BaseTypes.UInt:
+                    return Convert.ToUInt32(instance);
+                case BaseTypes.ULong:
+                    return Convert.ToUInt64(instance);
+                case BaseTypes.Long:
+                    return Convert.ToInt64(instance);
+                case BaseTypes.UShort:
+                    return Convert.ToUInt16(instance);
+                default:
+                    return (double)instance;
+            }
+        }
+
+
+        public static object EnsureCorrectNumberType(Type type, object value)
+        {
+            switch (type.FullName)
+            {
+                case BaseTypes.Int:
+                    return Convert.ToInt32(value);
+                case BaseTypes.UInt:
+                    return Convert.ToUInt32(value);
+                case BaseTypes.UShort:
+                    return Convert.ToUInt16(value);
+                case BaseTypes.Short:
+                    return Convert.ToInt16(value);
+                case BaseTypes.Long:
+                    return Convert.ToInt64(value);
+                case BaseTypes.ULong:
+                    return Convert.ToUInt64(value);
+                case BaseTypes.Float:
+                    return Convert.ToSingle(value);
+                case BaseTypes.Decimal:
+                    return Convert.ToDecimal(value);
+                case BaseTypes.Byte:
+                    return Convert.ToByte(value);
+                case BaseTypes.SByte:
+                    return Convert.ToSByte(value);
                 default:
                     return value;
             }
 
         }
 
+        public override bool Equals(object obj)
+        {
+            if (!base.Equals(obj))
+            {
+                return false;
+            }
+            else if (obj is JNumber jnum)
+            {
+                return jnum.Equals(this);
+            }
+            else if (obj is JString jstr)
+            {
+                return jstr.Equals(this);
+            }
+            else if (obj is JBool jb)
+            {
+                return jb.Equals(this);
+            }
+            else if (obj is JMappingObject jma)
+            {
+                if (BaseTypes.Numbers.Contains(InstanceType) && BaseTypes.Numbers.Contains(jma.InstanceType))
+                    return Convert.ToDouble(Instance) == Convert.ToDouble(jma.Instance);
+                else
+                    return jma.Instance == Instance;
+            }
+            else
+            {
+                throw new InvalidTypeOccuredException();
+            }
+
+        }
+
+        public override int GetHashCode()
+        {
+            return base.GetHashCode();
+        }
+        public override string ToString()
+        {
+            return $" mapping object:{InstanceType}";
+        }
     }
 
-
-  
-
-
-
-
-  
-    public class JMappingFunction:JMappingObject
+    public class JMappingFunction : JMappingObject
     {
-        public JMappingFunction(object instance, Func<object,object[],object>invoker, string name) : base()
+        public JMappingFunction()
         {
+
+        }
+        public JMappingFunction(JMappingObject parent, object instance, Func<object, object[], object> invoker, string name) : base()
+        {
+            Parent = parent;
             Instance = instance;
             Invoker = invoker;
             Name = name;
         }
 
         public int ParameterLength { get; set; }
-
         public Func<object, object[], object> Invoker { get; private set; }
 
-        public JObject Excute(params JObject[] parameters)
+
+        public override void SetProperty(object obj)
         {
-            return null;
+            throw new OnlyJmappingObjectSurpportException();
+        }
+
+        public override object GetObject()
+        {
+            return Invoker;
+        }
+
+        public override JMappingObject GetProperty(string name)
+        {
+            throw new OnlyJmappingObjectSurpportException();
         }
     }
 
 
 
-    public class JNull:JObject
+    public sealed class JNull : HideJObjectSomeProperties
     {
-        public object Value = null;
-
     }
 
-    public class JVoid:JObject
+    public sealed class JVoid : HideJObjectSomeProperties
     {
 
     }
 
-   
+
+    public sealed  class JUndefined : HideJObjectSomeProperties
+    {
+        public JUndefined(string name)
+        {
+            Name = name;
+        }
+    }
+
+
+    public class JMappingTypeInfo : JObject
+    {
+        public JMappingObject NewInstance(params JObject[] parameters)
+        {
+            return null;
+        }
+        public JMappingStaticFunction FindStaticFunction(string name)
+        {
+            return null;
+        }
+
+
+    }
+
+    public class JMappingStaticFunction:JMappingFunction
+    {
+
+    }
 }

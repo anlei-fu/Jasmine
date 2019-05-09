@@ -62,6 +62,8 @@
     <Compile Include="Grammer\AstTree\BinaryOperatorNode.cs" />
     <Compile Include="Grammer\AstTree\Exceptions\FunctionParameterCountNotMatchException.cs" />
     <Compile Include="Grammer\AstTree\Exceptions\IncorrectOperatorException.cs" />
+    <Compile Include="Grammer\AstTree\Exceptions\MemberNotAFunctionException.cs" />
+    <Compile Include="Grammer\AstTree\Exceptions\OperatorRequiredTypeIncorrectException.cs" />
     <Compile Include="Grammer\AstTree\LogicBinaryOperator.cs" />
     <Compile Include="Grammer\AstTree\NumberBinaryOperator.cs" />
     <Compile Include="Grammer\AstTree\OperandNode.cs" />
@@ -74,6 +76,9 @@
     <Compile Include="Grammer\Scopes\Block.cs" />
     <Compile Include="Grammer\Scopes\BodyBlock.cs" />
     <Compile Include="Grammer\Scopes\CatchBlock.cs" />
+    <Compile Include="Grammer\Scopes\Exceptions\CanNotCastToEnumerableException.cs" />
+    <Compile Include="Grammer\Scopes\Exceptions\InvalidGrammerException.cs" />
+    <Compile Include="Grammer\Scopes\Exceptions\VaribleAlreadyDeclaredException.cs" />
     <Compile Include="Grammer\Scopes\FinallyBlock.cs" />
     <Compile Include="Grammer\Scopes\IVariableManager.cs" />
     <Compile Include="Grammer\Scopes\DeclareExpression.cs" />
@@ -118,8 +123,13 @@
     <Compile Include="Grammer\Scopes\If0Block.cs" />
     <Compile Include="Grammer\AstTreeBuilders\IfBlockBuilder.cs" />
     <Compile Include="Grammer\Exceptions\InvalidNameException.cs" />
+    <Compile Include="Grammer\TypeSystem\Collections.cs" />
     <Compile Include="Grammer\TypeSystem\Exceptions\CastException.cs" />
+    <Compile Include="Grammer\TypeSystem\Exceptions\InvalidTypeOccuredException.cs" />
     <Compile Include="Grammer\TypeSystem\Exceptions\NotConvertableException.cs" />
+    <Compile Include="Grammer\TypeSystem\Exceptions\NotSettableException.cs" />
+    <Compile Include="Grammer\TypeSystem\Exceptions\OnlyJmappingObjectSurpportException.cs" />
+    <Compile Include="Grammer\TypeSystem\Exceptions\OnlyJobjectSurpportThisMethodException.cs" />
     <Compile Include="Grammer\TypeSystem\Exceptions\PropertyNotFoundException.cs" />
     <Compile Include="Grammer\TypeSystem\Exceptions\VariableNotFoundException.cs" />
     <Compile Include="Grammer\TypeSystem\IJobjectFactory.cs" />

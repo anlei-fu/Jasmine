@@ -2,6 +2,8 @@
 using GrammerTest.Grammer.AstTree;
 using GrammerTest.Grammer.AstTree.Exceptions;
 using GrammerTest.Grammer.Scopes;
+using Jasmine.Reflection;
+using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 
@@ -212,7 +214,7 @@ namespace Jasmine.Spider.Grammer
     /// r.name
     /// jobject, name(string)
     /// </summary>
-    public class MemberOperaterNode : BinaryOperatorNode
+    public class MemberOperaterNode : OperatorNode
     {
         public override OutputType OutputType => OutputType.Object;
 
@@ -223,19 +225,22 @@ namespace Jasmine.Spider.Grammer
             if (!Operands[1].OutputType.IsString())
                 trowOutputTypeIncorrectError();
         }
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        protected override void excuteBinary(JObject obj1, JObject obj2)
+
+        public override void Excute()
         {
-            if(Operands[1].Output is JMappingObject jm)
+            getOperand(Operands[0]);
+
+            if (Operands[0].Output is JMappingObject jm)
             {
-                Output = jm.GetProperty((string)obj2);
+                Output = jm.GetProperty(((QueryScopeOperatorNode)Operands[1]).ObjectName);
             }
             else
             {
-                Output = obj1.GetProperty((string)obj2);
+                Output = Operands[0].Output.GetProperty(((QueryScopeOperatorNode)Operands[1]).ObjectName);
             }
-
         }
+
+       
     }
 
     public class DeclareAsignmentNode : OperatorNode
@@ -256,12 +261,25 @@ namespace Jasmine.Spider.Grammer
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override void Excute()
         {
-
             var result = getOperand(Operands[Operands.Count - 1]);
             var name = (string)getOperand(Operands[0]);
-            result.Name = name;
 
-            Block.Declare(name, result);
+            if (result is JMappingObject jmo)
+            {
+                if(BaseTypes.Base.Contains(jmo.InstanceType))
+                {
+                    Block.Declare(name, jmo.ToJObject());
+                }
+                else
+                {
+                    Block.Declare(name, jmo);
+                }
+            }
+            else
+            {
+
+                Block.Declare(name, result);
+            }
          }
     }
     public class DeclareOperator : OperatorNode
@@ -279,7 +297,7 @@ namespace Jasmine.Spider.Grammer
         {
             if(Operands.Count==0)
             {
-
+                throw new AstGrammerException("");
             }
         }
 
@@ -317,13 +335,46 @@ namespace Jasmine.Spider.Grammer
         {
             if(obj1 is JMappingObject jm)
             {
-                jm.SetProperty(obj2.GetObject());
+                if (jm.Parent != null)
+                {
+                    /*
+                     * must convert to double 
+                     */ 
+                    if (BaseTypes.Numbers.Contains(jm.InstanceType))
+                    {
+                        jm.SetProperty(JMappingObject.EnsureCorrectNumberType(jm.InstanceType, obj2.GetObject()));
+                    }
+                    else
+                    {
+                        jm.SetProperty(obj2.GetObject());
+                    }
+                }
+                else
+                {
+                    Block.Reset(jm.Name, obj2);
+                }
             }
             else
             {
-                if(obj2.Type!=JType.Object)
+                /*
+                 *  must clone ,because jstring ,jnumber is class
+                 */
+                if (obj2 is JMappingObject jmo)
                 {
-                    obj2 = obj2.Clone();
+                    /*
+                     * 
+                     *  clone a new jobject
+                     */ 
+                    if (BaseTypes.Base.Contains(jmo.InstanceType))
+                        obj2 = jmo.ToJObject();
+                }
+                else
+                {
+
+                    if (obj2.Type != JType.Object)
+                    {
+                        obj2 = obj2.Clone();
+                    }
                 }
 
                 if (obj1.HasParent)
@@ -375,7 +426,19 @@ namespace Jasmine.Spider.Grammer
         {
             if(obj1 is JMappingObject jm)
             {
-
+                if(jm.InstanceType==BaseTypes.TString)
+                {
+                    Output = new JString(Convert.ToString(jm.Instance) + (string)obj2);
+                }
+                else if(BaseTypes.Numbers.Contains(jm.InstanceType))
+                {
+                    Output = new JNumber(Convert.ToDouble(jm.Instance) + (double)obj2);
+                }
+                else
+                {
+                    throw new OperatorRequiredTypeIncorrectException();
+                }
+                
             }
             else if(obj1 is JString jstr)
             {
@@ -387,7 +450,7 @@ namespace Jasmine.Spider.Grammer
             }
             else
             {
-
+                throw new OperatorRequiredTypeIncorrectException();
             }
 
         }
@@ -450,7 +513,7 @@ namespace Jasmine.Spider.Grammer
             }
             else
             {
-                obj1.SetProperty("", result);
+                obj1.SetProperty(obj1.Name, result);
             }
         }
 
@@ -479,7 +542,18 @@ namespace Jasmine.Spider.Grammer
         {
             if (obj1 is JMappingObject jm)
             {
-                jm.SetProperty(obj2.GetObject());
+              if(jm.InstanceType==BaseTypes.TString)
+                {
+                    jm.SetProperty(Convert.ToString(jm.Instance) + (string)obj2);
+                }
+              else if(BaseTypes.Numbers.Contains(jm.InstanceType))
+                {
+                    jm.SetProperty(Convert.ToDouble(jm.Instance) + (double)obj2);
+                }
+              else
+                {
+                    throw new OperatorRequiredTypeIncorrectException();
+                }
             }
             else
             {
@@ -501,7 +575,7 @@ namespace Jasmine.Spider.Grammer
                     }
                     else
                     {
-
+                        throw new OperatorRequiredTypeIncorrectException();
                     }
                 }
                 else
@@ -517,7 +591,7 @@ namespace Jasmine.Spider.Grammer
                     }
                     else
                     {
-
+                        throw new OperatorRequiredTypeIncorrectException();
                     }
                 }
             }
@@ -547,7 +621,7 @@ namespace Jasmine.Spider.Grammer
 
         public override void DoCheck()
         {
-            throw new System.NotImplementedException();
+            
         }
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         protected override JNumber caculate(JNumber num1, JNumber num2)
@@ -564,7 +638,7 @@ namespace Jasmine.Spider.Grammer
 
         public override void DoCheck()
         {
-            throw new System.NotImplementedException();
+            
         }
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         protected override JNumber caculate(JNumber num1, JNumber num2)
@@ -741,6 +815,11 @@ namespace Jasmine.Spider.Grammer
 
     public class DecrementNode : SingleOperatorNode
     {
+        public DecrementNode(Block block)
+        {
+            Block = block;
+        }
+        public Block Block { get; set; }
         public override OutputType OutputType => OutputType.Object;
 
         public override OperatorType OperatorType => OperatorType.Decrement;
@@ -758,7 +837,15 @@ namespace Jasmine.Spider.Grammer
             }
             else
             {
-                obj.SetProperty(obj.Name, new JNumber((((JNumber)obj).Value -= 1)));
+                var jmnu = new JNumber((((JNumber)obj).Value + 1));
+                jmnu.Name = obj.Name;
+
+                if (obj.HasParent)
+                    obj.SetProperty(obj.Name, jmnu);
+                else
+                {
+                    Block.Reset(obj.Name, jmnu);
+                }
             }
         }
     }
@@ -855,13 +942,43 @@ namespace Jasmine.Spider.Grammer
                 Output = jsf.Excute(ls.ToArray());
 
             }
-           else if(func is JMappingFunction)
+           else if(func is JMappingFunction jmaf)
             {
+                var ls = new List<object>();
 
+                for (int i = 1; i < Operands.Count; i++)
+                {
+                    ls.Add(getOperand(Operands[i]).GetObject());
+                }
+
+                var result = jmaf.Invoker(jmaf.Parent.Instance, ls.ToArray());
+
+                var type = result.GetType();
+
+                if (BaseTypes.Numbers.Contains(type))
+                {
+                    Output =JNumber.CreateJNumber(result);
+                }
+                else if(BaseTypes.TString==type)
+                {
+                    Output = new JString((string)result);
+                }
+                else if(BaseTypes.TBoolean==type)
+                {
+                    Output = new JBool((bool)result);
+                }
+                else if(type==typeof(void))
+                {
+                    Output = new JVoid();
+                }
+                else
+                {
+                    Output = new JMappingObject(result);
+                }
             }
            else
             {
-                throw new System.Exception();
+                throw new MemberNotAFunctionException();
             }
 
 
@@ -922,7 +1039,7 @@ namespace Jasmine.Spider.Grammer
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override void Excute()
         {
-            base.Excute();
+            Block.Continue();
         }
     }
 

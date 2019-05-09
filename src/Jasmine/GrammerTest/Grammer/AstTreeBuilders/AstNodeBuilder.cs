@@ -345,7 +345,7 @@ namespace GrammerTest.Grammer
                                 }
                                 else
                                 {
-                                    _currentNode = new OperandNode( new ArrayLiteralBuilder(_reader,_block).Build());
+                                    _currentNode = new OperandNode(new JMappingObject(new ArrayLiteralBuilder(_reader,_block).Build()));
                                 }
                          
                                 break;
@@ -413,7 +413,7 @@ namespace GrammerTest.Grammer
 
                             case OperatorType.Decrement:
 
-                                pushUnaryOperator(OperatorNodeFactory.CreateDecremnet());
+                                pushUnaryOperator(OperatorNodeFactory.CreateDecremnet(_block));
 
                                 break;
 

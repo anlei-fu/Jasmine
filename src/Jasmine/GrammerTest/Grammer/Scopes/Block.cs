@@ -1,6 +1,8 @@
-﻿using GrammerTest.Grammer.TypeSystem.Exceptions;
+﻿using GrammerTest.Grammer.Scopes.Exceptions;
+using GrammerTest.Grammer.TypeSystem.Exceptions;
 using Jasmine.Spider.Grammer;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 
 namespace GrammerTest.Grammer.Scopes
 {
@@ -14,29 +16,33 @@ namespace GrammerTest.Grammer.Scopes
         public override string Name => ".Block";
 
         public IVariableTable Parnet { get; internal set; }
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public JObject Declare(string name)
         {
             if (_variables.ContainsKey(name))
-                throw new System.Exception();
+                throw new VaribleAlreadyDeclaredException();
             else
             {
-                _variables.Add(name, new JObject(name));
+                _variables.Add(name, new JUndefined(name));
             }
 
             return _variables[name];
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public JObject Declare(string name, JObject obj)
         {
             if(_variables.ContainsKey(name))
                 throw new System.Exception();
             else
             {
+                obj.Name = name;
                 _variables.Add(name, obj);
             }
 
             return _variables[name];
         }
+
 
         public JObject GetVariable(string name)
         {
@@ -71,20 +77,18 @@ namespace GrammerTest.Grammer.Scopes
             }
 
         }
-
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Unset(string name)
         {
-            throw new System.NotImplementedException();
+            if (_variables.ContainsKey(name))
+                _variables.Remove(name);
         }
-
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void UnsetAll()
         {
             _variables.Clear();
         }
 
-        public void UnsetAll(string name)
-        {
-            throw new System.NotImplementedException();
-        }
+      
     }
 }
