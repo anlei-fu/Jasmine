@@ -1,8 +1,7 @@
-﻿using GrammerTest.Grammer;
-using GrammerTest.Grammer.AstTreeBuilders;
-using GrammerTest.Grammer.Scopes;
-using GrammerTest.Grammer.Tokenizers;
-using Jasmine.Spider.Grammer;
+﻿using Jasmine.Interpreter.AstTree.Builders;
+using Jasmine.Interpreter.Scopes;
+using Jasmine.Interpreter.Tokenizers;
+using Jasmine.Interpreter.TypeSystem;
 using System;
 using System.Diagnostics;
 using System.Text;
@@ -41,7 +40,7 @@ namespace GrammerTest
         }
         static void testMapping()
         {
-          var pattern = "var f;  function a(){ var t=0; while(t<1) ++t; return t>3; } a(); var c=b.Name; var d=b.Age; b.Age=15; for(var i=0;i<100000;++i){ d=b.Age;b.Age=i; b.Name=\"cat\"; c=b.Say();b.Add(); f=a();}";
+          var pattern = "var f; function k(){var t=0; while(++t<10) t=t;}    function a(){ var t=0; while(t<1) ++t; return t>3; } a(); var c=b.Name; var d=b.Age; b.Age=15; for(var i=0;i<10000;++i){ d=b.Age;b.Age=i; b.Name=\"cat\"; c=b.Say();b.Add(); f=a(); k();}";
 
             Tokenizer tg = new Tokenizer();
             var watch = new Stopwatch();

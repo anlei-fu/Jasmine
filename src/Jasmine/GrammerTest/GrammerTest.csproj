@@ -43,119 +43,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Grammer\AstTreeBuilders\OrderedBlockBuilder.cs" />
-    <Compile Include="Grammer\AstTreeBuilders\CallBuilder.cs" />
-    <Compile Include="Grammer\AstTreeBuilders\CatchBuilder.cs" />
-    <Compile Include="Grammer\AstTreeBuilders\DeclareExpressionBuilder.cs" />
-    <Compile Include="Grammer\AstTreeBuilders\Exceptions\BuilderException.cs" />
-    <Compile Include="Grammer\AstTreeBuilders\FinalyBlockBuilder.cs" />
-    <Compile Include="Grammer\AstTreeBuilders\ForBlockBuilder.cs" />
-    <Compile Include="Grammer\AstTreeBuilders\If0BlockBuilder.cs" />
-    <Compile Include="Grammer\AstTreeBuilders\Instruct.cs" />
-    <Compile Include="Grammer\AstTreeBuilders\TerbaryBuilder.cs" />
-    <Compile Include="Grammer\AstTreeBuilders\TopBlockBuilder.cs" />
-    <Compile Include="Grammer\AstTreeBuilders\TryBlockBuilder.cs" />
-    <Compile Include="Grammer\AstTreeBuilders\TryCatchFinallyBlockBuilder.cs" />
-    <Compile Include="Grammer\AstTreeBuilders\WhileBlockBuilder.cs" />
-    <Compile Include="Grammer\AstTree\AsignmnetOperatorNode.cs" />
-    <Compile Include="Grammer\AstTree\AstNode.cs" />
-    <Compile Include="Grammer\AstTree\BinaryOperatorNode.cs" />
-    <Compile Include="Grammer\AstTree\Exceptions\FunctionParameterCountNotMatchException.cs" />
-    <Compile Include="Grammer\AstTree\Exceptions\IncorrectOperatorException.cs" />
-    <Compile Include="Grammer\AstTree\Exceptions\MemberNotAFunctionException.cs" />
-    <Compile Include="Grammer\AstTree\Exceptions\OperatorRequiredTypeIncorrectException.cs" />
-    <Compile Include="Grammer\AstTree\LogicBinaryOperator.cs" />
-    <Compile Include="Grammer\AstTree\NumberBinaryOperator.cs" />
-    <Compile Include="Grammer\AstTree\OperandNode.cs" />
-    <Compile Include="Grammer\AstTree\OutputTypeExtension.cs" />
-    <Compile Include="Grammer\AstTree\SingleOperatorNode.cs" />
-    <Compile Include="Grammer\AstTree\ThreeOperatorNode.cs" />
-    <Compile Include="Grammer\Exceptions\ExcutingException.cs" />
-    <Compile Include="Grammer\Exceptions\NotConvertableException.cs" />
-    <Compile Include="Grammer\Scopes\AbstractExcutor.cs" />
-    <Compile Include="Grammer\Scopes\Block.cs" />
-    <Compile Include="Grammer\Scopes\BodyBlock.cs" />
-    <Compile Include="Grammer\Scopes\CatchBlock.cs" />
-    <Compile Include="Grammer\Scopes\Exceptions\CanNotCastToEnumerableException.cs" />
-    <Compile Include="Grammer\Scopes\Exceptions\InvalidGrammerException.cs" />
-    <Compile Include="Grammer\Scopes\Exceptions\VaribleAlreadyDeclaredException.cs" />
-    <Compile Include="Grammer\Scopes\FinallyBlock.cs" />
-    <Compile Include="Grammer\Scopes\IVariableManager.cs" />
-    <Compile Include="Grammer\Scopes\DeclareExpression.cs" />
-    <Compile Include="Grammer\Exceptions\PropertyNotDeclareException.cs" />
-    <Compile Include="Grammer\Scopes\FunctionDefineExpression.cs" />
-    <Compile Include="Grammer\Scopes\OrderingBlock.cs" />
-    <Compile Include="Grammer\Scopes\TopBlock.cs" />
-    <Compile Include="Grammer\Tokenizers\AbstractSequenceReader.cs" />
-    <Compile Include="Grammer\Tokenizers\CharSequenceReader.cs" />
-    <Compile Include="Grammer\Tokenizers\Exceptions\IncompletedOperatorException.cs" />
-    <Compile Include="Grammer\Tokenizers\Exceptions\InvalidIdentifierCharException.cs" />
-    <Compile Include="Grammer\Tokenizers\Exceptions\NotSurpportedOperatorException.cs" />
-    <Compile Include="Grammer\Tokenizers\Exceptions\TokenizerExcption.cs" />
-    <Compile Include="Grammer\Tokenizers\ISequenceReader.cs" />
-    <Compile Include="Grammer\Tokenizers\ITokenFactory.cs" />
-    <Compile Include="Grammer\Tokenizers\ITokenizer.cs" />
-    <Compile Include="Grammer\Tokenizers\SequenceReader.cs" />
-    <Compile Include="Grammer\Tokenizers\TokenFactory.cs" />
-    <Compile Include="Grammer\TypeSystem\ActionJFunctionAdapter.cs" />
-    <Compile Include="Grammer\AstTreeBuilders\DoWhileScopeBuilder.cs" />
-    <Compile Include="Grammer\AstTreeBuilders\ArrayIndexBuilder.cs" />
-    <Compile Include="Grammer\AstTreeBuilders\ArrayLiteralBuilder.cs" />
-    <Compile Include="Grammer\Exceptions\AstGrammerException.cs" />
-    <Compile Include="Grammer\AstTreeBuilders\AstNodeBuilder.cs" />
-    <Compile Include="Grammer\Scopes\AstTreeExcutor.cs" />
-    <Compile Include="Grammer\Scopes\BreakableBlock.cs" />
-    <Compile Include="Grammer\AstTreeBuilders\BuilderBase.cs" />
-    <Compile Include="Grammer\Scopes\DoWhileBlock.cs" />
-    <Compile Include="Grammer\Scopes\ElseBlock.cs" />
-    <Compile Include="Grammer\AstTreeBuilders\ElseBlockBuilder.cs" />
-    <Compile Include="Grammer\Exceptions\GrammerException.cs" />
-    <Compile Include="Grammer\Scopes\Excutor.cs" />
-    <Compile Include="Grammer\Scopes\ExcutorScope.cs" />
-    <Compile Include="Grammer\AstTreeBuilders\ExpressionBuilder.cs" />
-    <Compile Include="Grammer\Scopes\Expression.cs" />
-    <Compile Include="Grammer\AstTreeBuilders\ForeachBlockBuilder.cs" />
-    <Compile Include="Grammer\Scopes\ForeachBlock.cs" />
-    <Compile Include="Grammer\Scopes\ForBlock.cs" />
-    <Compile Include="Grammer\Scopes\FunctionBlock.cs" />
-    <Compile Include="Grammer\AstTreeBuilders\FunctionBlockBuilder.cs" />
-    <Compile Include="Grammer\Scopes\IfBlock.cs" />
-    <Compile Include="Grammer\Scopes\If0Block.cs" />
-    <Compile Include="Grammer\AstTreeBuilders\IfBlockBuilder.cs" />
-    <Compile Include="Grammer\Exceptions\InvalidNameException.cs" />
-    <Compile Include="Grammer\TypeSystem\Collections.cs" />
-    <Compile Include="Grammer\TypeSystem\Exceptions\CastException.cs" />
-    <Compile Include="Grammer\TypeSystem\Exceptions\InvalidTypeOccuredException.cs" />
-    <Compile Include="Grammer\TypeSystem\Exceptions\NotConvertableException.cs" />
-    <Compile Include="Grammer\TypeSystem\Exceptions\NotSettableException.cs" />
-    <Compile Include="Grammer\TypeSystem\Exceptions\OnlyJmappingObjectSurpportException.cs" />
-    <Compile Include="Grammer\TypeSystem\Exceptions\OnlyJobjectSurpportThisMethodException.cs" />
-    <Compile Include="Grammer\TypeSystem\Exceptions\PropertyNotFoundException.cs" />
-    <Compile Include="Grammer\TypeSystem\Exceptions\VariableNotFoundException.cs" />
-    <Compile Include="Grammer\TypeSystem\IJobjectFactory.cs" />
-    <Compile Include="Grammer\TypeSystem\IJObjectPool.cs" />
-    <Compile Include="Grammer\TypeSystem\InvalidMethodCall.cs" />
-    <Compile Include="Grammer\TypeSystem\JError.cs" />
-    <Compile Include="Grammer\TypeSystem\JNumberExtension.cs" />
-    <Compile Include="Grammer\TypeSystem\JObject.cs" />
-    <Compile Include="Grammer\Tokenizers\Keywords.cs" />
-    <Compile Include="Grammer\NameFearture.cs" />
-    <Compile Include="Grammer\AstTreeBuilders\ObjectLiteralBuilder.cs" />
-    <Compile Include="Grammer\AstTree\OperaterShape.cs" />
-    <Compile Include="Grammer\AstTree\OperatorExtension.cs" />
-    <Compile Include="Grammer\AstTree\OperatorNode.cs" />
-    <Compile Include="Grammer\AstTree\OutputType.cs" />
-    <Compile Include="Grammer\AstTree\OperatorType.cs" />
-    <Compile Include="Grammer\AstTreeBuilders\ParenthesisBuilder.cs" />
-    <Compile Include="Grammer\Scopes\SpiderExtractor.cs" />
-    <Compile Include="Grammer\Tokenizers\Token.cs" />
-    <Compile Include="Grammer\Tokenizers\Tokenizer.cs" />
-    <Compile Include="Grammer\Tokenizers\TokenType.cs" />
-    <Compile Include="Grammer\AstTree\OperatorNodeFactory.cs" />
-    <Compile Include="Grammer\Scopes\TryCatchFinallyBlock.cs" />
-    <Compile Include="Grammer\Scopes\TryBlock.cs" />
-    <Compile Include="Grammer\Scopes\WhileBlock.cs" />
-    <Compile Include="Grammer\TypeSystem\JObJectExtension.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -166,6 +53,14 @@
     <ProjectReference Include="..\Jamine.HtmlParser\Jasmine.Parser.csproj">
       <Project>{416D3751-2C3C-4349-A8E2-320B0062214A}</Project>
       <Name>Jasmine.Parser</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Jasmine.Common\Jasmine.Commom.csproj">
+      <Project>{27722F7A-0E0D-42A5-961A-7AF15FA0A1C8}</Project>
+      <Name>Jasmine.Commom</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Jasmine.Interpreter\Jasmine.Interpreter.csproj">
+      <Project>{6D7DB671-CD9A-4666-93A4-0EFB64D350A4}</Project>
+      <Name>Jasmine.Interpreter</Name>
     </ProjectReference>
     <ProjectReference Include="..\Jasmine.Reflection\Jasmine.Reflection.csproj">
       <Project>{C0525DCB-8593-421B-A8AD-1DE365216F7E}</Project>

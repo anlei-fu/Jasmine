@@ -69,6 +69,23 @@ namespace Jasmine.Reflection
             return ls.ToArray();
         }
 
+        public static bool CompareTypes(Type[] types1,Type[] types2)
+        {
+            if (types1.Length != types2.Length)
+                return false;
+
+            for (int i = 0; i < types1.Length; i++)
+            {
+                if (types2[i] == null)
+                    continue;
+
+                if (!types2[i].IsDerivedFrom(types1[i]))
+                    return false;
+            }
+
+            return true;
+        }
+
 
 
     }

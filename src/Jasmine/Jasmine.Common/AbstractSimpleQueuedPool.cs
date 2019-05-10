@@ -10,13 +10,13 @@ namespace Jasmine.Common
         }
         private int _capacity;
         private ConcurrentQueue<T> _queue = new ConcurrentQueue<T>();
-        public void Recycle( T item)
+        public virtual void Recycle( T item)
         {
             if (_queue.Count < _capacity)
                 _queue.Enqueue(item);
         }
 
-        public T Rent()
+        public virtual T Rent()
         {
             return _queue.TryDequeue(out var result) ?
                                              result : createNew();
