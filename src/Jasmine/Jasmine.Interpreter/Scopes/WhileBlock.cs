@@ -23,23 +23,23 @@ namespace Jasmine.Interpreter.Scopes
            
         }
 
-        public override void Excute()
+        public override void Excute(ExcutingStack stack)
         {
 
-            CheckExpression.Excute(ExcutingStack);
+            CheckExpression.Excute(stack);
 
-            var result = CheckExpression.Root.Output as JBool;
+            var result = (bool)stack.Get(CheckExpression.Root);
             
-            while(result.Value)
+            while(result)
             {
                 if (_break)
                     break;
 
-                Body.Excute();
+                Body.Excute(stack);
 
-                CheckExpression.Excute();
+                CheckExpression.Excute(stack);
 
-                 result = CheckExpression.Root.Output as JBool;
+                 result = (bool)stack.Get(CheckExpression.Root);
             }
 
             _break = false;

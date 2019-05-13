@@ -28,7 +28,7 @@ namespace Jasmine.Interpreter.Scopes
             throw new NotImplementedException();
         }
 
-        public override void Excute()
+        public override void Excute(ExcutingStack stack)
         {
             throw new NotImplementedException();
         }

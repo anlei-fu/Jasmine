@@ -1,10 +1,14 @@
-﻿using Jasmine.Interpreter.AstTree.Builders;
+﻿using Jasmine.Interpreter.AstTree;
+using Jasmine.Interpreter.AstTree.Builders;
 using Jasmine.Interpreter.Scopes;
 using Jasmine.Interpreter.Tokenizers;
 using Jasmine.Interpreter.TypeSystem;
 using System;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace GrammerTest
 {
@@ -16,11 +20,57 @@ namespace GrammerTest
 
 
 
-            testMapping();
+            testSpeed();
 
             Console.WriteLine("finished!");
 
             Console.Read();
+        }
+
+        static void testSpeed()
+        {
+            var t = 100000;
+            var str = new JString("");
+
+            var dic = new Dictionary<AstNode, Any>();
+           
+            var node = new OperandNode(new JString(""));
+            dic.Add(node, str);
+            for (int j = 0; j < 20; j++)
+            {
+                var watch = new Stopwatch();
+                watch.Start();
+                for (int i = 0; i < t; i++)
+                {
+                    var k =(string)str;
+                }
+                
+
+                var h = watch.ElapsedMilliseconds;
+
+                Console.WriteLine("new instance elapsed:" + h);
+
+
+                var queue = new ConcurrentQueue<JString>();
+                for (int i = 0; i < t; i++)
+                {
+                    dic.Add(new OperandNode(null), null);
+                }
+
+                var watch2 = new Stopwatch();
+                watch2.Start();
+               
+                for (int i = 0; i < t; i++)
+                {
+                    var k = dic[node];
+                }
+
+                h = watch2.ElapsedMilliseconds;
+                Console.WriteLine("queue elapsed:" + h);
+            }
+
+           
+
         }
 
         class Animal
@@ -40,7 +90,7 @@ namespace GrammerTest
         }
         static void testMapping()
         {
-          var pattern = "var f; function k(){var t=0; while(++t<10) t=t;}    function a(){ var t=0; while(t<1) ++t; return t>3; } a(); var c=b.Name; var d=b.Age; b.Age=15; for(var i=0;i<10000;++i){ d=b.Age;b.Age=i; b.Name=\"cat\"; c=b.Say();b.Add(); f=a(); k();}";
+          var pattern = "var f; function k(){var t=0; while(false) t=t;}    function a(){ var t=0; while(t<1) ++t; return t>3; } /*a();*/ var c=b.Name; var d=b.Age; b.Age=15; /*for(var i=0;i<100;++i){ d=b.Age;b.Age=i; b.Name=\"cat\"; c=b.Say();b.Add(); f=a(); k();}*/";
 
             Tokenizer tg = new Tokenizer();
             var watch = new Stopwatch();
@@ -53,7 +103,7 @@ namespace GrammerTest
             builder.Build();
 
             watch.Start();
-            builder.Block.Excute();
+            builder.Block.Excute(null);
             Console.WriteLine(watch.ElapsedMilliseconds);
             Console.WriteLine("c is " + block.GetVariable("c"));
             Console.WriteLine("d is " + block.GetVariable("d"));
@@ -84,7 +134,7 @@ namespace GrammerTest
                 builder.Build();
 
                 watch.Start();
-                builder.Block.Excute();
+                builder.Block.Excute(null);
 
                 Console.WriteLine(watch.ElapsedMilliseconds);
                 Console.WriteLine("a is " + block.GetVariable("a"));

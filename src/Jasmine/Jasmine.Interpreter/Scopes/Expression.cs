@@ -12,7 +12,7 @@ namespace Jasmine.Interpreter.Scopes
         public OperatorNode Root { get; set; }
         public override void Excute(ExcutingStack stack)
         {
-            Root.Excute(null);
+            Root.Excute(stack);
         }
     }
 }

@@ -1,6 +1,4 @@
-﻿using Jasmine.Reflection.Interfaces;
-
-namespace Jasmine.Common
+﻿namespace Jasmine.Common
 {
     public   interface IParamteterResolver<T>
     {

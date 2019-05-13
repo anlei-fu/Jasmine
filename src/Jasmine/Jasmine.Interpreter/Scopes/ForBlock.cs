@@ -24,30 +24,30 @@ namespace Jasmine.Interpreter.Scopes
         }
 
 
-        public override void Excute()
+        public override void Excute(ExcutingStack stack)
         {
-            DeclareExpression.Excute();
+            DeclareExpression.Excute(stack);
 
-            var t = 0;
-
+         
             while(true)
             {
                 if (_break)
                     break;
 
 
-                CheckExpression.Excute();
+                CheckExpression.Excute(stack);
 
-                ++t;
-                if (!(bool)CheckExpression.Root.Output)
+                
+
+                if (!(bool)stack.Get(CheckExpression.Root))
                 {
                     break;
                 }
 
-                Body.Excute();
+                Body.Excute(stack);
 
            
-                OperateExpression.Excute();
+                OperateExpression.Excute(stack);
 
             }
 

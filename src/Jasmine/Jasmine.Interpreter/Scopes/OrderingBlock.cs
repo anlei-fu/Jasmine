@@ -1,6 +1,4 @@
-﻿using GrammerTest.Grammer.TypeSystem;
-using Jasmine.Interpreter.TypeSystem;
-using Jasmine.Spider.Grammer;
+﻿using Jasmine.Interpreter.TypeSystem;
 using System.Collections.Generic;
 
 namespace Jasmine.Interpreter.Scopes
@@ -34,16 +32,19 @@ namespace Jasmine.Interpreter.Scopes
         }
         private bool _break;
 
-        public override void Excute()
+        public override void Excute(ExcutingStack stack)
         {
+            var newStack = ExcutingStackPool.Instance.Rent();
+
             foreach (var item in Children)
             {
                 if (_break)
                     break;
 
-                item.Excute();
+                item.Excute(newStack);
             }
 
+            ExcutingStackPool.Instance.Recycle(newStack);
 
             _break = false;
             UnsetAll();

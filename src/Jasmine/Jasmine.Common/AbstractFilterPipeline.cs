@@ -17,7 +17,37 @@ namespace Jasmine.Common
 
         public string Path => throw new System.NotImplementedException();
 
+        public IFilterPipelineBuilder<T> AddErrorFirst(IFilter<T> filter)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public IFilterPipelineBuilder<T> AddErrorLast(IFilter<T> filter)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public IFilterPipelineBuilder<T> AddFirst(IFilter<T> filter)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public IFilterPipelineBuilder<T> AddLast(IFilter<T> filter)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public IFilterPipeline<T> Build()
+        {
+            throw new System.NotImplementedException();
+        }
+
         public System.Collections.Generic.IEnumerator<IFilter<T>> GetEnumerator()
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public IFilterPipelineBuilder<T> SetStat()
         {
             throw new System.NotImplementedException();
         }

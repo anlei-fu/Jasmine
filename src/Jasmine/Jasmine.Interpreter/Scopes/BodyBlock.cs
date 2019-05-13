@@ -30,9 +30,10 @@ namespace Jasmine.Interpreter.Scopes
         {
             Parent.Continue();
         }
-        public override void Excute()
+        public override void Excute(ExcutingStack stack)
         {
-            Body.Excute();
+
+            Body.Excute(stack);
 
         }
     }

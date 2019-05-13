@@ -78,5 +78,10 @@
 
             return result;
         }
+
+        public IFilterPipelineBuilder<T> SetStat()
+        {
+            throw new System.NotImplementedException();
+        }
     }
 }

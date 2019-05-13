@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace Jasmine.Common
 {
-    public  class AbstractProxyFilter<T> : AbstractFilter<T>
+    public abstract  class AbstractProxyFilter<T> : AbstractFilter<T>
     {
         public AbstractProxyFilter(Method method,IParamteterResolver<T> resolver, object instance, string name) : base(name)
         {

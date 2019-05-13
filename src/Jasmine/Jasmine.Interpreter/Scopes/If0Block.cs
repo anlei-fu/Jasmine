@@ -13,16 +13,16 @@ namespace Jasmine.Interpreter.Scopes
         public Expression CheckExpression { get; set; } 
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public override void Excute()
+        public override void Excute(ExcutingStack stack)
         {
-            CheckExpression.Excute();
+            CheckExpression.Excute(stack);
 
-            var match = (CheckExpression.Root.Output as JBool).Value;
+            var match = (bool)stack.Get(CheckExpression.Root);
 
             if (match)
             {
                 Parent.SetMatchFound();
-                Body.Excute();
+                Body.Excute(stack);
             }
         }
        

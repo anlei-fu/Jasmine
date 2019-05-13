@@ -21,7 +21,7 @@ namespace Jasmine.Interpreter.Scopes
         }
 
         private bool _break;
-        public override void Excute()
+        public override void Excute(ExcutingStack stack)
         {
 
             foreach (var item in If0Blocks)
@@ -31,12 +31,12 @@ namespace Jasmine.Interpreter.Scopes
 
                
 
-                item.Excute();
+                item.Excute(stack);
 
             }
 
             if (!_isMatchFound && ElseBlock != null)
-                ElseBlock.Excute();
+                ElseBlock.Excute(stack);
 
             _break = false;
             _isMatchFound = false;

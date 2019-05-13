@@ -1,4 +1,5 @@
 ﻿using Jasmine.Interpreter.AstTree.Exceptions;
+using Jasmine.Interpreter.Exceptions;
 using Jasmine.Interpreter.Scopes;
 using Jasmine.Interpreter.Tokenizers;
 using Jasmine.Interpreter.TypeSystem;
@@ -38,7 +39,7 @@ namespace Jasmine.Interpreter.AstTree
     /// </summary>
     public abstract class OperatorNode : AstNode
     {
-        public override string Name => OperatorType.ToString0();
+        public override string Name => OperatorExtension.Tostring0(OperatorType);
         public abstract OperatorType OperatorType { get; }
         /// <summary>
         /// operands
@@ -79,7 +80,7 @@ namespace Jasmine.Interpreter.AstTree
 
         public override void Excute(ExcutingStack stack)
         {
-            //ignore
+            stack.Push(this, Output);
         }
     }
 
@@ -938,7 +939,7 @@ namespace Jasmine.Interpreter.AstTree
                 }
 
 
-                stack.Push(this, jsf.Excute(ls.ToArray()));
+                stack.Push(this, jsf.Excute(stack,ls.ToArray()));
 
             }
            else if(func is JMappingFunction jmaf)

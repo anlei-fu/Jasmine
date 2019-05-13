@@ -24,11 +24,15 @@ namespace Jasmine.Interpreter.Scopes
             throw new System.NotImplementedException();
         }
 
-        public override void Excute()
+        public override void Excute(ExcutingStack stack)
         {
             Declare(RETURN, new JObject());
 
-            Body.Excute();
+            var newStack = ExcutingStackPool.Instance.Rent();
+
+            Body.Excute(stack);
+
+            ExcutingStackPool.Instance.Recycle(newStack);
         }
 
         public override void Return(Any result)

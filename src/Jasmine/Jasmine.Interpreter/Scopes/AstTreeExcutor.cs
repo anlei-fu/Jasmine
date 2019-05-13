@@ -3,7 +3,7 @@
     public class AstTreeExcutor : IExcutor
     {
       
-        public  void Excute()
+        public  void Excute(ExcutingStack stack)
         {
             try
             {

@@ -234,7 +234,7 @@ namespace Jasmine.Interpreter.TypeSystem
 
         public override Type RuntimeType => typeof(Delegate);
 
-        public Any Excute(params Any[] parameters)
+        public Any Excute(ExcutingStack stack,params Any[] parameters)
         {
 
             if (parameters.Length != parameters.Length)
@@ -245,7 +245,7 @@ namespace Jasmine.Interpreter.TypeSystem
                 Block.Declare(Parameters[i], parameters[i]);
             }
 
-            Block.Excute();
+            Block.Excute(stack);
 
             var result = Block.GetVariable(RETURN);
 

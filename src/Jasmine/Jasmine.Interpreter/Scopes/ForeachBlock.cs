@@ -28,10 +28,12 @@ namespace Jasmine.Interpreter.Scopes
            
         }
 
-        public override void Excute()
+        public override void Excute(ExcutingStack stack)
         {
 
-            var result = GetCollectionExpression.Root.Output;
+            GetCollectionExpression.Root.Excute(stack);
+
+            var result = stack.Get(GetCollectionExpression.Root);
 
 
             if (result is JMappingObject jma)
@@ -44,7 +46,8 @@ namespace Jasmine.Interpreter.Scopes
                         break;
 
                     Reset(IteratorName, new JMappingObject(Enumerabtor.Current));
-                    Body.Excute();
+
+                    Body.Excute(stack);
                 }
             }
             else if(result.Type ==JType.Object)

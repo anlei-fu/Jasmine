@@ -28,7 +28,7 @@ namespace Jasmine.Interpreter.Scopes
             throw new InvalidGrammerException();
         }
 
-        public override void Excute()
+        public override void Excute(ExcutingStack stack)
         {
             throw new System.NotImplementedException();
         }

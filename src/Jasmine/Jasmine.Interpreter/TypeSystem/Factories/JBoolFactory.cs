@@ -3,9 +3,9 @@ using System;
 
 namespace Jasmine.Interpreter.TypeSystem.Factories
 {
-    public class JBoolFactory : AbstractSimpleQueuedPool<JBool>
+    public class JBoolPool : AbstractSimpleQueuedPool<JBool>
     {
-        public JBoolFactory(int capacity) : base(capacity)
+        public JBoolPool(int capacity) : base(capacity)
         {
         }
 
