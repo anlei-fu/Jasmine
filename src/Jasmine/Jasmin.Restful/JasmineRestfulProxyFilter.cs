@@ -1,5 +1,5 @@
 ﻿using Jasmine.Common;
-using Jasmine.Reflection.Models;
+using Jasmine.Reflection;
 
 namespace Jasmine.Restful
 {

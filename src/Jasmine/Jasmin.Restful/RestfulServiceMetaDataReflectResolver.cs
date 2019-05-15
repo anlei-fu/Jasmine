@@ -7,15 +7,15 @@ using System.Collections.Generic;
 
 namespace Jasmine.Restful
 {
-    public class RestfulServiceMetaDataReflectResolver : IServiceMetaDataReflectResolver<RestfulServiceMetaData>
+    public class RestfulServiceMetaDataReflectResolver : IServiceMetaDataReflectResolver<RestfulServiceGroupMetaData>
     {
         private ITypeCache _typeCache = JasmineReflectionCache.Instance;
-        public RestfulServiceMetaData Resolve(Type type)
+        public RestfulServiceGroupMetaData Resolve(Type type)
         {
             if (!_typeCache.GetItem(type).Attributes.Contains(typeof(RestfulAttribute)))
                 return null;
 
-            var metaData = new RestfulServiceMetaData();
+            var metaData = new RestfulServiceGroupMetaData();
 
             foreach (var item in _typeCache.GetItem(type).Attributes)
             {
@@ -48,7 +48,7 @@ namespace Jasmine.Restful
 
             }
 
-            var requests = new List<RestfulRequestMetaData>();
+            var requests = new List<RestfulServiceMetaData>();
 
             foreach (var item in _typeCache.GetItem(type).Methods)
             {
@@ -70,9 +70,9 @@ namespace Jasmine.Restful
         }
 
 
-        public RestfulRequestMetaData resolveMethodMetaData(Method method)
+        public RestfulServiceMetaData resolveMethodMetaData(Method method)
         {
-            var metaData = new RestfulRequestMetaData();
+            var metaData = new RestfulServiceMetaData();
 
             metaData.Method = method;
             foreach (var item in method.Attributes)
@@ -122,19 +122,19 @@ namespace Jasmine.Restful
                     }
                     else if(attrType==typeof(QueryStringAttribute))
                     {
-                        parameterMetaData.QueryString = ((QueryStringAttribute)attr).Name;
+                        parameterMetaData.QueryStringKey = ((QueryStringAttribute)attr).Name;
                     }
                     else if (attrType == typeof(DataAttribute))
                     {
-                        parameterMetaData.DataString = ((DataAttribute)attr).Name;
+                        parameterMetaData.DataKey = ((DataAttribute)attr).Name;
                     }
                     else if(attrType==typeof(FormAttribute))
                     {
-                        parameterMetaData.DataString = ((FormAttribute)attr).Name;
+                        parameterMetaData.DataKey = ((FormAttribute)attr).Name;
                     }
                     else if(attrType==typeof(PathVariableAttribute))
                     {
-                        parameterMetaData.PathVariable= ((PathVariableAttribute)attr).Name;
+                        parameterMetaData.PathVariableKey= ((PathVariableAttribute)attr).Name;
                     }
                     else if(attrType==typeof(DefaultValueAttribute))
                     {

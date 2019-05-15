@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Jasmine.Common
 {
-    public  interface IStat<TItem>:IReadOnlyCollection<TItem>
+    public  interface IMetric<TItem>:IReadOnlyCollection<TItem>
         where TItem:IStatItem
     {
         int Avarage { get; }

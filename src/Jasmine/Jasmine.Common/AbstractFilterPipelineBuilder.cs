@@ -1,35 +1,35 @@
 ﻿namespace Jasmine.Common
 {
-    public class AbstractFilterPipelineBuilder<T> : IFilterPipelineBuilder<T>
+    public class AbstractFilterPipelineBuilder<T> : IRequestProcessorBuilder<T>
     {
 
-        public AbstractFilterPipelineBuilder(IFilterPipeline<T> toBuilder)
+        public AbstractFilterPipelineBuilder(IRequestProcessor<T> toBuilder)
         {
             _pipeline = toBuilder;
         }
 
-        private IFilterPipeline<T> _pipeline;
+        private IRequestProcessor<T> _pipeline;
 
-        public IFilterPipelineBuilder<T> AddErrorFirst(IFilter<T> filter)
+        public IRequestProcessorBuilder<T> AddErrorFirst(IFilter<T> filter)
         {
-            if (_pipeline.Error.Next == null)
-                _pipeline.Error.Next = filter;
+            if (_pipeline.ErrorFilter.Next == null)
+                _pipeline.ErrorFilter.Next = filter;
             else
             {
-                filter.Next = _pipeline.Error.Next;
-                _pipeline.Error.Next = filter;
+                filter.Next = _pipeline.ErrorFilter.Next;
+                _pipeline.ErrorFilter.Next = filter;
             }
 
             return this;
         }
 
-        public IFilterPipelineBuilder<T> AddErrorLast(IFilter<T> filter)
+        public IRequestProcessorBuilder<T> AddErrorLast(IFilter<T> filter)
         {
-            if (_pipeline.Error.Next == null)
-                _pipeline.Error.Next = filter;
+            if (_pipeline.ErrorFilter.Next == null)
+                _pipeline.ErrorFilter.Next = filter;
             else
             {
-                var last = _pipeline.Error;
+                var last = _pipeline.ErrorFilter;
 
                 while (last.Next != null)
                     last = last.Next;
@@ -40,26 +40,26 @@
             return this;
         }
 
-        public IFilterPipelineBuilder<T> AddFirst(IFilter<T> filter)
+        public IRequestProcessorBuilder<T> AddFirst(IFilter<T> filter)
         {
-            if (_pipeline.Root.Next == null)
-                _pipeline.Root.Next = filter;
+            if (_pipeline.Filter.Next == null)
+                _pipeline.Filter.Next = filter;
             else
             {
-                filter.Next = _pipeline.Root.Next;
-                _pipeline.Root.Next = filter;
+                filter.Next = _pipeline.Filter.Next;
+                _pipeline.Filter.Next = filter;
             }
 
             return this;
         }
 
-        public IFilterPipelineBuilder<T> AddLast(IFilter<T> filter)
+        public IRequestProcessorBuilder<T> AddLast(IFilter<T> filter)
         {
-            if (_pipeline.Root.Next == null)
-                _pipeline.Root.Next = filter;
+            if (_pipeline.Filter.Next == null)
+                _pipeline.Filter.Next = filter;
             else
             {
-                var last = _pipeline.Root;
+                var last = _pipeline.Filter;
 
                 while (last.Next != null)
                     last = last.Next;
@@ -70,7 +70,7 @@
             return this;
         }
 
-        public IFilterPipeline<T> Build()
+        public IRequestProcessor<T> Build()
         {
             var result = _pipeline;
 
@@ -79,7 +79,7 @@
             return result;
         }
 
-        public IFilterPipelineBuilder<T> SetStat()
+        public IRequestProcessorBuilder<T> SetStat()
         {
             throw new System.NotImplementedException();
         }

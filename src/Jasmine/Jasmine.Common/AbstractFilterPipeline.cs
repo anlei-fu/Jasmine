@@ -1,62 +1,72 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace Jasmine.Common
 {
-    public class AbstractFilterPipeline<T> : IFilterPipeline<T>,IFilterPipelineBuilder<T>
+    public abstract class AbstractFilterPipeline<T> : IFilterPipeline<T>,INameFearture
     {
-        
-
-        public IFilter<T> Error => throw new System.NotImplementedException();
-
-        public IFilter<T> Root => throw new System.NotImplementedException();
-
-        public IStat<IStatItem> Stat => throw new System.NotImplementedException();
-
-        public int Count => throw new System.NotImplementedException();
-
-        public string Path => throw new System.NotImplementedException();
-
-        public IFilterPipelineBuilder<T> AddErrorFirst(IFilter<T> filter)
+        public AbstractFilterPipeline()
         {
-            throw new System.NotImplementedException();
+            _list = new LinkedList<IFilter<T>>();
+            _nameMap = new Dictionary<string, LinkedListNode<IFilter<T>>>();
         }
 
-        public IFilterPipelineBuilder<T> AddErrorLast(IFilter<T> filter)
+        private LinkedList<IFilter<T>> _list;
+        private IDictionary<string, LinkedListNode<IFilter<T>>> _nameMap;
+
+        public abstract string Name { get; }
+        public IFilter<T> First =>_list.First.Value;
+
+        public IFilter<T> Last => _list.Last.Value;
+
+        public int Count => _list.Count;
+        public void AddAfter(string name, IFilter<T> filter)
         {
-            throw new System.NotImplementedException();
+             var node= ensureFilterExistsAndGetFilterNode(name);
+
+            _list.AddAfter(node, filter);
+
         }
 
-        public IFilterPipelineBuilder<T> AddFirst(IFilter<T> filter)
+        public void AddBefore(string name, IFilter<T> filter)
         {
-            throw new System.NotImplementedException();
+            var node = ensureFilterExistsAndGetFilterNode(name);
+
+            _list.AddBefore(node, filter);
         }
 
-        public IFilterPipelineBuilder<T> AddLast(IFilter<T> filter)
+        public void AddFirst(IFilter<T> filter)
         {
-            throw new System.NotImplementedException();
+            ensureFilterNotExists(filter.Name);
+
+            _nameMap.Add(filter.Name, _list.AddFirst(filter));
+
         }
 
-        public IFilterPipeline<T> Build()
+        public void AddLast(IFilter<T> filter)
         {
-            throw new System.NotImplementedException();
+            ensureFilterNotExists(filter.Name);
+
+            _nameMap.Add(filter.Name, _list.AddFirst(filter));
         }
 
-        public System.Collections.Generic.IEnumerator<IFilter<T>> GetEnumerator()
+        public bool Contains(string name)
         {
-            throw new System.NotImplementedException();
+            return _nameMap.ContainsKey(name);
         }
 
-        public IFilterPipelineBuilder<T> SetStat()
+        private LinkedListNode<IFilter<T>> ensureFilterExistsAndGetFilterNode(string name)
         {
-            throw new System.NotImplementedException();
-        }
+            if (!_nameMap.ContainsKey(name))
+                throw new System.Exception();
 
-        IEnumerator IEnumerable.GetEnumerator()
+            return _nameMap[name];
+        }
+        private void ensureFilterNotExists(string name)
         {
-            throw new System.NotImplementedException();
-        }
+            if (_nameMap.ContainsKey(name))
+            {
 
-       
+            }
+        }
     }
 }

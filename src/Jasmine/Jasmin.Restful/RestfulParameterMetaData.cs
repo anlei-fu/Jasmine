@@ -4,13 +4,13 @@ namespace Jasmine.Restful
 {
     public   class RestfulRequestParameterMetaData:ParameterMetaDataBase
     {
-        public bool FromData { get; set; }
+        public bool FromData => DataKey != null;
         public bool FromBody { get; set; }
-        public bool FromQueryString { get; set; }
-        public string QueryString { get; set; }
-        public string DataString { get; set; }
-        public string PathVariable { get; set; }
-        public bool FromPathVariable { get; set; }
+        public bool FromQueryString => QueryStringKey != null;
+        public string QueryStringKey { get; set; }
+        public string DataKey { get; set; }
+        public string PathVariableKey { get; set; }
+        public bool FromPathVariableKey { get; set; }
         public bool FromForm { get; set; }
     }
 }

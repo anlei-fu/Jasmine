@@ -5,9 +5,9 @@ using log4net;
 
 namespace Jasmine.Restful
 {
-    public class RestfulDisPatcher : AbstractDispatcher<HttpFilterContext>
+    public class RestfulDispatcher : AbstractDispatcher<HttpFilterContext>
     {
-        public RestfulDisPatcher(string name, IFilterPipelineManager<HttpFilterContext> pipelineManager) : base(name, pipelineManager)
+        public RestfulDispatcher(string name, IRequestProcessorManager<HttpFilterContext> pipelineManager) : base(name, pipelineManager)
         {
         }
 
@@ -19,19 +19,19 @@ namespace Jasmine.Restful
         public bool UseApiManager { get; set; }
         public override async Task DispatchAsync(string path, HttpFilterContext context)
         {
-            if(_pipelineManager.Contains(path))
+            if(_pipelineManager.ContainsProcessor(path))
             {
-                var pipeline = _pipelineManager.GetPipeline(path);
+                var pipeline = _pipelineManager.GetProcessor(path);
 
                 try
                 {
-                   await  pipeline.Root.FiltAsync(context);
+                   await  pipeline.Filter.FiltAsync(context);
                 }
                 catch (Exception ex)
                 {
                     context.Exception = ex;
                     _logger?.Error(ex);
-                    await pipeline.Error.FiltAsync(context);
+                    await pipeline.ErrorFilter.FiltAsync(context);
                 }
                 
             }

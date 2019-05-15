@@ -4,12 +4,12 @@ using System;
 
 namespace Jasmine.Restful
 {
-    public class JasmineFilterPipelineGenerator : IFilterPipelineGenerator<HttpFilterContext, RestfulServiceMetaData>
+    public class JasmineFilterPipelineGenerator : IRequestProcessorGenerator<HttpFilterContext, RestfulServiceGroupMetaData>
     {
         private IAopFilterProvider<HttpFilterContext> _aopProvider;
         private IParameterResolverFactory<HttpFilterContext> _parameterResolverFactory;
         private IServiceProvider _serviceProvider;
-        public IFilterPipeline<HttpFilterContext> Generate(RestfulServiceMetaData metaData)
+        public IRequestProcessor<HttpFilterContext> Generate(RestfulServiceGroupMetaData metaData)
         {
             var builder = new FilterPipelineBuilder<HttpFilterContext>();
 
@@ -26,21 +26,9 @@ namespace Jasmine.Restful
 
                 }
 
-                var proxyFilter = new AbstractProxyFilter<HttpFilterContext>(item.Value.Method,
-                                                                            _parameterResolverFactory.Create(item.Value.Method),
-                                                                             _serviceProvider.GetService(metaData.RelatedType),
-                                                                             "");
-
-                builder.AddLast(proxyFilter);
-
-                foreach (var after in collection)
-                {
-
-                }
-
-
-
             }
+
+            return null;
         }
     }
 }

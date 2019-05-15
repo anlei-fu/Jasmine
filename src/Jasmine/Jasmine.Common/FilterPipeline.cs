@@ -4,13 +4,13 @@ using System.Collections.Generic;
 
 namespace Jasmine.Common
 {
-    public class FilterPipeline<TContext> : IFilterPipeline<TContext>
+    public class FilterPipeline<TContext> : IRequestProcessor<TContext>
     {
-        public IFilter<TContext> Error { get; internal set; }
+        public IFilter<TContext> ErrorFilter { get; internal set; }
 
-        public IFilter<TContext> Root { get; internal set; }
+        public IFilter<TContext> Filter { get; internal set; }
 
-        public IStat<IStatItem> Stat { get; internal set; }
+        public IMetric<IStatItem> Metric { get; internal set; }
 
         public int Count { get; internal set; }
 

@@ -1,54 +1,101 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Concurrent;
+﻿using System.Collections;
 using System.Collections.Generic;
 
 namespace Jasmine.Common
 {
-    public class AbstractPipelineManager<TContext> : IFilterPipelineManager<TContext>
+    public class AbstractPipelineManager<TContext> : IRequestProcessorManager<TContext>
     {
-        public AbstractPipelineManager(string name)
+
+        private IGroupManager _manager;
+        public int Count => throw new System.NotImplementedException();
+
+        public string Name => throw new System.NotImplementedException();
+
+
+
+        public void AddProcessor(string path, IRequestProcessor<TContext> processor)
         {
-            Name = name ?? throw new ArgumentNullException();
+            
         }
 
-        private ConcurrentDictionary<string, IFilterPipeline<TContext>> _internalDic = new ConcurrentDictionary<string, IFilterPipeline<TContext>>();
-
-        public int Count =>_internalDic.Count;
-
-        public string Name { get; }
-
-        public void AddFilterPipeline(string path, IFilterPipeline<TContext> pipeline)
+        public bool ContainsGroup(string name)
         {
-            _internalDic.TryAdd(path, pipeline);
+            return _manager.ContainsGroup(name);
         }
 
-        public bool Contains(string path)
+        public bool ContainsProcessor(string path)
         {
-            return _internalDic.ContainsKey(path);
+            throw new System.NotImplementedException();
         }
 
-        public IEnumerator<IFilterPipeline<TContext>> GetEnumerator()
+        public bool ContainsProcessor(string groupName, string name)
         {
-            foreach (var item in _internalDic.Values)
-            {
-                yield return item;
-            }
+            throw new System.NotImplementedException();
         }
 
-        public IFilterPipeline<TContext> GetPipeline(string path)
+        public IEnumerator<IRequestProcessor<TContext>> GetEnumerator()
         {
-            return _internalDic.TryGetValue(path, out var value) ? value : null;
+            throw new System.NotImplementedException();
         }
 
-        public void RemoveFilterPipeline(string path)
+        public IRequestProcessor<TContext> GetProcessor(string path)
         {
-            _internalDic.TryRemove(path, out var _);
+            throw new System.NotImplementedException();
+        }
+
+        public void RemoveGroup(string name)
+        {
+            _manager.RemoveGroup(name);
+        }
+
+        public void RemoveProcessor(string path)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public void RemoveService(string path)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public void RemoveService(string groupName, string name)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public void ResumeGroup(string name)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public void ResumeService(string path)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public void ResumeService(string groupName, string serviceName)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public void ShutDownGroup(string name)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public void ShutDownService(string path)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public void ShutDownService(string groupName, string serviceName)
+        {
+            throw new System.NotImplementedException();
         }
 
         IEnumerator IEnumerable.GetEnumerator()
         {
-            return _internalDic.GetEnumerator();
+            throw new System.NotImplementedException();
         }
     }
 }

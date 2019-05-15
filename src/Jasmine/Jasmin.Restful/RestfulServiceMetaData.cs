@@ -1,12 +1,24 @@
-﻿using Jasmine.Common;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using Jasmine.Common;
+using Jasmine.Reflection;
 
 namespace Jasmine.Restful
 {
-    public  class RestfulServiceMetaData:AopServiceMetaData
+    public   class RestfulServiceMetaData:IAop
     {
+        public SerializeMode SerializeMode { get; set; }
+        public Method Method { get; set; }
+        public string Name { get; set; }
         public string Path { get; set; }
         public string HttpMethod { get; set; }
-        public IDictionary<string, RestfulRequestMetaData> Requests { get; set; }
+        public RestfulRequestParameterMetaData[] Parameters { get; internal set; }
+
+        public IList<string> BeforeFilters { get; }
+
+        public IList<string> AfterFilters { get; }
+
+        public IList<string> AroundFilters { get; }
+
+        public IList<string> ErrorFilters { get; }
     }
 }

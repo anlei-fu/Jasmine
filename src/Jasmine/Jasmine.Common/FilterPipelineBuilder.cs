@@ -1,32 +1,32 @@
 ﻿namespace Jasmine.Common
 {
-    public class FilterPipelineBuilder<TContext> : IFilterPipelineBuilder<TContext>
+    public class FilterPipelineBuilder<TContext> : IRequestProcessorBuilder<TContext>
     {
         private FilterPipeline<TContext> _pipeline;
      
-        public IFilterPipelineBuilder<TContext> AddErrorFirst(IFilter<TContext> filter)
+        public IRequestProcessorBuilder<TContext> AddErrorFirst(IFilter<TContext> filter)
         {
 
-            if (_pipeline.Error == null)
+            if (_pipeline.ErrorFilter == null)
             {
-                _pipeline.Error = filter;
+                _pipeline.ErrorFilter = filter;
             }
             else
             {
-                filter.Next = _pipeline.Error;
-                _pipeline.Error = filter;
+                filter.Next = _pipeline.ErrorFilter;
+                _pipeline.ErrorFilter = filter;
             }
 
             return this;
           
         }
 
-        public IFilterPipelineBuilder<TContext> AddErrorLast(IFilter<TContext> filter)
+        public IRequestProcessorBuilder<TContext> AddErrorLast(IFilter<TContext> filter)
         {
-            var temp = _pipeline.Error;
+            var temp = _pipeline.ErrorFilter;
 
             if (temp == null)
-                _pipeline.Error = filter;
+                _pipeline.ErrorFilter = filter;
             else
             {
                 while(temp.Next!=null)
@@ -40,27 +40,27 @@
             return this;
         }
 
-        public IFilterPipelineBuilder<TContext> AddFirst(IFilter<TContext> filter)
+        public IRequestProcessorBuilder<TContext> AddFirst(IFilter<TContext> filter)
         {
-            if (_pipeline.Root == null)
+            if (_pipeline.Filter == null)
             {
-                _pipeline.Root = filter;
+                _pipeline.Filter = filter;
             }
             else
             {
-                filter.Next = _pipeline.Root;
-                _pipeline.Error = filter;
+                filter.Next = _pipeline.Filter;
+                _pipeline.ErrorFilter = filter;
             }
 
             return this;
         }
 
-        public IFilterPipelineBuilder<TContext> AddLast(IFilter<TContext> filter)
+        public IRequestProcessorBuilder<TContext> AddLast(IFilter<TContext> filter)
         {
-            var temp = _pipeline.Root;
+            var temp = _pipeline.Filter;
 
             if (temp == null)
-                _pipeline.Root= filter;
+                _pipeline.Filter= filter;
             else
             {
                 while (temp.Next != null)
@@ -74,12 +74,12 @@
             return this;
         }
 
-        public IFilterPipeline<TContext> Build()
+        public IRequestProcessor<TContext> Build()
         {
             return _pipeline;
         }
 
-        public IFilterPipelineBuilder<TContext> SetStat()
+        public IRequestProcessorBuilder<TContext> SetStat()
         {
             throw new System.NotImplementedException();
         }

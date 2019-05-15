@@ -3,7 +3,6 @@ using System;
 using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Text;
 
 namespace Jasmine.Restful
 {
@@ -15,7 +14,19 @@ namespace Jasmine.Restful
         public void AddFilter(IFilter<HttpFilterContext> filter)
         {
            if(!_map.TryAdd(filter.Name,filter))
-                throw
+            {
+
+            }
+        }
+
+        public void Clear()
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool Contains(string name)
+        {
+            throw new NotImplementedException();
         }
 
         public IEnumerator<IFilter<HttpFilterContext>> GetEnumerator()
@@ -24,6 +35,16 @@ namespace Jasmine.Restful
         }
 
         public IFilter<HttpFilterContext> GetFilter()
+        {
+            throw new NotImplementedException();
+        }
+
+        public IFilter<HttpFilterContext> GetFilter(string name)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Remove(string name)
         {
             throw new NotImplementedException();
         }

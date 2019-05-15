@@ -5,7 +5,7 @@ using System.Threading;
 
 namespace Jasmine.Common
 {
-    public class AbstractStat<TItem> : IStat<TItem>
+    public class AbstractStat<TItem> : IMetric<TItem>
          where TItem : IStatItem
     {
         
