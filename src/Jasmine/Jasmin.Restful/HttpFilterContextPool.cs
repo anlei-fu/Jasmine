@@ -8,7 +8,7 @@ namespace Jasmine.Restful
         {
         }
 
-        protected override HttpFilterContext createNew()
+        protected override HttpFilterContext newInstance()
         {
             throw new System.NotImplementedException();
         }

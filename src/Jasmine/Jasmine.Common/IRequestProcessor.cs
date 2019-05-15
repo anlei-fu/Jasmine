@@ -12,15 +12,15 @@ namespace Jasmine.Common
         /// <summary>
         /// attached error filter
         /// </summary>
-        IFilter<T> ErrorFilter { get;  }
+        IFilterPipeline<T> ErrorFilter { get;  }
         /// <summary>
         ///  filter pipeline
         /// </summary>
-        IFilter<T> Filter { get;  }
+        IFilterPipeline<T> Filter { get;  }
         /// <summary>
         /// service metric
         /// </summary>
-        IMetric<IStatItem> Metric { get;  }
+        IMetric Metric { get;  }
         /// <summary>
         /// 
         /// </summary>

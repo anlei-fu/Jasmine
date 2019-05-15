@@ -8,7 +8,7 @@ namespace Jasmine.ConfigCenter.Common
         {
         }
 
-        protected override ConfigCenterRequestContext createNew()
+        protected override ConfigCenterRequestContext newInstance()
         {
             return new ConfigCenterRequestContext()
             {

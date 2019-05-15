@@ -10,5 +10,6 @@
         void AddBefore(string name, IFilter<T> filter);
         void AddAfter(string name, IFilter<T> filter);
         bool Contains(string name);
+
     }
 }

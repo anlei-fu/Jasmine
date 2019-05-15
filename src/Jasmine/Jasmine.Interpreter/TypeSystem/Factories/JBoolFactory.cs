@@ -9,7 +9,7 @@ namespace Jasmine.Interpreter.TypeSystem.Factories
         {
         }
 
-        protected override JBool createNew()
+        protected override JBool newInstance()
         {
             throw new NotImplementedException();
         }

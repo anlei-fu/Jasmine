@@ -2,6 +2,6 @@
 {
     public interface  IExcutor
     {
-         void Excute(ExcutingStack stack);
+         void Excute(Interpreter interpreter);
     }
 }

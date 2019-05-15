@@ -8,7 +8,7 @@ namespace Jasmine.Interpreter.Scopes
         {
         }
 
-        protected override ExcutingStack createNew()
+        protected override ExcutingStack newInstance()
         {
             throw new System.NotImplementedException();
         }

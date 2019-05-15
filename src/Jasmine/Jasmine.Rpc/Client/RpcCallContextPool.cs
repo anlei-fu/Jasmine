@@ -9,7 +9,7 @@ namespace Jasmine.Rpc.Client
         {
         }
 
-        protected override RpcCallContext<IRpcResponse> createNew()
+        protected override RpcCallContext<IRpcResponse> newInstance()
         {
             throw new NotImplementedException();
         }

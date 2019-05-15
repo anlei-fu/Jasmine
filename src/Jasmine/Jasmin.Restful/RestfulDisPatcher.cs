@@ -25,13 +25,13 @@ namespace Jasmine.Restful
 
                 try
                 {
-                   await  pipeline.Filter.FiltAsync(context);
+                   await  pipeline.Filter.First.FiltAsync(context);
                 }
                 catch (Exception ex)
                 {
                     context.Exception = ex;
                     _logger?.Error(ex);
-                    await pipeline.ErrorFilter.FiltAsync(context);
+                    await pipeline.ErrorFilter.First.FiltAsync(context);
                 }
                 
             }

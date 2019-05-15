@@ -1,29 +1,23 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
 
 namespace Jasmine.Common
 {
     public class FilterPipeline<TContext> : IRequestProcessor<TContext>
     {
-        public IFilter<TContext> ErrorFilter { get; internal set; }
+        public IFilter<TContext> ErrorFilter => throw new NotImplementedException();
 
-        public IFilter<TContext> Filter { get; internal set; }
+        public IFilter<TContext> Filter => throw new NotImplementedException();
 
-        public IMetric<IStatItem> Metric { get; internal set; }
+        public IMetric<IStatItem> Metric => throw new NotImplementedException();
 
-        public int Count { get; internal set; }
+        public int MaxConcurrency => throw new NotImplementedException();
 
-        public string Path  { get; internal set; }
+        public bool Available => throw new NotImplementedException();
 
-        public IEnumerator<IFilter<TContext>> GetEnumerator()
-        {
-            throw new NotImplementedException();
-        }
+        public string Path => throw new NotImplementedException();
 
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            throw new NotImplementedException();
-        }
+        public string GroupName => throw new NotImplementedException();
+
+        public string Name => throw new NotImplementedException();
     }
 }

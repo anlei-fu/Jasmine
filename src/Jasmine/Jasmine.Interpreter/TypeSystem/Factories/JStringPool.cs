@@ -8,7 +8,7 @@ namespace Jasmine.Interpreter.TypeSystem.Factories
         {
         }
 
-        protected override JString createNew()
+        protected override JString newInstance()
         {
             throw new System.NotImplementedException();
         }

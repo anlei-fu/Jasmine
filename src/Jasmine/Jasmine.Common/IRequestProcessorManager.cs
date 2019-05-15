@@ -2,7 +2,7 @@
 
 namespace Jasmine.Common
 {
-    public  interface IRequestProcessorManager<T>:IReadOnlyCollection<IRequestProcessor<T>>,INameFearture
+    public  interface IRequestProcessorManager<T>:INameFearture,IReadOnlyCollection<IGroup>
     {
         void AddProcessor(string path, IRequestProcessor<T> processor);
         void RemoveProcessor(string path);
@@ -19,6 +19,7 @@ namespace Jasmine.Common
         void RemoveGroup(string name);
         void RemoveService(string path);
         void RemoveService(string groupName, string name);
+        IGroup GetGroup(string name);
 
 
     }

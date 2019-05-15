@@ -2,23 +2,20 @@
 {
     public class AbstractProcessor<T> : IRequestProcessor<T>
     {
-        public IFilter<T> ErrorFilter { get; }
+        public string Name { get; }
+        public IFilterPipeline<T> ErrorFilter { get; internal set; }
 
-        public IFilter<T> Filter { get; }
+        public IFilterPipeline<T> Filter { get; internal set; }
 
-        public IMetric<IStatItem> Metric { get; }
+        public IMetric Metric { get; }
 
         public int MaxConcurrency { get; }
 
         public bool Available { get; }
 
-        public int Count { get; }
-
         public string Path { get; }
 
-        public string GroupName { get; set; }
-
-        public string Name { get; set; }
-     
+        public string GroupName { get; }
+       
     }
 }

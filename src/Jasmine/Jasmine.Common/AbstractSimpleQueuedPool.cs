@@ -19,9 +19,9 @@ namespace Jasmine.Common
         public virtual T Rent()
         {
             return _queue.TryDequeue(out var result) ?
-                                             result : createNew();
+                                             result : newInstance();
         }
 
-        protected abstract T createNew();
+        protected abstract T newInstance();
     }
 }

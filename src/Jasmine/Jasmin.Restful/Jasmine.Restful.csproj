@@ -13,4 +13,9 @@
     <ProjectReference Include="..\Jasmine.Common\Jasmine.Commom.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="JavaScripts\" />
+    <Folder Include="Css\" />
+  </ItemGroup>
+
 </Project>
