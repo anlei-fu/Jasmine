@@ -4,12 +4,12 @@ namespace Jasmine.Common
 {
     public abstract class AbstractDispatcher<T> : IDispatcher<T>
     {
-        public AbstractDispatcher(string name,IRequestProcessorManager<T> pipelineManager)
+        public AbstractDispatcher(string name,IRequestProcessorManager<T> processorManager)
         {
-            _pipelineManager = pipelineManager;
+            _processorManager = processorManager;
             Name = name;
         }
-        protected  IRequestProcessorManager<T> _pipelineManager;
+        protected  IRequestProcessorManager<T> _processorManager;
 
         public string Name { get; }
 

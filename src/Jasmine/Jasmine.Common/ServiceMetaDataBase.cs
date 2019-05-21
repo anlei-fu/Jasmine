@@ -6,8 +6,7 @@ namespace Jasmine.Common
     {
         public string Name { get; set; }
         public Type RelatedType { get; set; }
-        public bool IsAbstract => RelatedType.IsClass || RelatedType.IsAbstract;
-   
+        public bool IsAbstract => RelatedType.IsInterface || RelatedType.IsAbstract;
       
     }
 

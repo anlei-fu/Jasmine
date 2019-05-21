@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
 
 namespace Jasmine.Common
 {
@@ -19,34 +20,42 @@ namespace Jasmine.Common
         public IFilter<T> Last => _list.Last.Value;
 
         public int Count => _list.Count;
-        public void AddAfter(string name, IFilter<T> filter)
+        public IFilterPiplelineBuilder<T> AddAfter(string name, IFilter<T> filter)
         {
              var node= ensureFilterExistsAndGetFilterNode(name);
 
             _list.AddAfter(node, filter);
 
+            return this;
+
         }
 
-        public void AddBefore(string name, IFilter<T> filter)
+        public IFilterPiplelineBuilder<T> AddBefore(string name, IFilter<T> filter)
         {
             var node = ensureFilterExistsAndGetFilterNode(name);
 
             _list.AddBefore(node, filter);
+
+            return this;
         }
 
-        public void AddFirst(IFilter<T> filter)
+        public IFilterPiplelineBuilder<T> AddFirst(IFilter<T> filter)
         {
             ensureFilterNotExists(filter.Name);
 
             _nameMap.Add(filter.Name, _list.AddFirst(filter));
 
+            return this;
+
         }
 
-        public void AddLast(IFilter<T> filter)
+        public IFilterPiplelineBuilder<T> AddLast(IFilter<T> filter)
         {
             ensureFilterNotExists(filter.Name);
 
             _nameMap.Add(filter.Name, _list.AddFirst(filter));
+
+            return this;
         }
 
         public bool Contains(string name)
@@ -67,6 +76,29 @@ namespace Jasmine.Common
             {
 
             }
+        }
+
+        public IFilterPiplelineBuilder<T> Remove(string name)
+        {
+            if(_nameMap.TryGetValue(name,out var value))
+            {
+                _list.Remove(value);
+            }
+
+            return this;
+        }
+
+        public IEnumerator<IFilter<T>> GetEnumerator()
+        {
+            foreach (var item in _nameMap.Values)
+            {
+                yield return item.Value;
+            }
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return _nameMap.Values.GetEnumerator();
         }
     }
 }

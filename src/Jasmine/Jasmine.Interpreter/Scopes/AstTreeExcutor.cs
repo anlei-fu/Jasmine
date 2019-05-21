@@ -1,6 +1,6 @@
 ﻿namespace Jasmine.Interpreter.Scopes
 {
-    public class AstTreeExcutor : IExcutor
+    public class AstTreeExcutor 
     {
       
         public  void Excute(ExcutingStack stack)

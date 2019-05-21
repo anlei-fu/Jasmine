@@ -1,12 +1,10 @@
-﻿using System.Collections.Generic;
-
-namespace Jasmine.Common
+﻿namespace Jasmine.Common
 {
     /// <summary>
     ///  a whole  request processor
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    public  interface IRequestProcessor<T>:IPathFearture,IGroupItem
+    public  interface IRequestProcessor<T>:IPathFearture,IServiceItem
     {
       
         /// <summary>
@@ -24,11 +22,11 @@ namespace Jasmine.Common
         /// <summary>
         /// 
         /// </summary>
-        int MaxConcurrency { get; }
+        int MaxConcurrency { get; set; }
         /// <summary>
         /// 
         /// </summary>
-        bool Available { get; }
+        bool Available { get; set; }
        
     
     }

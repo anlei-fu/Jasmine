@@ -285,7 +285,18 @@ namespace Jasmine.Extensions
         }
         public static string GetAttributeValue(this XmlNode node, string key)
         {
-            return null;
+            if (node == null)
+                return null;
+
+            if (node.Attributes == null)
+                return null;
+
+            var item = node.Attributes.GetNamedItem(key);
+
+            if (item == null)
+                return null;
+
+            return item.Value;
         }
 
     }

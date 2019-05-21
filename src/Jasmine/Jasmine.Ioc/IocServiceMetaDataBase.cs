@@ -5,7 +5,6 @@ namespace Jasmine.Ioc
 {
     public class IocServiceMetaDataBase:ServiceMetaDataBase
     {
-       
         public Type Impl { get; internal set; }
         public string ConfigKey { get; internal set; }
         public bool IsFromConfig => ConfigKey != null;

@@ -4,11 +4,11 @@ using System.Reflection;
 
 namespace Jasmine.Reflection
 {
-    public class Constructor : AttributeSurpport
+    public class Constructor : AttributeFearture
     {
         public ConstructorInfo RelatedInfo { get; set; }
         public Func<object[], object> Invoker { get; set; }
-        public bool IsDefault => DefaultInvoker != null;
+        public bool IsDefaultConstructor => DefaultInvoker != null;
         public Func<object> DefaultInvoker { get; internal set; }
         public string Name { get; set; }
         public string FullName { get; set; }

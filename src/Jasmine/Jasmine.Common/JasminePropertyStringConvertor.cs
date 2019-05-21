@@ -11,7 +11,7 @@ namespace Jasmine.Ioc
         }
         public static object Convert(Type type, string source)
         {
-            return  type.IsBaseType() ? JasmineStringConvertor.FromString(source, type) :
+            return  type.IsBaseType() ? JasmineStringValueConvertor.FromString(source, type) :
                                            Newtonsoft.Json.JsonConvert.DeserializeObject(source,type);
         }
        

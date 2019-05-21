@@ -78,7 +78,7 @@ namespace Jasmine.ConfigCenter.Server
 
                     if (context.Request.Parameter.ContainsKey(NODE_TYPE))
                     {
-                        if(JasmineStringConvertor.TryGetValue<NodeType>(context.Request.Parameter[NODE_TYPE],out var result))
+                        if(JasmineStringValueConvertor.TryGetValue<NodeType>(context.Request.Parameter[NODE_TYPE],out var result))
                         {
 
                         }
@@ -109,7 +109,7 @@ namespace Jasmine.ConfigCenter.Server
 
                     if(context.Request.Parameter.ContainsKey(DATA))
                     {
-                        if(JasmineStringConvertor.TryGetValue<byte[]>(context.Request.Parameter[DATA],out var value))
+                        if(JasmineStringValueConvertor.TryGetValue<byte[]>(context.Request.Parameter[DATA],out var value))
                         {
                             context.Response.ResponseCode = ResponseCode.Suceessed;
                         }

@@ -61,10 +61,9 @@ namespace Jasmine.Reflection
         public static Type[] GetParameterTypes(this MethodBase method)
         {
             var ls = new List<Type>();
+
             foreach (var item in method.GetParameters())
-            {
                 ls.Add(item.ParameterType);
-            }
 
             return ls.ToArray();
         }
@@ -76,6 +75,9 @@ namespace Jasmine.Reflection
 
             for (int i = 0; i < types1.Length; i++)
             {
+                /*
+                 * null assume  equels
+                 */ 
                 if (types2[i] == null)
                     continue;
 

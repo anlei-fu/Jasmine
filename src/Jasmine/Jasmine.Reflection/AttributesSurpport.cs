@@ -2,7 +2,7 @@
 
 namespace Jasmine.Reflection
 {
-    public class AttributeSurpport
+    public class AttributeFearture
     {
         public IAttributeCache Attributes { get; set; } = new DefaultAttributesCache();
     }

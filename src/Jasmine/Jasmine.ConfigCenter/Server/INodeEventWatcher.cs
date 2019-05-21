@@ -13,7 +13,7 @@ namespace Jasmine.ConfigCenter.Server
         void RemoveClient(ConnectionInfo client);
 
         Task OnChildrenCreated(string path);
-        Task OnDataChnaged(string path);
+        Task OnDataChanged(string path);
         Task OnNodeRemoved(string path);
     }
 }

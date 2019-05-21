@@ -9,7 +9,7 @@ namespace Jasmine.ConfigCenter.Server
         {
             Channel = channel;
         }
-        private HashSet<INodeEventManager> Managers;
+        private IDictionary<string,NodeEventManager> Managers;
         public IChannel Channel { get;  }
     }
 }

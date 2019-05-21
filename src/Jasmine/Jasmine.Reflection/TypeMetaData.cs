@@ -3,7 +3,7 @@ using System;
 
 namespace Jasmine.Reflection
 {
-    public class TypeMetaData:AttributeSurpport
+    public class TypeMetaData:AttributeFearture
     {
         public string Name => DeclareType.Name;
         public string FullName => DeclareType.FullName;

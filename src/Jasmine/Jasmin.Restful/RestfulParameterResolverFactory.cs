@@ -1,14 +1,19 @@
 ﻿using Jasmine.Common;
-using Jasmine.Reflection;
-using System;
 
 namespace Jasmine.Restful
 {
-    public class RestfulParameterResolverFactory : IParameterResolverFactory<HttpFilterContext>
+    internal class RestfulParameterResolverFactory : IParameterResolverFactory<HttpFilterContext,RestfulServiceMetaData>
     {
-        public IParamteterResolver<HttpFilterContext> Create(Method method)
+        private RestfulParameterResolverFactory()
         {
-            throw new NotImplementedException();
+
+        }
+
+        public static readonly IParameterResolverFactory<HttpFilterContext, RestfulServiceMetaData> Instance = new RestfulParameterResolverFactory();
+
+        public IParamteterResolver<HttpFilterContext> Create(RestfulServiceMetaData metaData)
+        {
+            return new RestfulParameterResolver(metaData.Parameters);
         }
     }
 }

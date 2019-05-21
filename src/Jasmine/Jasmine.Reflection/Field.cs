@@ -3,7 +3,7 @@ using System.Reflection;
 
 namespace Jasmine.Reflection
 {
-    public class Field : AttributeSurpport, IValueGetterSetter
+    public class Field : AttributeFearture, IValueGetterSetter
     {
         public FieldInfo RelatedInfo { get; set; }
         public string Name { get; set; }

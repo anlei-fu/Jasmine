@@ -18,7 +18,7 @@ namespace Jasmine.Reflection
                 _keyMap[info].Name = info.Name;
 
                 foreach (var item in info.GetCustomAttributes())
-                    _keyMap[info].Attributes.Cache((Attribute)item);
+                    _keyMap[info].Attributes.Cache(item);
             }
         }
     }

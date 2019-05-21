@@ -9,7 +9,7 @@ namespace Jasmine.Common
         /// </summary>
         /// <param name="context">filter context</param>
         /// <returns></returns>
-        Task FiltAsync(T context);
+        Task FiltsAsync(T context);
         /// <summary>
         /// attached next filter
         /// </summary>

@@ -4,6 +4,10 @@ namespace Jasmine.Restful.Attributes
 {
     public  class HttpMethodAttribute:Attribute
     {
-        public string Method { get; set; }
+        public HttpMethodAttribute(string method)
+        {
+            Method = method;
+        }
+        public string Method { get;  }
     }
 }

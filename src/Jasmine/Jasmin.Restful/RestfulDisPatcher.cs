@@ -7,10 +7,9 @@ namespace Jasmine.Restful
 {
     public class RestfulDispatcher : AbstractDispatcher<HttpFilterContext>
     {
-        public RestfulDispatcher(string name, IRequestProcessorManager<HttpFilterContext> pipelineManager) : base(name, pipelineManager)
+        public RestfulDispatcher(string name, IRequestProcessorManager<HttpFilterContext> processorManager) : base(name, processorManager)
         {
         }
-
         private ILog _logger;
         public bool AllowUpload { get; set; }
         public bool UseStaticFile { get; set; }
@@ -19,21 +18,29 @@ namespace Jasmine.Restful
         public bool UseApiManager { get; set; }
         public override async Task DispatchAsync(string path, HttpFilterContext context)
         {
-            if(_pipelineManager.ContainsProcessor(path))
+            if (_processorManager.ContainsProcessor(path))
             {
-                var pipeline = _pipelineManager.GetProcessor(path);
+                var processor = _processorManager.GetProcessor(path);
 
-                try
+                if (processor.Available)
                 {
-                   await  pipeline.Filter.First.FiltAsync(context);
+                    try
+                    {
+                        await processor.Filter.First.FiltsAsync(context);
+                    }
+                    catch (Exception ex)
+                    {
+                        context.Exception = ex;
+
+                        _logger?.Error(ex);
+
+                        await processor.ErrorFilter.First.FiltsAsync(context);
+                    }
                 }
-                catch (Exception ex)
+                else
                 {
-                    context.Exception = ex;
-                    _logger?.Error(ex);
-                    await pipeline.ErrorFilter.First.FiltAsync(context);
+                    context.HttpContext.Response.StatusCode = 401;
                 }
-                
             }
             else if(UseStaticFile)
             {

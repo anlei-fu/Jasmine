@@ -6,57 +6,57 @@ namespace Jasmine.Common
 {
     public class AbstractMetadataManager<TMetaData> : IDictionary<Type, TMetaData>
     {
-        private ConcurrentDictionaryIDictonaryAdapter<Type, TMetaData> _innerDic = new ConcurrentDictionaryIDictonaryAdapter<Type, TMetaData>();
+        private ConcurrentDictionaryIDictonaryAdapter<Type, TMetaData> _innerMap = new ConcurrentDictionaryIDictonaryAdapter<Type, TMetaData>();
         public TMetaData this[Type key]
         {
-            get => _innerDic[key];
+            get => _innerMap[key];
             set
             {
-                _innerDic[key] = value;
+                _innerMap[key] = value;
             }
         }
 
-        public ICollection<Type> Keys => _innerDic.Keys;
+        public ICollection<Type> Keys => _innerMap.Keys;
 
-        public ICollection<TMetaData> Values => _innerDic.Values;
+        public ICollection<TMetaData> Values => _innerMap.Values;
 
-        public int Count => _innerDic.Count;
+        public int Count => _innerMap.Count;
 
-        public bool IsReadOnly => _innerDic.IsReadOnly;
+        public bool IsReadOnly => _innerMap.IsReadOnly;
 
         public void Add(Type key, TMetaData value)
         {
-            _innerDic.Add(key, value);
+            _innerMap.Add(key, value);
         }
 
         public void Add(KeyValuePair<Type, TMetaData> item)
         {
-            _innerDic.Add(item);
+            _innerMap.Add(item);
         }
 
         public void Clear()
         {
-            _innerDic.Clear();
+            _innerMap.Clear();
         }
 
         public bool Contains(KeyValuePair<Type, TMetaData> item)
         {
-            return _innerDic.Contains(item);
+            return _innerMap.Contains(item);
         }
 
         public bool ContainsKey(Type key)
         {
-            return _innerDic.ContainsKey(key);
+            return _innerMap.ContainsKey(key);
         }
 
         public void CopyTo(KeyValuePair<Type, TMetaData>[] array, int arrayIndex)
         {
-            _innerDic.CopyTo(array, arrayIndex);
+            _innerMap.CopyTo(array, arrayIndex);
         }
 
         public IEnumerator<KeyValuePair<Type, TMetaData>> GetEnumerator()
         {
-            foreach (var item in _innerDic)
+            foreach (var item in _innerMap)
             {
                 yield return item;
             }
@@ -64,22 +64,22 @@ namespace Jasmine.Common
 
         public bool Remove(Type key)
         {
-          return  _innerDic.Remove(key);
+          return  _innerMap.Remove(key);
         }
 
         public bool Remove(KeyValuePair<Type, TMetaData> item)
         {
-            return _innerDic.Remove(item);
+            return _innerMap.Remove(item);
         }
 
         public bool TryGetValue(Type key, out TMetaData value)
         {
-            return _innerDic.TryGetValue(key, out value);
+            return _innerMap.TryGetValue(key, out value);
         }
 
         IEnumerator IEnumerable.GetEnumerator()
         {
-            return _innerDic.GetEnumerator();
+            return _innerMap.GetEnumerator();
         }
     }
 }

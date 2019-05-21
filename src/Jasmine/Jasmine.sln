@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.28010.2019
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.28729.10
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Test", "Test", "{A7BB9AAF-EF71-4F9C-8541-77B523D5DFBF}"
 EndProject
@@ -49,7 +49,13 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GrammerTest", "GrammerTest\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ActionReflectTest", "ActionReflectTest\ActionReflectTest.csproj", "{91D38630-5E57-4C45-85D8-37C33203D528}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jasmine.Interpreter", "Jasmine.Interpreter\Jasmine.Interpreter.csproj", "{6D7DB671-CD9A-4666-93A4-0EFB64D350A4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Jasmine.Interpreter", "Jasmine.Interpreter\Jasmine.Interpreter.csproj", "{6D7DB671-CD9A-4666-93A4-0EFB64D350A4}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Jasmine.Configuration", "Jasmine.Configuration\Jasmine.Configuration.csproj", "{B458ACF2-5654-4919-AF9B-6BB06C779A3A}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ConfigTest", "ConfigTest\ConfigTest.csproj", "{BCB8FD48-1B0C-40DD-80E9-C7FB18FFB202}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "restfulAppTest", "restfulAppTest\restfulAppTest.csproj", "{A872A70F-8F45-42F3-9426-6843592F410B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -149,6 +155,18 @@ Global
 		{6D7DB671-CD9A-4666-93A4-0EFB64D350A4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6D7DB671-CD9A-4666-93A4-0EFB64D350A4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6D7DB671-CD9A-4666-93A4-0EFB64D350A4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B458ACF2-5654-4919-AF9B-6BB06C779A3A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B458ACF2-5654-4919-AF9B-6BB06C779A3A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B458ACF2-5654-4919-AF9B-6BB06C779A3A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B458ACF2-5654-4919-AF9B-6BB06C779A3A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BCB8FD48-1B0C-40DD-80E9-C7FB18FFB202}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BCB8FD48-1B0C-40DD-80E9-C7FB18FFB202}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BCB8FD48-1B0C-40DD-80E9-C7FB18FFB202}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BCB8FD48-1B0C-40DD-80E9-C7FB18FFB202}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A872A70F-8F45-42F3-9426-6843592F410B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A872A70F-8F45-42F3-9426-6843592F410B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A872A70F-8F45-42F3-9426-6843592F410B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A872A70F-8F45-42F3-9426-6843592F410B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -160,6 +178,8 @@ Global
 		{6FC1AE0C-0460-4636-A559-F4CB690FB4CD} = {A7BB9AAF-EF71-4F9C-8541-77B523D5DFBF}
 		{9D6CFA6D-5194-4CF3-9653-BA83B9F07D7F} = {A7BB9AAF-EF71-4F9C-8541-77B523D5DFBF}
 		{91D38630-5E57-4C45-85D8-37C33203D528} = {A7BB9AAF-EF71-4F9C-8541-77B523D5DFBF}
+		{BCB8FD48-1B0C-40DD-80E9-C7FB18FFB202} = {A7BB9AAF-EF71-4F9C-8541-77B523D5DFBF}
+		{A872A70F-8F45-42F3-9426-6843592F410B} = {A7BB9AAF-EF71-4F9C-8541-77B523D5DFBF}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {A6D5FE91-3BE8-420B-A942-4CFE27F92901}

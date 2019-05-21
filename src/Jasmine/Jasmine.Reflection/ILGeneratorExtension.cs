@@ -9,6 +9,7 @@ namespace Jasmine.Reflection
         public static void PushInstance(this ILGenerator generator, Type type)
         {
             generator.Emit(OpCodes.Ldarg_0);
+
             if (type.IsValueType)
             {
                 generator.Emit(OpCodes.Unbox, type);

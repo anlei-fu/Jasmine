@@ -1,6 +1,7 @@
-﻿using System.Collections.Generic;
-using Jasmine.Common;
+﻿using Jasmine.Common;
 using Jasmine.Reflection;
+using Jasmine.Serialization;
+using System.Collections.Generic;
 
 namespace Jasmine.Restful
 {
@@ -13,12 +14,12 @@ namespace Jasmine.Restful
         public string HttpMethod { get; set; }
         public RestfulRequestParameterMetaData[] Parameters { get; internal set; }
 
-        public IList<string> BeforeFilters { get; }
+        public IList<string> BeforeFilters { get; } = new List<string>();
 
-        public IList<string> AfterFilters { get; }
+        public IList<string> AfterFilters { get; } = new List<string>();
 
-        public IList<string> AroundFilters { get; }
+        public IList<string> AroundFilters { get; } = new List<string>();
 
-        public IList<string> ErrorFilters { get; }
+        public IList<string> ErrorFilters { get; } = new List<string>();
     }
 }

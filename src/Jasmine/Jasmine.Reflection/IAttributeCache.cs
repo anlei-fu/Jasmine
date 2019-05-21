@@ -4,17 +4,16 @@ using System.Collections.Generic;
 namespace Jasmine.Reflection
 {
     /// <summary>
-    /// cache the attributes info in related type
+    /// cache  attributes  mark on  related type
     /// </summary>
-    public   interface IAttributeCache:IEnumerable<Attribute>
+    public   interface IAttributeCache:IEnumerable<Attribute[]>
     {
-      
         /// <summary>
         /// get attr by name
         /// </summary>
         /// <param name="name"></param>
         /// <returns></returns>
-        Attribute GetAttribute(string name);
+        Attribute[] GetAttribute(string name);
         /// <summary>
         /// contains attr by name
         /// </summary>
@@ -32,8 +31,8 @@ namespace Jasmine.Reflection
         /// </summary>
         /// <param name="attrType"></param>
         /// <returns></returns>
-        Attribute GetAttribute(Type attrType);
-        T GetAttribute<T>() where T : Attribute;
+        Attribute[] GetAttribute(Type attrType);
+        T[] GetAttribute<T>() where T : Attribute;
         /// <summary>
         /// 
         /// </summary>

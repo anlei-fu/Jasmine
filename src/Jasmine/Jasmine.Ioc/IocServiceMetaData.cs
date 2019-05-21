@@ -11,8 +11,7 @@ namespace Jasmine.Ioc
         {
             RelatedType = serviceType;
         }
-        public ITypeCache Cache { get; }
-        public Type Impl { get; set; }
+     
         public ServiceScope Scope { get; internal set; }
         public string TypeName => RelatedType.Name;
         public string TypeFullName => RelatedType.FullName;

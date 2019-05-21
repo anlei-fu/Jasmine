@@ -11,7 +11,11 @@ namespace Jasmine.Ioc
         /// <param name="type"></param>
         /// <returns></returns>
         Type GetImplementation(Type type);
-
-        void SetImplementation(Type abstrc, Type impl);
+        /// <summary>
+        /// set abstract or interface -- impl mapping
+        /// </summary>
+        /// <param name="abs"></param>
+        /// <param name="impl"></param>
+        void SetImplementation(Type abs, Type impl);
     }
 }

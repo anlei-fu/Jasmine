@@ -54,6 +54,10 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Jasmine.Common\Jasmine.Commom.csproj">
+      <Project>{27722F7A-0E0D-42A5-961A-7AF15FA0A1C8}</Project>
+      <Name>Jasmine.Commom</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Jasmine.Ioc\Jasmine.Ioc.csproj">
       <Project>{48F49070-FDC9-47FA-AE1B-F65B24EBED3E}</Project>
       <Name>Jasmine.Ioc</Name>

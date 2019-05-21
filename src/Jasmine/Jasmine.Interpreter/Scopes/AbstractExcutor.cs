@@ -1,6 +1,6 @@
 ﻿namespace Jasmine.Interpreter.Scopes
 {
-    public abstract class AbstractExcutor : IExcutor
+    public abstract class AbstractExcutor 
     {
         public AbstractExcutor(BreakableBlock parent)
         {

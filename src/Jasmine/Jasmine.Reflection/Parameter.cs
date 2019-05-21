@@ -2,7 +2,7 @@
 
 namespace Jasmine.Reflection
 {
-    public   class Parameter:AttributeSurpport
+    public   class Parameter:AttributeFearture
     {
         public Type ParameterType { get; set; }
         public string Name { get; set; }

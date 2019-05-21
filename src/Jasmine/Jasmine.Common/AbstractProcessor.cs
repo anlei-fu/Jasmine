@@ -1,21 +1,21 @@
 ﻿namespace Jasmine.Common
 {
-    public class AbstractProcessor<T> : IRequestProcessor<T>
+    public abstract class AbstractProcessor<T> : IRequestProcessor<T>
     {
-        public string Name { get; }
-        public IFilterPipeline<T> ErrorFilter { get; internal set; }
+        public  string Name { get; set; }
+        public IFilterPipeline<T> ErrorFilter { get;  set; }
 
-        public IFilterPipeline<T> Filter { get; internal set; }
+        public IFilterPipeline<T> Filter { get;  set; }
 
-        public IMetric Metric { get; }
+        public IMetric Metric { get; internal set; }
 
-        public int MaxConcurrency { get; }
+        public int MaxConcurrency { get;  set; }
 
-        public bool Available { get; }
+        public bool Available { get; set; } = true;
 
-        public string Path { get; }
+        public string Path { get;  set; }
 
-        public string GroupName { get; }
+        public string GroupName { get;  set; }
        
     }
 }

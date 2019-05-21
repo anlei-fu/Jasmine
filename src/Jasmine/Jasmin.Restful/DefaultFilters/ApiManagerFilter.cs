@@ -9,7 +9,7 @@ namespace Jasmine.Restful
         {
         }
 
-        public override Task FiltAsync(HttpFilterContext context)
+        public override Task FiltsAsync(HttpFilterContext context)
         {
             throw new System.NotImplementedException();
         }

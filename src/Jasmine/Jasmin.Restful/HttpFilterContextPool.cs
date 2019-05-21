@@ -10,7 +10,7 @@ namespace Jasmine.Restful
 
         protected override HttpFilterContext newInstance()
         {
-            throw new System.NotImplementedException();
+            return new HttpFilterContext();
         }
     }
 }

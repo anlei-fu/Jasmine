@@ -9,7 +9,14 @@ namespace Jasmine.Restful
 {
     public class RestfulServiceMetaDataReflectResolver : IServiceMetaDataReflectResolver<RestfulServiceGroupMetaData>
     {
-        private ITypeCache _typeCache = JasmineReflectionCache.Instance;
+        private RestfulServiceMetaDataReflectResolver()
+        {
+
+        }
+
+        public static readonly IServiceMetaDataReflectResolver<RestfulServiceGroupMetaData> Instance = new RestfulServiceMetaDataReflectResolver();
+
+        private ITypeCache _typeCache => JasmineReflectionCache.Instance;
         public RestfulServiceGroupMetaData Resolve(Type type)
         {
             if (!_typeCache.GetItem(type).Attributes.Contains(typeof(RestfulAttribute)))
@@ -17,46 +24,88 @@ namespace Jasmine.Restful
 
             var metaData = new RestfulServiceGroupMetaData();
 
+            metaData.RelatedType = type;
+
             foreach (var item in _typeCache.GetItem(type).Attributes)
             {
                 var attrType = item.GetType();
 
                 if(attrType== typeof(PathAttribute))
                 {
-                    metaData.Path = ((PathAttribute)item).Path;
+                    metaData.Path = ((PathAttribute)item[0]).Path;
                 }
                 else if(attrType==typeof(HttpMethodAttribute))
                 {
-                    metaData.HttpMethod = ((HttpMethodAttribute)item).Method;
+                    metaData.HttpMethod = ((HttpMethodAttribute)item[0]).Method;
                 }
                 else if (attrType == typeof(BeforeInterceptorAttribute))
                 {
-                    metaData.BeforeFilters.Add(((BeforeInterceptorAttribute)item).Name);
+                    foreach (var before in item)
+                    {
+                        metaData.BeforeFilters.Add(((BeforeInterceptorAttribute)before).Name);
+                    }
                 }
                 else if (attrType == typeof(AfterInterceptorAttribute))
                 {
-                    metaData.AfterFilters.Add(((AfterInterceptorAttribute)item).Name);
+                    foreach (var after in item)
+                    {
+                        metaData.BeforeFilters.Add(((AfterInterceptorAttribute)after).Name);
+                    }
                 }
                 else if (attrType == typeof(AroundInterceptorAttribute))
                 {
-                    metaData.AroundFilters.Add(((AroundInterceptorAttribute)item).Name);
+                    foreach (var around in item)
+                    {
+                        metaData.BeforeFilters.Add(((AroundInterceptorAttribute)around).Name);
+                    }
                 }
                 else if (attrType == typeof(ErrorInterceptor))
                 {
-                    metaData.ErrorFilters.Add(((ErrorInterceptor)item).Name);
+                    foreach (var error in item)
+                    {
+                        metaData.BeforeFilters.Add(((ErrorInterceptor)error).Name);
+                    }
+                }
+                else if(attrType==typeof(SerializationModeAtribute))
+                {
+                    metaData.SerializeMode = ((SerializationModeAtribute)item[0]).SerializeMode;
+                }
+                else if(attrType==typeof(AliasAttribute))
+                {
+                    metaData.Name= ((AliasAttribute)item[0]).Alias;
                 }
 
             }
+
+            if (metaData.Name == null)
+                metaData.Name = metaData.RelatedType.FullName;
+
+
+            if(metaData.HttpMethod==null)
+            {
+                metaData.HttpMethod = HttpMethods.GET;
+            }
+            
+            if(metaData.Path==null)
+            {
+                metaData.Path = "/"+metaData.RelatedType.Name.ToLower();
+            }
+
+
 
             var requests = new List<RestfulServiceMetaData>();
 
             foreach (var item in _typeCache.GetItem(type).Methods)
             {
-                if(item.Attributes.Contains(typeof(PathAttribute)))
-                {
-                    requests.Add(resolveMethodMetaData(item));
-                }
 
+                var request = resolveRequest(item,metaData.Path,metaData.HttpMethod);
+
+                if (request == null)
+                    continue;
+
+                setRequest(requests, request, metaData);
+
+                requests.Add(request);
             }
 
             foreach (var item in requests)
@@ -64,52 +113,120 @@ namespace Jasmine.Restful
                 metaData.Requests.Add(item.Path, item);
             }
 
-        
-
             return metaData;
         }
 
 
-        public RestfulServiceMetaData resolveMethodMetaData(Method method)
+        private void setRequest(List<RestfulServiceMetaData> list,RestfulServiceMetaData requestMetaData,RestfulServiceGroupMetaData requestGroupMetaData)
+        {
+            var t = 1;
+
+            for (int i = 0; i < list.Count; i++)
+            {
+                if(requestMetaData.Name==list[i].Name)
+                {
+                    t++;
+                    requestMetaData.Name = requestMetaData.Name + t.ToString();
+                    i = 0;
+                }
+            }
+
+
+            if (requestMetaData.Path == null)
+                requestMetaData.Path = requestGroupMetaData.Path + "/" + requestMetaData.Name.ToLower();
+
+            if (requestMetaData.HttpMethod == null)
+                requestMetaData.HttpMethod = requestGroupMetaData.HttpMethod;
+
+        }
+
+
+        private RestfulServiceMetaData resolveRequest(Method method,string groupPath,string groupMethod)
         {
             var metaData = new RestfulServiceMetaData();
 
             metaData.Method = method;
+
             foreach (var item in method.Attributes)
             {
                 var attrType = item.GetType();
 
                 if (attrType == typeof(PathAttribute))
                 {
-                    metaData.Path = ((PathAttribute)item).Path;
+                    metaData.Path = ((PathAttribute)item[0]).Path;
+                }
+                else if(attrType==typeof(RestfulIgnoreAttribute))
+                {
+                    return null;
                 }
                 else if (attrType == typeof(HttpMethodAttribute))
                 {
-                    metaData.HttpMethod = ((HttpMethodAttribute)item).Method;
+                    metaData.HttpMethod = ((HttpMethodAttribute)item[0]).Method;
                 }
                 else if (attrType == typeof(BeforeInterceptorAttribute))
                 {
-                    metaData.BeforeFilters.Add(((BeforeInterceptorAttribute)item).Name);
+                    foreach (var before in item)
+                    {
+                        metaData.BeforeFilters.Add(((BeforeInterceptorAttribute)before).Name);
+                    }
                 }
                 else if (attrType == typeof(AfterInterceptorAttribute))
                 {
-                    metaData.AfterFilters.Add(((AfterInterceptorAttribute)item).Name);
+                    foreach (var after in item)
+                    {
+                        metaData.BeforeFilters.Add(((AfterInterceptorAttribute)after).Name);
+                    }
                 }
                 else if (attrType == typeof(AroundInterceptorAttribute))
                 {
-                    metaData.AroundFilters.Add(((AroundInterceptorAttribute)item).Name);
+                    foreach (var around in item)
+                    {
+                        metaData.BeforeFilters.Add(((AroundInterceptorAttribute)around).Name);
+                    }
                 }
                 else if (attrType == typeof(ErrorInterceptor))
                 {
-                    metaData.ErrorFilters.Add(((ErrorInterceptor)item).Name);
+                    foreach (var error in item)
+                    {
+                        metaData.BeforeFilters.Add(((ErrorInterceptor)error).Name);
+                    }
+                }
+                else if (attrType == typeof(SerializationModeAtribute))
+                {
+                    metaData.SerializeMode = ((SerializationModeAtribute)item[0]).SerializeMode;
+                }
+                else if (attrType == typeof(AliasAttribute))
+                {
+                    metaData.Name = ((AliasAttribute)item[0]).Alias;
                 }
 
             }
+
+
+            if(metaData.Name==null)
+            {
+                metaData.Name = method.Name;
+            }
+            if (metaData.HttpMethod == null)
+            {
+                metaData.HttpMethod = groupMethod;
+            }
+
+            if (metaData.Path == null)
+            {
+                metaData.Path = groupPath + "/" + metaData.Name.ToLower();
+            }
+
+            var ls = new List<RestfulRequestParameterMetaData>();
 
             foreach (var item in method.Parameters)
             {
 
                 var parameterMetaData = new RestfulRequestParameterMetaData();
+
+                parameterMetaData.RelatedType = item.ParameterType;
+
+                var parameterFromSetted = false;
 
                 foreach (var attr in item.Attributes)
                 {
@@ -119,26 +236,32 @@ namespace Jasmine.Restful
                     if(attrType==typeof(BodyAttribute))
                     {
                         parameterMetaData.FromBody = true;
+
+                        parameterFromSetted = true;
                     }
                     else if(attrType==typeof(QueryStringAttribute))
                     {
-                        parameterMetaData.QueryStringKey = ((QueryStringAttribute)attr).Name;
+                        parameterMetaData.QueryStringKey = ((QueryStringAttribute)attr[0]).Name;
+
+                        parameterFromSetted = true;
                     }
                     else if (attrType == typeof(DataAttribute))
                     {
-                        parameterMetaData.DataKey = ((DataAttribute)attr).Name;
+                        parameterMetaData.DataKey = ((DataAttribute)attr[0]).Name;
                     }
                     else if(attrType==typeof(FormAttribute))
                     {
-                        parameterMetaData.DataKey = ((FormAttribute)attr).Name;
+                        parameterMetaData.DataKey = ((FormAttribute)attr[0]).Name;
                     }
                     else if(attrType==typeof(PathVariableAttribute))
                     {
-                        parameterMetaData.PathVariableKey= ((PathVariableAttribute)attr).Name;
+                        parameterMetaData.PathVariableKey= ((PathVariableAttribute)attr[0]).Name;
+
+                        parameterFromSetted = true;
                     }
                     else if(attrType==typeof(DefaultValueAttribute))
                     {
-                        parameterMetaData.DefaultValue = ((DefaultValueAttribute)attr).Value;
+                        parameterMetaData.DefaultValue = ((DefaultValueAttribute)attr[0]).Value;
                     }
                     else if(attrType==typeof(NotNullAttribute))
                     {
@@ -146,17 +269,32 @@ namespace Jasmine.Restful
                     }
                     else if(attrType==typeof(DefaultImplementAttribute))
                     {
-                        parameterMetaData.ImplType = ((DefaultImplementAttribute)attr).Impl;
+                        parameterMetaData.ImplType = ((DefaultImplementAttribute)attr[0]).Impl;
                     }
+                  
 
 
                 }
 
+                if(!parameterFromSetted)
+                {
+                    if(metaData.HttpMethod==HttpMethods.GET)
+                    {
+                        parameterMetaData.QueryStringKey = item.Name;
+                    }
+                    else
+                    {
+                        parameterMetaData.FromBody = true;
+                    }
+                }
+
+                ls.Add(parameterMetaData);
+
             }
 
+            metaData.Parameters = ls.ToArray();
 
-
-            return null;
+            return metaData;
         }
     }
 }

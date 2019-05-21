@@ -55,7 +55,7 @@ namespace Jasmine.ConfigCenter.Server
         public override bool SetData( byte[] data)
         {
             _data = data;
-            EventManager.OnDataChnaged(FullPath);
+            EventManager.OnDataChanged(FullPath);
 
             return true;
         }

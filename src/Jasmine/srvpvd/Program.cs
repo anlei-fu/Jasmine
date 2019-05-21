@@ -1,4 +1,5 @@
-﻿using Jasmine.Ioc;
+﻿using Jasmine.Common.Attributes;
+using Jasmine.Ioc;
 using Jasmine.Ioc.Attributes;
 using System;
 using System.Diagnostics;
@@ -9,9 +10,9 @@ namespace srvpvd
     {
         static void Main(string[] args)
         {
-            var serviceProvider = JasmineServiceProvider.Instance;
+            var serviceProvider = IocServiceProvider.Instance;
 
-            serviceProvider.AddImplementType(typeof(ISay), typeof(Pig));
+           serviceProvider.SetImplementationMapping(typeof(ISay), typeof(Pig));
             Animal s = null;
             var watch = new Stopwatch();
             s = (Animal)serviceProvider.GetService(typeof(Animal));

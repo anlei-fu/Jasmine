@@ -14,7 +14,7 @@ namespace Jasmine.Common
 
         public bool HasNext => Next != null;
 
-        public abstract Task FiltAsync(T context);
+        public abstract Task FiltsAsync(T context);
        
     }
 }

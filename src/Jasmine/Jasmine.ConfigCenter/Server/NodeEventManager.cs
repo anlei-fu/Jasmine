@@ -14,7 +14,7 @@ namespace Jasmine.ConfigCenter.Server
             return _handler.OnChildrenCreated(path, _childrenCreatedListeners);
         }
 
-        public Task OnDataChnaged(string path)
+        public Task OnDataChanged(string path)
         {
             return _handler.OnDataChanged(path, _dataChangedListeners);
         }

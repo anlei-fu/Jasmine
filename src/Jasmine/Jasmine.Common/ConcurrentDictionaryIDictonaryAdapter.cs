@@ -1,74 +1,79 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 
 namespace Jasmine.Common
 {
-    public class ConcurrentDictionaryIDictonaryAdapter<Tkey, Tvallue> : IDictionary<Tkey, Tvallue>
+    public class ConcurrentDictionaryIDictonaryAdapter<Tkey, TValue> : IDictionary<Tkey, TValue>
     {
-        public Tvallue this[Tkey key] { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        private ConcurrentDictionary<Tkey, TValue> _innerDic = new ConcurrentDictionary<Tkey, TValue>();
+        public TValue this[Tkey key] { get => _innerDic[key]; set => _innerDic[key]=value; }
 
-        public ICollection<Tkey> Keys => throw new NotImplementedException();
+        public ICollection<Tkey> Keys => _innerDic.Keys;
 
-        public ICollection<Tvallue> Values => throw new NotImplementedException();
+        public ICollection<TValue> Values => _innerDic.Values;
 
-        public int Count => throw new NotImplementedException();
+        public int Count => _innerDic.Count;
 
-        public bool IsReadOnly => throw new NotImplementedException();
+        public bool IsReadOnly => false;
 
-        public void Add(Tkey key, Tvallue value)
+        public void Add(Tkey key, TValue value)
         {
-            throw new NotImplementedException();
+            _innerDic.TryAdd(key, value);
         }
 
-        public void Add(KeyValuePair<Tkey, Tvallue> item)
+        public void Add(KeyValuePair<Tkey, TValue> item)
         {
-            throw new NotImplementedException();
+            _innerDic.TryAdd(item.Key, item.Value);
         }
 
         public void Clear()
         {
-            throw new NotImplementedException();
+            _innerDic.Clear();
         }
 
-        public bool Contains(KeyValuePair<Tkey, Tvallue> item)
+        public bool Contains(KeyValuePair<Tkey, TValue> item)
         {
             throw new NotImplementedException();
         }
 
         public bool ContainsKey(Tkey key)
         {
-            throw new NotImplementedException();
+            return _innerDic.ContainsKey(key);
         }
 
-        public void CopyTo(KeyValuePair<Tkey, Tvallue>[] array, int arrayIndex)
+        public void CopyTo(KeyValuePair<Tkey, TValue>[] array, int arrayIndex)
         {
             throw new NotImplementedException();
         }
 
-        public IEnumerator<KeyValuePair<Tkey, Tvallue>> GetEnumerator()
+        public IEnumerator<KeyValuePair<Tkey, TValue>> GetEnumerator()
         {
-            throw new NotImplementedException();
+            foreach (var item in _innerDic)
+            {
+                yield return item;
+            }
         }
 
         public bool Remove(Tkey key)
         {
-            throw new NotImplementedException();
+           return  _innerDic.TryRemove(key, out var _);
         }
 
-        public bool Remove(KeyValuePair<Tkey, Tvallue> item)
+        public bool Remove(KeyValuePair<Tkey, TValue> item)
         {
             throw new NotImplementedException();
         }
 
-        public bool TryGetValue(Tkey key, out Tvallue value)
+        public bool TryGetValue(Tkey key, out TValue value)
         {
-            throw new NotImplementedException();
+            return _innerDic.TryGetValue(key, out value);
         }
 
         IEnumerator IEnumerable.GetEnumerator()
         {
-            throw new NotImplementedException();
+            return _innerDic.GetEnumerator();
         }
     }
 }

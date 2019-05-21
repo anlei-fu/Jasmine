@@ -21,15 +21,21 @@ namespace Jasmine.Common
         private IParamteterResolver<T> _resolver;
 
 
-        public override Task FiltAsync(T context)
+        public override Task FiltsAsync(T context)
         {
+            Console.WriteLine($"  resolver is null {_resolver==null}");
+            Console.WriteLine($"  instance is null {_instance == null}");
+            Console.WriteLine($"  context is null {context == null}");
             var parameters = _resolver.Resolve(context);
-
+          
+            Console.WriteLine(" in invoke");
             var result = _method.Invoke(_instance, parameters);
+
+          
             afterInvoke(context, result);
 
             if (Next != null)
-                return Next.FiltAsync(context);
+                return Next.FiltsAsync(context);
             else
                 return Task.CompletedTask;
         }

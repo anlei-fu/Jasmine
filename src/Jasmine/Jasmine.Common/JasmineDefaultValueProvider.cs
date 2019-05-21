@@ -31,7 +31,7 @@ namespace Jasmine.Common
                     return '\0';
                 case BaseTypes.NBoolean:
                 case BaseTypes.Boolean:
-                    return true;
+                    return false;
                 case BaseTypes.NFloat:
                 case BaseTypes.Float:
                 case BaseTypes.NDouble:

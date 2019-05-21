@@ -2,7 +2,7 @@
 
 namespace Jasmine.Restful.Attributes
 {
-    public class RestfulAttribute:Attribute
+    public class RestfulAttribute : Attribute
     {
     }
 }

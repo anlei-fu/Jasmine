@@ -2,7 +2,7 @@
 
 namespace Jasmine.Reflection
 {
-    public   class JasmineStringConvertor
+    public   class JasmineStringValueConvertor
     {
         public static string ToString(object obj,Type type)
         {

@@ -1,14 +1,12 @@
-﻿namespace Jasmine.Common
+﻿using System.Collections.Generic;
+
+namespace Jasmine.Common
 {
-    public interface IFilterPipeline<T>
+    public interface IFilterPipeline<T>:IFilterPiplelineBuilder<T>,IReadOnlyCollection<IFilter<T>>
     {
         IFilter<T> First { get; }
         IFilter<T> Last { get; }
-        int Count { get; }
-        void AddFirst(IFilter<T> filter);
-        void AddLast(IFilter<T> filter);
-        void AddBefore(string name, IFilter<T> filter);
-        void AddAfter(string name, IFilter<T> filter);
+      
         bool Contains(string name);
 
     }

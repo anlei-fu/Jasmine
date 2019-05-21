@@ -12,14 +12,7 @@ namespace Jasmine.Ioc
             Constructor = constructor;
         }
         public Constructor Constructor { get;}
-
         public IocParameterMetaData[] Parameters { get; set; }
-
        
-
-        public override string ToString()
-        {
-            return Constructor.RelatedInfo.ToString();
-        }
     }
 }

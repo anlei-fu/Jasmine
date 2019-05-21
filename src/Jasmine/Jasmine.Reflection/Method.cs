@@ -4,7 +4,7 @@ using System.Reflection;
 
 namespace Jasmine.Reflection
 {
-    public class Method :AttributeSurpport, IInvoker
+    public class Method :AttributeFearture, IInvoker
     {
         public MethodInfo RelatedInfo { get; set; }
         public Func<object,object[],object> Invoker { get; set; }
@@ -15,7 +15,6 @@ namespace Jasmine.Reflection
         public bool HasReturn => ReturnType != null;
         public IParameterCache Parameters { get; set; } = new DefaultParameterCache();
         public Type[] ParamerTypies { get; set; }
-
       
         public object Invoke(object instance, object[] parameters)
         {
