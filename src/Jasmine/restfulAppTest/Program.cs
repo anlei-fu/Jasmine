@@ -1,4 +1,5 @@
-﻿using Jasmine.Restful.Attributes;
+﻿using Jasmine.Ioc.Attributes;
+using Jasmine.Restful.Attributes;
 using Jasmine.Restful.Implement;
 using System;
 using System.Reflection;
@@ -11,8 +12,8 @@ namespace restfulAppTest
         {
             var builder = new RestfulApplicationBuilder();
 
+            builder.LoadConfig("test.config");
             builder.Scan(Assembly.GetExecutingAssembly());
-
             builder.Build().StartAsyn();
 
             Console.Read();
@@ -24,9 +25,16 @@ namespace restfulAppTest
         public class Test
         {
             
+            public Test([FromConfig("test.prefix[name:001]")]string prefix)
+            {
+                _prefix = prefix;
+            }
+
+            private string _prefix;
+            [Path("/do")]
             public string Say(string what)
             {
-                return $"you want me to say {what}";
+                return $" {_prefix}: you want me to say {what}";
             }
 
             public bool BigThan(int value)

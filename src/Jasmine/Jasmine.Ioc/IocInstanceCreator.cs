@@ -1,4 +1,5 @@
 ﻿using Jasmine.Common;
+using Jasmine.Configuration;
 using Jasmine.Ioc.Exceptions;
 using Jasmine.Reflection;
 using System.Collections;
@@ -17,7 +18,7 @@ namespace Jasmine.Ioc
 
         private ConcurrentDictionary<string,IInstanceCreatedListener<IocServiceMetaData>> _listeners=new ConcurrentDictionary<string, IInstanceCreatedListener<IocServiceMetaData>>();
 
-        private readonly IPropertyManager _propertyManager;
+        private  IConfigrationProvider _configProvider=> JasmineConfigurationProvider.Instance;
         
 
         public static readonly IInstanceCreator<IocServiceMetaData> Instance = new IocInstanceCreator();
@@ -48,7 +49,7 @@ namespace Jasmine.Ioc
                     if (type == null)
                         throw new ImplementationNotFoundException("");
 
-                    paramsInstances[i] = JasminePropertyStringConvertor.Convert(type,_propertyManager.GetValue(constructor.Parameters[i].ConfigKey));
+                    paramsInstances[i] = _configProvider.GetConfig(type,constructor.Parameters[i].ConfigKey);
                 }
                 else if (constructor.Parameters[i].HasDefaultValue)//default value
                 {

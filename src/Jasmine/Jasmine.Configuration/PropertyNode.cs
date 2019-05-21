@@ -15,7 +15,6 @@ namespace Jasmine.Configuration
 
             if (IsProperty)
             {
-
                 var index = Name.IndexOf(".");
 
                 if (index == -1)

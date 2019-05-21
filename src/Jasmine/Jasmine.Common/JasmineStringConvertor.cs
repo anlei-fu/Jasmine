@@ -136,7 +136,7 @@ namespace Jasmine.Reflection
             if (type.IsEnum)
                 return Enum.ToObject(type, int.Parse(source));
 
-            switch (type.Name)
+            switch (type.FullName)
             {
                 case BaseTypes.NSByte:
                     return SByte.TryParse(source, out var sbvalue) ? (sbyte?)sbvalue : null;
@@ -206,6 +206,8 @@ namespace Jasmine.Reflection
                     return Guid.TryParse(source, out var gvalue) ? (Guid?)gvalue : null;
                 case BaseTypes.Guid:
                     return Guid.Parse(source);
+                case BaseTypes.String:
+                    return source;
                 default:
                     throw new NotSupportedException($"the {type} is not convertable in this convertor!"); 
             }

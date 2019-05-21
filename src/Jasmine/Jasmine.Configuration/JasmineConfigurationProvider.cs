@@ -1,13 +1,30 @@
-﻿using System.Collections.Concurrent;
+﻿using System;
+using System.Collections.Concurrent;
 
 namespace Jasmine.Configuration
 {
     public class JasmineConfigurationProvider : IConfigrationProvider
     {
-        private ConcurrentDictionary<string, IConfigGroup> _groups = new ConcurrentDictionary<string, IConfigGroup>();
-        public string GetConfig(string parameter)
+        private JasmineConfigurationProvider()
         {
-            return new PropertyNodeParser().Parse(parameter).GetValue(this);
+
+        }
+
+        private ConcurrentDictionary<string, IConfigGroup> _groups = new ConcurrentDictionary<string, IConfigGroup>();
+
+        public static readonly JasmineConfigurationProvider Instance = new JasmineConfigurationProvider();
+
+        public T GetConfig<T>(string config)
+        {
+            return (T)GetConfig(typeof(T), config);
+        }
+        public object GetConfig(Type type, string config)
+        {
+            return JasmineConfigStringConvertor.Convert(type, GetConfig(config));
+        }
+        public string GetConfig(string config)
+        {
+            return new PropertyNodeParser().Parse(config).GetValue(this);
         }
 
       

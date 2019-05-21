@@ -1,4 +1,5 @@
 ﻿using Jasmine.Common;
+using Jasmine.Configuration;
 using Jasmine.Ioc;
 using System;
 using System.Reflection;
@@ -37,6 +38,15 @@ namespace Jasmine.Restful.Implement
 
             return this;
         }
+
+        public RestfulApplicationBuilder LoadConfig(string path)
+        {
+            JasmineConfigurationProvider.Instance.LoadConfig(path);
+
+            return this;
+        }
+
+
         public RestfulApplicationBuilder Scan(Assembly assembly,string nameSpace)
         {
 

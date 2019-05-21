@@ -11,6 +11,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Jasmine.Common\Jasmine.Commom.csproj" />
+    <ProjectReference Include="..\Jasmine.Configuration\Jasmine.Configuration.csproj" />
     <ProjectReference Include="..\Jasmine.Extensions\Jasmine.Extensions.csproj" />
     <ProjectReference Include="..\Jasmine.Reflection\Jasmine.Reflection.csproj" />
   </ItemGroup>
