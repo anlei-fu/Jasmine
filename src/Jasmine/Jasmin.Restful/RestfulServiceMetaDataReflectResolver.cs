@@ -2,6 +2,7 @@
 using Jasmine.Common.Attributes;
 using Jasmine.Reflection;
 using Jasmine.Restful.Attributes;
+using Jasmine.Serialization.Attributes;
 using System;
 using System.Collections.Generic;
 

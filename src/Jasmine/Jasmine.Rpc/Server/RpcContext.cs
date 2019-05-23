@@ -1,10 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Jasmine.Rpc
+﻿namespace Jasmine.Rpc
 {
-    class RpcContext
+    public   class RpcContext
     {
+        public RpcRequest Request { get;private set; }
+        public RpcResponse Response { get; }
+        public void Init(RpcRequest request)
+        {
+
+        }
     }
 }

@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using Jasmine.Common;
 
 namespace Jasmine.Rpc.Server
 {
-    class RpcRequestProcessor
+    public  class RpcRequestProcessor: AbstractProcessor<RpcFilterContext>
     {
     }
 }

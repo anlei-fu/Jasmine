@@ -1,10 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using Jasmine.Common;
 
 namespace Jasmine.Rpc.Server
 {
-    class RpcFilterPipeline
+    public class RpcFilterPipeline : AbstractFilterPipeline<RpcFilterContext>
     {
+        public override string Name => "Rpc.Filter.Pipeline";
     }
 }

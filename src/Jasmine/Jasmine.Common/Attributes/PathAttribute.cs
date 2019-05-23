@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Jasmine.Restful.Attributes
+namespace Jasmine.Common.Attributes
 {
     public  class PathAttribute:Attribute
     {

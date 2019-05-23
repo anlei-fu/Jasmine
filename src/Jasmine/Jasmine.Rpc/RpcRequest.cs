@@ -1,10 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
+using System.IO;
 
 namespace Jasmine.Rpc
 {
-    class RpcRequest
+    public  class RpcRequest
     {
+        public long RequestId { get; set; }
+        public string Path { get; set; }
+        public IDictionary<string, string> Query { get; set; }
+        public Stream Body { get; set; }
     }
 }

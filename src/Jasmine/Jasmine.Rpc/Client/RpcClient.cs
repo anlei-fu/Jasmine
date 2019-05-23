@@ -1,10 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Jasmine.Rpc.Client
+﻿namespace Jasmine.Rpc.Client
 {
-    class RpcClient
+    public  class RpcClient
     {
+        public void Connect()
+        {
+
+        }
+        public RpcResponse GetResponce(RpcRequest request)
+        {
+            return null;
+        }
     }
 }

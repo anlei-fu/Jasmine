@@ -10,6 +10,7 @@ namespace Jasmine.ConfigCenter.Server
             Channel = channel;
         }
         private IDictionary<string,NodeEventManager> Managers;
+        public IList<string> NodeOwn { get; set; }
         public IChannel Channel { get;  }
     }
 }

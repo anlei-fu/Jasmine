@@ -1,18 +1,18 @@
 ﻿using Jasmine.Common;
-using Jasmine.Reflection.Models;
+using Jasmine.Reflection;
 using System;
 
 namespace Jasmine.Rpc.Server
 {
-    public class RpcProxyFilter : AbstractProxyFilter<IRpcContext>
+    public class RpcProxyFilter : AbstractProxyFilter<RpcFilterContext>
     {
-        public RpcProxyFilter(object instance, Method method, IParameterResolverFactory<IRpcContext> factory) : base(instance, method, factory)
+        public RpcProxyFilter(Method method, IRequestParamteterResolver<RpcFilterContext> resolver, object instance, string name) : base(method, resolver, instance, name)
         {
         }
 
-        protected override void afterInvoke(IRpcContext context, object _return)
+        protected override void afterInvoke(RpcFilterContext context, object _return)
         {
-            throw new NotImplementedException();
+            context.ReturnValue = _return;
         }
     }
 }

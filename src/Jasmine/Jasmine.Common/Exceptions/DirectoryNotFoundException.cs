@@ -1,6 +1,7 @@
 ﻿using System;
 
-namespace Jasmine.Restful.Exceptions
+namespace Jasmine.Common.Exceptions
+
 {
     public class DirectoryNotFoundException:Exception
     {

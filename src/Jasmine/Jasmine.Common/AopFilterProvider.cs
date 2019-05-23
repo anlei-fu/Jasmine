@@ -5,14 +5,14 @@ using System.Collections.Generic;
 
 namespace Jasmine.Common
 {
-    public class AopFilterProvider<TContext> : IAopFilterProvider<TContext>
+    public abstract class AbstractAopFilterProvider<TContext> : IAopFilterProvider<TContext>
     {
-        private ConcurrentDictionary<string, IFilter<TContext>> _map = new ConcurrentDictionary<string, IFilter<TContext>>();
+        protected ConcurrentDictionary<string, IFilter<TContext>> _map = new ConcurrentDictionary<string, IFilter<TContext>>();
         public int Count => _map.Count;
 
         public void AddFilter(IFilter<TContext> filter)
         {
-            if(!_map.TryAdd(filter.Name,filter))
+            if (!_map.TryAdd(filter.Name, filter))
             {
                 throw new FilterAlreadyExistException($" filter ({filter.Name}) already exists! ");
             }
@@ -36,10 +36,8 @@ namespace Jasmine.Common
             }
         }
 
-        public IFilter<TContext> GetFilter(string name)
-        {
-            return _map.TryGetValue(name, out var value) ? value : null;
-        }
+        public abstract IFilter<TContext> GetFilter(string name);
+       
 
         public void Remove(string name)
         {

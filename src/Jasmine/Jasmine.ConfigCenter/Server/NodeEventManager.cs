@@ -81,5 +81,10 @@ namespace Jasmine.ConfigCenter.Server
         {
             return _dataChangedListeners.Remove(client);
         }
+
+        public void ClearClientEvent(ConnectionInfo client)
+        {
+            throw new System.NotImplementedException();
+        }
     }
 }

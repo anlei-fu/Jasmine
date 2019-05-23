@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Jasmine.Rpc.Server
 {
-    class RpcApplicationProvider
+   public class RpcApplicationProvider
     {
     }
 }

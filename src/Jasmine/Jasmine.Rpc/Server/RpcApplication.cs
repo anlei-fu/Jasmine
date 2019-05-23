@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Jasmine.Rpc.Server
+﻿namespace Jasmine.Rpc.Server
 {
-    class RpcApplication
+    public   class RpcApplication
     {
     }
 }

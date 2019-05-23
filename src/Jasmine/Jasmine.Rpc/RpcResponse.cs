@@ -1,10 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Jasmine.Rpc
+﻿namespace Jasmine.Rpc
 {
-    class RpcResponse
+    public   class RpcResponse
     {
+        public static readonly RpcResponse ErrorResponse = new RpcResponse();
+        public static readonly RpcResponse  UnregisterdResponse=new RpcResponse();
+
+        public long RequestId { get; set; }
+        public object Body { get; set; }
+        public int StatuCode { get; set; }
     }
 }

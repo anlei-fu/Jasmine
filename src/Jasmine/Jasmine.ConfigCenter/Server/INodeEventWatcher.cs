@@ -15,5 +15,7 @@ namespace Jasmine.ConfigCenter.Server
         Task OnChildrenCreated(string path);
         Task OnDataChanged(string path);
         Task OnNodeRemoved(string path);
+
+        void ClearClientEvent(ConnectionInfo client);
     }
 }

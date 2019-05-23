@@ -1,10 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using Jasmine.Common;
+using System;
 
 namespace Jasmine.Rpc.Server
 {
-    class RpcProcessorManager
+    public class RpcProcessorManager : AbstractProcessorManager<RpcFilterContext>
     {
+        public override string Name => throw new NotImplementedException();
     }
 }

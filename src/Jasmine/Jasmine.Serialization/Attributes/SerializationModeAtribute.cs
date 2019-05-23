@@ -1,7 +1,6 @@
-﻿using Jasmine.Serialization;
-using System;
+﻿using System;
 
-namespace Jasmine.Restful.Attributes
+namespace Jasmine.Serialization.Attributes
 {
     public  class SerializationModeAtribute:Attribute
     {
