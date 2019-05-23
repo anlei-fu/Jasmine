@@ -6,7 +6,7 @@ namespace Jasmine.Restful
 {
     public   interface IStaticFileProvider
     {
-        Task<Stream> GetAsync(string path);
+      Stream GetAsync(string path);
         Task WriteAsync(string path, Stream stream);
         Task RenameAsync(string path1, string newName);
         Task CopyToAsync(string path1, string path2);

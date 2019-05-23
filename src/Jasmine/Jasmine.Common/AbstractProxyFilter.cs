@@ -10,7 +10,7 @@ namespace Jasmine.Common
     /// <typeparam name="T"> context type</typeparam>
     public abstract class AbstractProxyFilter<T> : AbstractFilter<T>
     {
-        public AbstractProxyFilter(Method method, IParamteterResolver<T> resolver, object instance, string name) : base(name)
+        public AbstractProxyFilter(Method method, IRequestParamteterResolver<T> resolver, object instance, string name) : base(name)
         {
             _instance = instance ?? throw new ArgumentNullException();
             _method = method ?? throw new ArgumentException();
@@ -18,7 +18,7 @@ namespace Jasmine.Common
         }
         private object _instance;
         private Method _method;
-        private IParamteterResolver<T> _resolver;
+        private IRequestParamteterResolver<T> _resolver;
 
 
         public override Task FiltsAsync(T context)

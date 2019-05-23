@@ -8,23 +8,23 @@ namespace Jasmine.Restful.Implement
 {
     public class ResfulMiddleware : IMiddleware, INameFearture
     {
+        public static IDispatcher<HttpFilterContext> Dispatcher;
 
         private ILog _logger;
-        public static IDispatcher<HttpFilterContext> Dispatcher;
         private IPool<HttpFilterContext> _pool = new HttpFilterContextPool(10000);
 
-        public string Name { get; } = "jjj";
+        public string Name =>"Restful-Middleware";
 
         public async Task InvokeAsync(HttpContext context, RequestDelegate next)
         {
-            var fcontext = _pool.Rent();
+            var filterContext = _pool.Rent();
 
-            fcontext.Init(context);
+            filterContext.Init(context);
 
             try
             {
 
-                await Dispatcher.DispatchAsync(context.Request.Path, fcontext);
+                await Dispatcher.DispatchAsync(context.Request.Path.ToString().ToLower(), filterContext);
             }
             catch (Exception ex)
             {
@@ -32,8 +32,8 @@ namespace Jasmine.Restful.Implement
             }
             finally
             {
-                fcontext.Reset();
-                _pool.Recycle(fcontext);
+                filterContext.Reset();
+                _pool.Recycle(filterContext);
             }
 
             //if (next != null)

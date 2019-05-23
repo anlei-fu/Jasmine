@@ -7,22 +7,22 @@ using System.Collections.Generic;
 
 namespace Jasmine.Restful
 {
-    public class RestfulServiceMetaDataReflectResolver : IServiceMetaDataReflectResolver<RestfulServiceGroupMetaData>
+    public class RestfulServiceMetaDataReflectResolver : IServiceMetaDataReflectResolver<RestfulServiceMetaData>
     {
         private RestfulServiceMetaDataReflectResolver()
         {
 
         }
 
-        public static readonly IServiceMetaDataReflectResolver<RestfulServiceGroupMetaData> Instance = new RestfulServiceMetaDataReflectResolver();
+        public static readonly IServiceMetaDataReflectResolver<RestfulServiceMetaData> Instance = new RestfulServiceMetaDataReflectResolver();
 
         private ITypeCache _typeCache => JasmineReflectionCache.Instance;
-        public RestfulServiceGroupMetaData Resolve(Type type)
+        public RestfulServiceMetaData Resolve(Type type)
         {
             if (!_typeCache.GetItem(type).Attributes.Contains(typeof(RestfulAttribute)))
                 return null;
 
-            var metaData = new RestfulServiceGroupMetaData();
+            var metaData = new RestfulServiceMetaData();
 
             metaData.RelatedType = type;
 
@@ -93,7 +93,7 @@ namespace Jasmine.Restful
 
 
 
-            var requests = new List<RestfulServiceMetaData>();
+            var requests = new List<RestfulRequestMetaData>();
 
             foreach (var item in _typeCache.GetItem(type).Methods)
             {
@@ -117,7 +117,7 @@ namespace Jasmine.Restful
         }
 
 
-        private void setRequest(List<RestfulServiceMetaData> list,RestfulServiceMetaData requestMetaData,RestfulServiceGroupMetaData requestGroupMetaData)
+        private void setRequest(List<RestfulRequestMetaData> list,RestfulRequestMetaData requestMetaData,RestfulServiceMetaData requestGroupMetaData)
         {
             var t = 1;
 
@@ -141,9 +141,9 @@ namespace Jasmine.Restful
         }
 
 
-        private RestfulServiceMetaData resolveRequest(Method method,string groupPath,string groupMethod)
+        private RestfulRequestMetaData resolveRequest(Method method,string groupPath,string groupMethod)
         {
-            var metaData = new RestfulServiceMetaData();
+            var metaData = new RestfulRequestMetaData();
 
             metaData.Method = method;
 

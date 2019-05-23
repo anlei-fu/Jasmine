@@ -7,7 +7,7 @@ namespace Jasmine.Restful
 {
     public class RestfulProxyFilter : AbstractProxyFilter<HttpFilterContext>
     {
-        public RestfulProxyFilter(Method method, IParamteterResolver<HttpFilterContext> resolver, object instance, string name) : base(method, resolver, instance, name)
+        public RestfulProxyFilter(Method method, IRequestParamteterResolver<HttpFilterContext> resolver, object instance, string name) : base(method, resolver, instance, name)
         {
         }
 
@@ -17,7 +17,8 @@ namespace Jasmine.Restful
             Console.WriteLine($"request processed! {_return==null}");
 
             var bytes = JsonSerializer.Instance.SerializeToBytes(_return);
-          //  context.HttpContext.Response.StatusCode = 200;
+
+            context.HttpContext.Response.StatusCode = 500;
             context.HttpContext.Response.Body.Write(bytes,0,bytes.Length);
             context.HttpContext.Response.Body.Flush();
 

@@ -5,20 +5,20 @@ using System.Collections.Generic;
 
 namespace Jasmine.Restful
 {
-    public class HttpFilterContext:IContext
+    public class HttpFilterContext:IRequestProcessingContext
     {
         public HttpContext HttpContext { get; set; }
-        public Exception Exception { get; set; }
+        public Exception Error { get; set; }
         public object ReturnValue { get; set; }
         public Type ReturnValueType { get; set; }
         public IDictionary<string, object> Datas { get; set; } = new Dictionary<string, object>();
-        public IDispatcher<IContext> Dispatcher { get; internal set; }
+        public IDispatcher<IRequestProcessingContext> Dispatcher { get; internal set; }
         public string Path => HttpContext.Request.Path;
 
         public void Init(HttpContext context)
         {
             HttpContext = context;
-            Exception = null;
+            Error = null;
             ReturnValue = null;
             ReturnValueType = null;
             Datas.Clear();

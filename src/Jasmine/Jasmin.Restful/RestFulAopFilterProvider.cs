@@ -14,11 +14,13 @@ namespace Jasmine.Restful
         {
 
         }
+
         public static IAopFilterProvider<HttpFilterContext> Instance = new RestfulAopFilterProvider();
 
         private IServiceProvider _serviceProvider => IocServiceProvider.Instance;
 
         private ConcurrentDictionary<string, IFilter<HttpFilterContext>> _map = new ConcurrentDictionary<string, IFilter<HttpFilterContext>>();
+
         public int Count => _map.Count;
 
         public void AddFilter(IFilter<HttpFilterContext> filter)
@@ -49,11 +51,11 @@ namespace Jasmine.Restful
 
         public IFilter<HttpFilterContext> GetFilter(string name)
         {
-            if(!_map.ContainsKey(name))
+            if (!_map.ContainsKey(name))
             {
                 var instance = _serviceProvider.GetService(Type.GetType(name));
 
-                if(instance==null)
+                if (instance == null)
                 {
                     throw new AopFilterCanNotBeCreatedException($"{name} can not be created!");
                 }
@@ -64,7 +66,6 @@ namespace Jasmine.Restful
 
             return _map.TryGetValue(name, out var result) ? result : null;
         }
-
 
         public void Remove(string name)
         {

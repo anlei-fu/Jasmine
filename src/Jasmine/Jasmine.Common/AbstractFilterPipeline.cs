@@ -12,6 +12,7 @@ namespace Jasmine.Common
         }
 
         private LinkedList<IFilter<T>> _list;
+
         private IDictionary<string, LinkedListNode<IFilter<T>>> _nameMap;
 
         public abstract string Name { get; }

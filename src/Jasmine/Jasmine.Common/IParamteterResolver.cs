@@ -1,6 +1,6 @@
 ﻿namespace Jasmine.Common
 {
-    public   interface IParamteterResolver<T>
+    public   interface IRequestParamteterResolver<T>
     {
         /// <summary>
         ///  resolve parameters from context

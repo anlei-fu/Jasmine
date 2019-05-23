@@ -4,6 +4,6 @@ namespace Jasmine.Common
 {
     public  interface IParameterResolverFactory<T,TMetaData>
     {
-        IParamteterResolver<T> Create(TMetaData metaData);
+        IRequestParamteterResolver<T> Create(TMetaData metaData);
     }
 }

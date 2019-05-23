@@ -4,8 +4,7 @@ using System.Text;
 
 namespace Jasmine.Rpc.Client
 {
-  public  interface IEncoder
+    class RpcClient
     {
-        byte[] Encode(byte[] source);
     }
 }

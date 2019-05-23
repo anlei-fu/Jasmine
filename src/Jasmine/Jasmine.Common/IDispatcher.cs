@@ -3,10 +3,10 @@
 namespace Jasmine.Common
 {
     /// <summary>
-    /// use to dispatch a request
+    ///  dispatch a request
     /// </summary>
-    /// <typeparam name="T"></typeparam>
-    public  interface IDispatcher<T>:INameFearture
+    /// <typeparam name="TContext"></typeparam>
+    public  interface IDispatcher<TContext>:INameFearture
     {
         /// <summary>
         /// dispatch every request
@@ -14,6 +14,6 @@ namespace Jasmine.Common
         /// <param name="path">request path</param>
         /// <param name="context">filter context</param>
         /// <returns></returns>
-        Task DispatchAsync(string path, T context);
+        Task DispatchAsync(string path, TContext context);
     }
 }

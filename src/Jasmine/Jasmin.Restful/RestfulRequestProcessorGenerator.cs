@@ -6,7 +6,7 @@ using System.Collections.Generic;
 
 namespace Jasmine.Restful
 {
-    public class RestfulRequestProcessorGenerator : IRequestProcessorGenerator<HttpFilterContext, RestfulServiceGroupMetaData>
+    public class RestfulRequestProcessorGenerator : IRequestProcessorGenerator<HttpFilterContext, RestfulServiceMetaData>
     {
 
         private RestfulRequestProcessorGenerator()
@@ -15,23 +15,21 @@ namespace Jasmine.Restful
         }
 
         private IAopFilterProvider<HttpFilterContext> _aopProvider=>RestfulAopFilterProvider.Instance;
-        private IParameterResolverFactory<HttpFilterContext,RestfulServiceMetaData> _parameterResolverFactory=>RestfulParameterResolverFactory.Instance;
+        private IParameterResolverFactory<HttpFilterContext,RestfulRequestMetaData> _parameterResolverFactory=>RestfulParameterResolverFactory.Instance;
         private IServiceProvider _serviceProvider => IocServiceProvider.Instance;
 
 
-        public static readonly IRequestProcessorGenerator<HttpFilterContext, RestfulServiceGroupMetaData> Instance = new RestfulRequestProcessorGenerator();
+        public static readonly IRequestProcessorGenerator<HttpFilterContext, RestfulServiceMetaData> Instance = new RestfulRequestProcessorGenerator();
 
 
 
-        public IRequestProcessor<HttpFilterContext>[] Generate(RestfulServiceGroupMetaData metaData)
+        public IRequestProcessor<HttpFilterContext>[] Generate(RestfulServiceMetaData metaData)
         {
             var ls = new List<IRequestProcessor<HttpFilterContext>>();
 
             foreach (var item in metaData.Requests)
             {
                 var processor = new RestfulRequestProcessor();
-
-
 
                 foreach (var before in item.Value.BeforeFilters)
                 {
@@ -53,7 +51,6 @@ namespace Jasmine.Restful
 
                      processor.Filter.AddLast(filter);
                 }
-
 
                 var proxy = new RestfulProxyFilter(item.Value.Method, _parameterResolverFactory.Create(item.Value), _serviceProvider.GetService(metaData.RelatedType), item.Value.Name);
 

@@ -2,6 +2,7 @@
 using Jasmine.Restful.Attributes;
 using Jasmine.Restful.Implement;
 using System;
+using System.IO;
 using System.Reflection;
 
 namespace restfulAppTest
@@ -14,6 +15,11 @@ namespace restfulAppTest
 
             builder.LoadConfig("test.config");
             builder.Scan(Assembly.GetExecutingAssembly());
+            builder.ConfigDispatcher(dispacther =>
+            {
+                dispacther.UseStaticFile = true;
+                dispacther.VirtuePathRoot = Directory.GetCurrentDirectory() + "/www";
+            });
             builder.Build().StartAsyn();
 
             Console.Read();

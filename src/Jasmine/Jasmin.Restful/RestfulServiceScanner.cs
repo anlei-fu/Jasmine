@@ -1,20 +1,21 @@
 ﻿using Jasmine.Common;
 using Jasmine.Reflection;
 using Jasmine.Restful.Attributes;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 
 namespace Jasmine.Restful
 {
-    public  class RestfulServiceScaner
+    public  class RestfulServiceScanner
     {
 
-        private RestfulServiceScaner()
+        private RestfulServiceScanner()
         {
 
         }
-        public static RestfulServiceScaner Instance = new RestfulServiceScaner();
+        public static RestfulServiceScanner Instance = new RestfulServiceScanner();
 
         public IRequestProcessor<HttpFilterContext>[] ScanFolder(string directory)
         {
@@ -52,7 +53,7 @@ namespace Jasmine.Restful
             }
             catch 
             {
-                return null;
+                return Array.Empty<IRequestProcessor<HttpFilterContext>>();
             }
            
         }
@@ -62,7 +63,6 @@ namespace Jasmine.Restful
         }
         public IRequestProcessor<HttpFilterContext>[] Scan(Assembly assembly)
         {
-
             var ls = new List<IRequestProcessor<HttpFilterContext>>();
 
             foreach (var item in assembly.GetTypes())

@@ -19,7 +19,6 @@ namespace Jasmine.Restful
         private const string ERRORFILTER = "";
         private const string VALUE = "";
 
-
         public void Resolve(string path)
         {
             throw new System.NotImplementedException();

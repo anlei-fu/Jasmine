@@ -1,6 +1,6 @@
 ﻿namespace Jasmine.Restful
 {
-    public class StatuCodes
+    public class HttpStatuCodes
     {
         public const int SUCESSED = 200;
         public const int CREATED = 201;

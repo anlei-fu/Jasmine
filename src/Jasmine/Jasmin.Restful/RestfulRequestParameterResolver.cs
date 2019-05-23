@@ -2,13 +2,12 @@
 using Jasmine.Extensions;
 using Jasmine.Restful.Exceptions;
 using Jasmine.Serialization;
-using System.Diagnostics;
 
 namespace Jasmine.Restful
 {
-    internal class RestfulParameterResolver : IParamteterResolver<HttpFilterContext>
+    internal class RestfulRequestParameterResolver : IRequestParamteterResolver<HttpFilterContext>
     {
-        public RestfulParameterResolver(RestfulRequestParameterMetaData[] parameters)
+        public RestfulRequestParameterResolver(RestfulRequestParameterMetaData[] parameters)
         {
             _parameters = parameters;
         }

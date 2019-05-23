@@ -1,7 +1,7 @@
 ﻿namespace Jasmine.Common
 {
-    public interface IContext:IPathFearture
+    public interface IRequestProcessingContext:IPathFearture
     {
-        IDispatcher<IContext> Dispatcher { get; }
+        IDispatcher<IRequestProcessingContext> Dispatcher { get; }
     }
 }
