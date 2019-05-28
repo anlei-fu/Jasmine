@@ -128,6 +128,7 @@ namespace Jamine.Parser.Html
                             {
                                 _currentElement.Name = _nameBuilder.ToString();
                                 _currentElement.SingleOrDouble = Element.GetSingleOrDouble(Element.GetElemnetType(_currentElement.Name));
+                                _currentElement.ElementType = Element.GetElemnetType(_currentElement.Name);
                             }
 
                             pushIntoStack(_currentElement);

@@ -1,4 +1,5 @@
-﻿using Jasmine.Ioc.Attributes;
+﻿using Jasmine.Common.Attributes;
+using Jasmine.Ioc.Attributes;
 using Jasmine.Restful.Attributes;
 using Jasmine.Restful.Implement;
 using System;

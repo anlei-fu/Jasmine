@@ -23,7 +23,6 @@ namespace Jasmine.Restful.Implement
 
             try
             {
-
                 await Dispatcher.DispatchAsync(context.Request.Path.ToString().ToLower(), filterContext);
             }
             catch (Exception ex)
@@ -33,6 +32,7 @@ namespace Jasmine.Restful.Implement
             finally
             {
                 filterContext.Reset();
+
                 _pool.Recycle(filterContext);
             }
 

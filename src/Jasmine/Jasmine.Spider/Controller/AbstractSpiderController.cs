@@ -4,17 +4,14 @@ using System;
 
 namespace Jasmine.Spider.Controller
 {
-    public class AbstractSpiderController : ISpiderController
+    public class AbstractSpiderController 
     {
         public void CreateTask(ISpiderTaskConfig config)
         {
             throw new NotImplementedException();
         }
 
-        public void CreateTask(ISpiderTaskConfig config)
-        {
-            throw new NotImplementedException();
-        }
+       
 
         public void DestroyTask(long taskId)
         {
@@ -36,10 +33,7 @@ namespace Jasmine.Spider.Controller
             throw new NotImplementedException();
         }
 
-        public void Reconfig(long taskId, ISpiderTaskConfig config)
-        {
-            throw new NotImplementedException();
-        }
+       
 
         public void StartTask(ISpiderTask task)
         {
@@ -56,9 +50,6 @@ namespace Jasmine.Spider.Controller
             throw new NotImplementedException();
         }
 
-        ISpiderTaskStatFeature ISpiderTaskStatics.GetStat(long taskId)
-        {
-            throw new NotImplementedException();
-        }
+      
     }
 }

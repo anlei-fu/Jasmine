@@ -9,7 +9,6 @@ namespace Jasmine.Rpc.Server
         public bool FromQueryString => QueryStringKey != null;
         public string QueryStringKey { get; set; }
         public string DataKey { get; set; }
-        
        
     }
 }

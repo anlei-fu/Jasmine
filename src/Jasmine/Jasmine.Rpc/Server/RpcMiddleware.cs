@@ -7,14 +7,21 @@ namespace Jasmine.Rpc.Server
 {
     public class RpcMiddleware : IRpcMiddleware
     {
-        public static IDispatcher<RpcFilterContext> Dispatcher;
+
+        public RpcMiddleware(IDispatcher<RpcFilterContext> dispatcher)
+        {
+            _dispatcher = dispatcher;
+        }
+
+        private IDispatcher<RpcFilterContext> _dispatcher;
 
         private ILog _logger;
-        private IPool<RpcFilterContext> _pool ;
 
-        public string Name => "Restful-Middleware";
+        private IPool<RpcFilterContext> _pool = new RpcFilterContextPool(10000);
 
-        public async Task InvokeAsync(RpcContext context)
+        public string Name => "Restful.Middleware";
+
+        public async Task ProcessRequest(RpcContext context)
         {
             var filterContext = _pool.Rent();
 
@@ -22,8 +29,7 @@ namespace Jasmine.Rpc.Server
 
             try
             {
-
-                await Dispatcher.DispatchAsync(context.Request.Path.ToString().ToLower(), filterContext);
+                await _dispatcher.DispatchAsync(context.Request.Path, filterContext);
             }
             catch (Exception ex)
             {
@@ -31,7 +37,6 @@ namespace Jasmine.Rpc.Server
             }
             finally
             {
-               
                 _pool.Recycle(filterContext);
             }
 

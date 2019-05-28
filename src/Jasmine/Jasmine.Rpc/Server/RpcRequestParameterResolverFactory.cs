@@ -2,7 +2,7 @@
 
 namespace Jasmine.Rpc.Server
 {
-    internal class RpcParameterResolverFactory : IParameterResolverFactory<RpcFilterContext,RpcRequestMetaData>
+    internal class RpcParameterResolverFactory : IParameterResolverFactory<RpcFilterContext, RpcRequestMetaData>
     {
         private RpcParameterResolverFactory()
         {

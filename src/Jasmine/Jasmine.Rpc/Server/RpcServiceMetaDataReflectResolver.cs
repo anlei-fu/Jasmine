@@ -81,13 +81,10 @@ namespace Jasmine.Rpc.Server
                 metaData.Path = "/" + metaData.RelatedType.Name.ToLower();
             }
 
-
-
             var requests = new List<RpcRequestMetaData>();
 
             foreach (var item in _typeCache.GetItem(type).Methods)
             {
-
                 var request = resolveRequest(item, metaData.Path);
 
                 if (request == null)
@@ -106,26 +103,27 @@ namespace Jasmine.Rpc.Server
             return metaData;
         }
 
-
+        /// <summary>
+        /// handle  method overlay 
+        /// </summary>
+        /// <param name="list"></param>
+        /// <param name="requestMetaData"></param>
+        /// <param name="requestGroupMetaData"></param>
         private void setRequest(List<RpcRequestMetaData> list, RpcRequestMetaData requestMetaData, RpcServiceMetaData requestGroupMetaData)
         {
-            var t = 1;
 
             for (int i = 0; i < list.Count; i++)
             {
                 if (requestMetaData.Name == list[i].Name)
                 {
-                    t++;
-                    requestMetaData.Name = requestMetaData.Name + t.ToString();
+                    requestMetaData.Name = requestMetaData.Name + i.ToString();
+
                     i = 0;
                 }
             }
 
-
             if (requestMetaData.Path == null)
                 requestMetaData.Path = requestGroupMetaData.Path + "/" + requestMetaData.Name.ToLower();
-
-
 
         }
 
@@ -198,11 +196,11 @@ namespace Jasmine.Rpc.Server
                 metaData.Path = groupPath + "/" + metaData.Name.ToLower();
             }
 
+
             var ls = new List<RpcRequestParameterMetaData>();
 
             foreach (var item in method.Parameters)
             {
-
                 var parameterMetaData = new RpcRequestParameterMetaData();
 
                 parameterMetaData.RelatedType = item.ParameterType;
@@ -247,7 +245,6 @@ namespace Jasmine.Rpc.Server
 
                 if (!parameterFromSetted)
                 {
-
                     parameterMetaData.QueryStringKey = item.Name;
 
                 }

@@ -61,9 +61,11 @@ namespace Jasmine.Restful
                     var ext =  index!=-1? path.Substring(index, path.Length - index):
                                            ".html";
                     context.HttpContext.Response.Headers.Add("Content-Type", MediaTypeHelper.GetContentTypeByExtension(ext));
+
                     await stream.CopyToAsync(context.HttpContext.Response.Body);
 
                     stream.Close();
+
                     await context.HttpContext.Response.Body.FlushAsync();
 
                     

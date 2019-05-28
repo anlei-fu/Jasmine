@@ -2,6 +2,6 @@
 {
     public interface ISpiderTaskStatics
     {
-        ISpiderTaskStatFeature GetStat(long taskId);
+        
     }
 }

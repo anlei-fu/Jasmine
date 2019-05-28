@@ -2,7 +2,7 @@
 
 namespace Jasmine.Restful
 {
-    public class RestfulfilterPipeline : AbstractFilterPipeline<HttpFilterContext>
+    public class RestfulFilterPipeline : AbstractFilterPipeline<HttpFilterContext>
     {
         public override string Name => "Restful-Filter-Pipeline";
     }

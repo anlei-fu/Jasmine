@@ -15,4 +15,8 @@
     <Folder Include="Drivers\Python\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Jamine.HtmlParser\Jasmine.Parser.csproj" />
+  </ItemGroup>
+
 </Project>

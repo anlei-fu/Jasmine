@@ -6,8 +6,8 @@ namespace Jasmine.Restful
     {
         public RestfulRequestProcessor()
         {
-            ErrorFilter = new RestfulfilterPipeline();
-            Filter = new RestfulfilterPipeline();
+            ErrorFilter = new RestfulFilterPipeline();
+            Filter = new RestfulFilterPipeline();
         }
         public string HttpMethod { get; set; }
 

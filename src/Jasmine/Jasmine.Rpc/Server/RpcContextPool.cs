@@ -10,7 +10,7 @@ namespace Jasmine.Rpc.Server
 
         protected override RpcContext newInstance()
         {
-            throw new System.NotImplementedException();
+            return new RpcContext();
         }
     }
 }

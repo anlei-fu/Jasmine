@@ -2,8 +2,11 @@
 
 namespace Jasmine.Rpc.Server
 {
+    /// <summary>
+    ///  a plug  interface for <see cref="RpcServer"/>
+    /// </summary>
     public interface IRpcMiddleware
     {
-        Task InvokeAsync(RpcContext context);
+        Task ProcessRequest(RpcContext context);
     }
 }

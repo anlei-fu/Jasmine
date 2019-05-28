@@ -1,6 +1,7 @@
 ﻿using Jasmine.Common;
 using Jasmine.Common.Exceptions;
 using Jasmine.Ioc;
+using Jasmine.Serialization;
 using System;
 using System.Collections.Generic;
 
@@ -12,10 +13,7 @@ namespace Jasmine.Rpc.Server
         private IParameterResolverFactory<RpcFilterContext, RpcRequestMetaData> _parameterResolverFactory => RpcParameterResolverFactory.Instance;
         private IServiceProvider _serviceProvider => IocServiceProvider.Instance;
 
-
         public static readonly IRequestProcessorGenerator<RpcFilterContext, RpcServiceMetaData> Instance = new RpcRequestProcessorGenerator();
-
-
 
         public IRequestProcessor<RpcFilterContext>[] Generate(RpcServiceMetaData metaData)
         {
@@ -46,7 +44,7 @@ namespace Jasmine.Rpc.Server
                     processor.Filter.AddLast(filter);
                 }
 
-                var proxy = new RpcProxyFilter(item.Value.Method, _parameterResolverFactory.Create(item.Value), _serviceProvider.GetService(metaData.RelatedType), item.Value.Name);
+                var proxy = new RpcProxyFilter(item.Value.Method, _parameterResolverFactory.Create(item.Value), _serviceProvider.GetService(metaData.RelatedType), item.Value.Name,JsonSerializer.Instance);
 
                 processor.Filter.AddLast(proxy);
 
@@ -83,8 +81,6 @@ namespace Jasmine.Rpc.Server
                 processor.Name = item.Value.Name;
 
                 processor.Path = item.Value.Path;
-
-              
 
                 processor.GroupName = metaData.Name;
 

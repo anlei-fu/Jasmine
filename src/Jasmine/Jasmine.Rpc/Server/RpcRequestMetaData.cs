@@ -11,7 +11,6 @@ namespace Jasmine.Rpc.Server
         public Method Method { get; set; }
         public string Name { get; set; }
         public string Path { get; set; }
-        public string HttpMethod { get; set; }
         public RpcRequestParameterMetaData[] Parameters { get; internal set; }
 
         public IList<string> BeforeFilters { get; } = new List<string>();

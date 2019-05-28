@@ -1,17 +1,47 @@
 ﻿using Jasmine.Common;
+using log4net;
+using System;
 using System.Threading.Tasks;
 
 namespace Jasmine.Rpc.Server
 {
     public class RpcRequestDispatcher : AbstractDispatcher<RpcFilterContext>
     {
-        public RpcRequestDispatcher(string name, IRequestProcessorManager<RpcFilterContext> processorManager) : base(name, processorManager)
+        public RpcRequestDispatcher(string name, IRequestProcessorManager<RpcFilterContext> processorManager,ILog logger) : base(name, processorManager)
         {
+            _logger = logger;
         }
-
-        public override Task DispatchAsync(string path, RpcFilterContext context)
+        private ILog _logger;
+        public override async Task DispatchAsync(string path, RpcFilterContext context)
         {
-            throw new System.NotImplementedException();
+            if (_processorManager.ContainsProcessor(path))
+            {
+                var processor = _processorManager.GetProcessor(path);
+
+                if (processor.Available)
+                {
+                    try
+                    {
+                        await processor.Filter.First.FiltsAsync(context);
+                    }
+                    catch (Exception ex)
+                    {
+                        context.Error = ex;
+
+                        _logger?.Error(ex);
+
+                        await processor.ErrorFilter.First.FiltsAsync(context);
+                    }
+                }
+                else
+                {
+                   
+                }
+            }
+            else
+            {
+
+            }
         }
     }
 }

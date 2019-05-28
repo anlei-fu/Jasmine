@@ -14,6 +14,7 @@ namespace Jasmine.Rpc.Server
         {
 
         }
+
         public static RpcServiceScanner Instance = new RpcServiceScanner();
 
         public IRequestProcessor<RpcFilterContext>[] ScanFolder(string directory)

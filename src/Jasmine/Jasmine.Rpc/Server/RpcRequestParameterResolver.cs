@@ -11,7 +11,9 @@ namespace Jasmine.Rpc.Server
         {
             _parameters = parameters;
         }
+
         private RpcRequestParameterMetaData[] _parameters;
+
         public object[] Resolve(RpcFilterContext context)
         {
             var rets = new object[_parameters.Length];
@@ -22,7 +24,7 @@ namespace Jasmine.Rpc.Server
 
                 if (_parameters[i].FromBody)
                 {
-                    rets[i] = context.RpcContext.Request.Body.ReadData(type, SerializeMode.Json);
+                    rets[i] = JsonSerializer.Instance.Deserialize(context.RpcContext.Request.Body, type);
                 }
                 else if (_parameters[i].FromQueryString)
                 {

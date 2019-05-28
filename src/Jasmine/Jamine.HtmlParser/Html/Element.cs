@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Text;
 
 namespace Jasmine.Parsers.Html
@@ -38,6 +39,10 @@ namespace Jasmine.Parsers.Html
         }
         public static ElementType GetElemnetType(string Name)
         {
+            if(Name=="h3")
+            {
+                int t = 0;
+            }
             switch (Name)
             {
                 case "!doctype": return ElementType.Doctype;
@@ -340,18 +345,44 @@ namespace Jasmine.Parsers.Html
 
             return ls;
         }
-        
+
+
+        public List<Element> GetAllChildren(Func<Element,bool> matcher)
+        {
+            var ls = new List<Element>();
+
+            if (Children.Count != 0)
+                foreach (var item in Children)
+                {
+                    ls.AddRange(item.GetAllChildren(matcher));
+
+
+                    if (matcher(item))
+                        ls.Add(item);
+
+                }
+
+
+
+            return ls;
+        }
         public List<Element> GetAllChildrenByElementType(ElementType type)
         {
             var ls = new List<Element>();
 
             if (Children.Count != 0)
                 foreach (var item in Children)
-                    foreach (var item1 in item.GetAllChildrenByElementType(type))
-                        ls.Add(item1);
+                {
+                    ls.AddRange(item.GetAllChildrenByElementType(type));
 
-            if (ElementType == type)
-                ls.Add(this);
+            
+
+                    if (item.ElementType == type)
+                        ls.Add(item);
+                }
+
+          
+
             return ls;
         }
         
