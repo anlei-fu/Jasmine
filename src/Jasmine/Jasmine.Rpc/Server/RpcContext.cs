@@ -12,7 +12,15 @@ namespace Jasmine.Rpc
         /// response
         /// </summary>
         public RpcResponse Response { get; private set; }
+        /// <summary>
+        /// handler context
+        /// </summary>
         public IChannelHandlerContext HandlerContext { get; set; }
+        /// <summary>
+        /// rest context
+        /// </summary>
+        /// <param name="request"></param>
+        /// <param name="context"></param>
         public void Init(RpcRequest request,IChannelHandlerContext context)
         {
             Response = new RpcResponse();

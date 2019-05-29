@@ -29,7 +29,7 @@ namespace Jasmine.Restful
 
             foreach (var item in metaData.Requests)
             {
-                var processor = new RestfulRequestProcessor();
+                var processor = new RestfulRequestProcessor(1000,item.Key);
 
                 foreach (var before in item.Value.BeforeFilters)
                 {
@@ -85,6 +85,10 @@ namespace Jasmine.Restful
 
                     processor.ErrorFilter.AddLast(filter);
                 }
+
+                processor.MaxConcurrency = item.Value.MaxConcurrency;
+
+                processor.AlternativeService = item.Value.AlternativeService;
 
                 processor.Name = item.Value.Name;
 

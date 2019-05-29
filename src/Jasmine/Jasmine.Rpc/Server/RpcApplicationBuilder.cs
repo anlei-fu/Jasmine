@@ -20,9 +20,9 @@ namespace Jasmine.Rpc.Server
         /// <summary>
         /// look up  Rpc service by scanning types in assembly ,which marked by <see cref="RpcAttribute"/>
         /// </summary>
-        /// <param name="path"></param>
+        /// <param name="path">asembly path</param>
         /// <returns></returns>
-        public RpcApplicationBuilder Scan(string path)
+        public RpcApplicationBuilder ScanRpcService(string path)
         {
             foreach (var item in RpcServiceScanner.Instance.Scan(path))
             {
@@ -36,7 +36,7 @@ namespace Jasmine.Rpc.Server
         /// </summary>
         /// <param name="assembly"></param>
         /// <returns></returns>
-        public RpcApplicationBuilder Scan(Assembly assembly)
+        public RpcApplicationBuilder ScanRpcService(Assembly assembly)
         {
             foreach (var item in RpcServiceScanner.Instance.Scan(assembly))
             {
@@ -51,7 +51,7 @@ namespace Jasmine.Rpc.Server
         /// <param name="assembly"></param>
         /// <param name="nameSpace"></param>
         /// <returns></returns>
-        public RpcApplicationBuilder Scan(Assembly assembly, string nameSpace)
+        public RpcApplicationBuilder ScanRpcService(Assembly assembly, string nameSpace)
         {
 
             foreach (var item in RpcServiceScanner.Instance.Scan(assembly, nameSpace))
@@ -74,7 +74,7 @@ namespace Jasmine.Rpc.Server
         /// <param name="folder"></param>
         /// <returns></returns>
 
-        public RpcApplicationBuilder ScanFolder(string folder)
+        public RpcApplicationBuilder ScanAssemblyFolder(string folder)
         {
             foreach (var item in RpcServiceScanner.Instance.ScanFolder(folder))
             {
@@ -125,7 +125,7 @@ namespace Jasmine.Rpc.Server
         /// </summary>
         /// <param name="path"></param>
         /// <returns></returns>
-        public RpcApplicationBuilder LoadConfig(string path)
+        public RpcApplicationBuilder LoadJasmineConfig(string path)
         {
             JasmineConfigurationProvider.Instance.LoadConfig(path);
 
@@ -147,7 +147,7 @@ namespace Jasmine.Rpc.Server
         /// </summary>
         /// <param name="config"></param>
         /// <returns></returns>
-        public RpcApplicationBuilder ConfigProcessor(Action<IRequestProcessorManager<RpcFilterContext>> config)
+        public RpcApplicationBuilder ConfigRpcProcessor(Action<IRequestProcessorManager<RpcFilterContext>> config)
         {
             config(RpcRequestProcessorManager.Instance);
 
@@ -159,7 +159,7 @@ namespace Jasmine.Rpc.Server
         /// <param name="config"></param>
         /// <returns></returns>
 
-        public RpcApplicationBuilder ConfigServiceProvider(Action<IocServiceProvider> config)
+        public RpcApplicationBuilder ConfigIocServiceProvider(Action<IocServiceProvider> config)
         {
             config(IocServiceProvider.Instance);
 
@@ -171,7 +171,12 @@ namespace Jasmine.Rpc.Server
         /// <returns></returns>
         public RpcApplication Build()
         {
-            return new RpcApplication(_port,new RpcMiddleware(new RpcDispatcher("RpcDispatcher",RpcRequestProcessorManager.Instance,_serizlizer)),_serizlizer,_certs,_validator,_backlog );
+            return new RpcApplication(_port,
+                                      new RpcMiddleware(new RpcDispatcher("RpcDispatcher",RpcRequestProcessorManager.Instance,_serizlizer)),
+                                      _serizlizer,
+                                      _certs,
+                                      _validator,
+                                      _backlog );
         }
     }
 }

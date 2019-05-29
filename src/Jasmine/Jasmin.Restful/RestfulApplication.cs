@@ -21,9 +21,11 @@ namespace Jasmine.Restful
 
         private int _port;
 
+        private bool _portSeted;
+
         private IWebHost _webHost;
 
-        public Task StartAsyn()
+        public Task StartAsync()
         {
 
             _webHost = WebHost.CreateDefaultBuilder()
@@ -32,9 +34,13 @@ namespace Jasmine.Restful
                                              option =>
                                              {
                                                  option.ConfigureEndpointDefaults(
-                                                                option1 =>
+                                                                kestrelOptions =>
                                                                 {
-                                                                    option1.IPEndPoint = new IPEndPoint(IPAddress.Any, _port);
+                                                                    if (!_portSeted)
+                                                                    {
+                                                                        kestrelOptions.IPEndPoint = new IPEndPoint(IPAddress.Any, _port);
+                                                                        _portSeted = true;
+                                                                    }
                                                                 });
                                              })
                               .ConfigureServices(

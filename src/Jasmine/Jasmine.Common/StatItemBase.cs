@@ -2,13 +2,8 @@
 {
     public class StatItemBase : IStatItem
     {
-        public  StatItemBase(int time,bool suceed)
-        {
-            Time = time;
-            Sucessed = suceed;
-        }
-        public int Time { get; }
+        public long Time { get; set; }
 
-        public bool Sucessed { get; }
+        public bool Sucessed { get; set; }
     }
 }

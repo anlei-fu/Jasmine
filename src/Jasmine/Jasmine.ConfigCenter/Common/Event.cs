@@ -1,8 +1,8 @@
 ﻿namespace Jasmine.ConfigCenter.Common
 {
-    public class ConfigCenterMessage
+    public class Event
     {
-        public ConfigCenterMessageType MessgeType { get; set; }
+        public EventType EventType { get; set; }
         public byte[] Content { get; set; }
 
     }

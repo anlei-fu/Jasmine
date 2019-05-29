@@ -26,7 +26,7 @@ namespace RpcClientTest
 
             while (true)
             {
-                var response = await client.Call<string>("/test/say?what=haha");
+                var response =  client.Call<string>("/test/say?what=haha");
                 Console.WriteLine(response);
 
                 Thread.Sleep(200);

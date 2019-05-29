@@ -18,7 +18,7 @@ namespace Jasmine.Rpc.Server
                           IRpcMiddleware middleware,
                           ILoginValidator validator)
         {
-            _codex = new RpcCodex(serializer);
+            _codex = new RpcRequestResponseEncoder(serializer);
             _middleWare = middleware ?? throw new ArgumentNullException(nameof(middleware));
             _validator = validator;
         }
@@ -37,7 +37,7 @@ namespace Jasmine.Rpc.Server
         /// <summary>
         /// use to encode  <see cref="RpcResponse"/>
         /// </summary>
-        private RpcCodex _codex;
+        private RpcRequestResponseEncoder _codex;
         /// <summary>
         /// identity validate
         /// </summary>
@@ -53,7 +53,7 @@ namespace Jasmine.Rpc.Server
         /// <summary>
         /// check connection activity
         /// </summary>
-        private ChannelConnectiveChecker _checker = new ChannelConnectiveChecker();
+        private ChannelConnectivityChecker _checker = new ChannelConnectivityChecker();
 
 
 
@@ -61,6 +61,8 @@ namespace Jasmine.Rpc.Server
         {
             if (message is IByteBuffer buffer)
             {
+
+                var id=0l;
                 /*
                  * skip length field
                  */
@@ -94,6 +96,8 @@ namespace Jasmine.Rpc.Server
 
                         request.RequestId = buffer.ReadLongLE();
 
+                        id = request.RequestId;
+
                         var length = buffer.ReadIntLE();
 
                         var path = buffer.ReadString(length, Encoding.UTF8);
@@ -111,12 +115,26 @@ namespace Jasmine.Rpc.Server
                          */
                         if (_validator != null)// configed require  identity validate
                         {
-                            if (!_checker.IsRegistered(context.Channel.Id.AsLongText()))
+                            try
                             {
-                                var resposne = _validator.Validate(request.Query["id"], request.Query["password"]) ?RpcResponse.LoginSuccessFulResponse
-                                                                                                                   :RpcResponse.LoginFialedResponse;
+                                if (!_checker.IsRegistered(context.Channel.Id.AsLongText()))
+                                {
+                                    var resposne = _validator.Validate(request.Query["id"], request.Query["password"]) ? RpcResponse.CreateResponse(200, request.RequestId)
+                                                                                                                       : RpcResponse.CreateLoginFialedResponse(request.RequestId);
 
-                                var sendBuffer = _codex.EncodeServerResponse(resposne);
+                                    var sendBuffer = _codex.EncodeServerResponse(resposne);
+
+                                    var sendBuffer1 = context.Allocator.Buffer(sendBuffer.Length);
+
+                                    sendBuffer1.WriteBytes(sendBuffer);
+
+                                    context.WriteAndFlushAsync(sendBuffer1);
+
+                                }
+                            }
+                            catch(Exception ex)
+                            {
+                                var sendBuffer = _codex.EncodeServerResponse(RpcResponse.CreateErrorResponse(request.RequestId));
 
                                 var sendBuffer1 = context.Allocator.Buffer(sendBuffer.Length);
 
@@ -141,7 +159,7 @@ namespace Jasmine.Rpc.Server
                     {
                         _logger?.Error(ex);
 
-                        context.WriteAndFlushAsync(RpcResponse.ErrorResponse);
+                        context.WriteAndFlushAsync(RpcResponse.CreateErrorResponse(10000));
                     }
                     finally
                     {
@@ -196,7 +214,7 @@ namespace Jasmine.Rpc.Server
         {
             if (!_checker.IsRegistered(context.Channel.Id.AsLongText()))
             {
-                context.WriteAsync(RpcResponse.UnregisterdResponse);
+                context.WriteAsync(RpcResponse.CreateUnregisterdResponse(10000));
 
                 return false;
             }

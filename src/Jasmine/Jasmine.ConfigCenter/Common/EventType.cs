@@ -1,6 +1,6 @@
 ﻿namespace Jasmine.ConfigCenter.Common
 {
-    public   enum ConfigCenterMessageType
+    public   enum EventType
     {
         Login,
         HeartBeat,

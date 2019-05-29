@@ -170,7 +170,7 @@ namespace Jasmine.Serialization
             }
             catch
             {
-                result = default;
+                result = default(T);
 
                 return false;
             }
@@ -190,7 +190,7 @@ namespace Jasmine.Serialization
             }
             else
             {
-                result = default;
+                result = default(T);
                 return false;
             }
         }
@@ -210,7 +210,7 @@ namespace Jasmine.Serialization
             }
             else
             {
-                result = default;
+                result = null;
 
                 return false;
             }
@@ -227,7 +227,7 @@ namespace Jasmine.Serialization
             catch (Exception)
             {
 
-                result = default;
+                result = null;
 
                 return false;
             }

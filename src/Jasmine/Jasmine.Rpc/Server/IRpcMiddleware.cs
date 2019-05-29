@@ -3,7 +3,7 @@
 namespace Jasmine.Rpc.Server
 {
     /// <summary>
-    ///  a plug  interface for <see cref="RpcServer"/>
+    ///  a pluging  interface for <see cref="RpcServer"/>
     /// </summary>
     public interface IRpcMiddleware
     {

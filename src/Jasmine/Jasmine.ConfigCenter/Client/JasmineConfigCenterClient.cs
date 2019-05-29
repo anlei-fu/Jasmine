@@ -10,7 +10,7 @@ namespace Jasmine.ConfigCenter.Client
             throw new NotImplementedException();
         }
 
-        public override bool Connect(string host, string user, string id)
+        public override bool ConnectAsync(string host, string user, string id)
         {
             throw new NotImplementedException();
         }

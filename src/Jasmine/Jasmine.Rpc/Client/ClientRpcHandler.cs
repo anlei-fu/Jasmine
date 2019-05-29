@@ -1,5 +1,6 @@
 ﻿using DotNetty.Buffers;
 using DotNetty.Transport.Channels;
+using Jasmine.Rpc.Client.Exceptions;
 using log4net;
 using System;
 using System.Threading;
@@ -8,12 +9,13 @@ namespace Jasmine.Rpc.Client
 {
     public class ClientRpcHandler : ChannelHandlerAdapter
     {
-        public ClientRpcHandler(RpcClient client)
+        public ClientRpcHandler(RpcCallManager manager)
         {
-            _client = client;
+            _manager = manager;
         }
+
+        private RpcCallManager _manager;
         private ILog _logger;
-        private RpcClient _client;
 
         public override void ChannelRead(IChannelHandlerContext context, object message)
         {
@@ -21,7 +23,7 @@ namespace Jasmine.Rpc.Client
             {
                 try
                 {
-                    _client.Response = new RpcResponse();
+                    var response = new RpcResponse();
 
                     /*
                      * skip lengthfield and header
@@ -32,22 +34,28 @@ namespace Jasmine.Rpc.Client
                     /*
                      *  resolve  response
                      */
-                    _client.Response.RequestId = buffer.ReadLongLE();
+                    response.RequestId = buffer.ReadLongLE();
 
-                    _client.Response.StatuCode = buffer.ReadIntLE();
+                    response.StatuCode = buffer.ReadIntLE();
 
                     var length = buffer.ReadIntLE();
 
-                    _client.Response.Body = new byte[length];
+                    response.Body = new byte[length];
 
-                    buffer.ReadBytes(_client.Response.Body);
+                    buffer.ReadBytes(response.Body);
 
                     /*
                      * singal request finished
-                     */  
+                     */
 
-                    lock (_client.Locker)
-                        Monitor.PulseAll(_client.Locker);
+                    var call = _manager.GetCall(response.RequestId);
+
+                    if (call != null)
+                    {
+                        call.Response = response;
+
+                        Monitor.PulseAll(call.Locker);
+                    }
 
                 }
                 catch (Exception ex)
@@ -57,10 +65,20 @@ namespace Jasmine.Rpc.Client
             }
             else
             {
-
+                _logger.Warn($" unexcepted message type received {message}");
             }
         }
 
+        public override void ChannelInactive(IChannelHandlerContext context)
+        {
+            foreach (var item in _manager)
+            {
+                Monitor.PulseAll(item.Locker);
+            }
+
+
+            throw new ConnectionClosedException();
+        }
 
 
 

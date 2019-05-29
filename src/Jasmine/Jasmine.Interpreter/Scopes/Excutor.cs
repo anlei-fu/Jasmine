@@ -1,7 +1,9 @@
-﻿namespace Jasmine.Interpreter.Scopes
+﻿using Jasmine.Interpreter.Excutor;
+
+namespace Jasmine.Interpreter.Scopes
 {
     public interface  IExcutor
     {
-         void Excute(Interpreter interpreter);
+         void Excute(StackFrame interpreter);
     }
 }

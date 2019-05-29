@@ -8,16 +8,16 @@ using Jasmine.Rpc.Client.Exceptions;
 using Jasmine.Rpc.Server;
 using Jasmine.Serialization;
 using log4net;
-using log4net.Core;
 using System;
 using System.Net;
+using System.Runtime.CompilerServices;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace Jasmine.Rpc.Client
 {
-    public  class RpcClient
+    public class RpcClient
     {
 
         public RpcClient(string host,
@@ -27,66 +27,128 @@ namespace Jasmine.Rpc.Client
                          string user,
                          string password)
         {
-            _host = host??throw new ArgumentNullException(nameof(host));
-            _serializer = serializer ?? throw new ArgumentNullException(nameof(serializer));
-            _port = port;
-            _user = user ?? throw new ArgumentNullException(nameof(user));
-            _password = password ?? throw new ArgumentNullException(nameof(password));
+            Host = host ?? throw new ArgumentNullException(nameof(host));
+            _serializer = serializer ?? JsonSerializer.Instance;
+            Port = port;
+            User = user ?? throw new ArgumentNullException(nameof(user));
+            Password = password ?? throw new ArgumentNullException(nameof(password));
             _certs = certs;
-            _codex = new RpcCodex(_serializer);
+            _codex = new RpcRequestResponseEncoder(_serializer);
         }
 
-        private string _host="127.0.0.1";
-        private int _port=10336;
-        private const int DEFAULT_TIMEOUT = 10 * 1000*10;
-        internal RpcResponse Response { get; set; }
+
+        private const int DEFAULT_TIMEOUT = 10 * 1000 * 10;
         private MultithreadEventLoopGroup _eventGroup;
-        private RpcCodex _codex;
+        private RpcRequestResponseEncoder _codex;
         private ISerializer _serializer;
-        private string _user;
-        private string _password;
         private X509Certificate _certs;
-
-
+        private IChannel _channel;
+        private readonly object _locker = new object();
         private ILog _logger;
-       
+        private RpcCallManager _manager;
 
-        public readonly object Locker = new object();
+        /// <summary>
+        /// host to connect
+        /// </summary>
+        public string Host { get; }
+        /// <summary>
+        /// remote address  port
+        /// </summary>
+        public int Port { get; }
+        /// <summary>
+        /// configed user
+        /// </summary>
+        public string User { get; }
+        /// <summary>
+        /// configed  password
+        /// </summary>
+        public string Password { get; }
+        /// <summary>
+        /// mark client is available
+        /// </summary>
+        public bool Registered { get; private set; }
 
-        public  async Task<T> Call<T>(string path)
+        /// <summary>
+        /// call with body 
+        /// </summary>
+        /// <typeparam name="T">return value type</typeparam>
+        /// <param name="path">service path</param>
+        /// <param name="body"></param>
+        /// <returns></returns>
+        public T Call<T>(string path, object body)
         {
-
-            var response = await getResponce(createRequest(path));
-
-            return _serializer.Deserialize<T>(response.Body);
+            return Call<T>(RpcRequest.Create(path, body, _serializer));
         }
-
-
-        private async  Task<RpcResponse> getResponce(RpcRequest request)
+        /// <summary>
+        /// call without body
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="path"></param>
+        /// <returns></returns>
+        public T Call<T>(string path)
         {
-            Response = null;
-
-            var buffer = _codex.EncodClientRequest(request);
-
-            var buffer1=  Unpooled.Buffer(buffer.Length);
-
-            buffer1.WriteBytes(buffer);
-
-            await  _channel.WriteAndFlushAsync(buffer1);
-
-            lock (Locker)
-                Monitor.Wait(Locker, DEFAULT_TIMEOUT);
-
-            if (Response==null)
+            return Call<T>(RpcRequest.Create(path));
+        }
+        /// <summary>
+        /// call with request
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        public T Call<T>(RpcRequest request)
+        {
+            var call = call0(request);
+           
+            if (call.Response == null)
             {
-                await Close();
+
+            }
+            else 
+            {
+                checkThrowStutaCode(call.Response.StatuCode);
             }
 
-            return Response;
+            return _serializer.Deserialize<T>(call.Response.Body);
         }
+        /// <summary>
+        /// call with no return value and no body
+        /// </summary>
+        /// <param name="path"></param>
+        public void Invoke(string path)
+        {
+            Invoke(RpcRequest.Create(path));
+        }
+        /// <summary>
+        /// call with body
+        /// </summary>
+        /// <param name="path"></param>
+        /// <param name="body"></param>
+        public void Invoke(string path, object body)
+        {
+            Invoke(RpcRequest.Create(path, body, _serializer));
+        }
+        /// <summary>
+        /// call with request
+        /// </summary>
+        /// <param name="request"></param>
+        public void Invoke(RpcRequest request)
+        {
+            var call = call0(request);
 
-        private IChannel _channel;
-
+            if (call.Response == null)
+            {
+                throw new RpcCallTimeoutException();
+            }
+            else
+            {
+                checkThrowStutaCode(call.Response.StatuCode);
+            }
+          
+        }
+        /// <summary>
+        /// close
+        /// </summary>
+        /// <returns></returns>
         public async Task Close()
         {
             if (_channel != null)
@@ -97,71 +159,131 @@ namespace Jasmine.Rpc.Client
             }
 
         }
+        /// <summary>
+        /// connect
+        /// </summary>
+        /// <returns></returns>
         public async Task Connect()
         {
             _eventGroup = new MultithreadEventLoopGroup();
 
             try
             {
-                var bootstrap = new Bootstrap();
+                var builder = new Bootstrap();
 
-                     bootstrap
-                    .Group(_eventGroup)
-                    .Channel<TcpSocketChannel>()
-                    .Option(ChannelOption.TcpNodelay, true)
-                    .Handler(new ActionChannelInitializer<ISocketChannel>(channel =>
-                    {
-                        IChannelPipeline pipeline = channel.Pipeline;
+                builder
+               .Group(_eventGroup)
+               .Channel<TcpSocketChannel>()
+               .Option(ChannelOption.TcpNodelay, true)
+               .Handler(new ActionChannelInitializer<ISocketChannel>(channel =>
+               {
+                   IChannelPipeline pipeline = channel.Pipeline;
 
-                        if (_certs != null)
-                            pipeline.AddLast(TlsHandler.Server(_certs));
+                   if (_certs != null)
+                       pipeline.AddLast(TlsHandler.Server(_certs));
 
-                        pipeline.AddLast(new LengthFieldPrepender(CondecsConfig.LengthFiledLength));
-                        pipeline.AddLast(new LengthFieldBasedFrameDecoder(CondecsConfig.MaxPacketLength, 0,  CondecsConfig.LengthFiledLength));
-                        pipeline.AddLast(new ClientRpcHandler(this));
-                       
-                       
-                    }));
+                   pipeline.AddLast(new LengthFieldPrepender(CondecsConfig.LengthFiledLength));//encoder
+                   pipeline.AddLast(new LengthFieldBasedFrameDecoder(CondecsConfig.MaxPacketLength, 0, CondecsConfig.LengthFiledLength));//decoder
+                   pipeline.AddLast(new ClientRpcHandler(_manager));//business handler
 
 
-                _channel = await bootstrap.ConnectAsync(new IPEndPoint(IPAddress.Parse(_host),_port));
+               }));
+
+                _channel = await builder.ConnectAsync(new IPEndPoint(IPAddress.Parse(Host), Port));
 
                 /*
-                 *  login 
-                 */ 
-                var response = await getResponce(createLoginRequest());
+                 *  login in and registe client
+                 */
 
-                var result = _serializer.Deserialize<LoginResult>(response.Body);
-
-                if (!result.Success)
-                {
-                    throw new LoginFailedException(result.Message);
-                }
-
+                Invoke($"/login_internal?user={User}&password={Password}");
 
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 _logger.Error(ex);
+
+                throw ex;
             }
         }
-
-        private RpcRequest createLoginRequest()
+        /// <summary>
+        /// call final
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        private RpcCall call0(RpcRequest request)
         {
-            var request = new RpcRequest();
+            /*
+             * not registerd ,only login request can pass here
+             */ 
+            if(!Registered&&!request.Path.StartsWith("login_internal"))
+            {
+                throw new NotRegistedException("clien has not been registered,you can call nothing at now !");
+            }
 
-            request.Path = $"/login00?id={_user}&password={_password}";
-            
-            return request;
+            var call = new RpcCall()
+            {
+                Id = request.RequestId
+            };
+
+            _manager.AddCall(call);
+
+            sendRequest(request);
+
+            /*
+             * wait until timeout ,if response received ,rpc client handler will paulse
+             */ 
+            Monitor.Wait(call.Locker, DEFAULT_TIMEOUT);
+
+            _manager.Remove(call.Id);
+
+            return call;
+        }
+        /// <summary>
+        /// send request to server
+        /// </summary>
+        /// <param name="request"></param>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private void sendRequest(RpcRequest request)
+        {
+            var requestBuffer = _codex.EncodeClientRequest(request);
+
+            var bufferToSend = Unpooled.Buffer(requestBuffer.Length);
+
+            bufferToSend.WriteBytes(requestBuffer);
+
+            _channel.WriteAndFlushAsync(bufferToSend);
         }
 
-        private RpcRequest createRequest(string path)
+        private void checkThrowStutaCode(int code)
         {
-            var request = new RpcRequest();
-
-            request.Path = path;
-
-            return request;
+            if(code==RpcStutaCode.ERROR_REQUEST)
+            {
+                throw new RequestIncorrectException();
+            }
+            else if(code==RpcStutaCode.FORBIDDEN)
+            {
+                throw new ForbidenedException();
+            }
+            else if(code==RpcStutaCode.NOT_FPOUND)
+            {
+                throw new ServiceNotFoundException();
+            }
+            else if(code==RpcStutaCode.SERVER_ERROR)
+            {
+                throw new ServerException();
+            }
+            else if(code==RpcStutaCode.TIME_OUT)
+            {
+                throw new ServerException();
+            }
+            else if(code==RpcStutaCode.VALIDATE_FAILED)
+            {
+                throw new LoginFailedException("");
+            }
+            else if(code==RpcStutaCode.SERVER_NOT_AVAILABLE)
+            {
+                throw new ServiceNotAvailableException();
+            }
         }
 
     }

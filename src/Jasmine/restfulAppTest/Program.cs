@@ -16,12 +16,14 @@ namespace restfulAppTest
 
             builder.LoadConfig("test.config");
             builder.Scan(Assembly.GetExecutingAssembly());
+
             builder.ConfigDispatcher(dispacther =>
             {
                 dispacther.UseStaticFile = true;
                 dispacther.VirtuePathRoot = Directory.GetCurrentDirectory() + "/www";
             });
-            builder.Build().StartAsyn();
+           
+            builder.Build().StartAsync();
 
             Console.Read();
         }

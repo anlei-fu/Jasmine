@@ -2,7 +2,7 @@
 {
     public interface IStatItem
     {
-        int Time { get; }
+        long Time { get; }
         bool Sucessed { get; }
     }
 }

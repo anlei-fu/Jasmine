@@ -1,4 +1,6 @@
-﻿namespace Jasmine.Common
+﻿using System.Threading.Tasks;
+
+namespace Jasmine.Common
 {
     /// <summary>
     ///  a whole  request processor
@@ -22,12 +24,19 @@
         /// <summary>
         /// 
         /// </summary>
-        int MaxConcurrency { get; set; }
+        int MaxConcurrency { get;}
         /// <summary>
         /// 
         /// </summary>
-        bool Available { get; set; }
-       
+        bool Available { get;  }
+
+        Task FiltsAsysnc(T context);
+
+        void SetAvailable(bool available);
+
+        void ResetMaxConcurrency(int concurrency);
+
+        string AlternativeService { get; set; }
     
     }
 }

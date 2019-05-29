@@ -4,9 +4,9 @@ using System.Text;
 
 namespace Jasmine.Rpc.Client.Exceptions
 {
- public   class LoginFailedException:Exception
+    public class LoginFailedException : Exception
     {
-        public LoginFailedException(string msg):base(msg)
+        public LoginFailedException(string msg) : base(msg)
         {
 
         }

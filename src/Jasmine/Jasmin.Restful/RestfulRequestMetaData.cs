@@ -5,8 +5,10 @@ using System.Collections.Generic;
 
 namespace Jasmine.Restful
 {
-    public   class RestfulRequestMetaData:IAop
+    public class RestfulRequestMetaData : IAop
     {
+        public int MaxConcurrency { get; set; }
+        public string AlternativeService { get; set; }
         public SerializeMode SerializeMode { get; set; }
         public Method Method { get; set; }
         public string Name { get; set; }

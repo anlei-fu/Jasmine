@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Jasmine.Interpreter.Excutor
 {
-    class LocalVaribleStack
+  public  class LocalVaribleStack
     {
     }
 }

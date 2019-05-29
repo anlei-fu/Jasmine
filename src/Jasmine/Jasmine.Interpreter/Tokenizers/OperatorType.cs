@@ -174,7 +174,18 @@
         Minus,
         Operand,
         ArrayIndex,
-        ObjectMember
+        ObjectMember,
+
+        BlockStart,
+        BlockEnd,
+        ForBlockEnd,
+        ForBlockStart,
+        Jump,
+        JumpFalse,
+
+
+
+
 
 
     }

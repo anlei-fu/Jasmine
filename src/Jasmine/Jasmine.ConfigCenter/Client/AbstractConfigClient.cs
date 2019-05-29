@@ -1,20 +1,27 @@
-﻿using Jasmine.ConfigCenter.Common;
-using System;
+﻿using System;
 
 namespace Jasmine.ConfigCenter.Client
 {
     public abstract class AbstractConfigCenterClient : IConfigCenterClient
     {
         public abstract void Close();
-       
 
-        public abstract bool Connect(string host, string user, string id);
-       
+        public abstract void Connect(string host, string user);
+      
+        public string[] GetChildren(string path)
+        {
+            throw new NotImplementedException();
+        }
+
         public byte[] GetData(string path)
         {
             throw new NotImplementedException();
         }
 
+        public bool NodeExists(string path)
+        {
+            throw new NotImplementedException();
+        }
 
         public byte[] SetData(string path, byte[] data)
         {
@@ -51,7 +58,7 @@ namespace Jasmine.ConfigCenter.Client
             throw new NotImplementedException();
         }
 
-        protected abstract ConfigCenterServiceResponse call(ConfigCenterServiceRequest request);
+      
        
     }
 }

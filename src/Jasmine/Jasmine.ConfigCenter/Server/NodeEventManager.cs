@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace Jasmine.ConfigCenter.Server
 {
@@ -9,21 +8,7 @@ namespace Jasmine.ConfigCenter.Server
         private HashSet<ConnectionInfo> _childrenCreatedListeners;
         private HashSet<ConnectionInfo> _dataChangedListeners;
         private HashSet<ConnectionInfo> _nodeRemovedListerns;
-        public Task OnChildrenCreated(string path)
-        {
-            return _handler.OnChildrenCreated(path, _childrenCreatedListeners);
-        }
-
-        public Task OnDataChanged(string path)
-        {
-            return _handler.OnDataChanged(path, _dataChangedListeners);
-        }
-
-        public Task OnNodeRemoved(string path)
-        {
-            return _handler.OnNodeRemoved(path, _nodeRemovedListerns);
-        }
-
+        
         public void RemoveClient(ConnectionInfo client)
         {
             _childrenCreatedListeners.Remove(client);

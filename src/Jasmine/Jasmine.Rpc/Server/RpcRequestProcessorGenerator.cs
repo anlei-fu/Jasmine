@@ -21,7 +21,7 @@ namespace Jasmine.Rpc.Server
 
             foreach (var item in metaData.Requests)
             {
-                var processor = new RpcRequestProcessor();
+                var processor = new RpcRequestProcessor(1000,item.Key);
 
                 foreach (var before in item.Value.BeforeFilters)
                 {

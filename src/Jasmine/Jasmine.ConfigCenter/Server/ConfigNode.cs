@@ -11,7 +11,7 @@ namespace Jasmine.ConfigCenter.Server
         {
         }
 
-        public INodeEventManager EventManager { get; }
+        private INodeEventManager _eventManager;
         public NodeType NodeType { get; set; }
         public string Owner { get; set; }
 
@@ -24,16 +24,14 @@ namespace Jasmine.ConfigCenter.Server
 
             addInternal(node);
 
-            EventManager.OnChildrenCreated(node.FullPath);
 
             return node;
         }
 
         public override byte[] GetData()
         {
-           return _data;
+            return _data;
         }
-
         public override bool Remove()
         {
             var path = FullPath;
@@ -46,16 +44,13 @@ namespace Jasmine.ConfigCenter.Server
                 }
             }
 
-            EventManager.OnNodeRemoved(FullPath);
 
             return true;
 
         }
-
-        public override bool SetData( byte[] data)
+        public override bool SetData(byte[] data)
         {
             _data = data;
-            EventManager.OnDataChanged(FullPath);
 
             return true;
         }

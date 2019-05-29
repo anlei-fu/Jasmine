@@ -16,7 +16,7 @@ namespace Jasmine.ConfigCenter.Server
         }
         public override void ChannelRead(IChannelHandlerContext context, object message)
         {
-            var msg = message as ConfigCenterMessage;
+            var msg = message as Event;
 
             if (msg == null)
             {
@@ -25,7 +25,7 @@ namespace Jasmine.ConfigCenter.Server
 
             if (!_manager.ConnectionRegisted(context.Channel.Id.AsLongText()))
             {
-                if (msg.MessgeType == ConfigCenterMessageType.Login)
+                if (msg.EventType == EventType.Login)
                 {
                     if (_serializer.TryDeserialize<LoginInfo>(msg.Content, out var info))
                     {
@@ -48,11 +48,11 @@ namespace Jasmine.ConfigCenter.Server
 
                 }
             }
-            else if (msg.MessgeType == ConfigCenterMessageType.HeartBeat)
+            else if (msg.EventType == EventType.HeartBeat)
             {
 
             }
-            else if (msg.MessgeType == ConfigCenterMessageType.Request)
+            else if (msg.EventType == EventType.Request)
             {
                 if (_serializer.TryDeserialize<ConfigCenterServiceRequest>(msg.Content, out var request))
                 {

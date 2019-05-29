@@ -1,4 +1,5 @@
 ﻿using DotNetty.Transport.Channels;
+using Jasmine.ConfigCenter.Common;
 using System.Collections.Generic;
 
 namespace Jasmine.ConfigCenter.Server
@@ -9,8 +10,6 @@ namespace Jasmine.ConfigCenter.Server
         {
             Channel = channel;
         }
-        private IDictionary<string,NodeEventManager> Managers;
-        public IList<string> NodeOwn { get; set; }
-        public IChannel Channel { get;  }
+       
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using Jasmine.Common;
 using Jasmine.Serialization;
@@ -10,12 +11,12 @@ namespace Jasmine.Rpc.Server
     {
         public RpcDispatcher(string name, IRequestProcessorManager<RpcFilterContext> processorManager,ISerializer serializer) : base(name, processorManager)
         {
-            _codex = new RpcCodex(serializer);
+            _codex = new RpcRequestResponseEncoder(serializer);
         }
 
         private ILog _logger;
 
-        private RpcCodex _codex;
+        private RpcRequestResponseEncoder _codex;
 
      
         public override async Task DispatchAsync(string path, RpcFilterContext context)
@@ -29,6 +30,8 @@ namespace Jasmine.Rpc.Server
                     try
                     {
                         await processor.Filter.First.FiltsAsync(context);
+
+                        await writeResponse(context.RpcContext.Response, context);
                     }
                     catch (Exception ex)
                     {
@@ -37,35 +40,35 @@ namespace Jasmine.Rpc.Server
                         _logger?.Error(ex);
 
                         await processor.ErrorFilter.First.FiltsAsync(context);
+
+                        await writeResponse(context.RpcContext.Response, context);
                     }
                 }
                 else
                 {
-                    context.RpcContext.Response.StatuCode = 401;
-
-                    var buffer = _codex.EncodeServerResponse(context.RpcContext.Response);
-
-                    var buffer1 = context.RpcContext.HandlerContext.Allocator.Buffer(buffer.Length);
-
-                    buffer1.WriteBytes(buffer);
-
-                   await context.RpcContext.HandlerContext.WriteAndFlushAsync(buffer1);
+                    await writeResponse(RpcResponse.CreateServiceNotAvailableResponse(context.RpcContext.Request.RequestId),context);
                 }
             }
           else
             {
-                context.RpcContext.Response.StatuCode = 404;
-
-                var buffer = _codex.EncodeServerResponse(context.RpcContext.Response);
-
-                var buffer1 = context.RpcContext.HandlerContext.Allocator.Buffer(buffer.Length);
-
-                buffer1.WriteBytes(buffer);
-
-                await context.RpcContext.HandlerContext.WriteAndFlushAsync(buffer1);
+                await writeResponse(RpcResponse.CreateServiceNotFoundResponse(context.RpcContext.Request.RequestId),context);
             }
 
             
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private async Task writeResponse(RpcResponse response,RpcFilterContext context)
+        {
+
+            var responseBuffer = _codex.EncodeServerResponse(response);
+
+            var bufferToSend = context.RpcContext.HandlerContext.Allocator.Buffer(responseBuffer.Length);
+
+            bufferToSend.WriteBytes(responseBuffer);
+
+           await context.RpcContext.HandlerContext.WriteAndFlushAsync(bufferToSend);
+
         }
     }
 }

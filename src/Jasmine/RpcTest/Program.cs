@@ -19,7 +19,7 @@ namespace RpcTest
 
        async static void run()
         {
-            var app = new RpcApplicationBuilder().Scan(Assembly.GetExecutingAssembly())
+            var app = new RpcApplicationBuilder().ScanRpcService(Assembly.GetExecutingAssembly())
                                                  .ConfigPort(10336)
                                                  .ConfigValidator(new TrueValidator())
                                                  .ConfigSerializer(JsonSerializer.Instance)

@@ -75,6 +75,10 @@ namespace Jasmine.Restful
                 {
                     metaData.Name= ((AliasAttribute)item[0]).Alias;
                 }
+                else if(attrType==typeof(MaxConcurrencyAttribute))
+                {
+                    metaData.MaxConcurrency = ((MaxConcurrencyAttribute)item[0]).MaxConcurrency;
+                }
 
             }
 
@@ -200,6 +204,14 @@ namespace Jasmine.Restful
                 {
                     metaData.Name = ((AliasAttribute)item[0]).Alias;
                 }
+                else if (attrType == typeof(MaxConcurrencyAttribute))
+                {
+                    metaData.MaxConcurrency = ((MaxConcurrencyAttribute)item[0]).MaxConcurrency;
+                }
+                else if (attrType == typeof(AlternativeAttribute))
+                {
+                    metaData.AlternativeService= ((AlternativeAttribute)item[0]).Path;
+                }
 
             }
 
@@ -272,8 +284,6 @@ namespace Jasmine.Restful
                     {
                         parameterMetaData.ImplType = ((DefaultImplementAttribute)attr[0]).Impl;
                     }
-                  
-
 
                 }
 

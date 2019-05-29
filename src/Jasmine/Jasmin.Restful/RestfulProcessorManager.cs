@@ -11,8 +11,5 @@ namespace Jasmine.Restful
 
         public static readonly IRequestProcessorManager<HttpFilterContext> Instance = new RestfulProcessorManager();
         public override string Name => "RestfulProcessorManager";
-
-        
-
     }
 }

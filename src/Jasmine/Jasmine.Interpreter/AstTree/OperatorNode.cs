@@ -24,7 +24,7 @@ namespace Jasmine.Interpreter.AstTree
         /// do operate
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public abstract void Excute(ExcutingStack stack);
+        public abstract void Excute();
 
         protected void trowOutputTypeIncorrectError()
         {
@@ -41,10 +41,14 @@ namespace Jasmine.Interpreter.AstTree
     {
         public override string Name => OperatorExtension.Tostring0(OperatorType);
         public abstract OperatorType OperatorType { get; }
+        public Any Output { get; set; }
         /// <summary>
         /// operands
         /// </summary>
         public List<AstNode> Operands { get; set; } = new List<AstNode>();
+
+       
+      
 
        
 
@@ -61,7 +65,6 @@ namespace Jasmine.Interpreter.AstTree
         {
             Output = obj;
         }
-        public Any Output { get; set; }
         public override OutputType OutputType => OutputType.Object;
 
         
@@ -75,9 +78,8 @@ namespace Jasmine.Interpreter.AstTree
             //ignore
         }
 
-        public override void Excute(ExcutingStack stack)
+        public override void Excute()
         {
-            stack.Push(Output);
         }
     }
 
@@ -91,13 +93,13 @@ namespace Jasmine.Interpreter.AstTree
     public abstract class SingleOperatorNode : OperatorNode
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public sealed override void Excute(ExcutingStack stack)
+        public sealed override void Excute()
         {
             //excuteSingle(getOperand(Operands[0],stack),stack);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        protected abstract void excuteSingle(Any obj1,ExcutingStack stack);
+        protected abstract void excuteSingle(Any obj1);
 
     }
 
@@ -107,14 +109,12 @@ namespace Jasmine.Interpreter.AstTree
     public abstract class BinaryOperatorNode : OperatorNode
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public sealed override void Excute(ExcutingStack stack)
+        public sealed override void Excute()
         {
-            Operands[0].Excute(stack);
-            Operands[1].Excute(stack);
-            excuteBinary(stack.Get(Operands[0]),stack.Get(Operands[1]),stack);
+          
         }
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        protected abstract void excuteBinary(Any obj1,Any obj2,ExcutingStack stack);
+        protected abstract void excuteBinary(Any obj1,Any obj2);
     }
     /// <summary>
     /// two operands's output are both jbool
@@ -132,9 +132,9 @@ namespace Jasmine.Interpreter.AstTree
             }
         }
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        protected override void excuteBinary(Any obj1,Any obj2,ExcutingStack stack)
+        protected override void excuteBinary(Any obj1,Any obj2)
         {
-            stack.Push(this, caculate((JBool)obj1,(JBool)obj2));
+           
 
         }
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
