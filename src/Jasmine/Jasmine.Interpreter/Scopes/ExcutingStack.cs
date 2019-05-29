@@ -1,5 +1,4 @@
 ﻿using Jasmine.Interpreter.TypeSystem;
-using System.Collections;
 using System.Collections.Generic;
 
 namespace Jasmine.Interpreter.Scopes
@@ -8,14 +7,7 @@ namespace Jasmine.Interpreter.Scopes
     {
         private IVariableTable _currentVarible;
         private Stack<Any> _outputStack;
-        public void PushNewVaribleTable()
-        {
-
-        }
-        public void PopVaribleTable()
-        {
-
-        }
+        
         public Any Pop()
         {
            return _outputStack.Pop();

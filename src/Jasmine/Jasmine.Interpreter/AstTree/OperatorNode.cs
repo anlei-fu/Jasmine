@@ -47,9 +47,6 @@ namespace Jasmine.Interpreter.AstTree
         public List<AstNode> Operands { get; set; } = new List<AstNode>();
 
        
-      
-
-       
 
  
     }
@@ -80,7 +77,7 @@ namespace Jasmine.Interpreter.AstTree
 
         public override void Excute(ExcutingStack stack)
         {
-            stack.Push(this, Output);
+            stack.Push(Output);
         }
     }
 
