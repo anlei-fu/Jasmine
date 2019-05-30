@@ -6,10 +6,10 @@ namespace Jasmine.Orm.Attributes
     /// use to convert object property name to sql column name
     /// </summary>
     [AttributeUsage( AttributeTargets.Property , AllowMultiple = false)]
-    public  class SqlColumnNameAttribute:Attribute
+    public  class ColumnNameAttribute:Attribute
     {
 
-        public SqlColumnNameAttribute(string sqlName)
+        public ColumnNameAttribute(string sqlName)
         {
             SqlName = sqlName;
         }

@@ -4,23 +4,23 @@ using System.Collections.Concurrent;
 
 namespace Jasmine.Orm.Implements
 {
-    public   class DefaultSqlConvertorProvider:ISqlConvertorProvider
+    public   class DefaultSqlConvertorProvider:IOrmConvertorProvider
     {
 
         private DefaultSqlConvertorProvider()
         {
 
         }
-        public static readonly ISqlConvertorProvider Instance = new DefaultSqlConvertorProvider();
+        public static readonly IOrmConvertorProvider Instance = new DefaultSqlConvertorProvider();
 
-        private ConcurrentDictionary<Type, ISqlConvertor> _convertors = new ConcurrentDictionary<Type, ISqlConvertor>();
+        private ConcurrentDictionary<Type, IOrmConvertor> _convertors = new ConcurrentDictionary<Type, IOrmConvertor>();
 
-        public ISqlConvertor GetConvertor<T>()
+        public IOrmConvertor GetConvertor<T>()
         {
             return GetConvertor(typeof(T));
         }
 
-        public ISqlConvertor GetConvertor(Type type)
+        public IOrmConvertor GetConvertor(Type type)
         {
             return _convertors.TryGetValue(type, out var result) ?
                                                                result : DefaultSqlConvertor.Instance;
@@ -35,11 +35,11 @@ namespace Jasmine.Orm.Implements
             _convertors.TryRemove(type, out var result);
         }
 
-        public void AddConvertor<T>(ISqlConvertor convertor)
+        public void AddConvertor<T>(IOrmConvertor convertor)
         {
             AddConvertor(typeof(T),convertor);
         }
-        public void AddConvertor(Type type, ISqlConvertor convertor)
+        public void AddConvertor(Type type, IOrmConvertor convertor)
         {
             if (_convertors.ContainsKey(type))
                 _convertors[type] = convertor;

@@ -58,63 +58,52 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Attributes\CheckAttribute.cs" />
+    <Compile Include="Attributes\DataSourceAttribute.cs" />
     <Compile Include="Attributes\DefaultAttribute.cs" />
     <Compile Include="Attributes\ForeignKeyAttribute.cs" />
-    <Compile Include="Attributes\JoinColumnAttribute.cs" />
-    <Compile Include="Attributes\ManyToOneAttribute.cs" />
-    <Compile Include="Attributes\OneToManyAttribute.cs" />
+    <Compile Include="Attributes\JoinColumnsAttribute.cs" />
+    <Compile Include="Attributes\JoinTableAttribute.cs" />
     <Compile Include="Attributes\OrmAttribute.cs" />
     <Compile Include="Attributes\SqlConstraintAttribute.cs" />
     <Compile Include="Attributes\SqlDataTypeAttribute.cs" />
     <Compile Include="Attributes\SqlIgnoreAttribute.cs" />
-    <Compile Include="Attributes\SqlTableNameAttribute.cs" />
-    <Compile Include="ISqlConvertorProvider.cs" />
+    <Compile Include="Attributes\TableNameAttribute.cs" />
+    <Compile Include="DefaultDataTypeMapper.cs" />
+    <Compile Include="IDataTypeMapper.cs" />
+    <Compile Include="IOrmConvertorProvider.cs" />
     <Compile Include="ICursor.cs" />
-    <Compile Include="ISqlConnectionProvider.cs" />
-    <Compile Include="ISqlConvertor.cs" />
+    <Compile Include="IDbConnectionPool.cs" />
+    <Compile Include="IOrmConvertor.cs" />
     <Compile Include="ISqlExcuter.cs" />
-    <Compile Include="ITableInfoCache.cs" />
-    <Compile Include="ITableOrdinaryOperateTemplateGenarator.cs" />
-    <Compile Include="ITemplateProvider.cs" />
+    <Compile Include="ITableMetaDataProvider.cs" />
+    <Compile Include="ITableBaseTemplateGenarator.cs" />
     <Compile Include="IUnknowTypeConvertor.cs" />
-    <Compile Include="ITemplateConvertor.cs" />
     <Compile Include="Exceptions\ParameterNotFoundException.cs" />
     <Compile Include="Exceptions\NotConvertableTypeException.cs" />
     <Compile Include="Exceptions\SqlGrammerNotSurportedException.cs" />
     <Compile Include="Exceptions\TemplateException.cs" />
     <Compile Include="DefaultCursor.cs" />
-    <Compile Include="DefaultTemplateParser.cs" />
     <Compile Include="DefaultSqlBaseTypeConvertor.cs" />
-    <Compile Include="DefaultSqlConvertor.cs" />
+    <Compile Include="DefaultSqlConverter.cs" />
     <Compile Include="DefaultSqlConvertorProvider.cs" />
-    <Compile Include="DefaultTableInfoCache.cs" />
-    <Compile Include="DefaultTemplateConvertor.cs" />
-    <Compile Include="DefaultTemplateProvider.cs" />
+    <Compile Include="DefaultTableMetaDataProvide.cs" />
     <Compile Include="DefaultUnkowTypeConvertor.cs" />
-    <Compile Include="JasmineOrmConfig.cs" />
-    <Compile Include="JasmineOrmXmlConfig.cs" />
     <Compile Include="JasmineSqlExcutor.cs" />
     <Compile Include="ColumnMetaData.cs" />
     <Compile Include="DataSorceType.cs" />
-    <Compile Include="Expression.cs" />
-    <Compile Include="SqlParameters.cs" />
-    <Compile Include="SqlResultColumn.cs" />
     <Compile Include="SqlResultContext.cs" />
-    <Compile Include="SqlTemplate.cs" />
     <Compile Include="TableMetaData.cs" />
     <Compile Include="TableInfoReflectResolver.cs" />
     <Compile Include="TableInfoXmlResolver.cs" />
-    <Compile Include="SqlBuilder.cs" />
     <Compile Include="ISqlBaseTypeConvertor.cs" />
     <Compile Include="Attributes\NotNullAttribute.cs" />
     <Compile Include="Attributes\PrimaryKeyAttribute.cs" />
-    <Compile Include="ITemplateParser.cs" />
-    <Compile Include="SqlTemplateSegment.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Attributes\SqlColumnNameAttribute.cs" />
+    <Compile Include="Attributes\ColumnNameAttribute.cs" />
     <Compile Include="SqlConnectionStringBuilderExtension.cs" />
-    <Compile Include="SqlTypeCovertor.cs" />
+    <Compile Include="SqlServerTypeConverter.cs" />
     <Compile Include="Attributes\UniqueAttribute.cs" />
+    <Compile Include="TableMetaDataReflectResolver.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -123,6 +112,10 @@
     <ProjectReference Include="..\Jasmine.Common\Jasmine.Commom.csproj">
       <Project>{27722F7A-0E0D-42A5-961A-7AF15FA0A1C8}</Project>
       <Name>Jasmine.Commom</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Jasmine.Configuration\Jasmine.Configuration.csproj">
+      <Project>{B458ACF2-5654-4919-AF9B-6BB06C779A3A}</Project>
+      <Name>Jasmine.Configuration</Name>
     </ProjectReference>
     <ProjectReference Include="..\Jasmine.Reflection\Jasmine.Reflection.csproj">
       <Project>{C0525DCB-8593-421B-A8AD-1DE365216F7E}</Project>

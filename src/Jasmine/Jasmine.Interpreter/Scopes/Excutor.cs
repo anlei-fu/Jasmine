@@ -2,8 +2,8 @@
 
 namespace Jasmine.Interpreter.Scopes
 {
-    public interface  IExcutor
+    public interface  IInstructBuilder
     {
-         void Excute(StackFrame interpreter);
+         Instruct Build(StackFrame interpreter);
     }
 }

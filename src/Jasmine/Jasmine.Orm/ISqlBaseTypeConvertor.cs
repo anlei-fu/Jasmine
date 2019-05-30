@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Data.SqlClient;
+using System.Data.Common;
 
 namespace Jasmine.Orm.Interfaces
 {
@@ -20,6 +20,6 @@ namespace Jasmine.Orm.Interfaces
         /// <param name="index"></param>
         /// <param name="type"></param>
         /// <returns></returns>
-        object FromSql(SqlDataReader reader, int index, Type type);
+        object FromSql(DbDataReader reader, int index, Type type);
     }
 }

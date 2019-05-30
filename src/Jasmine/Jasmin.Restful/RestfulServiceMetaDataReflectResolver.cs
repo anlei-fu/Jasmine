@@ -8,14 +8,14 @@ using System.Collections.Generic;
 
 namespace Jasmine.Restful
 {
-    public class RestfulServiceMetaDataReflectResolver : IServiceMetaDataReflectResolver<RestfulServiceMetaData>
+    public class RestfulServiceMetaDataReflectResolver : IMetaDataReflectResolver<RestfulServiceMetaData>
     {
         private RestfulServiceMetaDataReflectResolver()
         {
 
         }
 
-        public static readonly IServiceMetaDataReflectResolver<RestfulServiceMetaData> Instance = new RestfulServiceMetaDataReflectResolver();
+        public static readonly IMetaDataReflectResolver<RestfulServiceMetaData> Instance = new RestfulServiceMetaDataReflectResolver();
 
         private ITypeCache _typeCache => JasmineReflectionCache.Instance;
         public RestfulServiceMetaData Resolve(Type type)

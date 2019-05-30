@@ -2,7 +2,7 @@
 
 namespace Jasmine.Interpreter.Excutor
 {
-    public   class InstructStack
+    public   class InstructGroup
     {
         public string Name { get; set; }
         public Instruct[] Instructs { get; set; }

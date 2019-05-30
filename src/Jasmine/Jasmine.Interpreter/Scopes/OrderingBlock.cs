@@ -9,7 +9,7 @@ namespace Jasmine.Interpreter.Scopes
         {
         }
 
-        public IList<IExcutor> Children { get; set; } = new List<IExcutor>();
+        public IList<IInstructBuilder> Children { get; set; } = new List<IInstructBuilder>();
         public override void Break()
         {
            Parent.Break();

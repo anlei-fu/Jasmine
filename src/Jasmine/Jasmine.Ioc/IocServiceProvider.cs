@@ -15,7 +15,7 @@ namespace Jasmine.Ioc
 
         }
         private  IIocServiceMetaDataManager _metaDataManager => IocServiceMetaDataManager.Instance;
-        private  IServiceMetaDataReflectResolver<IocServiceMetaData> _reflectResolver => IocServiceMetaDataReflectResolver.Instance;
+        private  IMetaDataReflectResolver<IocServiceMetaData> _reflectResolver => IocServiceMetaDataReflectResolver.Instance;
         private  IInstanceCreator<IocServiceMetaData> _instanceCreator => IocInstanceCreator.Instance;
 
         private readonly IServiceMetaDataXmlResolver _xmlResolver;

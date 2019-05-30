@@ -4,7 +4,7 @@ namespace Jasmine.Interpreter.Excutor
 {
     public  class InstructCollectionBuilder
     {
-        public InstrcutCollection Build(TopBlock block)
+        public InstrcutGroupCollection Build(TopBlock block)
         {
             return null;
         }

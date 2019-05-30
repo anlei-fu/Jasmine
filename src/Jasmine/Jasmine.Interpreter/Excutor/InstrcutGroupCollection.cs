@@ -4,18 +4,18 @@ using System.Text;
 
 namespace Jasmine.Interpreter.Excutor
 {
-   public class InstrcutCollection
+   public class InstrcutGroupCollection
     {
-        public InstructStack GetStack(string name)
+        public InstructGroup GetGroup(string name)
         {
             return null;
         }
-        public void SaveStack(InstructStack stack)
+        public void SaveGroup(InstructGroup stack)
         {
 
         }
 
-        public InstructStack GetEntryPoint()
+        public InstructGroup GetEntryPoint()
         {
             return null;
         }

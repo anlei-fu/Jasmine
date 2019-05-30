@@ -8,10 +8,11 @@ namespace Jasmine.Orm
     public  class ColumnMetaData:IValueGetterSetter
     {
         public bool Nullable { get; set; } = true;
+        public Type OwnnerType { get; set; }
         public Type RelatedType { get; set; }
         public string ColumnName { get; set; }
-        public IDictionary<Type, SqlConstraintAttribute> Constraints { get; set; } = new Dictionary<Type,SqlConstraintAttribute>();
-        public string ModelName { get; set; }
+        public HashSet<SqlConstraintAttribute> Constraints { get; set; } = new HashSet<SqlConstraintAttribute>();
+        public string PorpertyName { get; set; }
         public string SqlType { get; set; }
         public Action<object, object> Setter { get; set; }
         public Func<object, object> Getter { get; set; }

@@ -3,7 +3,7 @@ using System;
 
 namespace Jasmine.Orm.Interfaces
 {
-    public interface ISqlConvertor
+    public interface IOrmConvertor
     {
         /// <summary>
         /// conver objct to insert-into command's real parameter part

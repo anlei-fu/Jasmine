@@ -36,7 +36,7 @@ namespace Jasmine.Ioc
         private const string Name = "";
 
         private readonly ITypeCache _typeCache = JasmineReflectionCache.Instance;
-        private readonly IServiceMetaDataReflectResolver<IocServiceMetaData> _resolver;
+        private readonly IMetaDataReflectResolver<IocServiceMetaData> _resolver;
         private readonly IIocServiceMetaDataManager _manager;
 
         public static readonly IServiceMetaDataXmlResolver Instance = new IocServiceMetaDataXmlResolver();

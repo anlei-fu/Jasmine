@@ -1,3 +1,0 @@
-﻿namespace Jasmine.Orm.Interfaces
-{
-}

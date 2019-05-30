@@ -3,7 +3,7 @@ using Jasmine.Orm.Interfaces;
 using Jasmine.Reflection;
 using System;
 using System.Collections.Generic;
-using System.Data.SqlClient;
+using System.Data.Common;
 using System.Text;
 
 namespace Jasmine.Orm.Implements
@@ -59,12 +59,13 @@ namespace Jasmine.Orm.Implements
 
         public static readonly ISqlBaseTypeConvertor Instance = new DefaultBaseTypeConvertor();
 
-        public object FromSql(SqlDataReader reader, int index, Type type)
+        public object FromSql(DbDataReader reader, int index, Type type)
         {
+            var value = reader.GetValue(index);
 
             if (type.IsEnum)
             {
-                var e = reader.GetSqlInt32(index);
+               
 
             }
 
@@ -72,133 +73,79 @@ namespace Jasmine.Orm.Implements
             {
 
                 case BaseTypes.SByte:
-                    var sb = reader.GetSqlByte(index);
-                    return sb.IsNull ? default(sbyte) : (sbyte)(byte)sb;
+                   return (sbyte)value;
                 case BaseTypes.NSByte:
-                    var nsb = reader.GetSqlByte(index);
-                    return nsb.IsNull ? default(sbyte?) : (sbyte?)(byte)nsb;
-
+                    return (sbyte?)value;
                 case BaseTypes.Char:
-                    var c = reader.GetSqlByte(index);
-                    return c.IsNull ? default(char) : (char)(byte)c;
+                    return (char)value;
                 case BaseTypes.NChar:
-                    var nc = reader.GetSqlByte(index);
-                    return nc.IsNull ? null : (char?)(byte)nc;
-
+                    return (char?)value;
                 case BaseTypes.Byte:
-                    var b = reader.GetSqlByte(index);
-                    return b.IsNull ? default(byte) : (byte)b;
+                    return (byte)value;
                 case BaseTypes.NByte:
-                    var nb = reader.GetSqlByte(index);
-                    return nb.IsNull ? null : (byte?)nb;
-
+                    return (byte?)value;
                 case BaseTypes.Boolean:
-                    var bl = reader.GetSqlBoolean(index);
-                    return bl.IsNull ? default(bool) : (bool)bl;
+                    return (bool)value;
                 case BaseTypes.NBoolean:
-                    var nbl = reader.GetSqlBoolean(index);
-                    return nbl.IsNull ? null : (bool?)nbl;
-
+                    return (bool?)value;
                 case BaseTypes.UShort:
-                    var ui16 = reader.GetSqlInt16(index);
-                    return ui16.IsNull ? default(ushort) : (ushort)(short)ui16;
-
+                    return (ushort)value;
                 case BaseTypes.NUShort:
-                    var nui16 = reader.GetSqlInt16(index);
-                    return nui16.IsNull ? null : (ushort?)(short)nui16;
-
+                    return (ushort?)value;
                 case BaseTypes.Short:
-                    var i16 = reader.GetSqlInt16(index);
-                    return i16.IsNull ? default(short) : (short)i16;
-
+                    return (short)value;
                 case BaseTypes.NShort:
-                    var ni16 = reader.GetSqlInt16(index);
-                    return ni16.IsNull ? null : (short?)ni16;
-
+                    return (short?)value;
                 case BaseTypes.Int:
-                    var i = reader.GetSqlInt32(index);
-                    return i.IsNull ? default(int) : (int)i;
+                    return (int)value;
 
                 case BaseTypes.NInt:
-                    var ni = reader.GetSqlInt32(index);
-                    return ni.IsNull ? null : (int?)ni;
+                    return (int?)value;
 
                 case BaseTypes.UInt:
-                    var ui = reader.GetSqlInt32(index);
-                    return ui.IsNull ? default(uint) : (uint)(int)ui;
+                    return (uint)value;
 
                 case BaseTypes.NUInt:
-                    var nui = reader.GetSqlInt32(index);
-                    return nui.IsNull ? null : (uint?)(int)nui;
+                    return (uint?)value;
 
                 case BaseTypes.Long:
-                    var l = reader.GetSqlInt64(index);
-                    return l.IsNull ? default(long) : (long)l;
+                    return (long)value;
                 case BaseTypes.NLong:
-                    var nl = reader.GetSqlInt64(index);
-                    return nl.IsNull ? null : (long?)nl;
+                    return (long?)value;
                 case BaseTypes.ULong:
-                    var ul = reader.GetSqlInt64(index);
-                    return ul.IsNull ? default(ulong) : (ulong)(long)ul;
+                    return (ulong)value;
                 case BaseTypes.NULong:
-                    var nul = reader.GetSqlInt64(index);
-                    return nul.IsNull ? null : (ulong?)(long)nul;
-
+                    return (ulong?)value;
                 case BaseTypes.Float:
-                    var f = reader.GetSqlSingle(index);
-                    return f.IsNull ? default(float) : (float)f;
-
+                    return (float)value;
                 case BaseTypes.NFloat:
-                    var nf = reader.GetSqlSingle(index);
-                    return nf.IsNull ? null : (float?)nf;
-
+                    return (float?)value;
                 case BaseTypes.Double:
-                    var d = reader.GetSqlDouble(index);
-                    return d.IsNull ? default(double) : (double)d;
-
+                    return (double)value;
                 case BaseTypes.NDouble:
-                    var nd = reader.GetSqlDouble(index);
-                    return nd.IsNull ? null : (double?)nd;
-
+                    return (double?)value;
                 case BaseTypes.Decimal:
-                    var de = reader.GetSqlDecimal(index);
-                    return de.IsNull ? default(decimal) : (decimal)de;
+                    return (decimal)value;
                 case BaseTypes.NDecimal:
-                    var nde = reader.GetSqlDecimal(index);
-                    return nde.IsNull ? null : (decimal?)nde;
-
+                    return (decimal?)value;
                 case BaseTypes.Guid:
-                    var g = reader.GetSqlGuid(index);
-                    return g.IsNull ? default(Guid) : (Guid)g;
+                    return (Guid)value;
                 case BaseTypes.NGuid:
-                    var ng = reader.GetSqlGuid(index);
-                    return ng.IsNull ? null : (Guid?)ng;
-
+                    return (Guid?)value;
                 case BaseTypes.DateTime:
-                    var dt = reader.GetSqlDateTime(index);
-                    return dt.IsNull ? default(DateTime) : (DateTime)dt;
+                    return (DateTime)value;
                 case BaseTypes.NDateTime:
-                    var ndt = reader.GetSqlDateTime(index);
-                    return ndt.IsNull ? null : (DateTime?)ndt;
-
+                    return (DateTime?)value;
                 case BaseTypes.TimeSpan:
-                    var ts = reader.GetSqlDateTime(index);
-                    return ts.IsNull ? default(TimeSpan) : TimeSpan.FromTicks(((DateTime)ts).Ticks);
-
+                    return (TimeSpan)value;
                 case BaseTypes.NTimeSpan:
-                    var nts = reader.GetSqlDateTime(index);
-                    return nts.IsNull ? null : (TimeSpan?)TimeSpan.FromTicks(((DateTime)nts).Ticks);
-
+                    return (TimeSpan?)value;
                 case BaseTypes.DateTimeOffset:
-                    var dto = reader.GetSqlDateTime(index);
-                    return dto.IsNull ? default(DateTimeOffset) : DateTimeOffset.FromUnixTimeMilliseconds(((DateTime)dto).Ticks);
+                    return (DateTimeOffset)value;
                 case BaseTypes.NDateTimeOffset:
-                    var ndto = reader.GetSqlDateTime(index);
-                    return ndto.IsNull ? null : (DateTimeOffset?)DateTimeOffset.FromUnixTimeMilliseconds(((DateTime)ndto).Ticks);
-
+                    return (DateTimeOffset?)value;
                 case BaseTypes.String:
-                    return reader.GetString(index);
-
+                    return (string)value;
                 default:
                     throw new NotConvertableTypeException(type,GetType());
             }

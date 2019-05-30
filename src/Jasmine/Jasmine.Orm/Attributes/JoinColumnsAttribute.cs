@@ -6,7 +6,7 @@ namespace Jasmine.Orm.Attributes
     /// use join quey or insert 
     /// </summary>
     [AttributeUsage(AttributeTargets.Property)]
-    public  class JoinColumnAttribute:OrmAttribute
+    public  class JoinColumnsAttribute:OrmAttribute
     {
     }
 }

@@ -8,10 +8,10 @@ using Jasmine.Serialization.Attributes;
 
 namespace Jasmine.Rpc.Server
 {
-    public class RpcServiceMetaDataReflectResolver : IServiceMetaDataReflectResolver<RpcServiceMetaData>
+    public class RpcServiceMetaDataReflectResolver : IMetaDataReflectResolver<RpcServiceMetaData>
     {
 
-        public static readonly IServiceMetaDataReflectResolver<RpcServiceMetaData> Instance = new RpcServiceMetaDataReflectResolver();
+        public static readonly IMetaDataReflectResolver<RpcServiceMetaData> Instance = new RpcServiceMetaDataReflectResolver();
 
         private ITypeCache _typeCache => JasmineReflectionCache.Instance;
         public RpcServiceMetaData Resolve(Type type)

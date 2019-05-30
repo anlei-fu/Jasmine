@@ -8,7 +8,7 @@ using System.Linq;
 
 namespace Jasmine.Ioc
 {
-    public class IocServiceMetaDataReflectResolver : IServiceMetaDataReflectResolver<IocServiceMetaData>
+    public class IocServiceMetaDataReflectResolver : IMetaDataReflectResolver<IocServiceMetaData>
     {
 
         private IocServiceMetaDataReflectResolver()
@@ -18,7 +18,7 @@ namespace Jasmine.Ioc
 
         private ITypeCache _reflection => JasmineReflectionCache.Instance;
 
-        public static readonly IServiceMetaDataReflectResolver<IocServiceMetaData> Instance = new IocServiceMetaDataReflectResolver();
+        public static readonly IMetaDataReflectResolver<IocServiceMetaData> Instance = new IocServiceMetaDataReflectResolver();
 
         public IocServiceMetaData ResolveProtoType(Type type)
         {

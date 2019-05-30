@@ -16,10 +16,7 @@ namespace Jasmine.Orm.Implements
         {
             var result = new List<object>();
 
-            foreach (var item in context.Columns.Values)
-            {
-                result.Add(DefaultBaseTypeConvertor.Instance.FromSql(context.Reader, item.Index, SqlTypeCovertor.ConvertSqlDataTypeToCsharpType(item.SqlType)));
-            }
+        
 
             return result;
         }

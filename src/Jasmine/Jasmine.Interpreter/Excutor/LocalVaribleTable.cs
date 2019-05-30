@@ -1,10 +1,14 @@
 ﻿using Jasmine.Interpreter.TypeSystem;
+using System.Collections.Generic;
 
 namespace Jasmine.Interpreter.Excutor
 {
     public   class LocalVaribleTable
     {
+        public LocalVaribelTableScope Scope { get; set; }
+        public LocalVaribleTable Parent { get; set; }
 
+        private IDictionary<string, LocalVaribleTable> _fastCache;
         public void Declare(string name,Any value)
         {
 
@@ -24,5 +28,12 @@ namespace Jasmine.Interpreter.Excutor
         {
 
         }
+    }
+
+    public enum LocalVaribelTableScope
+    {
+        Block,
+        Loop,
+        Function
     }
 }

@@ -1,4 +1,5 @@
 ﻿using Jasmine.Orm.Model;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 
 namespace Jasmine.Orm.Interfaces
@@ -8,7 +9,7 @@ namespace Jasmine.Orm.Interfaces
     /// </summary>
     public  interface ICursor
     {
-        IEnumerable<ColumnMetaInfo> Columns { get; }
+        ConcurrentDictionary<string,QuryResultColumnMetaInfo> Columns { get; }
         /// <summary>
         /// 
         /// </summary>

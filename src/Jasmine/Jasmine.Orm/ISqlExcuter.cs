@@ -1,4 +1,4 @@
-﻿using Jasmine.Orm.Model;
+﻿using Jasmine.Configuration;
 using System.Collections.Generic;
 
 namespace Jasmine.Orm.Interfaces
@@ -28,29 +28,15 @@ namespace Jasmine.Orm.Interfaces
         /// <param name="template"></param>
         /// <param name="paramter"></param>
         /// <returns></returns>
-        IEnumerable<T> Query<T>(string template, SqlParameters parameters, IDbConnectionProvider provider);
+        IEnumerable<T> Query<T>(string template, object obj, IDbConnectionProvider provider);
         /// <summary>
         /// 
         /// </summary>
         /// <param name="template"></param>
         /// <param name="paramter"></param>
         /// <returns></returns>
-        IEnumerable<IEnumerable<object>> Query(string template, SqlParameters parameters, IDbConnectionProvider provider);
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="template"></param>
-        /// <param name="parameters"></param>
-        /// <returns></returns>
-        IEnumerable<T> Query<T>(string template, IEnumerable<SqlParameters> parameters, IDbConnectionProvider provider);
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="template"></param>
-        /// <param name="parameters"></param>
-        /// <returns></returns>
-        IEnumerable<IEnumerable<object>> Query(string template, IEnumerable<SqlParameters> parameters, IDbConnectionProvider provider);
+        IEnumerable<IEnumerable<object>> Query(string template, object obj, IDbConnectionProvider provider);
+        
         /// <summary>
         /// 
         /// </summary>
@@ -58,29 +44,15 @@ namespace Jasmine.Orm.Interfaces
         /// <param name="segments"></param>
         /// <param name="parameter"></param>
         /// <returns></returns>
-        IEnumerable<T> Query<T>(SqlTemplate template, SqlParameters parameters, IDbConnectionProvider provider);
+        IEnumerable<T> Query<T>(Template template, object obj, IDbConnectionProvider provider);
         /// <summary>
         /// 
         /// </summary>
         /// <param name="segments"></param>
         /// <param name="parameters"></param>
         /// <returns></returns>
-        IEnumerable<IEnumerable<object>> Query(SqlTemplate template, SqlParameters parameters, IDbConnectionProvider provider);
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="segments"></param>
-        /// <param name="parameters"></param>
-        /// <returns></returns>
-        IEnumerable<T> Query<T>(SqlTemplate template, IEnumerable<SqlParameters> parameters, IDbConnectionProvider provider);
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="segments"></param>
-        /// <param name="parameters"></param>
-        /// <returns></returns>
-        IEnumerable<IEnumerable<object>> Query(SqlTemplate template, IEnumerable<SqlParameters> parameters, IDbConnectionProvider provider);
+        IEnumerable<IEnumerable<object>> Query(Template template, object obj, IDbConnectionProvider provider);
+      
         /// <summary>
         /// 查询，以游标的方式返回结果集
         /// </summary>
@@ -94,28 +66,16 @@ namespace Jasmine.Orm.Interfaces
         /// <param name="template"></param>
         /// <param name="paramter"></param>
         /// <returns></returns>
-        ICursor QueryCursor(string template, SqlParameters paramters, IDbConnectionProvider provider);
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="template"></param>
-        /// <param name="parameters"></param>
-        /// <returns></returns>
-        ICursor QueryCusor(string template, IEnumerable<SqlParameters> parameters, IDbConnectionProvider provider);
+        ICursor QueryCursor(string template, object obj, IDbConnectionProvider provider);
+       
         /// <summary>
         /// 
         /// </summary>
         /// <param name="segments"></param>
         /// <param name="parameters"></param>
         /// <returns></returns>
-        ICursor QueryCursor(SqlTemplate template, IEnumerable<SqlParameters> parameters, IDbConnectionProvider provider);
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="segments"></param>
-        /// <param name="parameter"></param>
-        /// <returns></returns>
-        ICursor QueryCursor(SqlTemplate template, SqlParameters parameters, IDbConnectionProvider provider);
+        ICursor QueryCursor(Template template, object obj, IDbConnectionProvider provider);
+       
         /// <summary>
         /// 执行命令
         /// </summary>
@@ -128,21 +88,28 @@ namespace Jasmine.Orm.Interfaces
         /// <param name="template"></param>
         /// <param name="parameter"></param>
         /// <returns></returns>
-        int Excute(string template,object parameter, IDbConnectionProvider provider);
+        int Excute(string template,object obj, IDbConnectionProvider provider);
         /// <summary>
         /// 
         /// </summary>
         /// <param name="segments"></param>
         /// <param name="parameter"></param>
         /// <returns></returns>
-        int Excute(SqlTemplate template, SqlParameters parameters, IDbConnectionProvider provider);
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="segments"></param>
-        /// <param name="parameters"></param>
-        /// <returns></returns>
-        int Excute(SqlTemplate template, IEnumerable<SqlParameters> parameters, IDbConnectionProvider provider);
+        int Excute(Template template, object obj, IDbConnectionProvider provider);
+
+        int BatchInsert<T>(IEnumerable<T> data, IDbConnectionProvider provider);
+        int BatchInsert<T>(IEnumerable<T> datas, string table, IDbConnectionProvider provider);
+        int Insert<T>(T data, IDbConnectionProvider provider);
+        int Insert<T>(T data,string table, IDbConnectionProvider provider);
+        int Drop<T>( IDbConnectionProvider provider);
+        int Drop<T>(string name, IDbConnectionProvider provider);
+        int Create(string name, IDbConnectionProvider provider);
+        int Create<T>(string name, IDbConnectionProvider provider);
+        ICursor QueryCursor<T>( IDbConnectionProvider provider);
+        ICursor QueryCursor<T>(string table, IDbConnectionProvider provider);
+        IEnumerable<T> Query<T>(IDbConnectionProvider provider);
+        IEnumerable<T> QueryWith<T>(string table, IDbConnectionProvider provider);
+
 
 
     }

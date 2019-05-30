@@ -7,7 +7,7 @@ namespace Jasmine.Interpreter.Excutor
 {
   public  class StackFrame
     {
-        public InstructStack InstructStack { get; set; }
+        public InstructGroup InstructStack { get; set; }
         public JumpTable JumpTable { get; set; }
         public OperandStack OperandStack { get; set; }
         public LocalVaribleStack LocalVaribleStack { get; set; }

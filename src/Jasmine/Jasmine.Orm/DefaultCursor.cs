@@ -1,5 +1,6 @@
 ﻿using Jasmine.Orm.Interfaces;
 using Jasmine.Orm.Model;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Data.SqlClient;
 
@@ -7,7 +8,7 @@ namespace Jasmine.Orm.Implements
 {
     public class DefaultCursor : ICursor
     {
-        public DefaultCursor(SqlResultContext context, ISqlConvertorProvider sqlConvertorProvider, SqlConnection connection, IDbConnectionProvider provider)
+        public DefaultCursor(SqlResultContext context, IOrmConvertorProvider sqlConvertorProvider, SqlConnection connection, IDbConnectionProvider provider)
         {
             _context = context;
             _provider = provider;
@@ -17,12 +18,13 @@ namespace Jasmine.Orm.Implements
         private SqlConnection _connection;
         private SqlResultContext _context;
         private IDbConnectionProvider _provider;
-        private ISqlConvertorProvider _convertorProvider;
+        private IOrmConvertorProvider _convertorProvider;
         private IUnknowTypeConvertor _unknowTypeConvertor;
         public bool Closed { get; private set; }
-        public bool HasRow => throw new System.NotImplementedException();
 
-        public IEnumerable<ColumnMetaInfo> Columns =>_context.Columns.Values;
+        public ConcurrentDictionary<string,QuryResultColumnMetaInfo> Columns => _context.TempTable.Columns;
+
+        public bool HasRow => _context.Reader.HasRows;
 
         public void Close()
         {
@@ -34,8 +36,13 @@ namespace Jasmine.Orm.Implements
         public IEnumerable<T> Read<T>(int count)
         {
             var result = new List<T>();
+
+            var type = typeof(T);
+
             var t = 0;
-            var convertor = _convertorProvider.GetConvertor<T>();
+
+            var convertor = _convertorProvider.GetConvertor(type);
+
 
             while (_context.Reader.HasRows)
             {
@@ -45,7 +52,7 @@ namespace Jasmine.Orm.Implements
                 }
                 else
                 {
-                    result.Add((T)convertor.FromResult(_context, typeof(T)));
+                    result.Add((T)convertor.FromResult(_context, type));
                 }
             }
 
@@ -76,7 +83,7 @@ namespace Jasmine.Orm.Implements
         public T ReadOne<T>()
         {
             return _context.Reader.HasRows && _context.Reader.Read() ?
-                                                (T)_convertorProvider.GetConvertor<T>().FromResult(_context, typeof(T)) : default(T);
+                                                (T)_convertorProvider.GetConvertor(typeof(T)).FromResult(_context, typeof(T)) : default(T);
 
         }
 

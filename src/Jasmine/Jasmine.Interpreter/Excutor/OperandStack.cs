@@ -13,11 +13,8 @@ namespace Jasmine.Interpreter.Excutor
             return null;
         }
 
-        public void Pop(Lable lable)
-        {
-
-        }
-        public void Push()
+     
+        public void Push(Any any)
         {
 
         }

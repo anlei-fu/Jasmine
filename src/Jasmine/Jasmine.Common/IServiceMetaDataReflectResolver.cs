@@ -2,7 +2,7 @@
 
 namespace Jasmine.Common
 {
-    public   interface IServiceMetaDataReflectResolver< out T>
+    public   interface IMetaDataReflectResolver< out T>
     {
         T Resolve(Type type);
     }
