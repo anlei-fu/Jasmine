@@ -181,7 +181,7 @@ namespace Test
         [NotNull]
         public int? Sex { get; set; }
         [NotNull]
-        [SqlDataType("char(12)")]
+        [SqlColumnTypeAttribute("char(12)")]
        
         public string Name { get; set; }
     }

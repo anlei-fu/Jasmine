@@ -1,6 +1,4 @@
-﻿using Jasmine.Orm.Attributes;
-using Jasmine.Orm.Interfaces;
-using Jasmine.Orm.Model;
+﻿using Jasmine.Orm.Interfaces;
 using Jasmine.Reflection;
 using System;
 using System.Collections.Concurrent;
@@ -13,7 +11,6 @@ namespace Jasmine.Orm.Implements
         {
 
         }
-
         private readonly ConcurrentDictionary<Type, TableMetaData> _tables = new ConcurrentDictionary<Type, TableMetaData>();
         private readonly ITypeCache _reflection = JasmineReflectionCache.Instance;
 
@@ -23,7 +20,6 @@ namespace Jasmine.Orm.Implements
 
 
         }
-
         public bool Contains(Type type)
         {
             return _tables.ContainsKey(type);
@@ -36,13 +32,10 @@ namespace Jasmine.Orm.Implements
 
             return _tables.TryGetValue(type, out var result) ? result : null;
         }
-
         public void Cache<T>()
         {
             Cache(typeof(T));
         }
-
-
         public bool Contains<T>()
         {
             return Contains(typeof(T));

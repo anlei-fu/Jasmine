@@ -73,7 +73,7 @@
     <Compile Include="IOrmConvertorProvider.cs" />
     <Compile Include="ICursor.cs" />
     <Compile Include="IDbConnectionPool.cs" />
-    <Compile Include="IOrmConvertor.cs" />
+    <Compile Include="IQueryResultResolver.cs" />
     <Compile Include="ISqlExcuter.cs" />
     <Compile Include="ITableMetaDataProvider.cs" />
     <Compile Include="ITableBaseTemplateGenarator.cs" />
@@ -83,9 +83,9 @@
     <Compile Include="Exceptions\SqlGrammerNotSurportedException.cs" />
     <Compile Include="Exceptions\TemplateException.cs" />
     <Compile Include="DefaultCursor.cs" />
-    <Compile Include="DefaultSqlBaseTypeConvertor.cs" />
-    <Compile Include="DefaultSqlConverter.cs" />
-    <Compile Include="DefaultSqlConvertorProvider.cs" />
+    <Compile Include="DefaultSqlBaseTypeConverter.cs" />
+    <Compile Include="DefaultQueryResultResolver.cs" />
+    <Compile Include="DefaultQueryResultResolverProvider.cs" />
     <Compile Include="DefaultTableMetaDataProvide.cs" />
     <Compile Include="DefaultUnkowTypeConvertor.cs" />
     <Compile Include="JasmineSqlExcutor.cs" />
@@ -93,7 +93,7 @@
     <Compile Include="DataSorceType.cs" />
     <Compile Include="SqlResultContext.cs" />
     <Compile Include="TableMetaData.cs" />
-    <Compile Include="TableInfoReflectResolver.cs" />
+    <Compile Include="TableMeataDataReflectResolver.cs" />
     <Compile Include="TableInfoXmlResolver.cs" />
     <Compile Include="ISqlBaseTypeConvertor.cs" />
     <Compile Include="Attributes\NotNullAttribute.cs" />
@@ -103,7 +103,6 @@
     <Compile Include="SqlConnectionStringBuilderExtension.cs" />
     <Compile Include="SqlServerTypeConverter.cs" />
     <Compile Include="Attributes\UniqueAttribute.cs" />
-    <Compile Include="TableMetaDataReflectResolver.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

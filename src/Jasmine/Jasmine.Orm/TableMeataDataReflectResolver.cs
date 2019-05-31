@@ -5,7 +5,7 @@ using System;
 
 namespace Jasmine.Orm
 {
-    public class TableInfoReflectResolver : IMetaDataReflectResolver<TableMetaData>
+    public class TableMetaDataReflectResolver : IMetaDataReflectResolver<TableMetaData>
     {
         public TableMetaData Resolve(Type type)
         {
@@ -50,7 +50,7 @@ namespace Jasmine.Orm
 
                 }
 
-                if(pattrs.Contains<SqlDataTypeAttribute>())
+                if(pattrs.Contains<SqlColumnTypeAttributeAttribute>())
                 {
 
                 }

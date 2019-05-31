@@ -1,26 +1,26 @@
 ﻿using System;
 using System.Collections.Concurrent;
-using System.Data.Common;
+using System.Data;
 
 namespace Jasmine.Orm.Model
 {
-    public class SqlResultContext
+    public class QueryResultContext
     {
-        public SqlResultContext(DbDataReader reader)
+        public QueryResultContext(IDataReader reader)
         {
             Reader = reader;
-            TempTable = QueryResultTableMetaData.Create(reader);
+            ResultTable = QueryResultTableMetaData.Create(reader);
         }
-        public DbDataReader Reader { get; }
+        public IDataReader Reader { get; }
 
-        public QueryResultTableMetaData TempTable { get; }
+        public QueryResultTableMetaData ResultTable { get; }
 
     }
 
 
     public class QueryResultTableMetaData
     {
-        public static QueryResultTableMetaData Create(DbDataReader reader)
+        public static QueryResultTableMetaData Create(IDataReader reader)
         {
             var result = new QueryResultTableMetaData();
 
@@ -28,10 +28,10 @@ namespace Jasmine.Orm.Model
 
             while (t++ < reader.FieldCount)
             {
-                var column = new QuryResultColumnMetaInfo()
+                var column = new QuryResultColumnInfo()
                 {
                     Name = reader.GetName(t - 1),
-                    SqlType = reader.GetProviderSpecificFieldType(t - 1),
+                    SqlType = reader.GetFieldType(t - 1),
                     Index = t - 1
                 };
 
@@ -40,10 +40,10 @@ namespace Jasmine.Orm.Model
 
             return result;
         }
-        public ConcurrentDictionary<string, QuryResultColumnMetaInfo> Columns { get; } = new ConcurrentDictionary<string, QuryResultColumnMetaInfo>();
+        public ConcurrentDictionary<string, QuryResultColumnInfo> Columns { get; } = new ConcurrentDictionary<string, QuryResultColumnInfo>();
     }
 
-    public class QuryResultColumnMetaInfo
+    public class QuryResultColumnInfo
     {
         public string Name { get; set; }
         public Type SqlType { get; set; }

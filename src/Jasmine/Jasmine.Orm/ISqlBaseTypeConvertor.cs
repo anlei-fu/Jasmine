@@ -12,14 +12,14 @@ namespace Jasmine.Orm.Interfaces
         /// <param name="obj"></param>
         /// <param name="nullable"></param>
         /// <returns></returns>
-        string ToSQL(Type type,object obj,bool nullable=true);
+        string ConvertToSqlString(Type type,object obj,bool nullable=true);
         /// <summary>
-        /// get object from reader's one row's index
+        /// convert object to destination type ,will do an explicit convert or  unbox  operation
         /// </summary>
         /// <param name="reader"></param>
         /// <param name="index"></param>
-        /// <param name="type"></param>
+        /// <param name="convertTo"></param>
         /// <returns></returns>
-        object FromSql(DbDataReader reader, int index, Type type);
+        object ConverToOtherType(object value, Type convertTo);
     }
 }

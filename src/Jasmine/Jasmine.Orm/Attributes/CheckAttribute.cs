@@ -12,6 +12,6 @@ namespace Jasmine.Orm.Attributes
         {
             Expression = expression;
         }
-        public string Expression { get; set; }
+        public string Expression { get;}
     }
 }

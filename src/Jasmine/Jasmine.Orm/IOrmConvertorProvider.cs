@@ -2,8 +2,8 @@
 
 namespace Jasmine.Orm.Interfaces
 {
-    public  interface IOrmConvertorProvider
+    public  interface IQueryResultResolverProvider
     {
-        IOrmConvertor GetConvertor(Type type);
+        IQueryResultResolver GetResolver(Type type);
     }
 }

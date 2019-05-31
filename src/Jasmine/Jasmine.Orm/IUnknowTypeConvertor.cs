@@ -5,6 +5,6 @@ namespace Jasmine.Orm.Interfaces
 {
     public  interface IUnknowTypeConvertor
     {
-        IEnumerable<object> Convert(SqlResultContext context);
+        IEnumerable<object> Convert(QueryResultContext context);
     }
 }

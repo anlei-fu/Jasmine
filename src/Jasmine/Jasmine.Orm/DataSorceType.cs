@@ -2,6 +2,9 @@
 {
     public   enum DataSourceType
     {
+        /// <summary>
+        /// 
+        /// </summary>
         SqlServer,
         Oracle,
         MySql,
