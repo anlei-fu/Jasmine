@@ -2,6 +2,7 @@
 using Jasmine.Orm.Attributes;
 using Jasmine.Reflection;
 using System;
+using System.Collections.Generic;
 
 namespace Jasmine.Orm
 {
@@ -15,12 +16,12 @@ namespace Jasmine.Orm
 
             if(attrs.Contains<TableNameAttribute>())
             {
-
+                table.Name = attrs.GetAttribute<TableNameAttribute>()[0].Name;
             }
 
             if(attrs.Contains<DataSourceAttribute>())
             {
-
+                table.DataSource = attrs.GetAttribute<DataSourceAttribute>()[0].DataSource;
             }
 
 
@@ -33,12 +34,19 @@ namespace Jasmine.Orm
 
                 if(pattrs.Contains<JoinTableAttribute>())
                 {
+                    var joinTable = getJoinTable(item);
+
+                    table.JoinTables.Add(joinTable.Name, joinTable);
 
                     continue;
                 }
 
                 if(pattrs.Contains<JoinColumnsAttribute>())
                 {
+                    foreach (var joinColumn in getJooinColumns(item))
+                    {
+                        table.Columns.Add(joinColumn.ColumnName, joinColumn);
+                    }
 
                 }
 
@@ -47,49 +55,63 @@ namespace Jasmine.Orm
 
                 if(pattrs.Contains<ColumnNameAttribute>())
                 {
-
+                    column.ColumnName = pattrs.GetAttribute<ColumnNameAttribute>()[0].ColumnName;
                 }
 
                 if(pattrs.Contains<SqlDataTypeAttribute>())
                 {
-
+                    column.SqlType = pattrs.GetAttribute<SqlDataTypeAttribute>()[0].SqlType;
                 }
 
-                if(pattrs.Contains<NotNullAttribute>())
+                if(pattrs.Contains<NullableAttribute>())
                 {
-
+                    column.Nullable = pattrs.GetAttribute<NullableAttribute>()[0].Nullable;
                 }
 
                 if(attrs.Contains<PrimaryKeyAttribute>())
                 {
-
+                    column.Constraints.Add(pattrs.GetAttribute<PrimaryKeyAttribute>()[0]);
                 }
 
                 if(attrs.Contains<UniqueAttribute>())
                 {
-
+                    column.Constraints.Add(pattrs.GetAttribute<UniqueAttribute>()[0]);
                 }
 
                 if(attrs.Contains<ForeignKeyAttribute>())
                 {
-
+                    column.Constraints.Add(pattrs.GetAttribute<ForeignKeyAttribute>()[0]);
                 }
 
                 if(attrs.Contains<DefaultAttribute>())
                 {
-
+                    column.Constraints.Add(pattrs.GetAttribute<DefaultAttribute>()[0]);
                 }
 
                 if(attrs.Contains<CheckAttribute>())
                 {
-
+                    column.Constraints.Add(pattrs.GetAttribute<CheckAttribute>()[0]);
                 }
 
-
-
+                column.RelatedType = item.RelatedInfo.PropertyType;
+                column.PorpertyName = item.Name;
+                column.Getter = item.Getter;
+                column.Setter = item.Setter;
 
             }
 
+            return table;
+
+        }
+
+        public List<ColumnMetaData> getJooinColumns(Property property)
+        {
+            return null;
+        }
+
+        public TableMetaData getJoinTable(Property property)
+        {
+            return null;
         }
     }
 }

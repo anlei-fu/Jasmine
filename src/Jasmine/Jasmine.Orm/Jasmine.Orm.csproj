@@ -96,7 +96,7 @@
     <Compile Include="TableInfoReflectResolver.cs" />
     <Compile Include="TableInfoXmlResolver.cs" />
     <Compile Include="ISqlBaseTypeConvertor.cs" />
-    <Compile Include="Attributes\NotNullAttribute.cs" />
+    <Compile Include="Attributes\NullableAttribute.cs" />
     <Compile Include="Attributes\PrimaryKeyAttribute.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Attributes\ColumnNameAttribute.cs" />

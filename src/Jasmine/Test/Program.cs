@@ -178,9 +178,9 @@ namespace Test
 
        
         public int Age { get; set; }
-        [NotNull]
+        [Nullable]
         public int? Sex { get; set; }
-        [NotNull]
+        [Nullable]
         [SqlDataType("char(12)")]
        
         public string Name { get; set; }

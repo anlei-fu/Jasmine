@@ -14,6 +14,8 @@ namespace Jasmine.Orm
         public IDictionary<string, ColumnMetaData> Columns { get; set; } = new Dictionary<string, ColumnMetaData>();
         public Func<object> Constructor { get; set; }
         public int Count =>Columns.Count;
+
+
         public IEnumerator<ColumnMetaData> GetEnumerator()
         {
             foreach (var item in Columns.Values)

@@ -9,13 +9,13 @@ namespace Jasmine.Orm.Attributes
     public  class ColumnNameAttribute:Attribute
     {
 
-        public ColumnNameAttribute(string sqlName)
+        public ColumnNameAttribute(string columnName)
         {
-            SqlName = sqlName;
+            ColumnName = columnName;
         }
         /// <summary>
         /// 数据库字段名
         /// </summary>
-        public string SqlName { get; set; }
+        public string ColumnName { get; set; }
     }
 }

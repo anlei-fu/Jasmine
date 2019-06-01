@@ -27,6 +27,11 @@ namespace Jasmine.Configuration
             return new PropertyNodeParser().Parse(config).GetValue(this);
         }
 
+        public string GetConfig(string config,object parameter)
+        {
+            return null;
+        }
+
       
         public void LoadConfig(string path)
         {
