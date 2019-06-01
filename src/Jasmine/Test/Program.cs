@@ -180,8 +180,13 @@ namespace Test
         public int Age { get; set; }
         [Nullable]
         public int? Sex { get; set; }
+<<<<<<< HEAD
         [Nullable]
         [SqlDataType("char(12)")]
+=======
+        [NotNull]
+        [SqlColumnTypeAttribute("char(12)")]
+>>>>>>> abd18fb1fcdd791e769188a65fdc4c0ae78ae8d4
        
         public string Name { get; set; }
     }

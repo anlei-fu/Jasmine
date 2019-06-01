@@ -8,7 +8,7 @@ namespace Jasmine.Orm.Implements
 {
     public class DefaultCursor : ICursor
     {
-        public DefaultCursor(SqlResultContext context, IOrmConvertorProvider sqlConvertorProvider, SqlConnection connection, IDbConnectionProvider provider)
+        public DefaultCursor(QueryResultContext context, IQueryResultResolverProvider sqlConvertorProvider, SqlConnection connection, IDbConnectionProvider provider)
         {
             _context = context;
             _provider = provider;
@@ -16,13 +16,13 @@ namespace Jasmine.Orm.Implements
             _convertorProvider = sqlConvertorProvider;
         }
         private SqlConnection _connection;
-        private SqlResultContext _context;
+        private QueryResultContext _context;
         private IDbConnectionProvider _provider;
-        private IOrmConvertorProvider _convertorProvider;
+        private IQueryResultResolverProvider _convertorProvider;
         private IUnknowTypeConvertor _unknowTypeConvertor;
         public bool Closed { get; private set; }
 
-        public ConcurrentDictionary<string,QuryResultColumnMetaInfo> Columns => _context.TempTable.Columns;
+        public ConcurrentDictionary<string,QuryResultColumnInfo> Columns => _context.ResultTable.Columns;
 
         public bool HasRow => _context.Reader.HasRows;
 
@@ -41,7 +41,7 @@ namespace Jasmine.Orm.Implements
 
             var t = 0;
 
-            var convertor = _convertorProvider.GetConvertor(type);
+            var convertor = _convertorProvider.GetResolver(type);
 
 
             while (_context.Reader.HasRows)
@@ -52,7 +52,7 @@ namespace Jasmine.Orm.Implements
                 }
                 else
                 {
-                    result.Add((T)convertor.FromResult(_context, type));
+                    result.Add((T)convertor.Resolve(_context, type));
                 }
             }
 
@@ -83,7 +83,7 @@ namespace Jasmine.Orm.Implements
         public T ReadOne<T>()
         {
             return _context.Reader.HasRows && _context.Reader.Read() ?
-                                                (T)_convertorProvider.GetConvertor(typeof(T)).FromResult(_context, typeof(T)) : default(T);
+                                                (T)_convertorProvider.GetResolver(typeof(T)).Resolve(_context, typeof(T)) : default(T);
 
         }
 

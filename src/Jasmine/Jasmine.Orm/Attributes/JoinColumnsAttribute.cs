@@ -8,5 +8,6 @@ namespace Jasmine.Orm.Attributes
     [AttributeUsage(AttributeTargets.Property)]
     public  class JoinColumnsAttribute:OrmAttribute
     {
+
     }
 }

@@ -6,7 +6,7 @@ using System.Collections.Generic;
 
 namespace Jasmine.Orm
 {
-    public class TableInfoReflectResolver : IMetaDataReflectResolver<TableMetaData>
+    public class TableMetaDataReflectResolver : IMetaDataReflectResolver<TableMetaData>
     {
         public TableMetaData Resolve(Type type)
         {
@@ -58,7 +58,7 @@ namespace Jasmine.Orm
                     column.ColumnName = pattrs.GetAttribute<ColumnNameAttribute>()[0].ColumnName;
                 }
 
-                if(pattrs.Contains<SqlDataTypeAttribute>())
+                if(pattrs.Contains<SqlColumnTypeAttributeAttribute>())
                 {
                     column.SqlType = pattrs.GetAttribute<SqlDataTypeAttribute>()[0].SqlType;
                 }

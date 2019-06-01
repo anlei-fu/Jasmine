@@ -190,7 +190,9 @@ namespace Jasmine.Orm
                     return _sqlServerCs.TryGetValue(type, out var sqlServerV) ? sqlServerV : null;
 
                 case DataSourceType.Oracle:
+
                     break;
+
                 case DataSourceType.MySql:
 
                     return _mysqlCs.TryGetValue(type, out var mysqlV) ? mysqlV : null;

@@ -12,7 +12,7 @@ namespace Jasmine.Orm.Implements
 
         }
         public static readonly IUnknowTypeConvertor Instance = new DefaultUnkowTypeConvertor();
-        public IEnumerable<object> Convert(SqlResultContext context)
+        public IEnumerable<object> Convert(QueryResultContext context)
         {
             var result = new List<object>();
 

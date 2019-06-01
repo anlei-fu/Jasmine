@@ -3,7 +3,6 @@ using Jasmine.Orm.Interfaces;
 using Jasmine.Reflection;
 using System;
 using System.Collections.Generic;
-using System.Data.Common;
 using System.Text;
 
 namespace Jasmine.Orm.Implements
@@ -59,9 +58,8 @@ namespace Jasmine.Orm.Implements
 
         public static readonly ISqlBaseTypeConvertor Instance = new DefaultBaseTypeConvertor();
 
-        public object FromSql(DbDataReader reader, int index, Type type)
+        public object ConverToOtherType(object value, Type type)
         {
-            var value = reader.GetValue(index);
 
             if (type.IsEnum)
             {
@@ -151,7 +149,7 @@ namespace Jasmine.Orm.Implements
             }
         }
 
-        public string ToSQL(Type type, object obj, bool nullable = true)
+        public string ConvertToSqlString(Type type, object obj, bool nullable = true)
         {
             if (obj == null)
             {
@@ -192,6 +190,7 @@ namespace Jasmine.Orm.Implements
 
             return $"'{sb.ToString()}'";
         }
+
 
     }
 }
