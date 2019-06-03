@@ -69,7 +69,7 @@ namespace Jasmine.Ioc
 
             _metaDataManager.TryGetValue(serviceType, out var metaData);
 
-            if(metaData==null)//interface or abstrct class ,pre generate if found implement,_interface map should  add mapping
+            if(metaData==null)//interface or abstrct class ,pregenerate if found implement,_interface map should  add mapping
             {
                 var impl = _metaDataManager.GetImplementation(serviceType);
 
@@ -92,6 +92,7 @@ namespace Jasmine.Ioc
                 if (!_singletons.TryGetValue(serviceType, out var instance))
                 {
                     instance = _instanceCreator.Create(metaData, node);
+
                     _singletons.TryAdd(serviceType,instance);
                 }
 

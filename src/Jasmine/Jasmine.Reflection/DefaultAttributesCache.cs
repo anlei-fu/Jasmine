@@ -34,6 +34,11 @@ namespace Jasmine.Reflection.Implements
             return _keyMap.ContainsKey(attrType);
         }
 
+        public bool Contains<Type>()
+        {
+            throw new NotImplementedException();
+        }
+
         public Attribute[] GetAttribute(string name)
         {
             return _nameMap.TryGetValue(name, out var result) ? result.ToArray() : null;

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Data.Common;
 
 namespace Jasmine.Orm.Interfaces
 {
@@ -20,6 +19,6 @@ namespace Jasmine.Orm.Interfaces
         /// <param name="index"></param>
         /// <param name="convertTo"></param>
         /// <returns></returns>
-        object ConverToOtherType(object value, Type convertTo);
+        object ExpliciteConvert(object value, Type convertTo);
     }
 }

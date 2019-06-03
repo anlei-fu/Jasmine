@@ -6,7 +6,7 @@ namespace Jasmine.Orm.Attributes
     /// use to imply a sql data type {char,nchar,varchar,boolean....}
     /// </summary>
     [AttributeUsage(AttributeTargets.Property, AllowMultiple = false)]
-    public  class SqlColumnTypeAttribute:OrmAttribute
+    public  class SqlColumnTypeAttribute:Attribute
     {
         public SqlColumnTypeAttribute(string type)
         {

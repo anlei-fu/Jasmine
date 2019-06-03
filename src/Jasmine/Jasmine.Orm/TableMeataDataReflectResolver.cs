@@ -32,14 +32,7 @@ namespace Jasmine.Orm
                 if (pattrs.Contains<SqlIgnoreAttribute>())
                     continue;
 
-                if(pattrs.Contains<JoinTableAttribute>())
-                {
-                    var joinTable = getJoinTable(item);
-
-                    table.JoinTables.Add(joinTable.Name, joinTable);
-
-                    continue;
-                }
+                
 
                 if(pattrs.Contains<JoinColumnsAttribute>())
                 {
@@ -58,7 +51,7 @@ namespace Jasmine.Orm
                     column.ColumnName = pattrs.GetAttribute<ColumnNameAttribute>()[0].ColumnName;
                 }
 
-                if(pattrs.Contains<SqlColumnTypeAttributeAttribute>())
+                if(pattrs.Contains<SqlColumnTypeAttribute>())
                 {
                     column.SqlType = pattrs.GetAttribute<SqlDataTypeAttribute>()[0].SqlType;
                 }

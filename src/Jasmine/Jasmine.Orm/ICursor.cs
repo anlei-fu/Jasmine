@@ -12,11 +12,6 @@ namespace Jasmine.Orm.Interfaces
     public interface ICursor:IDisposable
     {
         /// <summary>
-        /// still has any row to read
-        /// </summary>
-        bool HasRow { get; }
-        ConcurrentDictionary<string, QuryResultColumnInfo> Columns { get; }
-        /// <summary>
         /// read one row
         /// </summary>
         /// <returns></returns>
@@ -40,6 +35,19 @@ namespace Jasmine.Orm.Interfaces
         /// <param name="count">count of rows to read</param>
         /// <returns></returns>
         Task<IEnumerable<T>> ReadAsync<T>(int count);
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <returns></returns>
+
+        IEnumerable<T> ReadToEnd<T>();
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <returns></returns>
+        Task<IEnumerable<T>> ReadToEndAsync<T>();
         /// <summary>
         /// close cursor ，internal close sql connection
         /// </summary>

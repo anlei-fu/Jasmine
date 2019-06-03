@@ -3,6 +3,7 @@ using Jasmine.Orm.Model;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Data.SqlClient;
+using System.Threading.Tasks;
 
 namespace Jasmine.Orm.Implements
 {
@@ -24,7 +25,7 @@ namespace Jasmine.Orm.Implements
 
         public ConcurrentDictionary<string,QuryResultColumnInfo> Columns => _context.ResultTable.Columns;
 
-        public bool HasRow => _context.Reader.HasRows;
+      
 
         public void Close()
         {
@@ -44,53 +45,41 @@ namespace Jasmine.Orm.Implements
             var convertor = _convertorProvider.GetResolver(type);
 
 
-            while (_context.Reader.HasRows)
-            {
-                if (t++ > count && !_context.Reader.Read())
-                {
-                    break;
-                }
-                else
-                {
-                    result.Add((T)convertor.Resolve(_context, type));
-                }
-            }
+           
 
             return result;
         }
 
-        public IEnumerable<IEnumerable<object>> Read(int count)
-        {
-            var t = 0;
-
-            var result = new List<IEnumerable<object>>();
-
-            while (_context.Reader.HasRows)
-            {
-                if (t++ > count && !_context.Reader.Read())
-                {
-                    break;
-                }
-                else
-                {
-                    result.Add(_unknowTypeConvertor.Convert(_context));
-                }
-            }
-
-            return result;
-        }
 
         public T ReadOne<T>()
         {
-            return _context.Reader.HasRows && _context.Reader.Read() ?
-                                                (T)_convertorProvider.GetResolver(typeof(T)).Resolve(_context, typeof(T)) : default(T);
-
+            return default;
         }
 
-        public IEnumerable<object> ReadOne()
+       
+        public Task<T> ReadOneAsync<T>()
         {
-            return _context.Reader.HasRows && _context.Reader.Read() ?
-                               _unknowTypeConvertor.Convert(_context) : null;
+            throw new System.NotImplementedException();
+        }
+
+        public Task<IEnumerable<T>> ReadAsync<T>(int count)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public IEnumerable<T> ReadToEnd<T>()
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public Task<IEnumerable<T>> ReadToEndAsync<T>()
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public void Dispose()
+        {
+            throw new System.NotImplementedException();
         }
     }
 }

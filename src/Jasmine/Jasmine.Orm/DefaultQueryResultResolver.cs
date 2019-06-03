@@ -32,12 +32,11 @@ namespace Jasmine.Orm.Implements
 
                     if (rawValue.GetType() == item.RelatedType)
                     {
-
                         item.Setter.Invoke(data, rawValue);
                     }
                     else
                     {
-                        item.Setter.Invoke(data, _baseTypeConvertor.ConverToOtherType(rawValue, item.RelatedType));
+                        item.Setter.Invoke(data, _baseTypeConvertor.ExpliciteConvert(rawValue, item.RelatedType));
                     }
                 }
             }

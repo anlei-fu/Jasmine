@@ -58,13 +58,11 @@ namespace Jasmine.Orm.Implements
 
         public static readonly ISqlBaseTypeConvertor Instance = new DefaultBaseTypeConvertor();
 
-        public object ConverToOtherType(object value, Type type)
+        public object ExpliciteConvert(object value, Type type)
         {
 
             if (type.IsEnum)
             {
-               
-
             }
 
             switch (type.FullName)
@@ -96,16 +94,12 @@ namespace Jasmine.Orm.Implements
                     return (short?)value;
                 case BaseTypes.Int:
                     return (int)value;
-
                 case BaseTypes.NInt:
                     return (int?)value;
-
                 case BaseTypes.UInt:
                     return (uint)value;
-
                 case BaseTypes.NUInt:
                     return (uint?)value;
-
                 case BaseTypes.Long:
                     return (long)value;
                 case BaseTypes.NLong:
@@ -143,9 +137,9 @@ namespace Jasmine.Orm.Implements
                 case BaseTypes.NDateTimeOffset:
                     return (DateTimeOffset?)value;
                 case BaseTypes.String:
-                    return (string)value;
+                    return value;
                 default:
-                    throw new NotConvertableTypeException(type,GetType());
+                    throw new NotConvertableException(type,GetType());
             }
         }
 
@@ -172,7 +166,7 @@ namespace Jasmine.Orm.Implements
             else if (_baseTypes.Contains(type))
                 return obj.ToString();
             else
-                throw new NotConvertableTypeException(type, GetType());
+                throw new NotConvertableException(type, GetType());
         }
 
 

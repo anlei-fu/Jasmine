@@ -172,7 +172,7 @@ namespace MovieSpider
                 title = titles[0].InnerText.Replace("_BT种子_迅雷种子下载_种子搜索神器网页版", "");
 
 
-            var result = StringHelper.Select(page, "ed2k:", "\"");
+            var result = StringExtensions.Select(page, "ed2k:", "\"");
 
             if (result.Count != 0)
             {
@@ -190,7 +190,7 @@ namespace MovieSpider
 
             }
 
-             result = StringHelper.Select(page, "magnet:", "\"");
+             result = StringExtensions.Select(page, "magnet:", "\"");
 
             if (result.Count != 0)
             {
@@ -228,7 +228,7 @@ namespace MovieSpider
                 title = titles[0].InnerText.Replace("_BT种子_迅雷种子下载_种子搜索神器网页版", "");
 
 
-            var result = StringHelper.Select(page, "data-link=\"ed2k:", "\"");
+            var result = StringExtensions.Select(page, "data-link=\"ed2k:", "\"");
 
             if (result.Count != 0)
             {
@@ -246,7 +246,7 @@ namespace MovieSpider
                
             }
 
-             result = StringHelper.Select(page, "value=\"ed2k:", "\"");
+             result = StringExtensions.Select(page, "value=\"ed2k:", "\"");
 
             if (result.Count != 0)
             {
@@ -285,7 +285,7 @@ namespace MovieSpider
                 title = titles[0].InnerText.Replace("高清迅雷下载_百度云 - TL95", "");
 
 
-            var result = StringHelper.Select(page, "value=\"thunder", "\"");
+            var result = StringExtensions.Select(page, "value=\"thunder", "\"");
 
             if (result.Count != 0)
             {
@@ -299,7 +299,7 @@ namespace MovieSpider
                 });
             }
 
-             result = StringHelper.Select(page, "thunderhref=\"", "\"");
+             result = StringExtensions.Select(page, "thunderhref=\"", "\"");
 
             if (result.Count != 0)
             {
@@ -332,7 +332,7 @@ namespace MovieSpider
                 title = titles[0].InnerText.Replace("高清迅雷下载_百度云 - TL95", "");
 
 
-            var result = StringHelper.Select(page, "href=\"magnet", " \"");
+            var result = StringExtensions.Select(page, "href=\"magnet", " \"");
 
             if (result.Count != 0)
             {
@@ -365,7 +365,7 @@ namespace MovieSpider
                 title = titles[0].InnerText.Replace("_BT种子_迅雷种子下载_种子搜索神器网页版", "");
 
 
-            var result = StringHelper.Select(page, "ed2k://", "</");
+            var result = StringExtensions.Select(page, "ed2k://", "</");
 
             if (result.Count != 0)
             {
@@ -398,15 +398,15 @@ namespace MovieSpider
                 title = titles[0].InnerText.Replace("迅雷下载_BT种子磁力下载 - LOL电影天堂", "");
 
 
-            var result = StringHelper.Select(page, "var downurls=\"", "\";");
+            var result = StringExtensions.Select(page, "var downurls=\"", "\";");
 
             if(result.Count!=0)
             {
                 var data = result[0].Replace("var downurls=\"", "").Replace("\";", "");
 
-                foreach (var item in StringHelper.Splite1(data,"#"))
+                foreach (var item in StringExtensions.Splite1(data,"#"))
                 {
-                    var pair = StringHelper.Splite1(item, "$");
+                    var pair = StringExtensions.Splite1(item, "$");
 
                     if(pair.Count==2)
                     {

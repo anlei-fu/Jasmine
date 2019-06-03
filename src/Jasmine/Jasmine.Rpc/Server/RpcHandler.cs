@@ -195,9 +195,9 @@ namespace Jasmine.Rpc.Server
         {
             var dic = new Dictionary<string, string>();
 
-            foreach (var item in StringHelper.Splite1(str, "&"))
+            foreach (var item in StringExtensions.Splite1(str, "&"))
             {
-                var pair = StringHelper.Splite1(item, "=");
+                var pair = StringExtensions.Splite1(item, "=");
 
                 if (pair.Count == 2)
                 {

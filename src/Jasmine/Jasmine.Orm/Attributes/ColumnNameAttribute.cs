@@ -11,19 +11,11 @@ namespace Jasmine.Orm.Attributes
 
         public ColumnNameAttribute(string columnName)
         {
-<<<<<<< HEAD
             ColumnName = columnName;
-=======
-            ColumnName = sqlName;
->>>>>>> abd18fb1fcdd791e769188a65fdc4c0ae78ae8d4
         }
         /// <summary>
         /// 数据库字段名
         /// </summary>
-<<<<<<< HEAD
         public string ColumnName { get; set; }
-=======
-        public string ColumnName { get;}
->>>>>>> abd18fb1fcdd791e769188a65fdc4c0ae78ae8d4
     }
 }

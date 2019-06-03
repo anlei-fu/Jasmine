@@ -5,10 +5,9 @@ using System.Reflection.Emit;
 namespace Jasmine.Reflection
 {
     /// <summary>
-    /// 动态方法貌似能够提高反射的性能，此类使用的动态方法的部分是从
-    /// json.net反射部分拷贝下来的，
-    /// 参考 https://github.com/JamesNK/Newtonsoft.Json/blob/master/Src/Newtonsoft.Json/Utilities/DynamicReflectionDelegateFactory.cs
-    /// 值类型参数 压栈
+    /// 
+    /// ref: https://github.com/JamesNK/Newtonsoft.Json/blob/master/Src/Newtonsoft.Json/Utilities/DynamicReflectionDelegateFactory.cs
+    /// 
     /// </summary>
     public class DynamicMethodDelegateFatory
     {
@@ -16,13 +15,15 @@ namespace Jasmine.Reflection
         {
             if (info.IsLiteral)
             {
-                object constantValue = info.GetValue(null);
+                var constantValue = info.GetValue(null);
+
                 Func<object, object> getter = o => constantValue;
+
                 return getter;
             }
 
-            DynamicMethod dynamicMethod = createDynamicMethod("Get" + info.Name, typeof(object), new[] { typeof(object) }, info.DeclaringType);
-            ILGenerator generator = dynamicMethod.GetILGenerator();
+            var dynamicMethod = createDynamicMethod("Get" + info.Name, typeof(object), new[] { typeof(object) }, info.DeclaringType);
+            var generator = dynamicMethod.GetILGenerator();
 
             generateCreateGetFieldIL(info, generator);
 
@@ -52,8 +53,8 @@ namespace Jasmine.Reflection
         /// <returns></returns>
         public static Action<object, object> CreateFiledSetter(FieldInfo fieldInfo)
         {
-            DynamicMethod dynamicMethod = createDynamicMethod("Set" + fieldInfo.Name, null, new[] { typeof(object), typeof(object) }, fieldInfo.DeclaringType);
-            ILGenerator generator = dynamicMethod.GetILGenerator();
+            var dynamicMethod = createDynamicMethod("Set" + fieldInfo.Name, null, new[] { typeof(object), typeof(object) }, fieldInfo.DeclaringType);
+            var generator = dynamicMethod.GetILGenerator();
 
             generateCreateSetFieldIL(fieldInfo, generator);
 
@@ -94,8 +95,8 @@ namespace Jasmine.Reflection
         /// <returns></returns>
         public static Action<object, object> CreatePropertySetter(PropertyInfo info)
         {
-            DynamicMethod dynamicMethod = createDynamicMethod("Set" + info.Name, null, new[] { typeof(object), typeof(object) }, info.DeclaringType);
-            ILGenerator generator = dynamicMethod.GetILGenerator();
+            var dynamicMethod = createDynamicMethod("Set" + info.Name, null, new[] { typeof(object), typeof(object) }, info.DeclaringType);
+            var generator = dynamicMethod.GetILGenerator();
 
             generateCreateSetPropertyIL(info, generator);
 
@@ -110,8 +111,8 @@ namespace Jasmine.Reflection
 
         public static Func<object, object[], object> CreateMethodCall(MethodBase method)
         {
-            DynamicMethod dynamicMethod = createDynamicMethod(method.ToString(), typeof(object), new[] { typeof(object), typeof(object[]) }, method.DeclaringType);
-            ILGenerator generator = dynamicMethod.GetILGenerator();
+            var dynamicMethod = createDynamicMethod(method.ToString(), typeof(object), new[] { typeof(object), typeof(object[]) }, method.DeclaringType);
+            var generator = dynamicMethod.GetILGenerator();
 
             generateCreateMethodCallIL(method, generator, 1);
 
@@ -121,9 +122,9 @@ namespace Jasmine.Reflection
 
         private static void generateCreateMethodCallIL(MethodBase method, ILGenerator generator, int argsIndex)
         {
-            ParameterInfo[] args = method.GetParameters();
+            var args = method.GetParameters();
 
-            Label argsOk = generator.DefineLabel();
+            var argsOk = generator.DefineLabel();
 
             // throw an error if the number of argument values doesn't match method parameters
             generator.Emit(OpCodes.Ldarg, argsIndex);
@@ -140,19 +141,19 @@ namespace Jasmine.Reflection
                 generator.PushInstance(method.DeclaringType);
             }
 
-            LocalBuilder localConvertible = generator.DeclareLocal(typeof(IConvertible));
-            LocalBuilder localObject = generator.DeclareLocal(typeof(object));
+            var localConvertible = generator.DeclareLocal(typeof(IConvertible));
+            var localObject = generator.DeclareLocal(typeof(object));
 
             for (int i = 0; i < args.Length; i++)
             {
-                ParameterInfo parameter = args[i];
-                Type parameterType = parameter.ParameterType;
+                var parameter = args[i];
+                var parameterType = parameter.ParameterType;
 
                 if (parameterType.IsByRef)
                 {
                     parameterType = parameterType.GetElementType();
 
-                    LocalBuilder localVariable = generator.DeclareLocal(parameterType);
+                    var localVariable = generator.DeclareLocal(parameterType);
 
                     // don't need to set variable for 'out' parameter
                     if (!parameter.IsOut)
@@ -161,8 +162,8 @@ namespace Jasmine.Reflection
 
                         if (parameterType.IsPrimitive)
                         {
-                            Label skipSettingDefault = generator.DefineLabel();
-                            Label finishedProcessingParameter = generator.DefineLabel();
+                            var skipSettingDefault = generator.DefineLabel();
+                            var finishedProcessingParameter = generator.DefineLabel();
 
                             // check if parameter is not null
                             generator.Emit(OpCodes.Brtrue_S, skipSettingDefault);
@@ -197,15 +198,15 @@ namespace Jasmine.Reflection
 
                     // have to check that value type parameters aren't null
                     // otherwise they will error when unboxed
-                    Label skipSettingDefault = generator.DefineLabel();
-                    Label finishedProcessingParameter = generator.DefineLabel();
+                    var skipSettingDefault = generator.DefineLabel();
+                    var finishedProcessingParameter = generator.DefineLabel();
 
                     // check if parameter is not null
                     generator.Emit(OpCodes.Ldloc_S, localObject);
                     generator.Emit(OpCodes.Brtrue_S, skipSettingDefault);
 
                     // parameter has no value, initialize to default
-                    LocalBuilder localVariable = generator.DeclareLocal(parameterType);
+                    var localVariable = generator.DeclareLocal(parameterType);
                     generator.Emit(OpCodes.Ldloca_S, localVariable);
                     generator.Emit(OpCodes.Initobj, parameterType);
                     generator.Emit(OpCodes.Ldloc_S, localVariable);
@@ -217,12 +218,12 @@ namespace Jasmine.Reflection
                     if (parameterType.IsPrimitive)
                     {
                         // for primitive types we need to handle type widening (e.g. short -> int)
-                        MethodInfo toParameterTypeMethod = typeof(IConvertible)
+                        var toParameterTypeMethod = typeof(IConvertible)
                             .GetMethod("To" + parameterType.Name, new[] { typeof(IFormatProvider) });
 
                         if (toParameterTypeMethod != null)
                         {
-                            Label skipConvertible = generator.DefineLabel();
+                            var skipConvertible = generator.DefineLabel();
 
                             // check if argument type is an exact match for parameter type
                             // in this case we may use cheap unboxing instead
@@ -273,7 +274,7 @@ namespace Jasmine.Reflection
                 generator.CallMethod((MethodInfo)method);
             }
 
-            Type returnType = method.IsConstructor
+            var returnType = method.IsConstructor
                 ? method.DeclaringType
                 : ((MethodInfo)method).ReturnType;
 
@@ -299,8 +300,8 @@ namespace Jasmine.Reflection
         /// <returns></returns>
         public static Func<object[],object> CreateParameterizedConstructor(MethodBase method)
         {
-            DynamicMethod dynamicMethod = createDynamicMethod(method.ToString(), typeof(object), new[] { typeof(object[]) }, method.DeclaringType);
-            ILGenerator generator = dynamicMethod.GetILGenerator();
+            var dynamicMethod = createDynamicMethod(method.ToString(), typeof(object), new[] { typeof(object[]) }, method.DeclaringType);
+            var generator = dynamicMethod.GetILGenerator();
 
             generateCreateMethodCallIL(method, generator, 0);
 
@@ -315,8 +316,8 @@ namespace Jasmine.Reflection
         public static Func<object, object> CreatePropertyGetter(PropertyInfo info)
         {
 
-            DynamicMethod dynamicMethod = createDynamicMethod("Get" + info.Name, typeof(object), new[] { typeof(object) }, info.DeclaringType);
-            ILGenerator generator = dynamicMethod.GetILGenerator();
+            var dynamicMethod = createDynamicMethod("Get" + info.Name, typeof(object), new[] { typeof(object) }, info.DeclaringType);
+            var generator = dynamicMethod.GetILGenerator();
 
             generateCreateGetPropertyIL(info, generator);
 
@@ -325,9 +326,9 @@ namespace Jasmine.Reflection
 
         public static Func<object> CreateDefaultConstructor(Type type)
         {
-            DynamicMethod dynamicMethod = createDynamicMethod("Create" + type.FullName, type, null, type);
+            var dynamicMethod = createDynamicMethod("Create" + type.FullName, type, null, type);
             dynamicMethod.InitLocals = true;
-            ILGenerator generator = dynamicMethod.GetILGenerator();
+            var generator = dynamicMethod.GetILGenerator();
 
             generateCreateDefaultConstructorIL(type, generator, typeof(object));
 
@@ -337,7 +338,7 @@ namespace Jasmine.Reflection
 
         private static DynamicMethod createDynamicMethod(string name, Type returnType, Type[] parameterTypes, Type owner)
         {
-            DynamicMethod dynamicMethod = !owner.IsInterface
+            var dynamicMethod = !owner.IsInterface
                 ? new DynamicMethod(name, returnType, parameterTypes, owner, true)
                 : new DynamicMethod(name, returnType, parameterTypes, owner.Module, true);
 
@@ -356,7 +357,7 @@ namespace Jasmine.Reflection
             }
             else
             {
-                ConstructorInfo constructorInfo =
+                var constructorInfo =
                     type.GetConstructor(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance, null, new Type[] { }, null);
 
                 if (constructorInfo == null)
@@ -371,7 +372,7 @@ namespace Jasmine.Reflection
 
         private static void generateCreateGetPropertyIL(PropertyInfo propertyInfo, ILGenerator generator)
         {
-            MethodInfo getMethod = propertyInfo.GetGetMethod(true);
+            var getMethod = propertyInfo.GetGetMethod(true);
 
             if (getMethod == null)
                 throw new InvalidOperationException("the property doesn't have getter method! ");
@@ -405,7 +406,7 @@ namespace Jasmine.Reflection
 
         private static void generateCreateSetPropertyIL(PropertyInfo propertyInfo, ILGenerator generator)
         {
-            MethodInfo setMethod = propertyInfo.GetSetMethod(true);
+            var setMethod = propertyInfo.GetSetMethod(true);
 
             if (!setMethod.IsStatic)
             {

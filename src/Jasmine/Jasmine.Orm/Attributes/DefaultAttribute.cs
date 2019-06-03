@@ -6,7 +6,7 @@ namespace Jasmine.Orm.Attributes
     /// default constraints
     /// </summary>
     [AttributeUsage(AttributeTargets.Property,AllowMultiple =false)]
-    public class DefaultAttribute:SqlConstraintAttribute
+    public class DefaultAttribute:Attribute
     {
         public DefaultAttribute(object value)
         {

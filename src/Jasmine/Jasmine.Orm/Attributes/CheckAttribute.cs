@@ -6,7 +6,7 @@ namespace Jasmine.Orm.Attributes
     /// check constraints
     /// </summary>
     [AttributeUsage(AttributeTargets.Property , AllowMultiple = false)]
-    public  class CheckAttribute:SqlConstraintAttribute
+    public  class CheckAttribute:Attribute
     {
         public CheckAttribute(string expression)
         {
