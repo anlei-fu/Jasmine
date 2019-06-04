@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Jasmine.Common
 {
-    public  interface IMetric:IReadOnlyCollection<IStatItem>
+    public  interface IMetric
       
     {
         int Avarage { get; }
@@ -14,7 +14,9 @@ namespace Jasmine.Common
         int Slowest { get; }
         float FaileRate { get; }
         float SuccesRate { get; }
-        DateTime LastCaculateTime { get; }
+        int Median { get; }
+
+        string LastCaculateTime { get; }
         void Add(IStatItem item);
         void Caculate();
         void Clear();

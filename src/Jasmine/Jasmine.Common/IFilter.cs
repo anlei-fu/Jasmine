@@ -14,5 +14,7 @@ namespace Jasmine.Common
         /// attached next filter
         /// </summary>
         IFilter<T> Next { get; set; }
+
+        IFilterPipeline<T> Pipeline { get; set; }
     }
 }

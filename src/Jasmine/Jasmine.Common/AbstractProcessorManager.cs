@@ -1,8 +1,9 @@
-﻿using Jasmine.Common.Exceptions;
-using System;
+﻿using Jasmine.Common.Attributes;
+using Jasmine.Common.Exceptions;
 using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Jasmine.Common
 {
@@ -15,6 +16,7 @@ namespace Jasmine.Common
 
         public int Count => _groups.Count;
 
+        [RestfulIgnore]
         public void AddProcessor(string path, IRequestProcessor<T> processor)
         {
            if(_pathMap.TryAdd(path,processor))
@@ -35,20 +37,24 @@ namespace Jasmine.Common
             }
         }
 
-      
+        public IRequestProcessor<T>[] GetAllProcessor()
+        {
+            return _pathMap.Values.ToArray();
+        }
 
+        [RestfulIgnore]
         public bool ContainsGroup(string name)
         {
             return _groups.ContainsKey(name);
         }
 
-     
 
+        [RestfulIgnore]
         public bool ContainsProcessor(string path)
         {
             return _pathMap.ContainsKey(path);
         }
-
+        [RestfulIgnore]
         public bool ContainsProcessor(string groupName, string name)
         {
            if(_groups.TryGetValue(groupName,out var value))
@@ -60,7 +66,7 @@ namespace Jasmine.Common
                 return false;
             }
         }
-
+        [RestfulIgnore]
         public IEnumerator<IServiceGroup> GetEnumerator()
         {
             foreach (var item in _groups.Values)
@@ -74,6 +80,7 @@ namespace Jasmine.Common
             return _groups.TryGetValue(name, out var value) ? value : null;
         }
 
+        [Description("获取服务统计")]
         public IRequestProcessor<T> GetProcessor(string path)
         {
             return _pathMap.TryGetValue(path, out var value) ? value : null;
@@ -92,11 +99,7 @@ namespace Jasmine.Common
             }
         }
 
-        public void RemoveItem(string name)
-        {
-            throw new NotImplementedException();
-        }
-
+       
         public void RemoveProcessor(string path)
         {
             if(_pathMap.TryRemove(path,out var item))
@@ -110,7 +113,13 @@ namespace Jasmine.Common
 
         public void RemoveService(string path)
         {
-            throw new NotImplementedException();
+            if(_pathMap.TryRemove(path,out var value))
+            {
+               if( _groups.TryGetValue(value.GroupName,out var group))
+                {
+                    group.RemoveItem(value.Name);
+                }
+            }
         }
 
         public void RemoveService(string groupName, string name)
@@ -165,7 +174,7 @@ namespace Jasmine.Common
         {
             if (_pathMap.TryGetValue(path, out var value))
             {
-                value.Available = available;
+                value.SetAvailable(available);
             }
         }
         private void setServiceAvailable(string groupName, string serviceName, bool available)
@@ -175,7 +184,7 @@ namespace Jasmine.Common
                 var item = group.GetItem(serviceName);
 
                 if (item is IRequestProcessor<T> processor)
-                    processor.Available = available;
+                    processor.SetAvailable(available);
 
             }
         }
@@ -186,11 +195,12 @@ namespace Jasmine.Common
                 foreach (var item in group)
                 {
                     if (item is IRequestProcessor<T> processor)
-                        processor.Available = available;
+                        processor.SetAvailable(available);
 
                 }
             }
         }
+        [RestfulIgnore]
         IEnumerator IEnumerable.GetEnumerator()
         {
             return _groups.Values.GetEnumerator();

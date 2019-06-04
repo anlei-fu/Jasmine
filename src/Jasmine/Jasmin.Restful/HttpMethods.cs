@@ -2,13 +2,13 @@
 {
     public class HttpMethods
     {
-        public const string POST = "POST";
-        public const string GET = "GET";
-        public const string PUT = "PUT";
-        public const string DELETE = "DELETE";
-        public const string TRACE = "TRACE";
-        public const string OPTION = "OPTION";
-        public const string HEAD = "HEAD";
+        public const string POST = "post";
+        public const string GET = "get";
+        public const string PUT = "put";
+        public const string DELETE = "delete";
+        public const string TRACE = "trace";
+        public const string OPTION = "option";
+        public const string HEAD = "head";
 
     }
 }

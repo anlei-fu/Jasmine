@@ -27,7 +27,7 @@ namespace Jasmine.Reflection
         /// <returns></returns>
         bool Contains(Type attrType);
 
-        bool Contains<Type>();
+        bool Contains<T>();
         /// <summary>
         /// get attr by type
         /// </summary>

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Threading;
 
@@ -14,7 +13,7 @@ namespace Jasmine.Common
         private int _failed;
 
         private readonly object _lockObject = new object();
-        private List<IStatItem> _items = new List<IStatItem>();
+        public List<IStatItem> Items = new List<IStatItem>();
         public int Avarage { get; private set; }
 
         public int Total => _total;
@@ -30,7 +29,9 @@ namespace Jasmine.Common
         public float SuccesRate => _successed / (float)_total;
         public int Count => _total;
 
-        public DateTime LastCaculateTime { get; private set; }
+        public string LastCaculateTime { get; private set; }
+
+        public int Median { get; set; }
 
         public void Add(IStatItem item)
         {
@@ -43,46 +44,57 @@ namespace Jasmine.Common
 
             lock(_lockObject)
             {
-                if (item.Time > Slowest)
-                    Slowest = item.Time;
+                if (item.Elapsed > Slowest)
+                    Slowest = (int)item.Elapsed;
 
-                if (item.Time < Fatest)
-                    Fatest = item.Time;
+                if (item.Elapsed < Fatest)
+                    Fatest = (int)item.Elapsed;
+
+
+                
             }
 
-            _items.Add(item);
+            Items.Add(item);
 
+            if (Items.Count > 100)
+                Caculate();
 
         }
 
         public void Caculate()
         {
-            throw new NotImplementedException();
+            lock(_lockObject)
+            {
+                Items.Clear();
+
+                LastCaculateTime = DateTime.Now.ToString();
+            }
         }
 
         public IEnumerator<IStatItem> GetEnumerator()
         {
             lock(_lockObject)
             {
-                foreach (var item in _items)
+                foreach (var item in Items)
                 {
                     yield return item;
                 }
             }
         }
 
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            lock (_lockObject)
-                return _items.GetEnumerator();
-        }
+       
+        //IEnumerator IEnumerable.GetEnumerator()
+        //{
+        //    lock (_lockObject)
+        //        return _items.GetEnumerator();
+        //}
 
         public void Clear()
         {
             lock(_lockObject)
             {
                 Fatest = Slowest = Avarage =_total =_successed=_failed= 0;
-                _items.Clear();
+                Items.Clear();
             }
         }
     }

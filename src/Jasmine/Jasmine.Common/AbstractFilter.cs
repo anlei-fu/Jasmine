@@ -14,6 +14,8 @@ namespace Jasmine.Common
 
         public bool HasNext => Next != null;
 
+        public IFilterPipeline<T> Pipeline { get; set; }
+
         public abstract Task FiltsAsync(T context);
        
     }

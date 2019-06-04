@@ -102,11 +102,23 @@ namespace Jasmine.Ioc
 
             /*
              * pick first constructor as default constructor,if type has no none-parameter constructor
+             */
+            if (defaultConstructor == null)
+            {
+                defaultConstructor = _reflection.GetItem(type).Constructors.GetDefaultConstructor();
+
+                    defaultConstructor=    defaultConstructor==null? 
+                                                                   constructors.Length > 0 ? constructors[0] : null
+                                                                   :null;
+
+            }
+
+            /*
+             *  no constructor available
              */ 
             if (defaultConstructor == null)
-                defaultConstructor = _reflection.GetItem(type).Constructors.GetDefaultConstructor() ??
-                                                                                                 constructors[0];
-            
+                return metaData;
+
             metaData.ConstrctorMetaData = resolveConstructor(defaultConstructor);
 
 

@@ -9,6 +9,17 @@ namespace Jasmine.Restful.Implement
 {
     public class RestfulApplicationBuilder
     {
+        public RestfulApplicationBuilder()
+        {
+            ConfigServiceProvider(x =>
+            {
+                x.SetImplementationMapping(typeof(IRequestProcessorManager<HttpFilterContext>), typeof(RestfulProcessorManager));
+                x.AddSigleton(typeof(RestfulProcessorManager), RestfulProcessorManager.Instance);
+            });
+
+            AddRestfulService(typeof(RestfulProcessorManager));
+        }
+
         private int _port = 10336;
 
         private RestfulDispatcher _dispatcher = new RestfulDispatcher("restful-dispatcher", RestfulProcessorManager.Instance);
@@ -35,6 +46,24 @@ namespace Jasmine.Restful.Implement
         {
             foreach (var item in RestfulServiceScanner.Instance.Scan(assembly))
             {
+                item.Dispatcher = _dispatcher;
+
+                RestfulProcessorManager.Instance.AddProcessor(item.Path, item);
+            }
+
+            return this;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public RestfulApplicationBuilder AddRestfulService(Type type)
+        {
+            var restful= RestfulServiceMetaDataReflectResolver.Instance.Resolve(type);
+
+            foreach (var item in RestfulRequestProcessorGenerator.Instance.Generate(restful))
+            {
                 RestfulProcessorManager.Instance.AddProcessor(item.Path, item);
             }
 
@@ -57,6 +86,11 @@ namespace Jasmine.Restful.Implement
             return this;
         }
 
+
+        public RestfulApplicationBuilder ConfigSsl()
+        {
+            return this;
+        }
         public RestfulApplicationBuilder ConfigDispatcher(Action<RestfulDispatcher> dispatcher)
         {
             dispatcher(_dispatcher);

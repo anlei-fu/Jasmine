@@ -6,29 +6,29 @@ namespace Jasmine.Common
     ///  a whole  request processor
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    public  interface IRequestProcessor<T>:IPathFearture,IServiceItem
+    public interface IRequestProcessor<T> : IPathFearture, IServiceItem
     {
-      
+        IDispatcher<T> Dispatcher { get; set; }
         /// <summary>
         /// attached error filter
         /// </summary>
-        IFilterPipeline<T> ErrorFilter { get;  }
+        IFilterPipeline<T> ErrorFilter { get; }
         /// <summary>
         ///  filter pipeline
         /// </summary>
-        IFilterPipeline<T> Filter { get;  }
+        IFilterPipeline<T> Filter { get; }
         /// <summary>
         /// service metric
         /// </summary>
-        IMetric Metric { get;  }
+        IMetric Metric { get; }
         /// <summary>
         /// 
         /// </summary>
-        int MaxConcurrency { get;}
+        int MaxConcurrency { get; }
         /// <summary>
         /// 
         /// </summary>
-        bool Available { get;  }
+        bool Available { get; }
 
         Task FiltsAsysnc(T context);
 
@@ -37,6 +37,8 @@ namespace Jasmine.Common
         void ResetMaxConcurrency(int concurrency);
 
         string AlternativeService { get; set; }
-    
+        string Description { get; set; }
+        
+
     }
 }
