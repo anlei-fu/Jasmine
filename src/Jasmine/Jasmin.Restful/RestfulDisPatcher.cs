@@ -34,9 +34,17 @@ namespace Jasmine.Restful
                     {
                         await processor.FiltsAsysnc(context);
 
-                        var buffer = JsonSerializer.Instance.SerializeToBytes(context.ReturnValue);
 
-                        await context.HttpContext.Response.Body.WriteAsync(buffer, 0, buffer.Length);
+                        //handle processor
+
+                        if (context.ReturnValue != null)
+                        {
+                            var buffer = JsonSerializer.Instance.SerializeToBytes(context.ReturnValue);
+
+                            await context.HttpContext.Response.Body.WriteAsync(buffer, 0, buffer.Length);
+                        }
+
+                        context.HttpContext.Response.StatusCode = HttpStatuCodes.SUCESSED;
                     }
                     catch (Exception ex)
                     {
@@ -78,6 +86,8 @@ namespace Jasmine.Restful
                     var ext =  index!=-1? path.Substring(index, path.Length - index):
                                            ".html";
 
+                    context.HttpContext.Response.StatusCode = HttpStatuCodes.SUCESSED;
+
                     context.HttpContext.Response.Headers.Add("Content-Type", MediaTypeHelper.GetContentTypeByExtension(ext));
 
                     await stream.CopyToAsync(context.HttpContext.Response.Body);
@@ -93,7 +103,7 @@ namespace Jasmine.Restful
 
             /*
              * flush 
-             */ 
+             */
 
             await context.HttpContext.Response.Body.FlushAsync();
 

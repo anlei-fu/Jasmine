@@ -86,6 +86,8 @@ namespace Jasmine.Restful
                     processor.ErrorFilter.AddLast(filter);
                 }
 
+                processor.Description = item.Value.Description;
+
                 processor.MaxConcurrency = item.Value.MaxConcurrency;
 
                 processor.AlternativeService = item.Value.AlternativeService;

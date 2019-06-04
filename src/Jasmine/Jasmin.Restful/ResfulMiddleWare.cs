@@ -11,6 +11,7 @@ namespace Jasmine.Restful.Implement
         public static IDispatcher<HttpFilterContext> Dispatcher;
 
         private ILog _logger;
+
         private IPool<HttpFilterContext> _pool = new HttpFilterContextPool(10000);
 
         public string Name =>"Restful-Middleware";

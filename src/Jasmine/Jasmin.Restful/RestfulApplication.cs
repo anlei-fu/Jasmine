@@ -39,6 +39,7 @@ namespace Jasmine.Restful
                                                                     if (!_portSeted)
                                                                     {
                                                                         kestrelOptions.IPEndPoint = new IPEndPoint(IPAddress.Any, _port);
+
                                                                         _portSeted = true;
                                                                     }
                                                                 });

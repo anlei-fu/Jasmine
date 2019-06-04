@@ -73,6 +73,9 @@ namespace Jasmine.Restful
 
                     var processors = RestfulRequestProcessorGenerator.Instance.Generate(metaData);
 
+
+                    
+
                     ls.AddRange(processors);
                 }
 

@@ -10,7 +10,7 @@ namespace Jasmine.Restful
             Filter = new RestfulFilterPipeline();
         }
         public string HttpMethod { get; set; }
-
+        public RestfulRequestMetaData MetaData { get; set; }
      
     }
 }

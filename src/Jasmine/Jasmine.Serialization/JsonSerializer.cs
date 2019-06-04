@@ -10,7 +10,7 @@ namespace Jasmine.Serialization
     {
         private JsonSerializer()
         {
-
+         
         }
 
         public static readonly ISerializer Instance = new JsonSerializer();

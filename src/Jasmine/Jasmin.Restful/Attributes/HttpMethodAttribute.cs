@@ -6,7 +6,7 @@ namespace Jasmine.Restful.Attributes
     {
         public HttpMethodAttribute(string method)
         {
-            Method = method;
+            Method = method.ToLower();
         }
         public string Method { get;  }
     }

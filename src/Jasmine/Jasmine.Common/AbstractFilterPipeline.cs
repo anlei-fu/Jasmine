@@ -21,6 +21,9 @@ namespace Jasmine.Common
         public IFilter<T> Last => _list.Last.Value;
 
         public int Count => _list.Count;
+
+        public IRequestProcessor<T> Processor { get; set; }
+
         public IFilterPiplelineBuilder<T> AddAfter(string name, IFilter<T> filter)
         {
              var node= ensureFilterExistsAndGetFilterNode(name);

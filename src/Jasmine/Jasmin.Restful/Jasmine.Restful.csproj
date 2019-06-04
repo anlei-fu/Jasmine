@@ -5,6 +5,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Css\**" />
+    <EmbeddedResource Remove="Css\**" />
+    <None Remove="Css\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="log4net" Version="2.0.8" />
     <PackageReference Include="Microsoft.AspNetCore" Version="2.2.0" />
     <PackageReference Include="Microsoft.AspNetCore.Hosting" Version="2.2.0" />
@@ -15,10 +21,6 @@
     <ProjectReference Include="..\Jasmine.Common\Jasmine.Commom.csproj" />
     <ProjectReference Include="..\Jasmine.Ioc\Jasmine.Ioc.csproj" />
     <ProjectReference Include="..\Jasmine.Serialization\Jasmine.Serialization.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Css\" />
   </ItemGroup>
 
 </Project>

@@ -23,14 +23,10 @@ namespace Jasmine.Common
 
         public override Task FiltsAsync(T context)
         {
-            Console.WriteLine($"  resolver is null {_resolver==null}");
-            Console.WriteLine($"  instance is null {_instance == null}");
-            Console.WriteLine($"  context is null {context == null}");
+            
             var parameters = _resolver.Resolve(context);
           
-            Console.WriteLine(" in invoke");
             var result = _method.Invoke(_instance, parameters);
-
           
             afterInvoke(context, result);
 

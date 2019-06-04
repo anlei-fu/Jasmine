@@ -1,7 +1,11 @@
 ﻿using Jasmine.Common;
+using Jasmine.Common.Attributes;
+using Jasmine.Restful.Attributes;
 
 namespace Jasmine.Restful
 {
+    [Restful]
+    [Path("/apimgr")]
     public class RestfulProcessorManager : AbstractProcessorManager<HttpFilterContext>
     {
         private RestfulProcessorManager()
