@@ -1,5 +1,6 @@
 ﻿using Jasmine.Common;
 using Jasmine.Orm.Attributes;
+using Jasmine.Orm.Interfaces;
 using System;
 using System.Collections.Generic;
 
@@ -7,6 +8,7 @@ namespace Jasmine.Orm
 {
     public  class ColumnMetaData:IValueGetterSetter
     {
+        public ISqlBaseTypeConvertor Convertor { get; set; }
         public bool Nullable { get; set; } = true;
         public Type OwnnerType { get; set; }
         public Type RelatedType { get; set; }

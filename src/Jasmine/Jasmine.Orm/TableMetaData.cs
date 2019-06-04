@@ -1,4 +1,5 @@
 ﻿using Jasmine.Common;
+using Jasmine.Orm.Interfaces;
 using Jasmine.Orm.Model;
 using System;
 using System.Collections;
@@ -14,7 +15,7 @@ namespace Jasmine.Orm
         public IDictionary<string, ColumnMetaData> Columns { get; set; } = new Dictionary<string, ColumnMetaData>();
         public Func<object> Constructor { get; set; }
         public int Count =>Columns.Count;
-
+        public IQueryResultResolver Resolver { get; set; }
 
         public IEnumerator<ColumnMetaData> GetEnumerator()
         {

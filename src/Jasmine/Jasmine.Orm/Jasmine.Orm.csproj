@@ -58,6 +58,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Attributes\CheckAttribute.cs" />
+    <Compile Include="Attributes\ColumnConvertorAttribute.cs" />
     <Compile Include="Attributes\DataSourceAttribute.cs" />
     <Compile Include="Attributes\DefaultAttribute.cs" />
     <Compile Include="Attributes\ForeignKeyAttribute.cs" />
@@ -68,6 +69,8 @@
     <Compile Include="Attributes\SqlIgnoreAttribute.cs" />
     <Compile Include="Attributes\TableNameAttribute.cs" />
     <Compile Include="DefaultDataTypeMapper.cs" />
+    <Compile Include="Exceptions\RequiredAttributeNotFoundException.cs" />
+    <Compile Include="Exceptions\TemplateAlreadyExistsException.cs" />
     <Compile Include="IDataTypeMapper.cs" />
     <Compile Include="IQueryResultResolverProvider.cs" />
     <Compile Include="ICursor.cs" />
@@ -114,6 +117,10 @@
     <ProjectReference Include="..\Jasmine.Configuration\Jasmine.Configuration.csproj">
       <Project>{B458ACF2-5654-4919-AF9B-6BB06C779A3A}</Project>
       <Name>Jasmine.Configuration</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Jasmine.Extensions\Jasmine.Extensions.csproj">
+      <Project>{1ea10f6b-d317-4da7-b44a-5f8c51e80e4f}</Project>
+      <Name>Jasmine.Extensions</Name>
     </ProjectReference>
     <ProjectReference Include="..\Jasmine.Reflection\Jasmine.Reflection.csproj">
       <Project>{C0525DCB-8593-421B-A8AD-1DE365216F7E}</Project>

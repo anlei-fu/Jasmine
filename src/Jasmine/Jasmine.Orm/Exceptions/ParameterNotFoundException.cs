@@ -8,10 +8,10 @@ namespace Jasmine.Orm.Exceptions
 {
  public   class ParameterNotFoundException:Exception
     {
-        public ParameterNotFoundException(string parameter)
+        public ParameterNotFoundException(string msg):base(msg)
         {
-            Parameter = parameter;
+           
         }
-        public string Parameter { get; set; }
+        
     }
 }

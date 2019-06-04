@@ -9,23 +9,21 @@ namespace Jasmine.Orm.Implements
 {
     public class DefaultCursor : ICursor
     {
-        public DefaultCursor(QueryResultContext context, IQueryResultResolverProvider sqlConvertorProvider, SqlConnection connection, IDbConnectionProvider provider)
+        public DefaultCursor(QueryResultContext context, SqlConnection connection, IDbConnectionProvider provider)
         {
             _context = context;
             _provider = provider;
             _connection = connection;
-            _convertorProvider = sqlConvertorProvider;
+
         }
         private SqlConnection _connection;
         private QueryResultContext _context;
         private IDbConnectionProvider _provider;
-        private IQueryResultResolverProvider _convertorProvider;
-        private IUnknowTypeConvertor _unknowTypeConvertor;
         public bool Closed { get; private set; }
 
-        public ConcurrentDictionary<string,QuryResultColumnInfo> Columns => _context.ResultTable.Columns;
+        public ConcurrentDictionary<string, QuryResultColumnInfo> Columns => _context.ResultTable.Columns;
 
-      
+
 
         public void Close()
         {
@@ -42,10 +40,12 @@ namespace Jasmine.Orm.Implements
 
             var t = 0;
 
-            var convertor = _convertorProvider.GetResolver(type);
+            var resolver = DefaultQueryResultResolverProvider.Instance.GetResolver(type);
 
-
-           
+            while (t++ <= count && _context.Reader.Read())
+            {
+                result.Add((T)resolver.Resolve(_context, type));
+            }
 
             return result;
         }
@@ -53,33 +53,78 @@ namespace Jasmine.Orm.Implements
 
         public T ReadOne<T>()
         {
-            return default;
+            var type = typeof(T);
+
+            var resolver = DefaultQueryResultResolverProvider.Instance.GetResolver(type);
+
+            return _context.Reader.Read() ? (T)resolver.Resolve(_context, type)
+                                          : default(T);
         }
 
-       
-        public Task<T> ReadOneAsync<T>()
+
+        public async Task<T> ReadOneAsync<T>()
         {
-            throw new System.NotImplementedException();
+            var type = typeof(T);
+
+            var resolver = DefaultQueryResultResolverProvider.Instance.GetResolver(type);
+
+            return await _context.Reader.ReadAsync().ConfigureAwait(false) ? (T)resolver.Resolve(_context, type)
+                                                                           : default(T);
         }
 
-        public Task<IEnumerable<T>> ReadAsync<T>(int count)
+        public async Task<IEnumerable<T>> ReadAsync<T>(int count)
         {
-            throw new System.NotImplementedException();
+            var result = new List<T>();
+
+            var type = typeof(T);
+
+            var t = 0;
+
+            var resolver = DefaultQueryResultResolverProvider.Instance.GetResolver(type);
+
+            while (t++ <= count && await _context.Reader.ReadAsync().ConfigureAwait(false))
+            {
+                result.Add((T)resolver.Resolve(_context, type));
+            }
+
+            return result;
         }
 
         public IEnumerable<T> ReadToEnd<T>()
         {
-            throw new System.NotImplementedException();
+            var result = new List<T>();
+
+            var type = typeof(T);
+
+            var resolver = DefaultQueryResultResolverProvider.Instance.GetResolver(type);
+
+            while (_context.Reader.Read())
+            {
+                result.Add((T)resolver.Resolve(_context, type));
+            }
+
+            return result;
         }
 
-        public Task<IEnumerable<T>> ReadToEndAsync<T>()
+        public async Task<IEnumerable<T>> ReadToEndAsync<T>()
         {
-            throw new System.NotImplementedException();
+            var result = new List<T>();
+
+            var type = typeof(T);
+
+            var resolver = DefaultQueryResultResolverProvider.Instance.GetResolver(type);
+
+            while (await _context.Reader.ReadAsync().ConfigureAwait(false))
+            {
+                result.Add((T)resolver.Resolve(_context, type));
+            }
+
+            return result;
         }
 
         public void Dispose()
         {
-            throw new System.NotImplementedException();
+            Close();
         }
     }
 }

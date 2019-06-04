@@ -1,17 +1,18 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Data;
+using System.Data.Common;
 
 namespace Jasmine.Orm.Model
 {
     public class QueryResultContext
     {
-        public QueryResultContext(IDataReader reader)
+        public QueryResultContext(DbDataReader reader)
         {
             Reader = reader;
             ResultTable = QueryResultTableMetaData.Create(reader);
         }
-        public IDataReader Reader { get; }
+        public DbDataReader Reader { get; }
 
         public QueryResultTableMetaData ResultTable { get; }
 
