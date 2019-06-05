@@ -21,12 +21,12 @@ namespace Jasmine.Orm
 
     public struct SqlTemplateSegment
     {
-        public SqlTemplateSegment(string value,bool isVarible)
+        public SqlTemplateSegment(string value, bool isVarible)
         {
             Value = value;
             IsVarible = isVarible;
         }
-        public string Value  { get; }
+        public string Value { get; }
         public bool IsVarible { get; }
     }
 
@@ -49,13 +49,13 @@ namespace Jasmine.Orm
 
             var segmentBuilder = new StringBuilder();
 
-            while(reader.HasNext())
+            while (reader.HasNext())
             {
                 reader.Next();
 
-                if(reader.Current()=='@'&&!parsingParameter)
+                if (reader.Current() == '@' && !parsingParameter)
                 {
-                    if(segmentBuilder.Length!=0)
+                    if (segmentBuilder.Length != 0)
                     {
                         ls.Add(new SqlTemplateSegment(segmentBuilder.ToString(), false));
 
@@ -98,7 +98,7 @@ namespace Jasmine.Orm
         }
     }
 
-    public  class SqlTemplateProvider:IReadOnlyCollection<SqlTemplate>
+    public class SqlTemplateProvider : IReadOnlyCollection<SqlTemplate>
     {
         private const string ORM_TEMPLATE_GROUP = "orm-template-group";
         private const string TEMPLATE = "template";
@@ -116,12 +116,12 @@ namespace Jasmine.Orm
             {
                 var name = item.GetAttributeValue(Name);
 
-                if(name==null)
+                if (name == null)
                 {
                     throw new RequiredAttributeNotFoundException($"required attribute {Name} of {ORM_TEMPLATE_GROUP} not found!");
                 }
 
-                foreach (var templateNode in item.GetAllChildren(x=>x.Name==TEMPLATE))
+                foreach (var templateNode in item.GetAllChildren(x => x.Name == TEMPLATE))
                 {
                     var tptName = templateNode.GetAttributeValue(Name);
 
@@ -130,7 +130,7 @@ namespace Jasmine.Orm
                         throw new RequiredAttributeNotFoundException($"required attribute {Name} of {TEMPLATE} not found!");
                     }
 
-                    var template=  SqlTemplateParser.Parse(templateNode.InnerText);
+                    var template = SqlTemplateParser.Parse(templateNode.InnerText);
 
                     template.Name = name + tptName;
 
@@ -153,7 +153,7 @@ namespace Jasmine.Orm
             return _map.TryGetValue(name, out var result) ? result : null;
         }
 
-        public void Add(string name,string templateStr)
+        public void Add(string name, string templateStr)
         {
             var template = SqlTemplateParser.Parse(templateStr);
 
@@ -163,7 +163,7 @@ namespace Jasmine.Orm
         }
         public void Add(SqlTemplate template)
         {
-           if(!_map.TryAdd(template.Name, template))
+            if (!_map.TryAdd(template.Name, template))
             {
                 throw new TemplateAlreadyExistsException($"{template.Name} alrady exists!");
             }
@@ -185,16 +185,23 @@ namespace Jasmine.Orm
 
     public class SqltemplateConverter
     {
-        public string Convert(SqlTemplate template,object parameters)
+        private SqltemplateConverter()
         {
-            var map = genarateMap(string.Empty,parameters);
+
+        }
+        public static readonly SqltemplateConverter Instance = new SqltemplateConverter();
+
+        
+        public string Convert(SqlTemplate template, object parameters)
+        {
+            var map = genarateMap(string.Empty, parameters);
 
 
             var builder = new StringBuilder();
 
             foreach (var item in template.Segments)
             {
-                if(item.IsVarible)
+                if (item.IsVarible)
                 {
                     if (map.ContainsKey(item.Value))
                     {
@@ -217,7 +224,7 @@ namespace Jasmine.Orm
         }
 
 
-        private Dictionary<string,string> genarateMap(string prefix,object obj)
+        private Dictionary<string, string> genarateMap(string prefix, object obj)
         {
             var map = new Dictionary<string, string>();
 
@@ -232,13 +239,13 @@ namespace Jasmine.Orm
                 {
                     map.Add(name, DefaultBaseTypeConvertor.Instance.ConvertToSqlString(valueType, value));
                 }
-                else if(valueType.IsClass)
+                else if (valueType.IsClass)
                 {
                     var result = genarateMap(name, value);
 
-                    foreach (var pair in genarateMap(name,value))
+                    foreach (var pair in genarateMap(name, value))
                     {
-                        map.Add(pair.Key,pair.Value);
+                        map.Add(pair.Key, pair.Value);
                     }
                 }
 

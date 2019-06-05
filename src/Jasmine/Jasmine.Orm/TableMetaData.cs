@@ -16,6 +16,8 @@ namespace Jasmine.Orm
         public Func<object> Constructor { get; set; }
         public int Count =>Columns.Count;
         public IQueryResultResolver Resolver { get; set; }
+        public JoinTableInfo[] JoinTables { get; set; }
+
 
         public IEnumerator<ColumnMetaData> GetEnumerator()
         {
@@ -31,5 +33,10 @@ namespace Jasmine.Orm
                 yield return item;
             }
         }
+    }
+    public class JoinTableInfo
+    {
+        public TableMetaData Table { get; set; }
+       public string PtomaryKey { get; set; }
     }
 }

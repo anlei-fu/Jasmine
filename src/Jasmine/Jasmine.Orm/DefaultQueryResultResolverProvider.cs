@@ -18,7 +18,7 @@ namespace Jasmine.Orm.Implements
 
         public int Count => _resolvers.Count;
 
-        public IQueryResultResolver GetConvertor<T>()
+        public IQueryResultResolver GetResolver<T>()
         {
             return GetResolver(typeof(T));
         }

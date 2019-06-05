@@ -63,6 +63,7 @@
     <Compile Include="Attributes\DefaultAttribute.cs" />
     <Compile Include="Attributes\ForeignKeyAttribute.cs" />
     <Compile Include="Attributes\JoinColumnsAttribute.cs" />
+    <Compile Include="Attributes\JoinTableAttribute.cs" />
     <Compile Include="Attributes\QueryResultResolverAttribute.cs" />
     <Compile Include="Attributes\SqlConstraintAttribute.cs" />
     <Compile Include="Attributes\SqlDataTypeAttribute.cs" />
@@ -78,7 +79,7 @@
     <Compile Include="IQueryResultResolver.cs" />
     <Compile Include="ISqlExcuter.cs" />
     <Compile Include="ITableMetaDataProvider.cs" />
-    <Compile Include="ITableBaseTemplateGenarator.cs" />
+    <Compile Include="ITableTemplateCacheProvider.cs" />
     <Compile Include="IUnknowTypeConvertor.cs" />
     <Compile Include="Exceptions\ParameterNotFoundException.cs" />
     <Compile Include="Exceptions\NotConvertableTypeException.cs" />
@@ -105,6 +106,7 @@
     <Compile Include="SqlConnectionStringBuilderExtension.cs" />
     <Compile Include="SqlServerTypeConverter.cs" />
     <Compile Include="Attributes\UniqueAttribute.cs" />
+    <Compile Include="ITableOperatorTemplateCache.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

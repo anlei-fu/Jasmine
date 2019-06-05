@@ -1,5 +1,6 @@
 ﻿using Jasmine.Configuration;
 using Jasmine.Orm.Interfaces;
+using Jasmine.Orm.Model;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -8,12 +9,10 @@ namespace Jasmine.Orm.Implements
 {
     public class JasmineSqlExcutor : ISqlExcuter
     {
+        private ITableTemplateCacheProvider _templateProvider;
+        private SqltemplateConverter _templateConverter;
+        private IDbConnectionProvider _connectionProvider;
         public int BatchInsert<T>(IEnumerable<T> data, bool transanction = false)
-        {
-            throw new NotImplementedException();
-        }
-
-        public int BatchInsert<T>(string template, IEnumerable<T> data, bool transanction = false)
         {
             throw new NotImplementedException();
         }
@@ -23,7 +22,22 @@ namespace Jasmine.Orm.Implements
             throw new NotImplementedException();
         }
 
-        public Task<int> BatchInsertAsync<T>(string template, IEnumerable<T> data, bool transanction = false)
+        public int BatchInsertPartial<T>(string[] columns, IEnumerable<T> data, bool transanction = false)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<int> BatchInsertPartialAsync<T>(string[] columns, IEnumerable<T> data, bool transanction = false)
+        {
+            throw new NotImplementedException();
+        }
+
+        public int BatchInsertPartialWith<T>(string table, string[] columns, IEnumerable<T> datas, bool transanction = false)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<int> BatchInsertPartialWithAsync<T>(string table, string[] columns, IEnumerable<T> datas, bool transanction = false)
         {
             throw new NotImplementedException();
         }
@@ -33,17 +47,7 @@ namespace Jasmine.Orm.Implements
             throw new NotImplementedException();
         }
 
-        public int BatchInsertWith<T>(string table, string template, IEnumerable<T> datas, bool transanction = false)
-        {
-            throw new NotImplementedException();
-        }
-
         public Task<int> BatchInsertWithAsync<T>(string table, IEnumerable<T> datas, bool transanction = false)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<int> BatchInsertWithAsync<T>(string table, string template, IEnumerable<T> datas, bool transanction = false)
         {
             throw new NotImplementedException();
         }
@@ -78,12 +82,12 @@ namespace Jasmine.Orm.Implements
             throw new NotImplementedException();
         }
 
-        public Task<int> DeleteAsync<T>(string condition)
+        public Task<int> DeleteAsync(string table, string condition, bool transanction = false)
         {
             throw new NotImplementedException();
         }
 
-        public Task<int> DeleteAync(string table, string condition)
+        public Task<int> DeleteAsync<T>(string condition, bool transanction = false)
         {
             throw new NotImplementedException();
         }
@@ -123,11 +127,6 @@ namespace Jasmine.Orm.Implements
             throw new NotImplementedException();
         }
 
-        public Task<int> ExcuteAsyn(Template template, object obj, bool transanction = false)
-        {
-            throw new NotImplementedException();
-        }
-
         public Task<int> ExcuteAsync(string sql, bool transanction = false)
         {
             throw new NotImplementedException();
@@ -138,7 +137,7 @@ namespace Jasmine.Orm.Implements
             throw new NotImplementedException();
         }
 
-        public int Insert<T>(string template, T data)
+        public Task<int> ExcuteAsync(Template template, object obj, bool transanction = false)
         {
             throw new NotImplementedException();
         }
@@ -148,27 +147,32 @@ namespace Jasmine.Orm.Implements
             throw new NotImplementedException();
         }
 
-        public Task<int> InsertAsync<T>(string template, T data)
-        {
-            throw new NotImplementedException();
-        }
-
         public Task<int> InsertAsync<T>(T data)
         {
             throw new NotImplementedException();
         }
 
-        public int InsertWith<T>(string table, string template, T data)
+        public int InsertPartial<T>(string template, T data)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<int> InsertPartialAsync<T>(string template, T data)
+        {
+            throw new NotImplementedException();
+        }
+
+        public int InsertPartialWith<T>(string table, string template, T data)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<int> InsertPartialWithAsync<T>(string table, string template, T data)
         {
             throw new NotImplementedException();
         }
 
         public int InsertWith<T>(string table, T data)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<int> InsertWithAsync<T>(string table, string template, T data)
         {
             throw new NotImplementedException();
         }
@@ -180,25 +184,66 @@ namespace Jasmine.Orm.Implements
 
         public IEnumerable<T> Query<T>(string sql)
         {
-            throw new NotImplementedException();
+            var connection = _connectionProvider.Rent();
+
+            try
+            {
+                if (connection.State != System.Data.ConnectionState.Open)
+                {
+                    connection.Open();
+                }
+
+                var command = connection.CreateCommand();
+
+                command.CommandText = sql;
+
+                var context = new QueryResultContext(command.ExecuteReader());
+
+                var resolver = DefaultQueryResultResolverProvider.Instance.GetResolver<T>();
+
+                var ls = new List<T>();
+
+                while (context.Reader.Read())
+                {
+                    ls.Add((T)resolver.Resolve(context, typeof(T)));
+                }
+
+                return ls;
+
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+            finally
+            {
+                _connectionProvider.Recycle(connection);
+            }
         }
 
         public IEnumerable<T> Query<T>(string template, object obj)
         {
-            throw new NotImplementedException();
+            var tpt = SqlTemplateParser.Parse(template);
+
+            return Query<T>(_templateConverter.Convert(tpt, obj));
         }
 
-        public IEnumerable<T> Query<T>(Template template, object obj)
+        public IEnumerable<T> Query<T>(SqlTemplate template, object obj)
         {
-            throw new NotImplementedException();
+            return Query<T>(_templateConverter.Convert(template, obj));
         }
 
+        private string convert(SqlTemplate template, object parameter)
+        {
+            return _templateConverter.Convert(template, parameter);
+        }
         public IEnumerable<T> Query<T>()
         {
-            throw new NotImplementedException();
+            return Query<T>(convert(_templateProvider.GetCache<T>().GetQuery(), null));
         }
 
-        public Task<IEnumerable<T>> QueryAsync<T>(string sql)
+        public IEnumerable<T> QueryAsync<T>(string sql)
         {
             throw new NotImplementedException();
         }
@@ -213,14 +258,14 @@ namespace Jasmine.Orm.Implements
             throw new NotImplementedException();
         }
 
-        public Task<ICursor> QueryAsync<T>()
+        public Task<IEnumerable<T>> QueryAsync<T>()
         {
             throw new NotImplementedException();
         }
 
         public IEnumerable<T> QueryConditional<T>(string condition)
         {
-            throw new NotImplementedException();
+            return Query<T>(convert(_templateProvider.GetCache<T>().GetQueryConditional(condition), null));
         }
 
         public Task<IEnumerable<T>> QueryConditionalAsync<T>(string condition)
@@ -238,7 +283,32 @@ namespace Jasmine.Orm.Implements
             throw new NotImplementedException();
         }
 
+        public IEnumerable<T> QueryConditionalOrderByAsc<T>(string condition, string orderBy)
+        {
+            return Query<T>(convert(_templateProvider.GetCache<T>().GetQueryConditionalOrderByAsc(condition,orderBy), null));
+        }
+
+        public Task<IEnumerable<T>> QueryConditionalOrderByAscAsync<T>(string condition, string orderBy)
+        {
+            throw new NotImplementedException();
+        }
+
+        public ICursor QueryConditionalOrderByAscCursor<T>(string condition, string orderBy)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<ICursor> QueryConditionalOrderByAscCursorAsync<T>(string condition, string orderBy)
+        {
+            throw new NotImplementedException();
+        }
+
         public IEnumerable<T> QueryConditionalWith<T>(string table, string condition)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IEnumerable<T> QueryConditionalWith<T>(string table, string condition, string orderBy)
         {
             throw new NotImplementedException();
         }
@@ -248,7 +318,17 @@ namespace Jasmine.Orm.Implements
             throw new NotImplementedException();
         }
 
+        public Task<IEnumerable<T>> QueryConditionalWithAsync<T>(string table, string condition, string orderBy)
+        {
+            throw new NotImplementedException();
+        }
+
         public ICursor QueryConditionalWithCursor<T>(string table, string condition)
+        {
+            throw new NotImplementedException();
+        }
+
+        public ICursor QueryConditionalWithCursor<T>(string table, string condition, string orderBy)
         {
             throw new NotImplementedException();
         }
@@ -258,7 +338,7 @@ namespace Jasmine.Orm.Implements
             throw new NotImplementedException();
         }
 
-        public ICursor QueryCursor<T>()
+        public Task<ICursor> QueryConditionalWithCursorAsync<T>(string table, string condition, string orderBy)
         {
             throw new NotImplementedException();
         }
@@ -278,7 +358,12 @@ namespace Jasmine.Orm.Implements
             throw new NotImplementedException();
         }
 
-        public Task<ICursor> QueryCursorAsync<T>(string sql)
+        public ICursor QueryCursor<T>()
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<ICursor> QueryCursorAsyc<T>(string sql)
         {
             throw new NotImplementedException();
         }
@@ -289,6 +374,11 @@ namespace Jasmine.Orm.Implements
         }
 
         public Task<ICursor> QueryCursorAsync<T>(Template template, object obj)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<ICursor> QueryCursorAsync<T>()
         {
             throw new NotImplementedException();
         }
@@ -310,12 +400,12 @@ namespace Jasmine.Orm.Implements
 
         public Task<ICursor> QueryOrderByAscCursorAsync<T>(string orderBy)
         {
-            throw new NotImplementedException();
+            return Query<T>(convert(_templateProvider.GetCache<T>().GetQueryOrderByAsc(orderBy), null));
         }
 
         public IEnumerable<T> QueryOrderByAscWith<T>(string table, string orderBy)
         {
-            throw new NotImplementedException();
+            return Query<T>(convert(_templateProvider.GetCache<T>().GetQueryOrderByAscWith(condition, orderBy), null));
         }
 
         public Task<IEnumerable<T>> QueryOrderByAscWithAsync<T>(string table, string orderBy)
@@ -508,6 +598,11 @@ namespace Jasmine.Orm.Implements
             throw new NotImplementedException();
         }
 
+        public Task<ICursor> QueryPartialCursorAsync<T>(params string[] columns)
+        {
+            throw new NotImplementedException();
+        }
+
         public IEnumerable<T> QueryPartialOrderByAsc<T>(string orderBy, params string[] columns)
         {
             throw new NotImplementedException();
@@ -588,11 +683,6 @@ namespace Jasmine.Orm.Implements
             throw new NotImplementedException();
         }
 
-        public Task<ICursor> QueryPartialvAsync<T>(params string[] columns)
-        {
-            throw new NotImplementedException();
-        }
-
         public IEnumerable<T> QueryPartialWith<T>(string table, params string[] columns)
         {
             throw new NotImplementedException();
@@ -639,6 +729,86 @@ namespace Jasmine.Orm.Implements
         }
 
         public Task<ICursor> QueryTopConditionalCursorAsync<T>(int count, string condition)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IEnumerable<T> QueryTopConditionalOrderByAsc<T>(int count, string condition, string orderBy)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<IEnumerable<T>> QueryTopConditionalOrderByAscAsync<T>(int count, string condition, string orderBy)
+        {
+            throw new NotImplementedException();
+        }
+
+        public ICursor QueryTopConditionalOrderByAscCursor<T>(int count, string condition, string orderBy)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<ICursor> QueryTopConditionalOrderByAscCursorAsync<T>(int count, string condition, string orderBy)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IEnumerable<T> QueryTopConditionalOrderByAscWith<T>(string table, int count, string condition, string orderBy)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<IEnumerable<T>> QueryTopConditionalOrderByAscWithAsync<T>(string table, int count, string condition, string orderBy)
+        {
+            throw new NotImplementedException();
+        }
+
+        public ICursor QueryTopConditionalOrderByAscWithCursor<T>(string table, int count, string condition, string orderBy)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<ICursor> QueryTopConditionalOrderByAscWithCursorAsync<T>(string table, int count, string condition, string orderBy)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IEnumerable<T> QueryTopConditionalOrderByDesc<T>(int count, string condition, string orderBy)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<IEnumerable<T>> QueryTopConditionalOrderByDescAsync<T>(int count, string condition, string orderBy)
+        {
+            throw new NotImplementedException();
+        }
+
+        public ICursor QueryTopConditionalOrderByDescCursor<T>(int count, string condition, string orderBy)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<ICursor> QueryTopConditionalOrderByDescCursorAsync<T>(int count, string condition, string orderBy)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IEnumerable<T> QueryTopConditionalOrderByDescWith<T>(string table, int count, string condition, string orderBy)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<IEnumerable<T>> QueryTopConditionalOrderByDescWithAsync<T>(string table, int count, string condition, string orderBy)
+        {
+            throw new NotImplementedException();
+        }
+
+        public ICursor QueryTopConditionalOrderByDescWithCursor<T>(string table, int count, string condition, string orderBy)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<ICursor> QueryTopConditionalOrderByDescWithCursorAsync<T>(string table, int count, string condition, string orderBy)
         {
             throw new NotImplementedException();
         }
@@ -838,7 +1008,7 @@ namespace Jasmine.Orm.Implements
             throw new NotImplementedException();
         }
 
-        public Task<ICursor> QueryTopPartialConditionalOrderByDescvAsync<T>(int count, string condition, string orderBy, params string[] columns)
+        public Task<ICursor> QueryTopPartialConditionalOrderByDescCursorAsync<T>(int count, string condition, string orderBy, params string[] columns)
         {
             throw new NotImplementedException();
         }
@@ -968,27 +1138,27 @@ namespace Jasmine.Orm.Implements
             throw new NotImplementedException();
         }
 
-        public Task<ICursor> QueryTopPartialOrderByDescWithvAsync<T>(string table, int count, string orderBy, params string[] columns)
+        public Task<ICursor> QueryTopPartialOrderByDescWithCursorAsync<T>(string table, int count, string orderBy, params string[] columns)
         {
             throw new NotImplementedException();
         }
 
-        public IEnumerable<T> QueryTopPartialWidth<T>(string table, int count, params string[] column)
+        public IEnumerable<T> QueryTopPartialWith<T>(string table, int count, params string[] column)
         {
             throw new NotImplementedException();
         }
 
-        public Task<IEnumerable<T>> QueryTopPartialWidthAsync<T>(string table, int count, params string[] column)
+        public Task<IEnumerable<T>> QueryTopPartialWithAsync<T>(string table, int count, params string[] column)
         {
             throw new NotImplementedException();
         }
 
-        public ICursor QueryTopPartialWidthCursor<T>(string table, int count, params string[] column)
+        public ICursor QueryTopPartialWithCursor<T>(string table, int count, params string[] column)
         {
             throw new NotImplementedException();
         }
 
-        public Task<ICursor> QueryTopPartialWidthCursorAsync<T>(string table, int count, params string[] column)
+        public Task<ICursor> QueryTopPartialWithCursorAsync<T>(string table, int count, params string[] column)
         {
             throw new NotImplementedException();
         }
