@@ -5,7 +5,7 @@ namespace Jasmine.Orm.Exceptions
 {
     public class NotSurpportedDataSourceException:Exception
     {
-        public NotSurpportedDataSourceException(DataSourceType type):base($" serve {type} is not surpported!")
+        public NotSurpportedDataSourceException(DataSource type):base($" serve {type} is not surpported!")
         {
 
         }

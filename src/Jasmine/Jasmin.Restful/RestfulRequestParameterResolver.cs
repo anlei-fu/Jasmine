@@ -34,7 +34,7 @@ namespace Jasmine.Restful
                 }
                 else if (_parameters[i].FromData)
                 {
-                    rets[i] = context.Datas[_parameters[i].DataKey];
+                    rets[i] = context.CachedDatas[_parameters[i].DataKey];
                 }
                 else
                 {

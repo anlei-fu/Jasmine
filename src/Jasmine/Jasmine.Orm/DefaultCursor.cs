@@ -1,7 +1,4 @@
-﻿using Jasmine.Orm.Interfaces;
-using Jasmine.Orm.Model;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Data.Common;
 using System.Threading.Tasks;
 
@@ -21,8 +18,7 @@ namespace Jasmine.Orm.Implements
         private IDbConnectionProvider _provider;
         public bool Closed { get; private set; }
 
-        public ConcurrentDictionary<string, QuryResultColumnInfo> Columns => _context.ResultTable.Columns;
-
+        
 
 
         public void Close()

@@ -10,9 +10,9 @@ namespace Jasmine.Restful
         public HttpContext HttpContext { get; set; }
         public Exception Error { get; set; }
         public object ReturnValue { get; set; }
-        public Type ReturnValueType { get; set; }
-        public IDictionary<string, object> Datas { get; set; } = new Dictionary<string, object>();
-        public IDispatcher<IRequestProcessingContext> Dispatcher { get; internal set; }
+        public Type ReturnValueType => ReturnValue?.GetType();
+        public IDictionary<string, object> CachedDatas { get; set; } = new Dictionary<string, object>();
+        public IDispatcher<HttpFilterContext> Dispatcher { get; internal set; }
         public string Path => HttpContext.Request.Path;
 
         public void Init(HttpContext context)
@@ -20,8 +20,7 @@ namespace Jasmine.Restful
             HttpContext = context;
             Error = null;
             ReturnValue = null;
-            ReturnValueType = null;
-            Datas.Clear();
+            CachedDatas.Clear();
             Dispatcher = null;
         }
         public void Reset()

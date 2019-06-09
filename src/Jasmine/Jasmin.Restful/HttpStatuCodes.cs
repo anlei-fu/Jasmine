@@ -1,6 +1,6 @@
 ﻿namespace Jasmine.Restful
 {
-    public class HttpStatuCodes
+    public class HttpStatusCodes
     {
         public const int SUCESSED = 200;
         public const int CREATED = 201;
@@ -16,7 +16,7 @@
         public const int ERROR_REQUEST = 400;
         public const int VALIDATE_FAILED = 401;
         public const int FORBIDDEN = 403;
-        public const int NOT_FPOUND=404;
+        public const int NOT_FOUND=404;
         public const int INCORRECT_HTTP_METHOD=405;
         public const int NOT_ACCEPTED = 406;
         public const int NEED_PROXY = 407;

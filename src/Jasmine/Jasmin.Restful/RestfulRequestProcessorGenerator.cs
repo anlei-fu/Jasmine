@@ -90,7 +90,7 @@ namespace Jasmine.Restful
 
                 processor.MaxConcurrency = item.Value.MaxConcurrency;
 
-                processor.AlternativeService = item.Value.AlternativeService;
+                processor.AlternativeServicePath = item.Value.AlternativeService;
 
                 processor.Name = item.Value.Name;
 

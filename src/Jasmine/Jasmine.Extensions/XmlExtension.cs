@@ -26,7 +26,6 @@ namespace Jasmine.Extensions
 
                 if (matcher(child))
                     ls.Add(child);
-
             }
 
             return ls;
@@ -44,7 +43,6 @@ namespace Jasmine.Extensions
 
                 if (child.ChildNodes != null)
                     ls.AddRange(child.GetAll(matcher));
-
             }
 
             return ls;

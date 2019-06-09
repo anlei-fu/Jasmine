@@ -5,13 +5,13 @@ namespace Jasmine.Orm.Exceptions
 {
     public  class SqlGrammerNotSurportedException:Exception
     {
-        public SqlGrammerNotSurportedException(DataSourceType dataSource,string grammer)
+        public SqlGrammerNotSurportedException(DataSource dataSource,string grammer)
         {
             _dataSource = dataSource;
             _grammer = grammer;
         }
 
-        private DataSourceType _dataSource;
+        private DataSource _dataSource;
         private string _grammer;
 
         public override string ToString()

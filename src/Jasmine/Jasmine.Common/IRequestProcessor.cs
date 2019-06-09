@@ -36,7 +36,9 @@ namespace Jasmine.Common
 
         void ResetMaxConcurrency(int concurrency);
 
-        string AlternativeService { get; set; }
+        string AlternativeServicePath { get; set; }
+
+        bool HasAlternativeService { get; }
         string Description { get; set; }
         
 

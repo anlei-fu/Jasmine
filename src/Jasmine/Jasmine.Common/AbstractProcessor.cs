@@ -49,7 +49,10 @@ namespace Jasmine.Common
         public string Path { get; set; }
 
         public string GroupName { get; set; }
-        public string AlternativeService { get; set; }
+        public string AlternativeServicePath { get; set; }
+
+        public bool HasAlternativeService => AlternativeServicePath != null;
+
         [JsonIgnore]
         public IDispatcher<T> Dispatcher { get; set; }
         public string Description { get; set; }

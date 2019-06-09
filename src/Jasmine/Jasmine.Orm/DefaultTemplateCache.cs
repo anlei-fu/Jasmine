@@ -1,12 +1,11 @@
-﻿using Jasmine.Orm.Attributes;
+﻿using Jasmine.Extensions;
+using Jasmine.Orm.Attributes;
+using Jasmine.Orm.Exceptions;
 using Jasmine.Orm.Interfaces;
 using Jasmine.Orm.Model;
 using System;
 using System.Collections.Generic;
-using Jasmine.Extensions;
 using System.Text;
-using Jasmine.Orm.Exceptions;
-using Jasmine.Orm.Implements;
 
 namespace Jasmine.Orm
 {
@@ -23,37 +22,30 @@ namespace Jasmine.Orm
         private ITableMetaDataProvider _metaDataProvider => DefaultTableMetaDataProvider.Instance;
         private ITableTemplateCacheProvider _templateProvider => DefaultTableTemplateCacheProvider.Instance;
         private Type _type;
-        private string _tableName => _metaDataProvider.GetTable(_type).Name;
+        private string _tableName => _table.Name;
         private TableMetaData _table => _metaDataProvider.GetTable(_type);
 
+        /*
+         * Keywords
+         */
         private const string TABLE = " Table ";
-
         private const string CREATE_TABLE = "Create Table ";
-
         private const string VALUES = " Values ";
-
-
         private const string PRIMARY_KEY = " Primary key ";
         private const string UNIQUE = " Unique ";
         private const string FOREIGN_KEY = " Foreign key ";
         private const string CHECK = " Check ";
         private const string DEFAULT = " Default ";
         private const string NOT_NULL = " Not Null ";
-
-
         private const string SELECT = " Select ";
         private const string FROM = " From ";
         private const string WHERE = " Where ";
         private const string TOP = " Top ";
-
         private const string ORDERBY = "Order By ";
-
         private const string ASC = " Asc ";
         private const string DESC = " Desc ";
-
         private const string LIMIT = " Limit ";
         private const string INSERT_INTO = " Insert Into ";
-
         private const string DELETE = " Delete ";
         private const string DROP = " Drop ";
 
@@ -74,9 +66,7 @@ namespace Jasmine.Orm
                 }
 
                 if (joinColumnTable.Table.HasJoinColumns)
-                {
                     ls.AddRange(getJoinColumn(joinColumnTable.Table, prefix + joinColumnTable.Table.Name + "_"));
-                }
             }
 
 
@@ -101,11 +91,7 @@ namespace Jasmine.Orm
                     columns.AddRange(table.Columns.Values);
 
                     if (table.HasJoinColumns)
-                    {
-
                         columns.AddRange(getJoinColumn(_table, ""));
-
-                    }
 
                     builder.Append(createSqlServerInternal(table.Name, columns));
 
@@ -172,11 +158,9 @@ namespace Jasmine.Orm
 
             builder.RemoveLastComa();
 
-
             builder.Append(")");
 
             return builder.ToString();
-
 
         }
 
@@ -234,9 +218,7 @@ namespace Jasmine.Orm
             lock (_locker)
             {
                 if (_stringCache[2] == null)
-                {
                     _stringCache[2] = $"{DELETE} {FROM} {_tableName} @condition";
-                }
             }
 
             return _stringCache[2].Replace("@condition", condition);
@@ -255,7 +237,8 @@ namespace Jasmine.Orm
                 }
             }
 
-            return _stringCache[3].Replace("@table", table).Replace("@condition", condition);
+            return _stringCache[3].Replace("@table", table)
+                                  .Replace("@condition", condition);
         }
         /// <summary>
         /// index 5
@@ -266,9 +249,7 @@ namespace Jasmine.Orm
             lock (_locker)
             {
                 if (_stringCache[4] == null)
-                {
                     _stringCache[4] = $"{DROP} {TABLE} {_tableName} ";
-                }
             }
 
             return _stringCache[4];
@@ -282,9 +263,7 @@ namespace Jasmine.Orm
             lock (_locker)
             {
                 if (_stringCache[5] == null)
-                {
                     _stringCache[5] = $"{DROP} {TABLE} @table ";
-                }
             }
 
             return _stringCache[4].Replace("@table", table);
@@ -373,9 +352,7 @@ namespace Jasmine.Orm
             builder.Append($"{INSERT_INTO} {_tableName}(");
 
             foreach (var item in columns)
-            {
                 builder.Append(item.Replace(".", "_") + ",");
-            }
 
             builder.RemoveLastComa();
 
@@ -395,7 +372,6 @@ namespace Jasmine.Orm
             ls.Add(new SqlTemplateSegment(")", false));
 
             template.Segments = ls.ToArray();
-
 
             return template;
         }
@@ -414,9 +390,7 @@ namespace Jasmine.Orm
             builder.Append($"{INSERT_INTO} {table}(");
 
             foreach (var item in columns)
-            {
                 builder.Append(item.Replace(".", "_") + ",");
-            }
 
             builder.RemoveLastComa();
 
@@ -436,7 +410,6 @@ namespace Jasmine.Orm
             ls.Add(new SqlTemplateSegment(")", false));
 
             template.Segments = ls.ToArray();
-
 
             return template;
         }
@@ -488,7 +461,6 @@ namespace Jasmine.Orm
 
                             ls.AddRange(template.Segments);
                         }
-
                     }
 
                     _templateCache[1] = new SqlTemplate()
@@ -496,7 +468,6 @@ namespace Jasmine.Orm
                     {
                         Segments = ls.ToArray()
                     };
-
                 }
             }
 
@@ -511,11 +482,7 @@ namespace Jasmine.Orm
             lock (_locker)
             {
                 if (_stringCache[10] == null)
-                {
                     _stringCache[10] = $"{SELECT} * {FROM} {_tableName} ";
-
-
-                }
             }
 
             return _stringCache[10];
@@ -529,9 +496,7 @@ namespace Jasmine.Orm
             lock (_locker)
             {
                 if (_stringCache[11] == null)
-                {
                     _stringCache[11] = $"{SELECT} * {FROM} {_metaDataProvider.GetTable(_type).Name} {getLeftJoin(_tableName)} {WHERE} @condition ";
-                }
             }
 
             return _stringCache[11].Replace("@condition", condition);
@@ -544,9 +509,7 @@ namespace Jasmine.Orm
             if (_table.HasJoinTable)
             {
                 foreach (var item in _table.JoinTables.Values)
-                {
-                    builder.Append($"left join {item.Table.Name} on {name}.{item.JoinKey}={item.Table.Name}.{item.JoinKey} ");
-                }
+                    builder.Append($"left join {item.Table.Name} on {name}.{item.SelfKey}={item.Table.Name}.{item.SelfKey} ");
             }
 
             return builder.ToString();
@@ -560,12 +523,11 @@ namespace Jasmine.Orm
             lock (_locker)
             {
                 if (_stringCache[12] == null)
-                {
                     _stringCache[12] = $"{SELECT} * {FROM} {_tableName} {getLeftJoin(_tableName)} {WHERE} @condition {ORDERBY} @orderBy {ASC} ";
-                }
             }
 
-            return _stringCache[12].Replace("@condition", condition).Replace("@orderBy", orderBy);
+            return _stringCache[12].Replace("@condition", condition)
+                                   .Replace("@orderBy", orderBy);
         }
         /// <summary>
         /// index 14
@@ -576,12 +538,12 @@ namespace Jasmine.Orm
             lock (_locker)
             {
                 if (_stringCache[13] == null)
-                {
                     _stringCache[13] = $"{SELECT} * {FROM} @table {getLeftJoin("@table")} {WHERE} @condition {ORDERBY} @orderBy {ASC} ";
-                }
             }
 
-            return _stringCache[13].Replace("@condition", condition).Replace("@orderBy", orderBy).Replace("@table", table);
+            return _stringCache[13].Replace("@condition", condition)
+                                   .Replace("@orderBy", orderBy)
+                                   .Replace("@table", table);
         }
         /// <summary>
         /// index 15
@@ -592,12 +554,11 @@ namespace Jasmine.Orm
             lock (_locker)
             {
                 if (_stringCache[14] == null)
-                {
                     _stringCache[14] = $"{SELECT} * {FROM} {_metaDataProvider.GetTable(_type).Name} {getLeftJoin(_tableName)} {WHERE} @condition {ORDERBY} @orderBy {DESC} ";
-                }
             }
 
-            return _stringCache[14].Replace("@condition", condition).Replace("@orderBy", orderBy);
+            return _stringCache[14].Replace("@condition", condition)
+                                   .Replace("@orderBy", orderBy);
         }
         /// <summary>
         /// index 16
@@ -608,12 +569,12 @@ namespace Jasmine.Orm
             lock (_locker)
             {
                 if (_stringCache[15] == null)
-                {
                     _stringCache[15] = $"{SELECT} * {FROM} @table {getLeftJoin("@table")}  {WHERE} @condition {ORDERBY} @orderBy {DESC} ";
-                }
             }
 
-            return _stringCache[15].Replace("@condition", condition).Replace("@orderBy", orderBy).Replace("@table", table);
+            return _stringCache[15].Replace("@condition", condition)
+                                   .Replace("@orderBy", orderBy)
+                                   .Replace("@table", table);
         }
         /// <summary>
         /// index 17
@@ -624,11 +585,11 @@ namespace Jasmine.Orm
             lock (_locker)
             {
                 if (_stringCache[16] == null)
-                {
                     _stringCache[16] = $"{SELECT} * {FROM} @table {getLeftJoin("@table")} {WHERE} @condition  ";
-                }
             }
-            return _stringCache[16].Replace("@condition", condition).Replace("@table", table);
+
+            return _stringCache[16].Replace("@condition", condition)
+                                   .Replace("@table", table);
         }
         /// <summary>
         /// index 18
@@ -639,9 +600,7 @@ namespace Jasmine.Orm
             lock (_locker)
             {
                 if (_stringCache[17] == null)
-                {
                     _stringCache[17] = $"{SELECT} * {FROM} {_table} {getLeftJoin(_tableName)} {ORDERBY} @orderBy {ASC}  ";
-                }
             }
 
             return _stringCache[17].Replace("@orderBy", orderBy);
@@ -655,12 +614,11 @@ namespace Jasmine.Orm
             lock (_locker)
             {
                 if (_stringCache[18] == null)
-                {
                     _stringCache[18] = $"{SELECT} * {FROM} @table {getLeftJoin("@table")} {ORDERBY} @orderBy {ASC}  ";
-                }
             }
 
-            return _stringCache[18].Replace("@orderBy", orderBy).Replace("@table", table);
+            return _stringCache[18].Replace("@orderBy", orderBy)
+                                   .Replace("@table", table);
         }
         /// <summary>
         /// index 20
@@ -671,9 +629,7 @@ namespace Jasmine.Orm
             lock (_locker)
             {
                 if (_stringCache[19] == null)
-                {
                     _stringCache[19] = $"{SELECT} * {FROM} {_tableName} {ORDERBY} {getLeftJoin(_tableName)} @orderBy {DESC}  ";
-                }
             }
 
             return _stringCache[19].Replace("@orderBy", orderBy);
@@ -687,12 +643,11 @@ namespace Jasmine.Orm
             lock (_locker)
             {
                 if (_stringCache[20] == null)
-                {
                     _stringCache[20] = $"{SELECT} * {FROM} @table {getLeftJoin("@table")} {ORDERBY} @orderBy {DESC}  ";
-                }
             }
 
-            return _stringCache[20].Replace("@orderBy", orderBy).Replace("@table", table);
+            return _stringCache[20].Replace("@orderBy", orderBy)
+                                   .Replace("@table", table);
         }
         /// <summary>
         /// index 22
@@ -703,9 +658,7 @@ namespace Jasmine.Orm
             lock (_locker)
             {
                 if (_stringCache[21] == null)
-                {
                     _stringCache[21] = $"{SELECT} @body {FROM} {_tableName} {getLeftJoin(_tableName)} ";
-                }
             }
 
             return _stringCache[21].Replace("@body", generateColumnsString(columns));
@@ -730,7 +683,7 @@ namespace Jasmine.Orm
                         return item;
                 }
 
-                throw new Orm.Exceptions.ColumnNotExistsException($"column({column}) not exists in table {_table.RelatedType}");
+                throw new ColumnNotExistsException($"column({column}) not exists in table {_table.RelatedType}");
             }
             // search join columns
             else
@@ -749,18 +702,16 @@ namespace Jasmine.Orm
                         foreach (var columnkey in table.Columns.Keys)
                         {
                             if (temp == columnkey.ToLower())
-                            {
-                                return _newColumn+ columnkey;
-                            }
+                                return _newColumn + columnkey;
                         }
 
-                        throw new Orm.Exceptions.ColumnNotExistsException($"column({column}) not exists in table {_table.RelatedType}");
+                        throw new ColumnNotExistsException($"column({column}) not exists in table {_table.RelatedType}");
                     }
 
                     //find table 
 
                     bool tableFound = false;
-                 
+
                     foreach (var joinColumnTable in table.JoinColumns)
                     {
                         if (temp == joinColumnTable.Key.ToLower())
@@ -775,23 +726,21 @@ namespace Jasmine.Orm
 
                     if (!tableFound)
                     {
-                        throw new Orm.Exceptions.ColumnNotExistsException($"column({column}) not exists in table {_table.RelatedType}");
+                        throw new ColumnNotExistsException($"column({column}) not exists in table {_table.RelatedType}");
                     }
 
                     ++t;
                 }
             }
 
-            throw new Orm.Exceptions.ColumnNotExistsException($"column({column}) not exists in table {_table.RelatedType}");
+            throw new ColumnNotExistsException($"column({column}) not exists in table {_table.RelatedType}");
         }
         private string generateColumnsString(string[] columns)
         {
             var builder = new StringBuilder();
 
             foreach (var item in columns)
-            {
                 builder.Append($"{requireColumnExistAndFormat(item)},");
-            }
 
             return builder.RemoveLastComa().ToString();
         }
@@ -805,12 +754,11 @@ namespace Jasmine.Orm
             lock (_locker)
             {
                 if (_stringCache[22] == null)
-                {
                     _stringCache[22] = $"{SELECT} @body {FROM} {_tableName} {getLeftJoin(_tableName)} {WHERE} @condition  ";
-                }
             }
 
-            return _stringCache[22].Replace("@body", generateColumnsString(columns)).Replace("@condition", condition);
+            return _stringCache[22].Replace("@body", generateColumnsString(columns))
+                                   .Replace("@condition", condition);
         }
         /// <summary>
         /// index 24
@@ -821,12 +769,12 @@ namespace Jasmine.Orm
             lock (_locker)
             {
                 if (_stringCache[23] == null)
-                {
                     _stringCache[23] = $"{SELECT} @body {FROM} {_tableName} {getLeftJoin(_tableName)} {ORDERBY} @orderBy {ASC}  {WHERE} @condition  ";
-                }
             }
 
-            return _stringCache[23].Replace("@body", generateColumnsString(columns)).Replace("@condition", condition).Replace("@orderBy", orderBy);
+            return _stringCache[23].Replace("@body", generateColumnsString(columns))
+                                   .Replace("@condition", condition)
+                                   .Replace("@orderBy", orderBy);
         }
         /// <summary>
         /// index 25
@@ -837,12 +785,13 @@ namespace Jasmine.Orm
             lock (_locker)
             {
                 if (_stringCache[24] == null)
-                {
                     _stringCache[24] = $"{SELECT} @body {FROM} @table {getLeftJoin("@table")} {ORDERBY} @orderBy {ASC}  {WHERE} @condition  ";
-                }
             }
 
-            return _stringCache[24].Replace("@body", generateColumnsString(columns)).Replace("@condition", condition).Replace("@orderBy", orderBy).Replace("@table", table);
+            return _stringCache[24].Replace("@body", generateColumnsString(columns))
+                                   .Replace("@condition", condition)
+                                   .Replace("@orderBy", orderBy)
+                                   .Replace("@table", table);
         }
         /// <summary>
         /// index 26
@@ -853,12 +802,12 @@ namespace Jasmine.Orm
             lock (_locker)
             {
                 if (_stringCache[25] == null)
-                {
                     _stringCache[25] = $"{SELECT} @body {FROM} {_tableName} {getLeftJoin(_tableName)} {ORDERBY} @orderBy {DESC}  {WHERE} @condition  ";
-                }
             }
 
-            return _stringCache[25].Replace("@body", generateColumnsString(columns)).Replace("@condition", condition).Replace("@orderBy", orderBy);
+            return _stringCache[25].Replace("@body", generateColumnsString(columns))
+                                   .Replace("@condition", condition)
+                                   .Replace("@orderBy", orderBy);
         }
         /// <summary>
         /// index 27
@@ -869,12 +818,12 @@ namespace Jasmine.Orm
             lock (_locker)
             {
                 if (_stringCache[26] == null)
-                {
                     _stringCache[26] = $"{SELECT} @body {FROM} @table {getLeftJoin("@table")} {ORDERBY} @orderBy {DESC}  {WHERE} @condition  ";
-                }
             }
 
-            return _stringCache[26].Replace("@body", generateColumnsString(columns)).Replace("@condition", condition).Replace("@orderBy", orderBy).Replace($"table", table);
+            return _stringCache[26].Replace("@body", generateColumnsString(columns))
+                                   .Replace("@condition", condition).Replace("@orderBy", orderBy)
+                                   .Replace($"table", table);
         }
         /// <summary>
         /// index 28
@@ -885,12 +834,12 @@ namespace Jasmine.Orm
             lock (_locker)
             {
                 if (_stringCache[27] == null)
-                {
                     _stringCache[27] = $"{SELECT} @body {FROM} @table {getLeftJoin("@table")} {ORDERBY}  {WHERE} @condition  ";
-                }
             }
 
-            return _stringCache[27].Replace("@body", generateColumnsString(columns)).Replace("@condition", condition).Replace("@table", table);
+            return _stringCache[27].Replace("@body", generateColumnsString(columns))
+                                   .Replace("@condition", condition)
+                                   .Replace("@table", table);
         }
         /// <summary>
         /// index 29
@@ -901,12 +850,11 @@ namespace Jasmine.Orm
             lock (_locker)
             {
                 if (_stringCache[28] == null)
-                {
                     _stringCache[28] = $"{SELECT} @body {FROM} {_tableName} {getLeftJoin(_tableName)} {ORDERBY} @orderBy {ASC}    ";
-                }
             }
 
-            return _stringCache[28].Replace("@body", generateColumnsString(columns)).Replace("@orderBy", orderBy);
+            return _stringCache[28].Replace("@body", generateColumnsString(columns))
+                                   .Replace("@orderBy", orderBy);
         }
         /// <summary>
         /// index 30
@@ -917,12 +865,12 @@ namespace Jasmine.Orm
             lock (_locker)
             {
                 if (_stringCache[29] == null)
-                {
                     _stringCache[29] = $"{SELECT} @body {FROM} @table {getLeftJoin("@table")} {ORDERBY} @orderBy {ASC}    ";
-                }
             }
 
-            return _stringCache[29].Replace("@body", generateColumnsString(columns)).Replace("@orderBy", orderBy).Replace("@table", table);
+            return _stringCache[29].Replace("@body", generateColumnsString(columns))
+                                   .Replace("@orderBy", orderBy)
+                                   .Replace("@table", table);
         }
         /// <summary>
         /// index 31
@@ -933,12 +881,11 @@ namespace Jasmine.Orm
             lock (_locker)
             {
                 if (_stringCache[30] == null)
-                {
                     _stringCache[30] = $"{SELECT} @body {FROM} {_tableName} {getLeftJoin(_tableName)} {ORDERBY} @orderBy {DESC}    ";
-                }
             }
 
-            return _stringCache[30].Replace("@body", generateColumnsString(columns)).Replace("@orderBy", orderBy);
+            return _stringCache[30].Replace("@body", generateColumnsString(columns))
+                                   .Replace("@orderBy", orderBy);
         }
         /// <summary>
         /// index 32
@@ -949,12 +896,11 @@ namespace Jasmine.Orm
             lock (_locker)
             {
                 if (_stringCache[31] == null)
-                {
                     _stringCache[31] = $"{SELECT} @body {FROM} @table {getLeftJoin("@table")} {ORDERBY} @orderBy {DESC}    ";
-                }
             }
 
-            return _stringCache[31].Replace("@body", generateColumnsString(columns)).Replace("@orderBy", orderBy).Replace("@table", table);
+            return _stringCache[31].Replace("@body", generateColumnsString(columns))
+                                   .Replace("@orderBy", orderBy).Replace("@table", table);
         }
         /// <summary>
         /// index 33
@@ -965,30 +911,27 @@ namespace Jasmine.Orm
             lock (_locker)
             {
                 if (_stringCache[32] == null)
-                {
                     _stringCache[32] = $"{SELECT} @body {FROM} @table {getLeftJoin("@table")}  ";
-                }
             }
 
-            return _stringCache[32].Replace("@body", generateColumnsString(columns)).Replace("@table", table);
+            return _stringCache[32].Replace("@body", generateColumnsString(columns))
+                                   .Replace("@table", table);
         }
 
-        private string markTop(string plain, DataSourceType dataSource)
+        private string markTop(string plain, DataSource dataSource)
         {
             switch (dataSource)
             {
-                case DataSourceType.SqlServer:
-
+                case DataSource.SqlServer:
                     return plain.Replace($"{SELECT}", $"{SELECT} {TOP} @count ");
-
-                case DataSourceType.Oracle:
+                case DataSource.Oracle:
                     return $"{SELECT} * {FROM}({plain}) where rownum < @count";
-                case DataSourceType.MySql:
-                case DataSourceType.Sqlite:
+                case DataSource.MySql:
+                case DataSource.Sqlite:
                     return $"{plain} {LIMIT} 0,@count ";
-                case DataSourceType.Db2:
+                case DataSource.Db2:
                     return $"{plain} fetch first @count rows only ";
-                case DataSourceType.Access:
+                case DataSource.Access:
                 default:
                     throw new NotSurpportedDataSourceException(dataSource);
             }
@@ -1027,7 +970,8 @@ namespace Jasmine.Orm
                 }
             }
 
-            return _stringCache[34].Replace("@count", $"{count}").Replace("@condition", condition);
+            return _stringCache[34].Replace("@count", $"{count}")
+                                   .Replace("@condition", condition);
         }
         /// <summary>
         /// index 36
@@ -1045,7 +989,9 @@ namespace Jasmine.Orm
                 }
             }
 
-            return _stringCache[35].Replace("@count", $"{count}").Replace("@condition", condition).Replace("@orderBy", orderBy);
+            return _stringCache[35].Replace("@count", $"{count}")
+                                   .Replace("@condition", condition)
+                                   .Replace("@orderBy", orderBy);
         }
         /// <summary>
         /// index 37
@@ -1063,7 +1009,10 @@ namespace Jasmine.Orm
                 }
             }
 
-            return _stringCache[35].Replace("@count", $"{count}").Replace("@condition", condition).Replace("@orderBy", orderBy).Replace("@table", table);
+            return _stringCache[35].Replace("@count", $"{count}")
+                                   .Replace("@condition", condition)
+                                   .Replace("@orderBy", orderBy)
+                                   .Replace("@table", table);
         }
         /// <summary>
         /// index 38
@@ -1071,7 +1020,6 @@ namespace Jasmine.Orm
         /// <returns></returns>
         public string GetQueryTopConditionalOrderByDesc(int count, string orderBy, string condition)
         {
-
             lock (_locker)
             {
                 if (_stringCache[37] == null)
@@ -1082,7 +1030,9 @@ namespace Jasmine.Orm
                 }
             }
 
-            return _stringCache[37].Replace("@count", $"{count}").Replace("@condition", condition).Replace("@orderBy", orderBy);
+            return _stringCache[37].Replace("@count", $"{count}")
+                                   .Replace("@condition", condition)
+                                   .Replace("@orderBy", orderBy);
         }
         /// <summary>
         /// index 39
@@ -1100,7 +1050,10 @@ namespace Jasmine.Orm
                 }
             }
 
-            return _stringCache[38].Replace("@count", $"{count}").Replace("@condition", condition).Replace("@orderBy", orderBy).Replace("@table", table);
+            return _stringCache[38].Replace("@count", $"{count}")
+                                   .Replace("@condition", condition)
+                                   .Replace("@orderBy", orderBy)
+                                   .Replace("@table", table);
         }
         /// <summary>
         /// index 40
@@ -1118,7 +1071,9 @@ namespace Jasmine.Orm
                 }
             }
 
-            return _stringCache[39].Replace("@count", $"{count}").Replace("@condition", condition).Replace("@table", table);
+            return _stringCache[39].Replace("@count", $"{count}")
+                                   .Replace("@condition", condition)
+                                   .Replace("@table", table);
         }
         /// <summary>
         /// index 41
@@ -1136,7 +1091,8 @@ namespace Jasmine.Orm
                 }
             }
 
-            return _stringCache[40].Replace("@count", $"{count}").Replace("@orderBy", orderBy);
+            return _stringCache[40].Replace("@count", $"{count}")
+                                   .Replace("@orderBy", orderBy);
         }
         /// <summary>
         /// index 42
@@ -1154,7 +1110,9 @@ namespace Jasmine.Orm
                 }
             }
 
-            return _stringCache[41].Replace("@count", $"{count}").Replace("@orderBy", orderBy).Replace("@table", table);
+            return _stringCache[41].Replace("@count", $"{count}")
+                                   .Replace("@orderBy", orderBy)
+                                   .Replace("@table", table);
         }
         /// <summary>
         /// index 43
@@ -1172,7 +1130,8 @@ namespace Jasmine.Orm
                 }
             }
 
-            return _stringCache[42].Replace("@count", $"{count}").Replace("@orderBy", orderBy);
+            return _stringCache[42].Replace("@count", $"{count}")
+                                   .Replace("@orderBy", orderBy);
         }
         /// <summary>
         /// index 44
@@ -1190,7 +1149,9 @@ namespace Jasmine.Orm
                 }
             }
 
-            return _stringCache[43].Replace("@count", $"{count}").Replace("@orderBy", orderBy).Replace("@table", table);
+            return _stringCache[43].Replace("@count", $"{count}")
+                                   .Replace("@orderBy", orderBy)
+                                   .Replace("@table", table);
         }
         /// <summary>
         /// index 45
@@ -1208,7 +1169,9 @@ namespace Jasmine.Orm
                 }
             }
 
-            return _stringCache[44].Replace("@count", $"{count}").Replace("@orderBy", orderBy).Replace("@body", generateColumnsString(columns));
+            return _stringCache[44].Replace("@count", $"{count}")
+                                   .Replace("@orderBy", orderBy)
+                                   .Replace("@body", generateColumnsString(columns));
         }
         /// <summary>
         /// index 46
@@ -1226,7 +1189,10 @@ namespace Jasmine.Orm
                 }
             }
 
-            return _stringCache[45].Replace("@count", $"{count}").Replace("@orderBy", orderBy).Replace("@body", generateColumnsString(columns)).Replace("@table", table);
+            return _stringCache[45].Replace("@count", $"{count}")
+                                   .Replace("@orderBy", orderBy)
+                                   .Replace("@body", generateColumnsString(columns))
+                                   .Replace("@table", table);
         }
         /// <summary>
         /// index 47
@@ -1244,7 +1210,8 @@ namespace Jasmine.Orm
                 }
             }
 
-            return _stringCache[46].Replace("@count", $"{count}").Replace("@body", generateColumnsString(columns));
+            return _stringCache[46].Replace("@count", $"{count}")
+                                   .Replace("@body", generateColumnsString(columns));
         }
         /// <summary>
         /// index 48
@@ -1262,7 +1229,9 @@ namespace Jasmine.Orm
                 }
             }
 
-            return _stringCache[47].Replace("@count", $"{count}").Replace("@body", generateColumnsString(columns)).Replace("@condition", condition);
+            return _stringCache[47].Replace("@count", $"{count}")
+                                   .Replace("@body", generateColumnsString(columns))
+                                   .Replace("@condition", condition);
         }
         /// <summary>
         /// index 49
@@ -1280,7 +1249,10 @@ namespace Jasmine.Orm
                 }
             }
 
-            return _stringCache[48].Replace("@count", $"{count}").Replace("@body", generateColumnsString(columns)).Replace("@condition", condition).Replace("@orderBy", orderBy);
+            return _stringCache[48].Replace("@count", $"{count}")
+                                   .Replace("@body", generateColumnsString(columns))
+                                   .Replace("@condition", condition)
+                                   .Replace("@orderBy", orderBy);
         }
         /// <summary>
         /// index 50
@@ -1298,7 +1270,10 @@ namespace Jasmine.Orm
                 }
             }
 
-            return _stringCache[49].Replace("@count", $"{count}").Replace("@body", generateColumnsString(columns)).Replace("@condition", condition).Replace("@table", table).Replace("@orderBy", orderBy);
+            return _stringCache[49].Replace("@count", $"{count}")
+                                   .Replace("@body", generateColumnsString(columns))
+                                   .Replace("@condition", condition)
+                                   .Replace("@table", table).Replace("@orderBy", orderBy);
         }
         /// <summary>
         /// index 51
@@ -1316,7 +1291,10 @@ namespace Jasmine.Orm
                 }
             }
 
-            return _stringCache[50].Replace("@count", $"{count}").Replace("@body", generateColumnsString(columns)).Replace("@condition", condition).Replace("@orderBy", orderBy);
+            return _stringCache[50].Replace("@count", $"{count}")
+                                   .Replace("@body", generateColumnsString(columns))
+                                   .Replace("@condition", condition)
+                                   .Replace("@orderBy", orderBy);
         }
         /// <summary>
         /// index 52
@@ -1334,7 +1312,11 @@ namespace Jasmine.Orm
                 }
             }
 
-            return _stringCache[51].Replace("@count", $"{count}").Replace("@body", generateColumnsString(columns)).Replace("@condition", condition).Replace("@orderBy", orderBy).Replace("@table", table);
+            return _stringCache[51].Replace("@count", $"{count}")
+                                   .Replace("@body", generateColumnsString(columns))
+                                   .Replace("@condition", condition)
+                                   .Replace("@orderBy", orderBy)
+                                   .Replace("@table", table);
         }
         /// <summary>
         /// index 53
@@ -1352,7 +1334,10 @@ namespace Jasmine.Orm
                 }
             }
 
-            return _stringCache[50].Replace("@count", $"{count}").Replace("@body", generateColumnsString(columns)).Replace("@condition", condition).Replace("@table", table);
+            return _stringCache[50].Replace("@count", $"{count}")
+                                   .Replace("@body", generateColumnsString(columns))
+                                   .Replace("@condition", condition)
+                                   .Replace("@table", table);
         }
         /// <summary>
         /// index 54
@@ -1370,7 +1355,9 @@ namespace Jasmine.Orm
                 }
             }
 
-            return _stringCache[53].Replace("@count", $"{count}").Replace("@body", generateColumnsString(columns)).Replace("@orderBy", orderBy);
+            return _stringCache[53].Replace("@count", $"{count}")
+                                   .Replace("@body", generateColumnsString(columns))
+                                   .Replace("@orderBy", orderBy);
         }
         /// <summary>
         /// index 55
@@ -1388,7 +1375,10 @@ namespace Jasmine.Orm
                 }
             }
 
-            return _stringCache[54].Replace("@count", $"{count}").Replace("@body", generateColumnsString(columns)).Replace("@orderBy", orderBy).Replace("@table", table);
+            return _stringCache[54].Replace("@count", $"{count}")
+                                   .Replace("@body", generateColumnsString(columns))
+                                   .Replace("@orderBy", orderBy)
+                                   .Replace("@table", table);
         }
         /// <summary>
         /// index 56
@@ -1406,7 +1396,9 @@ namespace Jasmine.Orm
                 }
             }
 
-            return _stringCache[55].Replace("@count", $"{count}").Replace("@body", generateColumnsString(columns)).Replace("@table", table);
+            return _stringCache[55].Replace("@count", $"{count}")
+                                   .Replace("@body", generateColumnsString(columns))
+                                   .Replace("@table", table);
         }
         /// <summary>
         /// index 57
@@ -1424,7 +1416,8 @@ namespace Jasmine.Orm
                 }
             }
 
-            return _stringCache[56].Replace("@count", $"{count}").Replace("@table", table);
+            return _stringCache[56].Replace("@count", $"{count}")
+                                   .Replace("@table", table);
         }
         /// <summary>
         /// index 58
@@ -1435,11 +1428,7 @@ namespace Jasmine.Orm
             lock (_locker)
             {
                 if (_stringCache[56] == null)
-                {
                     _stringCache[56] = $"{SELECT} * {FROM} @table {getLeftJoin("@table")}   ";
-
-
-                }
             }
 
             return _stringCache[56].Replace("@table", table);

@@ -7,7 +7,7 @@
         /// </summary>
         /// <param name="extension"></param>
         /// <returns></returns>
-        public static string GetContentTypeByExtension(string extension)
+        public static string GetMediaTypeByExtension(string extension)
         {
             switch (extension)
             {

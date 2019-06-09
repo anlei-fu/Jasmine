@@ -7,7 +7,7 @@ using System.Text;
 
 namespace Jasmine.Orm.Implements
 {
-    public class DefaultBaseTypeConvertor : ISqlBaseTypeConvertor
+    public class DefaultBaseTypeConvertor : ISqlTypeConvertor
     {
         private DefaultBaseTypeConvertor()
         {
@@ -56,18 +56,20 @@ namespace Jasmine.Orm.Implements
             typeof(DateTimeOffset),
         };
 
-        public static readonly ISqlBaseTypeConvertor Instance = new DefaultBaseTypeConvertor();
+        public static readonly ISqlTypeConvertor Instance = new DefaultBaseTypeConvertor();
 
-        public object ExpliciteConvert(object value, Type type)
+        public object FromSqlFiledValue(object value, Type type)
         {
 
             if (type.IsEnum)
             {
             }
 
+            /*
+             *  do explicit convert
+             */ 
             switch (type.FullName)
             {
-
                 case BaseTypes.SByte:
                    return (sbyte)value;
                 case BaseTypes.NSByte:
@@ -148,25 +150,39 @@ namespace Jasmine.Orm.Implements
             if (obj == null)
             {
                 if (nullable)
-                    return "null";
+                {
+                    return "NULL";
+                }
                 else
                 {
-                    if (type == BaseTypes.TString)
-                        return string.Empty;
-                    else
-                        return "0";
+                    /*
+                     * set default value ,if not nullable
+                     */
+
+                    return type == BaseTypes.TString ? string.Empty
+                                                     : "0";
                 }
             }
             else if (type.IsEnum)
+            {
                 return ((int)obj).ToString();
+            }
             else if (type == typeof(char))
+            {
                 return (char)obj == '\'' ? "''''" : $"'{obj.ToString()}'";
+            }
             else if (type == typeof(string))
+            {
                 return formatSingleQuota((string)obj);
+            }
             else if (_baseTypes.Contains(type))
+            {
                 return obj.ToString();
+            }
             else
+            {
                 throw new NotConvertableException(type, GetType());
+            }
         }
 
 

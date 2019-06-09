@@ -1,8 +1,7 @@
-﻿using System.Collections.Generic;
-using Jasmine.Orm.Interfaces;
-using Jasmine.Orm.Model;
+﻿using Jasmine.Orm.Interfaces;
+using System.Collections.Generic;
 
-namespace Jasmine.Orm.Implements
+namespace Jasmine.Orm
 {
     public class DefaultUnkowTypeConvertor : IUnknowTypeConvertor
     {

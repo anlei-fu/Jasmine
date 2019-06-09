@@ -1,14 +1,12 @@
-﻿using Jasmine.Orm.Interfaces;
-using Jasmine.Orm.Model;
+﻿using Jasmine.Extensions;
 using Jasmine.Reflection;
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Text;
 using System.Threading.Tasks;
-using Jasmine.Extensions;
 
-namespace Jasmine.Orm.Implements
+namespace Jasmine.Orm
 {
     public class JasmineSqlExcutor : ISqlExcuter
     {

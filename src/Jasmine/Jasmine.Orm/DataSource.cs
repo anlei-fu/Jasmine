@@ -1,6 +1,6 @@
 ﻿namespace Jasmine.Orm.Model
 {
-    public   enum DataSourceType
+    public   enum DataSource
     {
         /// <summary>
         /// 
@@ -11,5 +11,7 @@
         Db2,
         Sqlite,
         Access,
+        SyBase,
+        Postgre,
     }
 }

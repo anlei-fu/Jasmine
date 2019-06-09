@@ -1,7 +1,7 @@
 ﻿using Jasmine.Reflection;
 using System;
 
-namespace Jasmine.Orm.Model
+namespace Jasmine.Orm
 {
     public class SqlTypeCovertor
     {

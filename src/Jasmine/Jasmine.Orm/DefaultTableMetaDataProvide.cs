@@ -1,9 +1,7 @@
-﻿using Jasmine.Orm.Interfaces;
-using Jasmine.Reflection;
-using System;
+﻿using System;
 using System.Collections.Concurrent;
 
-namespace Jasmine.Orm.Implements
+namespace Jasmine.Orm
 {
     public class DefaultTableMetaDataProvider : ITableMetaDataProvider
     {
@@ -12,19 +10,10 @@ namespace Jasmine.Orm.Implements
 
         }
         private readonly ConcurrentDictionary<Type, TableMetaData> _tables = new ConcurrentDictionary<Type, TableMetaData>();
-        private readonly ITypeCache _reflection = JasmineReflectionCache.Instance;
-
+     
         public static readonly DefaultTableMetaDataProvider Instance = new DefaultTableMetaDataProvider();
-        public void Cache(Type type)
-        {
-            _tables.TryAdd(type, TableMetaDataReflectResolver.Instace.Resolve(type));
 
-        }
-        public bool Contains(Type type)
-        {
-            return _tables.ContainsKey(type);
-        }
-
+        public TableMetaData GetTable<T>() => GetTable(typeof(T));
         public TableMetaData GetTable(Type type)
         {
             if (!Contains(type))
@@ -36,9 +25,17 @@ namespace Jasmine.Orm.Implements
         {
             Cache(typeof(T));
         }
+        public void Cache(Type type)
+        {
+            _tables.TryAdd(type, TableMetaDataReflectResolver.Instace.Resolve(type));
+        }
         public bool Contains<T>()
         {
             return Contains(typeof(T));
+        }
+        public bool Contains(Type type)
+        {
+            return _tables.ContainsKey(type);
         }
     }
 }

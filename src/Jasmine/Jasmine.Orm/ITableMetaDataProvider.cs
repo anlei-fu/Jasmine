@@ -1,10 +1,10 @@
 ﻿using System;
-namespace Jasmine.Orm.Interfaces
+namespace Jasmine.Orm
 {
     public interface ITableMetaDataProvider
     {
         /// <summary>
-        /// return  a <see cref="TableMetaData"/> by give type
+        /// return  a <see cref="TableMetaData"/> by given type
         /// </summary>
         /// <param name="type"></param>
         /// <returns></returns>

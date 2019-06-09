@@ -7,7 +7,6 @@ namespace Jasmine.Common
     {
         public AbstractSequenceReader(IEnumerable<T> sequence = null)
         {
-
             if (sequence != null)
                 Sequence = sequence.ToArray();
         }

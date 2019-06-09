@@ -102,7 +102,7 @@ namespace Jasmine.Orm
     {
         private const string ORM_TEMPLATE_GROUP = "orm-template-group";
         private const string TEMPLATE = "template";
-        private const string Name = "name";
+        private const string NAME = "name";
 
         private ConcurrentDictionary<string, SqlTemplate> _map = new ConcurrentDictionary<string, SqlTemplate>();
         public int Count => _map.Count;
@@ -112,27 +112,29 @@ namespace Jasmine.Orm
         {
             var xml = new XmlDocument();
 
+            xml.Load(xmlPath);
+
             foreach (var item in xml.GetAll(x=>x.Name==ORM_TEMPLATE_GROUP))
             {
-                var name = item.GetAttribute(Name);
+                var name = item.GetAttribute(NAME);
 
                 if (name == null)
                 {
-                    throw new RequiredAttributeNotFoundException($"required attribute {Name} of {ORM_TEMPLATE_GROUP} not found!");
+                    throw new RequiredAttributeNotFoundException($"required attribute {NAME} of {ORM_TEMPLATE_GROUP} tag not found!");
                 }
 
                 foreach (var templateNode in item.GetAll(x => x.Name == TEMPLATE))
                 {
-                    var tptName = templateNode.GetAttribute(Name);
+                    var tptName = templateNode.GetAttribute(NAME);
 
                     if (name == null)
                     {
-                        throw new RequiredAttributeNotFoundException($"required attribute {Name} of {TEMPLATE} not found!");
+                        throw new RequiredAttributeNotFoundException($"required attribute {NAME} of {TEMPLATE} tag not found!");
                     }
 
                     var template = SqlTemplateParser.Parse(templateNode.InnerText);
 
-                    template.Name = name + tptName;
+                    template.Name = name +"."+ tptName;
 
                     Add(template);
                 }
@@ -189,13 +191,13 @@ namespace Jasmine.Orm
         {
 
         }
+
         public static readonly SqltemplateConverter Instance = new SqltemplateConverter();
 
         
         public string Convert(SqlTemplate template, object parameters)
         {
             var map = genarateMap(string.Empty, parameters);
-
 
             var builder = new StringBuilder();
 
@@ -211,8 +213,6 @@ namespace Jasmine.Orm
                     {
                         throw new ParameterNotFoundException($"requierd parameter @{item.Value} can not be found by given parameter instance ({parameters}),{template.RawString} ");
                     }
-
-
                 }
                 else
                 {

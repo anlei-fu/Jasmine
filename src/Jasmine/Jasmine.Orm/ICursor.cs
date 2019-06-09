@@ -1,13 +1,11 @@
-﻿using Jasmine.Orm.Model;
-using System;
-using System.Collections.Concurrent;
+﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace Jasmine.Orm.Interfaces
+namespace Jasmine.Orm
 {
     /// <summary>
-    /// it's iterator for sql select  result collection
+    /// it's a iterator to read sql qury  results collection
     /// </summary>
     public interface ICursor:IDisposable
     {
@@ -23,7 +21,7 @@ namespace Jasmine.Orm.Interfaces
         /// <returns></returns>
         Task<T> ReadOneAsync<T>();
         /// <summary>
-        /// read rows ,it may return less count rows, when  rows are not enough
+        /// read rows ,it may return less than count rows, when  rows are not enough
         /// </summary>
         /// <param name="count">count of row to read</param>
         /// <returns></returns>

@@ -15,7 +15,7 @@ namespace Jasmine.Orm.Implements
         }
         public static readonly IQueryResultResolver Instance = new DefaultQueryResultResolver();
         private ITableMetaDataProvider _tableProvider => DefaultTableMetaDataProvider.Instance;
-        private ISqlBaseTypeConvertor _baseTypeConvertor => DefaultBaseTypeConvertor.Instance;
+        private ISqlTypeConvertor _baseTypeConvertor => DefaultBaseTypeConvertor.Instance;
         private IReflectionCache<TypeMetaData,Type> _refelctionProvider => JasmineReflectionCache.Instance;
 
 
@@ -42,7 +42,7 @@ namespace Jasmine.Orm.Implements
 
                     var rawValue = context.Reader.GetValue(item.ColumnIndex);
 
-                    item.Setter.Invoke(instanceMap[item.Parent], _baseTypeConvertor.ExpliciteConvert(rawValue, item.PropertyType));
+                    item.Setter.Invoke(instanceMap[item.Parent], _baseTypeConvertor.FromSqlFiledValue(rawValue, item.PropertyType));
 
                 }
 

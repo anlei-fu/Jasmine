@@ -6,10 +6,10 @@ namespace Jasmine.Orm.Attributes
     [AttributeUsage(AttributeTargets.Class)]
     public  class DataSourceAttribute:Attribute
     {
-        public DataSourceAttribute(DataSourceType dataSource)
+        public DataSourceAttribute(DataSource dataSource)
         {
             DataSource = dataSource;
         }
-        public DataSourceType DataSource { get; }
+        public DataSource DataSource { get; }
     }
 }

@@ -1,13 +1,11 @@
-﻿using Jasmine.Orm.Model;
-using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
-namespace Jasmine.Orm.Interfaces
-{
+namespace Jasmine.Orm
+{ 
     public interface IQueryResultResolver
     {
         /// <summary>
-        /// resolve one row to an object by given <see cref="QueryResultContext"/> and destination type
+        /// resolve sql query result collection  into  a <see cref="IEnumerable{T}"/> by given <see cref="QueryResultContext"/> 
         /// </summary>
         /// <param name="context"></param>
         /// <param name="type"></param>

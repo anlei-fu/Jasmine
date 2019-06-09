@@ -2,7 +2,7 @@
 
 namespace Jasmine.Orm.Interfaces
 {
-    public interface ISqlBaseTypeConvertor
+    public interface ISqlTypeConvertor
     {
         /// <summary>
         /// convert obj to sql string 
@@ -19,6 +19,6 @@ namespace Jasmine.Orm.Interfaces
         /// <param name="index"></param>
         /// <param name="convertTo"></param>
         /// <returns></returns>
-        object ExpliciteConvert(object value, Type convertTo);
+        object FromSqlFiledValue(object value, Type convertTo);
     }
 }

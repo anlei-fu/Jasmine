@@ -34,8 +34,7 @@ namespace Jasmine.Restful
                     {
                         await processor.FiltsAsysnc(context);
 
-
-                        //handle processor
+                        //handle processor output
 
                         if (context.ReturnValue != null)
                         {
@@ -44,25 +43,24 @@ namespace Jasmine.Restful
                             await context.HttpContext.Response.Body.WriteAsync(buffer, 0, buffer.Length);
                         }
 
-                        context.HttpContext.Response.StatusCode = HttpStatuCodes.SUCESSED;
                     }
                     catch (Exception ex)
                     {
                         _logger?.Error(ex);
 
-                        context.HttpContext.Response.StatusCode = HttpStatuCodes.SERVER_ERROR;
+                        context.HttpContext.Response.StatusCode = HttpStatusCodes.SERVER_ERROR;
                     }
                 }
                 /*
                  *  has alternative service
                  */ 
-                else if(processor.AlternativeService!=null)
+                else if(processor.HasAlternativeService)
                 {
-                    await DispatchAsync(processor.AlternativeService, context);
+                    await DispatchAsync(processor.AlternativeServicePath, context);
                 }
                 else
                 {
-                    context.HttpContext.Response.StatusCode = HttpStatuCodes.SERVER_NOT_AVAILABLE;
+                    context.HttpContext.Response.StatusCode = HttpStatusCodes.SERVER_NOT_AVAILABLE;
                 }
             }
             /*
@@ -77,7 +75,7 @@ namespace Jasmine.Restful
                  */ 
                 if(stream==null)
                 {
-                    context.HttpContext.Response.StatusCode = HttpStatuCodes.NOT_FPOUND;
+                    context.HttpContext.Response.StatusCode = HttpStatusCodes.NOT_FOUND;
                 }
                 else
                 {
@@ -86,9 +84,9 @@ namespace Jasmine.Restful
                     var ext =  index!=-1? path.Substring(index, path.Length - index):
                                            ".html";
 
-                    context.HttpContext.Response.StatusCode = HttpStatuCodes.SUCESSED;
+                    context.HttpContext.Response.StatusCode = HttpStatusCodes.SUCESSED;
 
-                    context.HttpContext.Response.Headers.Add("Content-Type", MediaTypeHelper.GetContentTypeByExtension(ext));
+                    context.HttpContext.Response.Headers.Add("Content-Type", MediaTypeHelper.GetMediaTypeByExtension(ext));
 
                     await stream.CopyToAsync(context.HttpContext.Response.Body);
 
@@ -98,7 +96,7 @@ namespace Jasmine.Restful
             }
             else
             {
-                context.HttpContext.Response.StatusCode = HttpStatuCodes.NOT_FPOUND;
+                context.HttpContext.Response.StatusCode = HttpStatusCodes.NOT_FOUND;
             }
 
             /*

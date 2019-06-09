@@ -1,10 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Jasmine.Extensions
 {
-  public static  class  DateTimeExtensions
+    public static  class  DateTimeExtensions
     {
       
         public const long ONE_SECOND =1;

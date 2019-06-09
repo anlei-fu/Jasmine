@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Jasmine.Extensions
 {
- public static   class StringBuilderExtension
+    public static class StringBuilderExtension
     {
         public static StringBuilder RemoveLastComa(this StringBuilder builder)
         {

@@ -1,7 +1,6 @@
-﻿using Jasmine.Orm.Model;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
-namespace Jasmine.Orm.Interfaces
+namespace Jasmine.Orm
 {
     public  interface IUnknowTypeConvertor
     {

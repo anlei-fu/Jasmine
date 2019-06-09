@@ -2,7 +2,6 @@
 using Jasmine.Ioc;
 using Jasmine.Orm.Attributes;
 using Jasmine.Orm.Exceptions;
-using Jasmine.Orm.Interfaces;
 using Jasmine.Reflection;
 using System;
 using System.Collections.Generic;
@@ -15,7 +14,7 @@ namespace Jasmine.Orm
         {
 
         }
-        private ITableMetaDataProvider _provider => Implements.DefaultTableMetaDataProvider.Instance;
+        private ITableMetaDataProvider _provider =>DefaultTableMetaDataProvider.Instance;
         public static readonly IMetaDataReflectResolver<TableMetaData> Instace = new TableMetaDataReflectResolver();
         public TableMetaData Resolve(Type type)
         {
@@ -172,7 +171,7 @@ namespace Jasmine.Orm
                 column.PorpertyName = item.Name;
                 column.Getter = item.Getter;
                 column.Setter = item.Setter;
-                column.OwnnerType = item.OwnerType;
+                column.OwnerType = item.OwnerType;
 
                 table.Columns.Add(column.ColumnName, column);
 
@@ -196,7 +195,7 @@ namespace Jasmine.Orm
                 bool joinKeyOk = false;
                 foreach (var column in table.Columns)
                 {
-                    if(column.Key.ToLower()==item.JoinKey.ToLower())
+                    if(column.Key.ToLower()==item.SelfKey.ToLower())
                     {
                         joinKeyOk = true;
                         break;
@@ -205,7 +204,7 @@ namespace Jasmine.Orm
 
                 if(!joinKeyOk)
                 {
-                    throw new Orm.Exceptions.JoinKeyNotFountException(table,item.Table,item.JoinKey);
+                    throw new Orm.Exceptions.JoinKeyNotFountException(table,item.Table,item.SelfKey);
                 }
             }
 
@@ -234,8 +233,6 @@ namespace Jasmine.Orm
                     }
                 }
             }
-
-
         }
 
         private JoinColumns getJoinColumns(Property property)
@@ -248,7 +245,6 @@ namespace Jasmine.Orm
             var joinColumn = new JoinColumns();
 
             var table = _provider.GetTable(property.PropertyType);
-
 
             joinColumn.Table = table;
             joinColumn.PropertyName = property.Name;
@@ -277,7 +273,7 @@ namespace Jasmine.Orm
 
             joinTable.Table = table;
 
-            joinTable.JoinKey = joinKey;
+            joinTable.SelfKey = joinKey;
 
             joinTable.Setter = property.Setter;
             joinTable.Getter = property.Getter;

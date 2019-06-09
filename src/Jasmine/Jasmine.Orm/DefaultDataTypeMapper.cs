@@ -144,7 +144,7 @@ namespace Jasmine.Orm
         };
 
         public static readonly IDataTypeMapper Instace = new DefaultDataTypeMapper();
-        public Type GetCSharpType(string sqlType, DataSourceType dataSource)
+        public Type GetCSharpType(string sqlType, DataSource dataSource)
         {
             if (sqlType == null)
                 throw new ArgumentNullException(nameof(sqlType));
@@ -158,21 +158,21 @@ namespace Jasmine.Orm
 
             switch (dataSource)
             {
-                case DataSourceType.SqlServer:
+                case DataSource.SqlServer:
 
                     return _sqlServerSc.TryGetValue(sqlType,out var sqlServerV)?sqlServerV:null;
 
-                case DataSourceType.Oracle:
+                case DataSource.Oracle:
                     break;
-                case DataSourceType.MySql:
+                case DataSource.MySql:
 
                     return _mysqlSc.TryGetValue(sqlType, out var mysqlV) ? mysqlV : null;
 
-                case DataSourceType.Db2:
+                case DataSource.Db2:
                     break;
-                case DataSourceType.Sqlite:
+                case DataSource.Sqlite:
                     break;
-                case DataSourceType.Access:
+                case DataSource.Access:
                     break;
                 default:
                     break;
@@ -181,28 +181,31 @@ namespace Jasmine.Orm
             return null;
         }
 
-        public string GetSqlType(Type type, DataSourceType dataSource)
+        public string GetSqlType(Type type, DataSource dataSource)
         {
             switch (dataSource)
             {
-                case DataSourceType.SqlServer:
+                case DataSource.SqlServer:
 
                     return _sqlServerCs.TryGetValue(type, out var sqlServerV) ? sqlServerV : null;
 
-                case DataSourceType.Oracle:
+                case DataSource.Oracle:
 
                     break;
 
-                case DataSourceType.MySql:
+                case DataSource.MySql:
 
                     return _mysqlCs.TryGetValue(type, out var mysqlV) ? mysqlV : null;
 
-                case DataSourceType.Db2:
+                case DataSource.Db2:
                     break;
-                case DataSourceType.Sqlite:
+
+                case DataSource.Sqlite:
                     break;
-                case DataSourceType.Access:
+
+                case DataSource.Access:
                     break;
+
                 default:
                     break;
             }

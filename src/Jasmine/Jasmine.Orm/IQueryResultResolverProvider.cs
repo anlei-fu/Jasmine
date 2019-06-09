@@ -1,10 +1,9 @@
 ﻿using System;
 
-namespace Jasmine.Orm.Interfaces
+namespace Jasmine.Orm
 {
     public  interface IQueryResultResolverProvider
     {
         IQueryResultResolver GetResolver(Type type);
-        IQueryResultResolver GetResolver<T>();
     }
 }
