@@ -1,8 +1,4 @@
-﻿using Jasmine.Orm;
-using Jasmine.Orm.Attributes;
-using Jasmine.Orm.Implements;
-using Jasmine.Orm.Model;
-using Jasmine.Reflection;
+﻿using Jasmine.Reflection;
 using System;
 using System.Diagnostics;
 using System.IO;
@@ -75,80 +71,80 @@ namespace Test
             //Console.WriteLine($" direct call time spend:{watch.ElapsedMilliseconds} ");
 
 
-            var table = "animal_table_3";
-            JasmineOrmXmlConfig.LoadConfig("orm.config");
+           // var table = "animal_table_3";
+           // JasmineOrmXmlConfig.LoadConfig("orm.config");
 
-            var excutor = new JasmineSqlExcutor(null);
+           // var excutor = new JasmineSqlExcutor(null);
 
-            var builder= new SqlBuilder(DataSourceType.SqlServer);
-            var provider = new SqlConnectionProvider("sql server", @"server =HW09; database = Test; integrated security = SSPI");
+           // var builder= new SqlBuilder(DataSourceType.SqlServer);
+           // var provider = new SqlConnectionProvider("sql server", @"server =HW09; database = Test; integrated security = SSPI");
 
 
             
 
-            //excutor.Excute(builder.CreateTable<Animal>(table).Build(), provider);
-           // excutor.Excute(builder.Insert(new Animal() { Age = 45, Name = "cat", Sex = 0 }, table).Build(), provider);
+           // //excutor.Excute(builder.CreateTable<Animal>(table).Build(), provider);
+           //// excutor.Excute(builder.Insert(new Animal() { Age = 45, Name = "cat", Sex = 0 }, table).Build(), provider);
 
-            var animals = new Animal[]
-            {
-                new Animal{Name="fish",Age=15,Sex=null },
-                new Animal {Name="butterfly",Age=0,Sex=45 }
-            };
+           // var animals = new Animal[]
+           // {
+           //     new Animal{Name="fish",Age=15,Sex=null },
+           //     new Animal {Name="butterfly",Age=0,Sex=45 }
+           // };
 
-            excutor.Excute(builder.Insert<Animal>(animals, table).Build(), provider);
-
-
-            foreach (var item in excutor.Query(builder.Select<Animal>(table).Where("Name").Like("f%").And("Age").Bigger(9).Build(), provider))
-            {
-                foreach (var item1 in item)
-                {
-                    Console.WriteLine(item1);
-                }
-            }
+           // excutor.Excute(builder.Insert<Animal>(animals, table).Build(), provider);
 
 
+           // foreach (var item in excutor.Query(builder.Select<Animal>(table).Where("Name").Like("f%").And("Age").Bigger(9).Build(), provider))
+           // {
+           //     foreach (var item1 in item)
+           //     {
+           //         Console.WriteLine(item1);
+           //     }
+           // }
 
-           //  excutor.Excute(builder.Insert<Animal>(new Animal[] { new Animal {Name="monkey" },new Animal() {Name="donkey" } },"table1").Build(), provider);
-           // var result1= excutor.Query<Animal>(builder.Select<Animal>("table1").Build(), provider);
 
-            //Console.WriteLine(builder.SelectDistinct<Animal>("table1").Where(new Expression("age",14,">")).Build());
+
+           ////  excutor.Excute(builder.Insert<Animal>(new Animal[] { new Animal {Name="monkey" },new Animal() {Name="donkey" } },"table1").Build(), provider);
+           //// var result1= excutor.Query<Animal>(builder.Select<Animal>("table1").Build(), provider);
+
+           // //Console.WriteLine(builder.SelectDistinct<Animal>("table1").Where(new Expression("age",14,">")).Build());
                    
 
-           // excutor.Query<InstanceData>(builder.Build(),null);
+           //// excutor.Query<InstanceData>(builder.Build(),null);
             
 
 
-              var sb = new StringBuilder();
-            foreach (var item in BaseTypes.Base)
-            {
-                sb.Append(item.FullName + "\r\n");
-            }
+           //   var sb = new StringBuilder();
+           // foreach (var item in BaseTypes.Base)
+           // {
+           //     sb.Append(item.FullName + "\r\n");
+           // }
 
-            File.WriteAllText("type.text", sb.ToString());
+           // File.WriteAllText("type.text", sb.ToString());
 
-            var template = " select * from {table} where id>23 and {name}>12";
+           // var template = " select * from {table} where id>23 and {name}>12";
 
-            var watch = Stopwatch.StartNew();
-            watch.Start();
-            var result = DefaultTemplateParser.Instance.Parse(template);
+           // var watch = Stopwatch.StartNew();
+           // watch.Start();
+           // var result = DefaultTemplateParser.Instance.Parse(template);
 
-            Console.WriteLine($"elapsed :{watch.ElapsedMilliseconds}");
+           // Console.WriteLine($"elapsed :{watch.ElapsedMilliseconds}");
 
-            foreach (var item in result)
-            {
-                Console.WriteLine(item.Value);
-            }
-            DefaultTemplateConvertor.Instance.Convert(template, new { table = "table1", name = "jk" });
-            watch = Stopwatch.StartNew();
-            watch.Start();
+           // foreach (var item in result)
+           // {
+           //     Console.WriteLine(item.Value);
+           // }
+           // DefaultTemplateConvertor.Instance.Convert(template, new { table = "table1", name = "jk" });
+           // watch = Stopwatch.StartNew();
+           // watch.Start();
 
-            var buildresult = DefaultTemplateConvertor.Instance.Convert(template, new { table = "11", name = "jk" });
+           // var buildresult = DefaultTemplateConvertor.Instance.Convert(template, new { table = "11", name = "jk" });
 
-            Console.WriteLine($" elapsed:{watch.ElapsedMilliseconds}");
+           // Console.WriteLine($" elapsed:{watch.ElapsedMilliseconds}");
 
-            Console.WriteLine(buildresult);
+           // Console.WriteLine(buildresult);
 
-            Console.Read();
+           // Console.Read();
 
 
         }
@@ -177,17 +173,12 @@ namespace Test
     {
 
        
-        public int Age { get; set; }
-        [Nullable]
-        public int? Sex { get; set; }
-<<<<<<< HEAD
-        [Nullable]
-        [SqlDataType("char(12)")]
-=======
-        [NotNull]
-        [SqlColumnTypeAttribute("char(12)")]
->>>>>>> abd18fb1fcdd791e769188a65fdc4c0ae78ae8d4
+        //public int Age { get; set; }
+        //[NotNull]
+        //public int? Sex { get; set; }
+        //[NotNull]
+        //[SqlDataType("char(12)")]
        
-        public string Name { get; set; }
+        //public string Name { get; set; }
     }
 }

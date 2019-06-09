@@ -159,10 +159,6 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Jasmine.Orm\Jasmine.Orm.csproj">
-      <Project>{33A78647-0632-47DE-BE81-0019CC9D812D}</Project>
-      <Name>Jasmine.Orm</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Jasmine.Reflection\Jasmine.Reflection.csproj">
       <Project>{C0525DCB-8593-421B-A8AD-1DE365216F7E}</Project>
       <Name>Jasmine.Reflection</Name>

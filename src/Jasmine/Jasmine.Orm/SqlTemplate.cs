@@ -112,18 +112,18 @@ namespace Jasmine.Orm
         {
             var xml = new XmlDocument();
 
-            foreach (var item in xml.GetAllChildrenByTagName(ORM_TEMPLATE_GROUP))
+            foreach (var item in xml.GetAll(x=>x.Name==ORM_TEMPLATE_GROUP))
             {
-                var name = item.GetAttributeValue(Name);
+                var name = item.GetAttribute(Name);
 
                 if (name == null)
                 {
                     throw new RequiredAttributeNotFoundException($"required attribute {Name} of {ORM_TEMPLATE_GROUP} not found!");
                 }
 
-                foreach (var templateNode in item.GetAllChildren(x => x.Name == TEMPLATE))
+                foreach (var templateNode in item.GetAll(x => x.Name == TEMPLATE))
                 {
-                    var tptName = templateNode.GetAttributeValue(Name);
+                    var tptName = templateNode.GetAttribute(Name);
 
                     if (name == null)
                     {

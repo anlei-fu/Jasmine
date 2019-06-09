@@ -11,7 +11,7 @@ namespace Jasmine.Ioc
         /// </summary>
         Singleton,
         /// <summary>
-        /// every call creates a new instance <see cref="IServiceProvider.GetService(Type)"/>
+        /// every call create a new instance <see cref="IServiceProvider.GetService(Type)"/>
         /// </summary>
         Request,
         /// <summary>

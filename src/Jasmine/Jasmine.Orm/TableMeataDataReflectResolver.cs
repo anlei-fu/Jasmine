@@ -1,5 +1,8 @@
 ﻿using Jasmine.Common;
+using Jasmine.Ioc;
 using Jasmine.Orm.Attributes;
+using Jasmine.Orm.Exceptions;
+using Jasmine.Orm.Interfaces;
 using Jasmine.Reflection;
 using System;
 using System.Collections.Generic;
@@ -8,103 +11,311 @@ namespace Jasmine.Orm
 {
     public class TableMetaDataReflectResolver : IMetaDataReflectResolver<TableMetaData>
     {
+        private TableMetaDataReflectResolver()
+        {
+
+        }
+        private ITableMetaDataProvider _provider => Implements.DefaultTableMetaDataProvider.Instance;
+        public static readonly IMetaDataReflectResolver<TableMetaData> Instace = new TableMetaDataReflectResolver();
         public TableMetaData Resolve(Type type)
         {
             var table = new TableMetaData();
+            table.RelatedType = type;
 
             var attrs = JasmineReflectionCache.Instance.GetItem(type).Attributes;
 
-            if(attrs.Contains<TableNameAttribute>())
+            var joinColumns = new Dictionary<string, JoinColumns>();
+            var joinTables = new Dictionary<string, JoinTable>();
+            var associateTables = new Dictionary<string, AssociateTable>();
+
+            //table name
+            if (attrs.Contains<TableNameAttribute>())
             {
                 table.Name = attrs.GetAttribute<TableNameAttribute>()[0].Name;
             }
 
-            if(attrs.Contains<DataSourceAttribute>())
+            //data source ,default is sql server
+            if (attrs.Contains<DataSourceAttribute>())
             {
                 table.DataSource = attrs.GetAttribute<DataSourceAttribute>()[0].DataSource;
             }
+
+            // query result resolver
+            if (attrs.Contains<QueryResultResolverAttribute>())
+            {
+                table.Resolver = (IQueryResultResolver)IocServiceProvider.Instance.GetService(attrs.GetAttribute<QueryResultResolverAttribute>()[0].ResolverType);
+            }
+
+           
+            //default is type name
+            if (table.Name == null)
+            {
+                table.Name = type.Name;
+            }
+
+            // non parameter constructor is required
+            table.Constructor = JasmineReflectionCache.Instance.GetItem(type).Constructors.GetDefaultConstructor()?.DefaultInvoker;
+
+            if (table.Constructor == null)
+            {
+                throw new RequiredDefaultConstructorNotFoundException(type);
+            }
+
+            // set default query result resolver
+            if (table.Resolver == null)
+                table.Resolver = Implements.DefaultQueryResultResolver.Instance;
 
 
             foreach (var item in JasmineReflectionCache.Instance.GetItem(type).Properties)
             {
                 var pattrs = item.Attributes;
 
+                //ignore property
                 if (pattrs.Contains<SqlIgnoreAttribute>())
                     continue;
 
-                
-
-                if(pattrs.Contains<JoinColumnsAttribute>())
+                // resolve join column
+                if (pattrs.Contains<JoinColumnsAttribute>())
                 {
-                    foreach (var joinColumn in getJooinColumns(item))
-                    {
-                        table.Columns.Add(joinColumn.ColumnName, joinColumn);
-                    }
+                    var joinColumn = getJoinColumns(item);
+
+                    joinColumns.Add(joinColumn.Table.Name, joinColumn);
+
+                    continue;
+                }
+
+                //resolve join table
+                if (pattrs.Contains<JoinTableAttribute>())
+                {
+                    var joinTable = getJoinTable(item, pattrs.GetAttribute<JoinTableAttribute>()[0].ForeignKey);
+
+                    joinTables.Add(joinTable.Table.Name, joinTable);
+
+                    continue;
 
                 }
 
+                // resolve  associate query
+                if(pattrs.Contains<AssociateAttribute>())
+                {
+                    var associateTable = getAssociateTable(item,pattrs.GetAttribute<AssociateAttribute>()[0].Condition);
 
+                    associateTables.Add(associateTable.Table.Name, associateTable);
+
+                    continue;
+                }
+
+                //resolve column
                 var column = new ColumnMetaData();
 
-                if(pattrs.Contains<ColumnNameAttribute>())
+                //column name
+                if (pattrs.Contains<ColumnNameAttribute>())
                 {
                     column.ColumnName = pattrs.GetAttribute<ColumnNameAttribute>()[0].ColumnName;
                 }
 
-                if(pattrs.Contains<SqlColumnTypeAttribute>())
+                // sql type
+                if (pattrs.Contains<SqlColumnTypeAttribute>())
                 {
-                    column.SqlType = pattrs.GetAttribute<SqlDataTypeAttribute>()[0].SqlType;
+                    column.SqlType = pattrs.GetAttribute<SqlColumnTypeAttribute>()[0].SqlColumnType;
                 }
 
-                if(pattrs.Contains<NullableAttribute>())
+                // nullable
+                if (pattrs.Contains<NotNullAttribute>())
                 {
-                    column.Nullable = pattrs.GetAttribute<NullableAttribute>()[0].Nullable;
+                    column.Nullable = true;
                 }
 
-                if(attrs.Contains<PrimaryKeyAttribute>())
+                //primary key
+                if (pattrs.Contains<PrimaryKeyAttribute>())
                 {
                     column.Constraints.Add(pattrs.GetAttribute<PrimaryKeyAttribute>()[0]);
                 }
 
-                if(attrs.Contains<UniqueAttribute>())
+                //unique key
+                if (pattrs.Contains<UniqueAttribute>())
                 {
                     column.Constraints.Add(pattrs.GetAttribute<UniqueAttribute>()[0]);
                 }
 
-                if(attrs.Contains<ForeignKeyAttribute>())
+                //foreign key
+                if (pattrs.Contains<ForeignKeyAttribute>())
                 {
                     column.Constraints.Add(pattrs.GetAttribute<ForeignKeyAttribute>()[0]);
                 }
 
-                if(attrs.Contains<DefaultAttribute>())
+                // default value
+                if (pattrs.Contains<DefaultAttribute>())
                 {
                     column.Constraints.Add(pattrs.GetAttribute<DefaultAttribute>()[0]);
                 }
 
-                if(attrs.Contains<CheckAttribute>())
+                //check 
+                if (pattrs.Contains<CheckAttribute>())
                 {
                     column.Constraints.Add(pattrs.GetAttribute<CheckAttribute>()[0]);
                 }
 
-                column.RelatedType = item.RelatedInfo.PropertyType;
+                // config default sqltype ,if sqltype not be set
+                if (column.SqlType == null)
+                {
+                    column.SqlType = DefaultDataTypeMapper.Instace.GetSqlType(item.PropertyType, table.DataSource);
+                }
+
+                // default column name is property name
+                if (column.ColumnName == null)
+                {
+                    column.ColumnName = item.Name;
+                }
+
+                column.RelatedType = item.PropertyInfo.PropertyType;
                 column.PorpertyName = item.Name;
                 column.Getter = item.Getter;
                 column.Setter = item.Setter;
+                column.OwnnerType = item.OwnerType;
+
+                table.Columns.Add(column.ColumnName, column);
 
             }
+
+            table.JoinColumns = joinColumns;
+            table.AssociateTables = associateTables;
+            table.JoinTables = joinTables;
+
+            finalCheck(table);
 
             return table;
 
         }
 
-        public List<ColumnMetaData> getJooinColumns(Property property)
+        private void finalCheck(TableMetaData table)
         {
-            return null;
+            // check join key is ok
+            foreach (var item in table.JoinTables.Values)
+            {
+                bool joinKeyOk = false;
+                foreach (var column in table.Columns)
+                {
+                    if(column.Key.ToLower()==item.JoinKey.ToLower())
+                    {
+                        joinKeyOk = true;
+                        break;
+                    }
+                }
+
+                if(!joinKeyOk)
+                {
+                    throw new Orm.Exceptions.JoinKeyNotFountException(table,item.Table,item.JoinKey);
+                }
+            }
+
+            // check assciate query varible is ok
+            foreach (var item in table.AssociateTables.Values)
+            {
+                foreach (var seg in item.ConditionTemplate.Segments)
+                {
+                    if(seg.IsVarible)
+                    {
+                        bool conditionParameterIsOk = false;
+
+                        foreach (var column in table.Columns)
+                        {
+                            if(seg.Value==column.Key.ToLower())
+                            {
+                                conditionParameterIsOk = true;
+                                break;
+                            }
+                        }
+
+                        if(!conditionParameterIsOk)
+                        {
+                            throw new Orm.Exceptions.ConditionParameterCanNotBeFoundException(item.ConditionTemplate.RawString, seg.Value, table);
+                        }
+                    }
+                }
+            }
+
+
         }
 
-        public TableMetaData getJoinTable(Property property)
+        private JoinColumns getJoinColumns(Property property)
         {
-            return null;
+            if (BaseTypes.Base.Contains(property.PropertyType))
+            {
+                throw new BadJoinColumnException(property.PropertyType);
+            }
+
+            var joinColumn = new JoinColumns();
+
+            var table = _provider.GetTable(property.PropertyType);
+
+
+            joinColumn.Table = table;
+            joinColumn.PropertyName = property.Name;
+
+            joinColumn.Setter = property.Setter;
+            joinColumn.Getter = property.Getter;
+
+            joinColumn.OwnerType = property.OwnerType;
+            joinColumn.RelatedType = property.PropertyType;
+
+            return joinColumn;
+        }
+
+
+
+
+        public JoinTable getJoinTable(Property property, string joinKey)
+        {
+            if (BaseTypes.Base.Contains(property.PropertyType))
+            {
+                throw new BadJoinColumnException(property.PropertyType);
+            }
+
+            var joinTable = new JoinTable();
+            var table = _provider.GetTable(property.PropertyType);
+
+            joinTable.Table = table;
+
+            joinTable.JoinKey = joinKey;
+
+            joinTable.Setter = property.Setter;
+            joinTable.Getter = property.Getter;
+            joinTable.OwnerType = property.OwnerType;
+            joinTable.RelatedType = property.PropertyType;
+
+            return joinTable;
+        }
+
+        public AssociateTable getAssociateTable(Property property, string condition)
+        {
+            if (condition == null)
+                throw new Orm.Exceptions.AssociateConditionCanNotBeNullException();
+
+            if (!property.PropertyType.IsArray || !property.PropertyType.IsList())
+            {
+                throw new Orm.Exceptions.BadJoinTableTypeException(property.PropertyType);
+            }
+
+            if (BaseTypes.Base.Contains(property.PropertyType.GetElementType()))
+                throw new Orm.Exceptions.BadJoinTableTypeException(property.PropertyType);
+
+            var associateTable = new AssociateTable();
+
+            var table = _provider.GetTable(property.PropertyType);
+
+            associateTable.Table = table;
+
+            associateTable.PropertyName = property.Name;
+
+            associateTable.ConditionTemplate = SqlTemplateParser.Parse(condition);
+
+            associateTable.Setter = property.Setter;
+            associateTable .Getter = property.Getter;
+
+            associateTable.OwnerType = property.OwnerType;
+            associateTable.RelatedType = property.PropertyType;
+            return associateTable;
         }
     }
 }

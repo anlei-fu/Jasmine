@@ -20,7 +20,7 @@ namespace Jasmine.Reflection
             if (_keyMap.TryAdd(info, new Method()))
             {
                 _keyMap[info].Name = info.Name;
-                _keyMap[info].RelatedInfo = info;
+                _keyMap[info].MethodInfo = info;
                 _keyMap[info].ReturnType = info.ReturnType;
                 _keyMap[info].FullName = info.GetMethodName();
 

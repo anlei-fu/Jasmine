@@ -8,6 +8,7 @@ namespace Jasmine.Reflection
         {
 
         }
+
         public static readonly ITypeCache Instance = new JasmineReflectionCache();
 
         public override TypeMetaData GetItem(Type info)

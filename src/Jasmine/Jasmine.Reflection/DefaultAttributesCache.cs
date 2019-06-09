@@ -34,15 +34,9 @@ namespace Jasmine.Reflection.Implements
             return _keyMap.ContainsKey(attrType);
         }
 
-<<<<<<< Updated upstream
-        public bool Contains<Type>()
-        {
-            throw new NotImplementedException();
-=======
         public bool Contains<T>()
         {
             return Contains(typeof(T));
->>>>>>> Stashed changes
         }
 
         public Attribute[] GetAttribute(string name)

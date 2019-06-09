@@ -6,7 +6,7 @@ namespace Jasmine.Reflection
 {
     public class Constructor : AttributeFearture
     {
-        public ConstructorInfo RelatedInfo { get; set; }
+        public ConstructorInfo ConstructorInfo { get; set; }
         public Func<object[], object> Invoker { get; set; }
         public bool IsDefaultConstructor => DefaultInvoker != null;
         public Func<object> DefaultInvoker { get; internal set; }

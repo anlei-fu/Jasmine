@@ -8,14 +8,14 @@ namespace Jasmine.Extensions
     public static class StringExtensions
     {
 
-        public static int LastIndexOf(this string str, int start, HashSet<char> input)
+        public static int LastIndexOf(this string input, int start, HashSet<char> partterns)
         {
-            if (start > str.Length || start < 0)
+            if (start > input.Length || start < 0)
                 throw new ArgumentOutOfRangeException();
 
             for (int i = start; i >= 0; i--)
             {
-                if (input.Contains(str[i]))
+                if (input.Contains(input[i]))
                     return i;
             }
             return -1;
@@ -29,13 +29,13 @@ namespace Jasmine.Extensions
             return new string(ch);
         }
 
-        public static string RangeReverse(this string str, int start, int end)
+        public static string RangeReverse(this string input, int start, int end)
         {
             char[] ch1 = null;
 
             try
             {
-                ch1 = str.Substring(start, end - start).ToArray();
+                ch1 = input.Substring(start, end - start).ToArray();
             }
             catch
             {
@@ -44,7 +44,7 @@ namespace Jasmine.Extensions
 
             Array.Reverse(ch1);
 
-            var ch2 = str.ToArray();
+            var ch2 = input.ToArray();
             var t = 0;
 
             for (int i = start; i < end; i++, t++)
@@ -55,81 +55,88 @@ namespace Jasmine.Extensions
 
 
 
-        public static List<string> SelectWithMatch(this string str, string start, string end)
+        public static List<string> SelectWithMatch(this string input, string start, string end)
         {
             var ls = new List<string>();
 
             int t = 0, k = 0;
 
-            for (int i = 0; i < str.Length; i++)
+            for (int i = 0; i < input.Length; i++)
             {
-                t = str.IndexOf(start, i);
+                t = input.IndexOf(start, i);
 
                 if (t == -1)
                     break;
 
-                k = str.IndexOf(end, t + start.Length);
+                k = input.IndexOf(end, t + start.Length);
 
                 if (k == -1)
                     break;
 
                 if (k < t)
                 {
-                    for (int j = k; j < str.Length; j++)
+                    for (int j = k; j < input.Length; j++)
                     {
                         k = k + 1;
-                        if (k > str.Length) break;
-                        k = str.IndexOf(end, k);
-                        if (k > t) break;
-                        if (k == -1) return ls;
+
+                        if (k > input.Length)
+                            break;
+
+                        k = input.IndexOf(end, k);
+
+                        if (k > t)
+                            break;
+
+                        if (k == -1)
+                            return ls;
                     }
                 }
 
-                ls.Add(str.Substring(t, k - t + end.Length));
+                ls.Add(input.Substring(t, k - t + end.Length));
 
                 i = k;
             }
             return ls;
         }
-        public static string RangReplace(this string str, string oldpattern, string newpattern, int start, int end)
+        public static string RangReplace(this string input, string oldPattern, string newPattern, int start, int end)
         {
             var temp = string.Empty;
 
             try
             {
-                temp = str.Substring(start, end - start);
+                temp = input.Substring(start, end - start);
             }
             catch
             {
-                return str;
+                return input;
             }
 
-            str = str.Replace(temp, "*&ds2￥h5j%^w我kjd");
+            input = input.Replace(temp, "*&ds2￥h5j%^w我kjd");
 
-            temp = temp.Replace(oldpattern, newpattern);
+            temp = temp.Replace(oldPattern, newPattern);
 
-            return str.Replace("*&ds2￥h5j%^w我kjd", temp);
+            return input.Replace("*&ds2￥h5j%^w我kjd", temp);
         }
 
-        public static List<string> Select(this string str, string start, string end)
+        public static List<string> Select(this string input, string start, string end)
         {
             var ls = new List<string>();
 
             int t = 0, k = 0;
 
-            for (int i = 0; i < str.Length; i++)
+            for (int i = 0; i < input.Length; i++)
             {
-                t = str.IndexOf(start, i);
+                t = input.IndexOf(start, i);
 
                 if (t == -1)
                     break;
 
-                k = str.IndexOf(end, t + start.Length);
+                k = input.IndexOf(end, t + start.Length);
 
                 if (k == -1)
                     break;
 
-                ls.Add(str.Substring(t, k - t + end.Length));
+                ls.Add(input.Substring(t, k - t + end.Length));
                 i = k;
             }
 
@@ -158,46 +165,47 @@ namespace Jasmine.Extensions
             }
             return ls;
         }
-        public static List<string> SelectByCount(this string str, string start, string end, int count = 1)
+        public static List<string> SelectWithCount(this string input, string start, string end, int count = 1)
         {
-            List<string> ls = new List<string>();
-            if (str is null)
+            var ls = new List<string>();
+
+            if (input is null)
                 return ls;
 
             int t = 0, k = 0;
 
             if (count < 0)
             {
-                for (int i = 0; i < str.Length; i++)
+                for (int i = 0; i < input.Length; i++)
                 {
-                    t = str.IndexOf(start, i);
+                    t = input.IndexOf(start, i);
 
                     if (t == -1)
                         break;
 
-                    k = str.IndexOf(end, t + start.Length);
+                    k = input.IndexOf(end, t + start.Length);
 
                     if (k == -1)
                         break;
 
-                    ls.Add(str.Substring(t, k - t + end.Length));
+                    ls.Add(input.Substring(t, k - t + end.Length));
                     i = k;
                 }
                 return ls;
             }
-            for (int i = 0; i < str.Length; i++)
+            for (int i = 0; i < input.Length; i++)
             {
-                t = str.IndexOf(start, i);
+                t = input.IndexOf(start, i);
 
                 if (t == -1)
                     break;
 
-                k = str.IndexOf(end, t + start.Length);
+                k = input.IndexOf(end, t + start.Length);
 
                 if (k == -1)
                     break;
 
-                ls.Add(str.Substring(t, k - t + end.Length));
+                ls.Add(input.Substring(t, k - t + end.Length));
 
                 if (ls.Count == count)
                     break;
@@ -206,17 +214,15 @@ namespace Jasmine.Extensions
             }
             return ls;
         }
-        public static List<string> Splite(this string str, string pattern, int count = -1)
+        public static List<string> Splite(this string input, string pattern, int count = -1)
         {
             var ls = new List<string>();
-            var use_count = true;
 
-            if (count <= 0)
-                use_count = false;
+            var use = count > 0;
 
             int _count = 0;
 
-            if (str is null)
+            if (input is null)
                 return ls;
 
             int t = 0;
@@ -224,23 +230,23 @@ namespace Jasmine.Extensions
 
             while (true)
             {
-                t = str.IndexOf(pattern, k);
+                t = input.IndexOf(pattern, k);
 
                 if (t == -1)
                 {
-                    ls.Add(str.Substring(k, str.Length - k) + pattern);
+                    ls.Add(input.Substring(k, input.Length - k) + pattern);
 
                     break;
                 }
 
                 t += pattern.Length;
-                ls.Add(str.Substring(k, t - k));
+                ls.Add(input.Substring(k, t - k));
                 k = t;
 
-                if (k == str.Length)
+                if (k == input.Length)
                     return ls;
 
-                if (!use_count)
+                if (!use)
                     continue;
 
                 if (++_count == count)
@@ -249,59 +255,62 @@ namespace Jasmine.Extensions
 
             return ls;
         }
-        public static List<string> Splite1(this string str, string pattern, int count = -1)
+        public static List<string> Splite1(this string input, string pattern, int count = -1)
         {
-            var ls = new List<string>();
-            var use_count = true;
+            if (input == null)
+                throw new ArgumentNullException(nameof(input));
 
-            if (count <= 0)
-                use_count = false;
+            var ls = new List<string>();
+
+            var useCount = count>0;
 
             int _count = 0;
 
-            if (str is null)
-                return ls;
+            int t ;
 
-            int t = 0;
             int k = 0;
 
             while (true)
             {
-                t = str.IndexOf(pattern, k);
+                t = input.IndexOf(pattern, k);
 
                 if (t == -1)
                 {
-                    ls.Add(str.Substring(k, str.Length - k));
+                    ls.Add(input.Substring(k, input.Length - k));
 
                     break;
                 }
 
-                ls.Add(str.Substring(k, t - k));
+                ls.Add(input.Substring(k, t - k));
+
                 k = t + 1;
 
-                if (k == str.Length)
+                if (k == input.Length)
                     return ls;
 
-                if (!use_count)
+                if (!useCount)
                     continue;
 
                 if (++_count == count)
                     return ls;
             }
+
             return ls;
         }
-        public static List<string> Splite(this string str, IEnumerable<string> splitors)
+        public static List<string> Splite(this string input, IEnumerable<string> splitors)
         {
 
             var t = 0;
             var k = 1000000;
+
             var ls = new List<string>();
 
             while (true)
             {
                 foreach (var item in splitors)
                 {
-                    var b = str.IndexOf(item, t);
+                    var b = input.IndexOf(item, t);
+
                     b = b == -1 ? 1000000 : b;
 
                     if (k >= b)
@@ -310,43 +319,44 @@ namespace Jasmine.Extensions
 
                 if (k == 1000000)
                 {
-                    if (t != str.Length)
-                        ls.Add(str.Substring(t, str.Length - t));
+                    if (t != input.Length)
+                        ls.Add(input.Substring(t, input.Length - t));
 
                     break;
                 }
 
-                ls.Add(str.Substring(t, k + 1 - t));
+                ls.Add(input.Substring(t, k + 1 - t));
 
                 t = k + 1;
+
                 k = 1000000;
             }
 
             return ls;
 
         }
-        public static string GetOnlyOneNewLineSpliter(this string str)
+        public static string GetOnlyOneNewLineSpliter(this string input)
         {
-            str = str.Replace("\r", "\n");
+            input = input.Replace("\r", "\n");
             int t = 0;
 
             while (t != -1)
             {
-                str = str.Replace("\n\n", "\n");
-                t = str.IndexOf("\n\n");
+                input = input.Replace("\n\n", "\n");
+                t = input.IndexOf("\n\n");
             }
 
-            return str.Replace("\n", "\r\n");
+            return input.Replace("\n", "\r\n");
         }
-        public static string GetOnlyOneBlank(this string str)
+        public static string GetOnlyOneBlank(this string input)
         {
-            str = str.Replace("\t", " ");
+            input = input.Replace("\t", " ");
 
             var sb = new StringBuilder();
 
             var rm = false;
 
-            foreach (var item in str)
+            foreach (var item in input)
             {
                 var temp = item.ToString();
 
@@ -367,17 +377,17 @@ namespace Jasmine.Extensions
 
             return sb.ToString();
         }
-        public static string ParagraphFormat(this string str)
+        public static string ParagraphFormat(this string input)
         {
-            return str.Replace("\r\n", "\r\n  ");
+            return input.Replace("\r\n", "\r\n  ");
         }
-        public static string RemoveFormatterChars(this string str)
+        public static string RemoveFormatterChars(this string input)
         {
             var set = new HashSet<char>() { '\n', '\t', '\r', ' ', };
 
             var sb = new StringBuilder();
 
-            foreach (var item in str)
+            foreach (var item in input)
             {
                 if (!set.Contains(item))
                     sb.Append(item);
@@ -387,15 +397,15 @@ namespace Jasmine.Extensions
         }
 
 
-        public static string UpperFirstLetter(this string str)
+        public static string UpperFirstLetter(this string input)
         {
-            if (string.IsNullOrEmpty(str))
-                return str;
+            if (string.IsNullOrEmpty(input))
+                return input;
 
-            return str[0].ToString().ToUpper()
-                    + str.Remove(0, 1);
+            return input[0].ToString().ToUpper()
+                    + input.Remove(0, 1);
         }
-        public static string RemoveWithMatch(this string str, string start, string end)
+        public static string RemoveWithMatch(this string input, string start, string end)
         {
             int t = 0, k = 0;
 
@@ -403,21 +413,21 @@ namespace Jasmine.Extensions
 
             while (true)
             {
-                t = str.IndexOf(start, k);
+                t = input.IndexOf(start, k);
                 if (t == -1)
                 {
-                    sb.Append(str.Substring(k, str.Length - k));
+                    sb.Append(input.Substring(k, input.Length - k));
 
                     break;
                 }
 
-                sb.Append(str.Substring(k, t - k));
+                sb.Append(input.Substring(k, t - k));
 
-                k = str.IndexOf(end, t);
+                k = input.IndexOf(end, t);
 
                 if (k == -1)
                 {
-                    sb.Append(str.Substring(t, str.Length - t));
+                    sb.Append(input.Substring(t, input.Length - t));
 
                     break;
                 }
@@ -428,7 +438,7 @@ namespace Jasmine.Extensions
         }
 
 
-        public static void RemoveWithMatch(this string str, string start, string end, int count = -1)
+        public static void RemoveWithMatch(this string input, string start, string end, int count = -1)
         {
             int t = 0, k = 0;
             var use_count = true;
@@ -440,17 +450,17 @@ namespace Jasmine.Extensions
 
             while (true)
             {
-                t = str.IndexOf(start, k);
+                t = input.IndexOf(start, k);
 
                 if (t == -1)
                     return;
 
-                k = str.IndexOf(end, t + start.Length);
+                k = input.IndexOf(end, t + start.Length);
 
                 if (k == -1)
                     return;
 
-                str = str.Remove(t, k + end.Length - t);
+                input = input.Remove(t, k + end.Length - t);
                 k = t;
 
                 if (!use_count)
@@ -461,64 +471,64 @@ namespace Jasmine.Extensions
             }
         }
 
-        public static string Repeat(this string str, int time)
+        public static string Repeat(this string input, int time)
         {
             var t = 0;
-            var temp = str;
+            var temp = input;
 
             while (++t < time)
-                str += temp;
+                input += temp;
 
-            return str;
+            return input;
         }
 
 
-        public static bool Contains(this string str, IEnumerable<string> patterns)
+        public static bool Contains(this string input, IEnumerable<string> patterns)
         {
             foreach (var item in patterns)
-                if (!str.Contains(item))
+                if (!input.Contains(item))
                     return false;
 
             return true;
         }
 
-        public static bool StartWith(this string str, IEnumerable<string> patterns)
+        public static bool StartWith(this string input, IEnumerable<string> patterns)
         {
             foreach (var item in patterns)
-                if (str.StartsWith(item))
+                if (input.StartsWith(item))
                     return true;
 
             return false;
         }
 
 
-        public static bool EndWith(this string str, IEnumerable<string> patters)
+        public static bool EndWith(this string input, IEnumerable<string> patters)
         {
             foreach (var item in patters)
-                if (str.EndsWith(item))
+                if (input.EndsWith(item))
                     return true;
 
             return false;
         }
 
-        public static bool StartAndEndWith(this string str, string start, string end)
+        public static bool StartAndEndWith(this string input, string start, string end)
         {
-            return str.StartsWith(start) && str.EndsWith(end);
+            return input.StartsWith(start) && input.EndsWith(end);
         }
 
-        public static bool StartAndEndWith(this string str, IEnumerable<KeyValuePair<string, string>> patters)
+        public static bool StartAndEndWith(this string input, IEnumerable<KeyValuePair<string, string>> patters)
         {
             foreach (var item in patters)
-                if (StartAndEndWith(str, item.Key, item.Value))
+                if (StartAndEndWith(input, item.Key, item.Value))
                     return true;
 
             return false;
         }
 
-        public static bool ContainsOneOf(this string str, IEnumerable<string> patterns)
+        public static bool ContainsOneOf(this string input, IEnumerable<string> patterns)
         {
             foreach (var item in patterns)
-                if (str.Contains(item))
+                if (input.Contains(item))
                     return true;
 
             return false;

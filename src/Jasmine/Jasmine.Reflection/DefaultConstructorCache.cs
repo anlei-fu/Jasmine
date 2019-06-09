@@ -11,7 +11,7 @@ namespace Jasmine.Reflection
             if(_keyMap.TryAdd(info,new Constructor()))
             {
                
-                _keyMap[info].RelatedInfo = info;
+                _keyMap[info].ConstructorInfo = info;
                 _keyMap[info].Name = info.Name;
                 _keyMap[info].FullName = info.GetMethodName();
                 _nameMap.TryAdd(_keyMap[info].FullName, _keyMap[info]);

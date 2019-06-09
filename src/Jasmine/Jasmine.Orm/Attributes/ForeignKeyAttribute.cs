@@ -6,7 +6,7 @@ namespace Jasmine.Orm.Attributes
     /// 外键约束
     /// </summary>
     [AttributeUsage(AttributeTargets.Property , AllowMultiple = false)]
-    public   class ForeignKeyAttribute:Attribute
+    public   class ForeignKeyAttribute:SqlConstraintAttribute
     {
     }
 }

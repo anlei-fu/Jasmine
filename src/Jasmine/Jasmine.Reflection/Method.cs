@@ -6,7 +6,7 @@ namespace Jasmine.Reflection
 {
     public class Method :AttributeFearture, IInvoker
     {
-        public MethodInfo RelatedInfo { get; set; }
+        public MethodInfo MethodInfo { get; set; }
         public Func<object,object[],object> Invoker { get; set; }
         public string Name { get; set; }
         public string FullName { get; set; }

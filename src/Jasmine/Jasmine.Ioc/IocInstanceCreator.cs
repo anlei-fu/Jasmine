@@ -37,6 +37,7 @@ namespace Jasmine.Ioc
             var newNode = new DependencyCheckNode(node, metaData.RelatedType);
 
             var constructor = metaData.ConstrctorMetaData;
+
             var paramsInstances = new object[constructor.Parameters.Length];
 
             for (int i = 0; i < paramsInstances.Length; i++)

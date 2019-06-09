@@ -8,11 +8,11 @@ namespace Jasmine.Orm.Attributes
     [AttributeUsage(AttributeTargets.Property)]
     public  class JoinColumnsAttribute:Attribute
     {
-        public JoinColumnsAttribute(string foreignKey)
+        public JoinColumnsAttribute()
         {
-            ForeignKey = foreignKey;
+           
         }
 
-        public string ForeignKey { get; }
+       
     }
 }

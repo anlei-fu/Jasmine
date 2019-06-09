@@ -1,5 +1,4 @@
-﻿using System;
-using System.Reflection;
+﻿using System.Reflection;
 
 namespace Jasmine.Reflection
 {
@@ -10,7 +9,7 @@ namespace Jasmine.Reflection
             if (_keyMap.TryAdd(info, new Field()))
             {
                 _nameMap.TryAdd(info.Name, _keyMap[info]);
-                _keyMap[info].RelatedInfo = info;
+                _keyMap[info].FieldInfo = info;
                 _keyMap[info].Getter = DynamicMethodDelegateFatory.CreateFieldGetter(info);
                 _keyMap[info].Setter = DynamicMethodDelegateFatory.CreateFiledSetter(info);
                 _keyMap[info].PropertyType = info.FieldType;

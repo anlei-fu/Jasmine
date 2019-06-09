@@ -10,7 +10,7 @@ namespace Jasmine.Reflection.Implements
             if(_keyMap.TryAdd(info,new Property()))
             {
                 _nameMap.TryAdd(info.Name, _keyMap[info]);
-                _keyMap[info].RelatedInfo = info;
+                _keyMap[info].PropertyInfo = info;
 
                 if (info.CanRead)
                     _keyMap[info].Getter = DynamicMethodDelegateFatory.CreatePropertyGetter(info);

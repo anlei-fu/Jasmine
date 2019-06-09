@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SqlHelper
+namespace Jasmine.Orm.Attributes
 {
-    class TableName
+  public  class NotNullAttribute:SqlConstraintAttribute
     {
     }
 }

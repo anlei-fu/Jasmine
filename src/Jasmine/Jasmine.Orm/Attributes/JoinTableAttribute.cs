@@ -8,6 +8,10 @@ namespace Jasmine.Orm.Attributes
 {
   public  class JoinTableAttribute:Attribute
     {
+        public JoinTableAttribute(string foreignkey)
+        {
+            ForeignKey = foreignkey;
+        }
         public string ForeignKey { get; }
     }
 }

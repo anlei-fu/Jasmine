@@ -6,7 +6,7 @@ namespace Jasmine.Orm.Attributes
     /// unique constraint
     /// </summary>
     [AttributeUsage(AttributeTargets.Property , AllowMultiple = false)]
-    public   class UniqueAttribute:Attribute
+    public   class UniqueAttribute:SqlConstraintAttribute
     {
     }
 }

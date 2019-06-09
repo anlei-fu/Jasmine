@@ -1,5 +1,6 @@
 ﻿using Jasmine.Orm.Model;
 using System;
+using System.Collections.Generic;
 
 namespace Jasmine.Orm.Interfaces
 {
@@ -11,6 +12,6 @@ namespace Jasmine.Orm.Interfaces
         /// <param name="context"></param>
         /// <param name="type"></param>
         /// <returns></returns>
-        object Resolve(QueryResultContext context,Type type);
+        IEnumerable<T> Resolve<T>(QueryResultContext context);
     }
 }

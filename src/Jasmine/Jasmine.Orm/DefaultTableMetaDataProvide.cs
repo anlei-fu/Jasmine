@@ -5,19 +5,19 @@ using System.Collections.Concurrent;
 
 namespace Jasmine.Orm.Implements
 {
-    public class DefaultTableMetaDataProvide : ITableMetaDataProvider
+    public class DefaultTableMetaDataProvider : ITableMetaDataProvider
     {
-        private DefaultTableMetaDataProvide()
+        private DefaultTableMetaDataProvider()
         {
 
         }
         private readonly ConcurrentDictionary<Type, TableMetaData> _tables = new ConcurrentDictionary<Type, TableMetaData>();
         private readonly ITypeCache _reflection = JasmineReflectionCache.Instance;
 
-        public static readonly DefaultTableMetaDataProvide Instance = new DefaultTableMetaDataProvide();
+        public static readonly DefaultTableMetaDataProvider Instance = new DefaultTableMetaDataProvider();
         public void Cache(Type type)
         {
-
+            _tables.TryAdd(type, TableMetaDataReflectResolver.Instace.Resolve(type));
 
         }
         public bool Contains(Type type)

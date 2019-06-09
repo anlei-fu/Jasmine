@@ -36,6 +36,10 @@ namespace Jasmine.Reflection
             return t.IsValueType?true: t.GetDefaultConstructor() != null;
         }
 
+        public static bool IsList(this Type t)
+        {
+            return t.Name.StartsWith("List<") && t.Name.EndsWith(">");
+        }
         public static bool IsNullable(this Type t)
         {
             return t.IsValueType ? (t.IsGenericType && t.GetGenericTypeDefinition() == typeof(Nullable<>)) : false;

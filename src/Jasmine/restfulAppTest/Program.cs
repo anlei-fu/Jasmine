@@ -41,6 +41,7 @@ namespace restfulAppTest
             }
 
             private string _prefix;
+
             [Path("/do")]
             public string Say(string what)
             {

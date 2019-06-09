@@ -62,7 +62,7 @@ namespace Jasmine.Common
                 else if (subNode.Name == PROPERTIES)//property
                 {
 
-                    foreach (var property in subNode.GetDirectChildrenByTagName(PROPERTY))
+                    foreach (var property in subNode.GetDirect(pt=>pt.Name==PROPERTY))
                     {
                         if (property.Attributes.GetNamedItem(NAME) == null)//name requird
                             throw new JasminePropertyException("property-tag's name property is required!");

@@ -5,7 +5,7 @@ namespace Jasmine.Reflection
 {
     public class Field : AttributeFearture, IValueGetterSetter
     {
-        public FieldInfo RelatedInfo { get; set; }
+        public FieldInfo FieldInfo { get; set; }
         public string Name { get; set; }
         public Type PropertyType { get; set; }
         public Type OwnerType { get; set; }

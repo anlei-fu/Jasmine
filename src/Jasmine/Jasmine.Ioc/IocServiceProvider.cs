@@ -19,6 +19,7 @@ namespace Jasmine.Ioc
         private  IInstanceCreator<IocServiceMetaData> _instanceCreator => IocInstanceCreator.Instance;
 
         private readonly IServiceMetaDataXmlResolver _xmlResolver;
+
         private readonly ConcurrentDictionary<Type, object> _singletons = new ConcurrentDictionary<Type, object>();
 
 
@@ -26,7 +27,7 @@ namespace Jasmine.Ioc
        
         public void SetImplementationMapping(Type abs,Type impl)
         {
-            _metaDataManager.SetImplementation(abs, impl);
+            _metaDataManager.SetImplementationMapping(abs, impl);
         }
         public void AddProtoType(Type serviceType,object instance)
         {
@@ -44,14 +45,14 @@ namespace Jasmine.Ioc
         {
             foreach (var item in assembly.GetTypes())
             {
-                if (item.GetCustomAttribute<ServiceAttribute>() != null)
+                if (item.GetCustomAttribute<ServiceAttribute>()!= null)
                     generateMetaData(item);
             }  
         }
 
-        public T GetService<T>(Type type)
+        public T GetService<T>()
         {
-            return default(T);
+            return (T)GetService(typeof(T));
         }
         public object GetService(Type serviceType)
         {
@@ -69,11 +70,11 @@ namespace Jasmine.Ioc
 
             _metaDataManager.TryGetValue(serviceType, out var metaData);
 
-            if(metaData==null)//interface or abstrct class ,pregenerate if found implement,_interface map should  add mapping
+            if(metaData==null)//interface or abstrct class ,pregenerate, if find implementation,_interface map should  add mapping
             {
                 var impl = _metaDataManager.GetImplementation(serviceType);
 
-                if (impl==null)//not found implementation
+                if (impl==null)//do not find implementation
                     throw new ImplementationNotFoundException(null);
 
                 /*
@@ -100,7 +101,6 @@ namespace Jasmine.Ioc
             }
             else
             {
-             
                 return _instanceCreator.Create(metaData,node);
             }
         }
@@ -115,6 +115,7 @@ namespace Jasmine.Ioc
 
             _metaDataManager[serviceType].Scope = scope;
 
+            // overlay instance if instance already exists
             if (!_singletons.TryAdd(serviceType, instance))
                 _singletons[serviceType] = instance;
 

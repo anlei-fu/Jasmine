@@ -2,21 +2,21 @@
 using Jasmine.Orm.Model;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Data.SqlClient;
+using System.Data.Common;
 using System.Threading.Tasks;
 
 namespace Jasmine.Orm.Implements
 {
     public class DefaultCursor : ICursor
     {
-        public DefaultCursor(QueryResultContext context, SqlConnection connection, IDbConnectionProvider provider)
+        public DefaultCursor(QueryResultContext context, DbConnection connection, IDbConnectionProvider provider)
         {
             _context = context;
             _provider = provider;
             _connection = connection;
 
         }
-        private SqlConnection _connection;
+        private DbConnection _connection;
         private QueryResultContext _context;
         private IDbConnectionProvider _provider;
         public bool Closed { get; private set; }

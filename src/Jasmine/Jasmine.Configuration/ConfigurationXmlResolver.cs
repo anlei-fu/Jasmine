@@ -26,10 +26,10 @@ namespace Jasmine.Configuration
 
             xml.Load(path);
 
-            foreach (var groupNode in xml.GetAllChildrenByTagName(CONFIG_GROUP))
+            foreach (var groupNode in xml.GetAll(x=>x.Name==CONFIG_GROUP))
             {
 
-                var name = groupNode.GetAttributeValue(NAME);
+                var name = groupNode.GetAttribute(NAME);
 
                 requireAttributeExists(name, CONFIG_GROUP, NAME);
 
@@ -42,7 +42,7 @@ namespace Jasmine.Configuration
 
                     if (propertyNode.Name == IMPORT)
                     {
-                        var outterPath = propertyNode.GetAttributeValue(PATH);
+                        var outterPath = propertyNode.GetAttribute(PATH);
 
                         requireAttributeExists(name, IMPORT, PATH);
 
@@ -74,7 +74,7 @@ namespace Jasmine.Configuration
             var property = new Property();
             property.Name = node.Name.ToLower();
 
-            var value = node.GetAttributeValue(VALUE);
+            var value = node.GetAttribute(VALUE);
 
             if (value == null)
                 value = node.InnerText;

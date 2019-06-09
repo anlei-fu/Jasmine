@@ -17,7 +17,7 @@ namespace Jasmine.Ioc
         public static readonly IIocServiceMetaDataManager Instance = new IocServiceMetaDataManager();
        
 
-        public void SetImplementation(Type abs, Type impl)
+        public void SetImplementationMapping(Type abs, Type impl)
         {
             if (impl.IsInterfaceOrAbstraClass())
                 throw new NotImplementedException();

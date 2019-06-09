@@ -59,7 +59,7 @@ namespace Jasmine.Ioc
                  * add impl mapping
                  */ 
                 if (typeAttrs.Contains(typeof(DefaultImplementAttribute)))
-                    IocServiceMetaDataManager.Instance.SetImplementation(type, typeAttrs.GetAttribute<DefaultImplementAttribute>()[0].Impl);
+                    IocServiceMetaDataManager.Instance.SetImplementationMapping(type, typeAttrs.GetAttribute<DefaultImplementAttribute>()[0].Impl);
 
                 return null;
             }
@@ -226,7 +226,7 @@ namespace Jasmine.Ioc
         {
             var metaData = new IocPropertyMetaData();
 
-            metaData.RelatedType = filed.RelatedInfo.ReflectedType;
+            metaData.RelatedType = filed.FieldInfo.ReflectedType;
             metaData.Name = filed.Name;
 
             if (filed.Attributes.Contains(typeof(DefaultValueAttribute)))

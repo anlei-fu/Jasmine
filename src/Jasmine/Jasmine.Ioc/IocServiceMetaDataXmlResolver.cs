@@ -22,7 +22,7 @@ namespace Jasmine.Ioc
         private const string CONSTRUCTOR = "";
         private const string NULLABLE = "";
         private const string DEFAULT_VALUE = "";
-        private const string PARAM = "";
+        private const string PARAMETER = "";
         private const string INDEX = "";
         private const string REF = "";
         private const string TYPE = "";
@@ -50,9 +50,9 @@ namespace Jasmine.Ioc
 
             var dic = new Dictionary<string, Type>();//use to cache name type mapping
 
-            foreach (var service in dom.GetDirectChildrenByTagName(SERVICES))//iterate in services element
+            foreach (var service in dom.GetDirect(x=>x.Name==SERVICES))//iterate in services element
             {
-                var typeStr = service.GetAttributeValue(TYPE);
+                var typeStr = service.GetAttribute(TYPE);
 
                 if (typeStr == null)//has type attr
                 {
@@ -67,14 +67,14 @@ namespace Jasmine.Ioc
                         throw new TypeNotFoundException($"{typeStr} is not found");
                     }
 
-                    var name = service.GetAttributeValue(REF);
+                    var name = service.GetAttribute(REF);
 
                     if (name != null)
                         dic.Add(name, type);
 
                     if (type.IsInterfaceOrAbstraClass())//abstrct class impl should be instructed
                     {
-                        var impl = service.GetAttributeValue(IMPL);
+                        var impl = service.GetAttribute(IMPL);
 
                         if (impl == null)
                             throw new RequirdAttributeNotFoundException($"abstract or interface ,the impl attribute should be instructed!");
@@ -87,7 +87,7 @@ namespace Jasmine.Ioc
                         if (typeimpl.IsInterfaceOrAbstraClass() || typeimpl.IsDerivedFrom(type))//
                             throw new NotImplementedException($"{typeimpl} is abstract or not implement {type}");
 
-                        _manager.SetImplementation(type, typeimpl);
+                        _manager.SetImplementationMapping(type, typeimpl);
 
 
                     }
@@ -100,7 +100,7 @@ namespace Jasmine.Ioc
 
                         _manager.TryGetValue(type, out var metaData);
 
-                        var scope = service.GetAttributeValue(SCOPE);
+                        var scope = service.GetAttribute(SCOPE);
 
                         if (scope != null)
                         {
@@ -119,22 +119,22 @@ namespace Jasmine.Ioc
                         //find matched  constructor
                         //every parameter's type attribute is required if ref not exist
 
-                        foreach (var constructor in service.GetDirectChildrenByTagName(CONSTRUCTOR))
+                        foreach (var constructor in service.GetDirect(ctr=>ctr.Name==CONSTRUCTOR))
                         {
                             var candidate = new MethodCadidate();
 
-                            foreach (var parameter in constructor.GetDirectChildrenByTagName(PARAM))
+                            foreach (var parameter in constructor.GetDirect(para=>para.Name==PARAMETER))
                             {
                                 var parameterCadidate = new ParameterCadidate();
 
-                                var refer = parameter.GetAttributeValue(REF);
+                                var refer = parameter.GetAttribute(REF);
 
                                 if (dic.TryGetValue(refer, out var value))
                                 {
                                     parameterCadidate.Type = value;
                                 }
 
-                                var paraTypeStr = parameter.GetAttributeValue(TYPE);
+                                var paraTypeStr = parameter.GetAttribute(TYPE);
 
                                 if (TypeUtils.TryGetType(paraTypeStr, out var paraType))
                                 {
@@ -146,7 +146,7 @@ namespace Jasmine.Ioc
                                 }
 
 
-                                var paraTypeImplStr = parameter.GetAttributeValue(IMPL);
+                                var paraTypeImplStr = parameter.GetAttribute(IMPL);
 
 
                                 if (TypeUtils.TryGetType(paraTypeImplStr, out var paraTypImpl))
@@ -168,7 +168,7 @@ namespace Jasmine.Ioc
                                     throw new NotImplementedException($"{paraTypImpl}  not implement {paraType}");
 
 
-                                var notNull = parameter.GetAttributeValue(NOT_NULL);
+                                var notNull = parameter.GetAttribute(NOT_NULL);
 
                                 if (JasmineStringValueConvertor.TryGetValue<bool>(notNull, out var notNullValue))
                                 {
@@ -179,12 +179,12 @@ namespace Jasmine.Ioc
                                     throw new AttributeValueIncorrectException($"{notNull} is incorrect!");
                                 }
 
-                                var value1 = parameter.GetAttributeValue(VALUE);
+                                var value1 = parameter.GetAttribute(VALUE);
 
                                 if (value1 != null)
                                     parameterCadidate.DefaultValue = value1;
 
-                                foreach (var defaultValue in parameter.GetDirectChildrenByTagName(VALUE))
+                                foreach (var defaultValue in parameter.GetDirect(def=>def.Name==VALUE))
                                 {
                                     parameterCadidate.DefaultValue = defaultValue.InnerText;
                                 }
@@ -262,18 +262,18 @@ namespace Jasmine.Ioc
 
 
 
-                        foreach (var property in service.GetDirectChildrenByTagName(PROPERTY))
+                        foreach (var property in service.GetDirect(pt=>pt.Name==PROPERTY))
                         {
 
 
                         }
 
-                        foreach (var initiaMethod in service.GetDirectChildrenByTagName(INITIA_METHOD))
+                        foreach (var initiaMethod in service.GetDirect(init=>init.Name==INITIA_METHOD))
                         {
 
                         }
 
-                        foreach (var destroyMethod in service.GetDirectChildrenByTagName(DESTROY_METHOD))
+                        foreach (var destroyMethod in service.GetDirect(des=>des.Name==DESTROY_METHOD))
                         {
 
                         }

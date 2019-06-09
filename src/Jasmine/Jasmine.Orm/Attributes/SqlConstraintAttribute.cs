@@ -12,12 +12,8 @@ namespace Jasmine.Orm.Attributes
     /// default
     /// </summary>
     [AttributeUsage(AttributeTargets.Property, AllowMultiple = false)]
-    public class SqlConstraintAttribute : OrmAttribute
+    public class SqlConstraintAttribute : Attribute
     {
-        public SqlConstraintAttribute(params SqlConstraintAttribute[] constraints)
-        {
-            Constraints = constraints;
-        }
-        public SqlConstraintAttribute[] Constraints { get; }
+       
     }
 }

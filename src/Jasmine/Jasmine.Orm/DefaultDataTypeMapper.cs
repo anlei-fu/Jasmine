@@ -40,7 +40,7 @@ namespace Jasmine.Orm
           {typeof(uint) ,"int"},
           {typeof(uint?) ,"int"},
           {typeof(int) ,"int"},
-          {typeof(int) ,"int"},
+          {typeof(int?) ,"int"},
           {typeof(long),"bigint"},
           {typeof(long?),"bigint"},
           {typeof(bool) ,"bit"},
@@ -104,7 +104,7 @@ namespace Jasmine.Orm
           {typeof(uint) ,"int"},
           {typeof(uint?) ,"int"},
           {typeof(int) ,"int"},
-          {typeof(int) ,"int"},
+          {typeof(int?) ,"int"},
           {typeof(long),"bigint"},
           {typeof(long?),"bigint"},
           {typeof(bool) ,"bit"},
@@ -143,7 +143,7 @@ namespace Jasmine.Orm
 
         };
 
-
+        public static readonly IDataTypeMapper Instace = new DefaultDataTypeMapper();
         public Type GetCSharpType(string sqlType, DataSourceType dataSource)
         {
             if (sqlType == null)

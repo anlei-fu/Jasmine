@@ -16,6 +16,6 @@ namespace Jasmine.Ioc
         /// </summary>
         /// <param name="abs"></param>
         /// <param name="impl"></param>
-        void SetImplementation(Type abs, Type impl);
+        void SetImplementationMapping(Type abs, Type impl);
     }
 }
