@@ -9,7 +9,7 @@ namespace Jasmine.Scheduling
         private static long newId => Interlocked.Increment(ref _id);
         public long Id { get; } = newId;
 
-        public JobState JobState { get; internal set; }
+        public JobState State { get; internal set; }
         public DateTime ScheduledTime { get; internal set; }
 
         public Exception Error { get; internal set; }
@@ -18,7 +18,7 @@ namespace Jasmine.Scheduling
 
         public  void Cancel()
         {
-            if (JobState != JobState.Scheduled)
+            if (State != JobState.Scheduled)
                 return;
 
             Scheduler.Cancel(Id);

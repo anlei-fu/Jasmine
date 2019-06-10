@@ -1,5 +1,5 @@
-﻿namespace Jasmine.Cache.Interfaces
-{
+﻿namespace Jasmine.Cache
+{ 
     public  interface ICache<TKey,Tvalue>
     {
         void Cache(TKey key, Tvalue value);

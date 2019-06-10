@@ -4,17 +4,17 @@ namespace Jasmine.Scheduling
 {
     public abstract class TimeoutJob :Job
     {
-        public TimeoutJob(DateTime time)
+        public TimeoutJob(DateTime excuteTime)
         {
-            ScheduledExcutingTime = time;
+            ScheduledExcutingTime = excuteTime;
         }
     
         public DateTime ScheduledExcutingTime { get;internal set; }
      
         public new JasmineTimeoutScheduler Scheduler { get; internal set; }
-        public void AddJustTimeout(long millionSeconds)
+        public void AdjustTimeout(long millionSeconds)
         {
-            if (JobState!=JobState.Scheduled)
+            if (State!=JobState.Scheduled)
             {
                 return;
             }

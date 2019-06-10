@@ -167,6 +167,7 @@ namespace Jasmine.Orm.Implements
                     };
                 }
 
+                // iterate recurserve
                 foreach (var joinTbale in item.Table.JoinTables.Values)
                 {
                     var result = resolveJoinTable(column, joinTbale.Table, prefix + item.PropertyName);

@@ -1,18 +1,15 @@
-﻿using System.Collections.Generic;
-
-namespace Jasmine.Scheduling
+﻿namespace Jasmine.Scheduling
 {
-    public   class JasmineFifoScheduler<T>
+    public class JasmineFifoScheduler<T> : AbstractScheduler<T>
+         where T : Job
     {
-        private Queue<T> _taskQueue;
-        public void Schedule(T task)
+        public JasmineFifoScheduler(FifoJobManager jobmanager, int maxConcurrency = 0) : base(jobmanager, maxConcurrency)
         {
-            _taskQueue.Enqueue(task);
         }
 
-        public T GetTask()
+        protected override void setScheduler(T job)
         {
-            return _taskQueue.Dequeue();
+            throw new System.NotImplementedException();
         }
     }
 }

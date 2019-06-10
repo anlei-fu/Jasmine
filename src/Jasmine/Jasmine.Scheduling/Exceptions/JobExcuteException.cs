@@ -4,7 +4,7 @@ namespace Jasmine.Scheduling.Exceptions
 {
     public class JobExcuteException:Exception
     {
-        public JobExcuteException(long jobId,  Exception ex):base($"job(id:{jobId}) excute faild !",ex)
+        public JobExcuteException(long jobId,  Exception ex):base($"job({jobId}) excute faild !",ex)
         {
 
         }

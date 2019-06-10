@@ -1,6 +1,6 @@
 ﻿namespace Jasmine.Scheduling
 {
-    public class JasmineTimeoutScheduler : JasmineScheduler<TimeoutJob>
+    public class JasmineTimeoutScheduler : AbstractScheduler<TimeoutJob>
     {
         public JasmineTimeoutScheduler(ITimeoutJobManager manager ,int maxConccurency=0):base(manager,maxConccurency)
         {

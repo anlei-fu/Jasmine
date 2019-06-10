@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System;
 using System.Linq;
 
-namespace Jasmine.Cache
+namespace Jasmine.DataStructure
 {
     public class WeightedCycleTree<T> : IReadOnlyCollection<T>
         where T : ILongId

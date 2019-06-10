@@ -1,4 +1,4 @@
-﻿namespace Jasmine.Cache.Interfaces
+﻿namespace Jasmine.Cache
 {
     public  interface ILoader<Tkey,TValue>
     {

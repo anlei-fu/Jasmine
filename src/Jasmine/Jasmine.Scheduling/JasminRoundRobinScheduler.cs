@@ -1,6 +1,6 @@
 ﻿namespace Jasmine.Scheduling
 {
-    public class JasminRoundRobinScheduler : JasmineScheduler<RoundRobinJob>
+    public class JasminRoundRobinScheduler : AbstractScheduler<RoundRobinJob>
     {
         public JasminRoundRobinScheduler(IJobManager<RoundRobinJob> jobManager, int maxConcurrency = 4) : base(jobManager, maxConcurrency)
         {

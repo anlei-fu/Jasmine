@@ -1,4 +1,4 @@
-﻿namespace Jasmine.Cache
+﻿namespace Jasmine.DataStructure
 {
     public interface ILongId
     {

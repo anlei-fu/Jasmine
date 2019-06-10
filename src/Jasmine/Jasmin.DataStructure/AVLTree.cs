@@ -1,7 +1,10 @@
-﻿using System.Runtime.Serialization;
+﻿using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Runtime.Serialization;
 using System.Security.Permissions;
 
-namespace System.Collections.Generic
+namespace Jasmine.DataStructure
 {
     /// <summary>
     /// balanced binary tree which's  a datastructure  can insert and search fast
@@ -98,7 +101,9 @@ namespace System.Collections.Generic
                 _root = ret;
             }
             else
+            {
                 ret = add(ref _root, v);
+            }
 
             return ret;
         }
@@ -180,6 +185,7 @@ namespace System.Collections.Generic
         {
             var array = new T[Count];
             var index = 0;
+
             copyTo(array, ref index, _root);
 
             return array;
@@ -203,12 +209,12 @@ namespace System.Collections.Generic
             return getPositionDesc(fidnMaxNode(v));
         }
 
-        public T GetDataAtPositionDesc(int rank)
+        public T GetDataAtPositionDesc(int index)
         {
-            if (rank > Count || rank < 1)
+            if (index > Count || index < 1)
                 throw new ArgumentOutOfRangeException("rank must between 1 to count", "rank");
 
-            return getNodeAt(_root, rank).Data;
+            return getNodeAt(_root, index).Data;
         }
         /// <summary>
         /// the cloest value near  <see cref="v"/> which is smaller than <see cref="v"/>

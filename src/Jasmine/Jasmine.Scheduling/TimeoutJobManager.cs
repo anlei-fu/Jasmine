@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Jasmine.DataStructure;
+using System;
 using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -12,6 +13,7 @@ namespace Jasmine.Scheduling
             Capacity = capacity;
         }
         private const int DEFAULT_WAKEUP_TIME = 100000;
+
         private ConcurrentDictionary<long, AvlTree<TimeoutJob>.Node> _jobs = new ConcurrentDictionary<long, AvlTree<TimeoutJob>.Node>();
         private AvlTree<TimeoutJob> _tree = new AvlTree<TimeoutJob>(new TimeoutJobCompare());
         private readonly object _locker = new object();
@@ -33,6 +35,7 @@ namespace Jasmine.Scheduling
                 {
                     _tree.Remove(node);
                     _jobs.TryRemove(node.Data.Id, out var _);
+
                     return node.Data;
                 }
                 else

@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 
-namespace Jasmine.Cache
+namespace Jasmine.DataStructure
 {
     public class CycleTree<T>:IEnumerable<T>
     {

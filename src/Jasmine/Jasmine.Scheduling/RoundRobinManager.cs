@@ -1,4 +1,4 @@
-﻿using Jasmine.Cache;
+﻿using Jasmine.DataStructure;
 using System;
 using System.Collections;
 using System.Collections.Generic;

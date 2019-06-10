@@ -15,7 +15,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Jasmine.Cache\Jasmine.Cache.csproj" />
+    <ProjectReference Include="..\Jasmin.DataStructure\Jasmine.DataStructure.csproj" />
   </ItemGroup>
 
 </Project>

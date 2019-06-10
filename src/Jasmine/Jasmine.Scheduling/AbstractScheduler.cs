@@ -7,10 +7,10 @@ using System.Threading.Tasks;
 
 namespace Jasmine.Scheduling
 {
-    public abstract class JasmineScheduler<T> : IScheduler<T>
+    public abstract class AbstractScheduler<T> : IScheduler<T>
         where T : Job
     {
-        public JasmineScheduler(IJobManager<T> jobmanager, int maxConcurrency =0)
+        public AbstractScheduler(IJobManager<T> jobmanager, int maxConcurrency =0)
         {
             MaxConcurrency = maxConcurrency==0?DEFAULT_CONCURRENCY:maxConcurrency;
             _concurrencyLock = new SemaphoreSlim(MaxConcurrency);
@@ -20,6 +20,7 @@ namespace Jasmine.Scheduling
         protected IJobManager<T> _jobManager;
 
         private static readonly int DEFAULT_CONCURRENCY = Environment.ProcessorCount * 2;
+
         private SemaphoreSlim _concurrencyLock;
         private readonly object _locker = new object();
         private int _jobExcuted;
@@ -64,24 +65,27 @@ namespace Jasmine.Scheduling
             }
         }
 
-        public bool Stop(bool waitForAllJobsComplete)
+        public bool Stop(bool waitForAllJobComplete)
         {
             lock (_locker)
             {
                 if (State != SchedulerState.Running)
+                {
                     return false;
+                }
                 else
                 {
                     State = SchedulerState.Stopping;
                 }
             }
 
-            if (waitForAllJobsComplete)
+            if (waitForAllJobComplete)
             {
                 while (JobExcuting != 0) ;
             }
 
             State = SchedulerState.Stopped;
+
             Listener?.OnSchedulerStppped();
 
             return true;
@@ -120,14 +124,16 @@ namespace Jasmine.Scheduling
         {
             if (_jobManager.Schedule(job))
             {
-                job.JobState = JobState.Scheduled;
+                job.State = JobState.Scheduled;
                 
-                // set job's scheduler by subclass ,to solve cast exception
+                // set job's scheduler by sub-class ,to solve cast exception
                 setScheduler(job);
 
                 job.ScheduledTime = DateTime.Now;
+
                 Interlocked.Increment(ref _jobScheduled);
                 Interlocked.Increment(ref _jobUnExcute);
+
                 Listener?.OnJobScheduled(job.Id);
              
                 lock(_locker)
@@ -135,6 +141,8 @@ namespace Jasmine.Scheduling
                     if(_isSleeping)
                     {
                         _isSleeping = false;
+                        
+                        //  awake  work-loop thread
                         Monitor.PulseAll(_locker);
                     }
                 }
@@ -174,11 +182,13 @@ namespace Jasmine.Scheduling
                     lock (_locker)
                     {
                         _isSleeping = true;
+
                         Monitor.Wait(_locker, GetNextJobExcutingTimeout());//sleep some time, the thread will keep running until wait timeout or new job scheduled
                     }
                 }
                 else
                 {
+                    //control max cocurrency
                     _concurrencyLock.Wait();
 
                     Task.Run(() =>
@@ -186,26 +196,38 @@ namespace Jasmine.Scheduling
                         try
                         {
                             Interlocked.Decrement(ref _jobUnExcute);
-                            job.JobState = JobState.Excuting;
+
+                            job.State = JobState.Excuting;
+
                             Interlocked.Increment(ref _jobExcuting);
+
                             Listener?.OnJobBeginExcuting(job.Id);
+
                             job.Excute();
-                            job.JobState = JobState.CompleteSuccessfully;
+
+                            job.State = JobState.CompleteSuccessfully;
+
                             Interlocked.Increment(ref _jobSuccessed);
-                            Listener?.OnJobSuscced(job.Id);
+
+                            Listener?.OnJobExcuteSusccefully(job.Id);
                         }
                         catch (Exception ex)
                         {
                             Interlocked.Increment(ref _jobFailed);
-                            job.JobState = JobState.CompleteFailed;
+
+                            job.State = JobState.CompleteFailed;
+
                             job.Error = new JobExcuteException(job.Id, ex);
-                            Listener?.OnJobFailed(job.Id, ex);
+
+                            Listener?.OnJobEcuteFailed(job.Id, ex);
                         }
                         finally
                         {
 
                             Interlocked.Decrement(ref _jobExcuting);
+
                             Interlocked.Increment(ref _jobExcuted);
+
                             _concurrencyLock.Release();
                         }
 

@@ -6,8 +6,8 @@ namespace Jasmine.Scheduling
     {
        void  OnJobScheduled(long id);
         void OnJobBeginExcuting(long id);
-        void OnJobFailed(long id,Exception ex);
-        void OnJobSuscced(long id);
+        void OnJobEcuteFailed(long id,Exception ex);
+        void OnJobExcuteSusccefully(long id);
         void OnSchedulerStarted();
         void OnSchedulerStppped();
 
