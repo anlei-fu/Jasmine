@@ -107,16 +107,16 @@ namespace Jasmine.Ioc
             {
                 defaultConstructor = _reflection.GetItem(type).Constructors.GetDefaultConstructor();
 
-                    defaultConstructor=    defaultConstructor==null? 
-                                                                   constructors.Length > 0 ? constructors[0] : null
-                                                                   :null;
-
+                if (defaultConstructor == null)
+                {
+                    defaultConstructor = constructors.Length > 0 ? constructors[0] : null;
+                }
             }
 
-            /*
-             *  no constructor available
-             */ 
-            if (defaultConstructor == null)
+                /*
+                 *  no constructor available
+                 */
+                if (defaultConstructor == null)
                 return metaData;
 
             metaData.ConstrctorMetaData = resolveConstructor(defaultConstructor);

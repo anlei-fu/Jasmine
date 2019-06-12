@@ -3,10 +3,10 @@ using Jasmine.Common.Exceptions;
 using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace Jasmine.Common
 {
+    [BeforeInterceptor("cookie-validate-filter")]
     public abstract class AbstractProcessorManager<T> : IRequestProcessorManager<T>
     {
         private ConcurrentDictionary<string, IServiceGroup> _groups = new ConcurrentDictionary<string, IServiceGroup>();
@@ -36,10 +36,11 @@ namespace Jasmine.Common
                 throw new PathAlreadyExistsException();
             }
         }
-
-        public IRequestProcessor<T>[] GetAllProcessor()
+        [Description("获取全部服务数据")]
+        [Path("/api/getall")]
+        public  IEnumerable< IServiceGroup> GetAllProcessor()
         {
-            return _pathMap.Values.ToArray();
+            return _groups.Values;
         }
 
         [RestfulIgnore]
@@ -74,18 +75,20 @@ namespace Jasmine.Common
                 yield return item;
             }
         }
-
+        [Path("/api/getgroup")]
+        [Description("获取某个服务组的统计、检测、配置数据")]
         public IServiceGroup GetGroup(string name)
         {
             return _groups.TryGetValue(name, out var value) ? value : null;
         }
-
-        [Description("获取服务统计")]
+        [Path("/api/getservice")]
+        [Description("获取某个服务的统计、检测、配置数据")]
         public IRequestProcessor<T> GetProcessor(string path)
         {
             return _pathMap.TryGetValue(path, out var value) ? value : null;
         }
-
+        [Path("api/removegroup")]
+        [Description("移除某个服务组，注意：一旦移除，必须通过重启服务器才能恢复服务")]
         public void RemoveGroup(string name)
         {
             if(_groups.TryGetValue(name,out var value))
@@ -99,7 +102,7 @@ namespace Jasmine.Common
             }
         }
 
-       
+       [RestfulIgnore]
         public void RemoveProcessor(string path)
         {
             if(_pathMap.TryRemove(path,out var item))
@@ -110,7 +113,8 @@ namespace Jasmine.Common
                 }
             }
         }
-
+        [Description("移除某个服务，注意：一旦移除，必须通过重启服务器才能恢复服务")]
+        [Path("/api/removeservice")]
         public void RemoveService(string path)
         {
             if(_pathMap.TryRemove(path,out var value))
@@ -121,7 +125,7 @@ namespace Jasmine.Common
                 }
             }
         }
-
+        [RestfulIgnore]
         public void RemoveService(string groupName, string name)
         {
             if(_groups.TryGetValue(groupName,out var group))
@@ -135,37 +139,39 @@ namespace Jasmine.Common
                 }
             }
         }
-
+        [Description("恢复某个服务组，使之正常运行")]
+        [Path("/api/resumegroup")]
         public void ResumeGroup(string name)
         {
             setGroupAvailable(name, true);
         }
-
+        [Description("重启某个服务")]
+        [Path("/api/resumeservice")]
         public void ResumeService(string path)
         {
             setServiceAvailable(path, true);
         }
-
+        [RestfulIgnore]
         public void ResumeService(string groupName, string serviceName)
         {
             setServiceAvailable(groupName, serviceName, true);
         }
 
       
-     
-
+        [Description("关闭某个服务组")]
+        [Path("/api/shutdowgroup")]
         public void ShutDownGroup(string name)
         {
             setGroupAvailable(name, false);
         }
 
-    
-
+        [Description("关闭某个服务")]
+        [Path("/api/shutdownservice")]
         public void ShutDownService(string path)
         {
             setServiceAvailable(path, false);
         }
-
+        [RestfulIgnore]
         public void ShutDownService(string groupName, string serviceName)
         {
             setServiceAvailable(groupName, serviceName, false);

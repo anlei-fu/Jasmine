@@ -2,6 +2,7 @@
 using Jasmine.Configuration;
 using Jasmine.Ioc;
 using Jasmine.Restful.Attributes;
+using Jasmine.Restful.DefaultServices;
 using System;
 using System.Reflection;
 
@@ -18,6 +19,7 @@ namespace Jasmine.Restful.Implement
             });
 
             AddRestfulService(typeof(RestfulProcessorManager));
+            AddRestfulService(typeof(LoginService));
         }
 
         private int _port = 10336;

@@ -36,12 +36,16 @@ namespace Jasmine.Restful
 
                         //handle processor output
 
+                        context.HttpContext.Response.Headers.Add("Access-Control-Allow-Origin", "*");
+
                         if (context.ReturnValue != null)
                         {
                             var buffer = JsonSerializer.Instance.SerializeToBytes(context.ReturnValue);
 
                             await context.HttpContext.Response.Body.WriteAsync(buffer, 0, buffer.Length);
                         }
+
+                      
 
                     }
                     catch (Exception ex)
