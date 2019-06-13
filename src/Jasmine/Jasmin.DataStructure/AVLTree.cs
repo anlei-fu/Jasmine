@@ -11,7 +11,7 @@ namespace Jasmine.DataStructure
     /// it keeps a lower height than ordinary binary tree 
     /// and it sorted as binary tree 
     /// in this implementation ,it can insert repeat value that means it can not  use to build 
-    /// a dictionary structure,it's not a thead safe structure
+    /// a dictionary structure,and it's not a thead-safe structure
     /// </summary>
     /// <typeparam name="T"></typeparam>
     [Serializable]

@@ -10,12 +10,11 @@ namespace Jasmine.Restful
 {
     public  class RestfulServiceScanner
     {
-
         private RestfulServiceScanner()
         {
 
         }
-        public static RestfulServiceScanner Instance = new RestfulServiceScanner();
+        public static readonly RestfulServiceScanner Instance = new RestfulServiceScanner();
 
         public IRequestProcessor<HttpFilterContext>[] ScanFolder(string directory)
         {
@@ -35,7 +34,7 @@ namespace Jasmine.Restful
                     }
                     catch (System.Exception)
                     {
-
+                        //ignore
                     }
                 }
             }
@@ -53,6 +52,7 @@ namespace Jasmine.Restful
             }
             catch 
             {
+                //ignore
                 return Array.Empty<IRequestProcessor<HttpFilterContext>>();
             }
            
@@ -72,9 +72,6 @@ namespace Jasmine.Restful
                     var metaData = RestfulServiceMetaDataReflectResolver.Instance.Resolve(item);
 
                     var processors = RestfulRequestProcessorGenerator.Instance.Generate(metaData);
-
-
-                    
 
                     ls.AddRange(processors);
                 }

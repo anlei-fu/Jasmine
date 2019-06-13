@@ -1,6 +1,5 @@
 ﻿using Jasmine.Extensions;
 using Jasmine.Orm.Interfaces;
-using Jasmine.Orm.Model;
 using Jasmine.Reflection;
 using System;
 using System.Collections.Generic;

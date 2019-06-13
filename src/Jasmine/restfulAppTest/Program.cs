@@ -14,7 +14,7 @@ namespace restfulAppTest
         {
             var builder = new RestfulApplicationBuilder();
 
-            builder.LoadConfig("test.config");
+            builder.ConfigConfigProvider("test.config");
 
             builder.Scan(Assembly.GetExecutingAssembly());
 

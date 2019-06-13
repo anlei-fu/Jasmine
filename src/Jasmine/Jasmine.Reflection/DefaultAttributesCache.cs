@@ -9,7 +9,6 @@ namespace Jasmine.Reflection.Implements
     {
         private ConcurrentDictionary<Type, List<Attribute>> _keyMap = new ConcurrentDictionary<Type, List<Attribute>>();
         private ConcurrentDictionary<string, List<Attribute>> _nameMap = new ConcurrentDictionary<string, List<Attribute>>();
-
         public void Cache(Attribute attr)
         {
             var type = attr.GetType();
@@ -21,7 +20,6 @@ namespace Jasmine.Reflection.Implements
             }
 
             _keyMap[type].Add(attr);
-            
         }
 
         public bool Contains(string name)
@@ -38,7 +36,6 @@ namespace Jasmine.Reflection.Implements
         {
             return Contains(typeof(T));
         }
-
         public Attribute[] GetAttribute(string name)
         {
             return _nameMap.TryGetValue(name, out var result) ? result.ToArray() : null;
@@ -48,7 +45,6 @@ namespace Jasmine.Reflection.Implements
         {
             return _keyMap.TryGetValue(attrType, out var result) ? result.ToArray() : null;
         }
-
         public T[] GetAttribute<T>() where T : Attribute
         {
             // need a cast

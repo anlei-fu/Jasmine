@@ -1,13 +1,14 @@
 ﻿using Jasmine.Common;
 using Jasmine.Reflection;
-using Jasmine.Serialization;
-using System;
 
 namespace Jasmine.Restful
 {
+    /// <summary>
+    /// reflect invoke service method
+    /// </summary>
     public class RestfulProxyFilter : AbstractProxyFilter<HttpFilterContext>
     {
-        public RestfulProxyFilter(Method method, IRequestParamteterResolver<HttpFilterContext> resolver, object instance, string name) : base(method, resolver, instance, name)
+        public RestfulProxyFilter(Method method, IRequestParamteterResolver<HttpFilterContext> resolver, object instance) : base(method, resolver, instance, "restful-proxy-filter")
         {
         }
 

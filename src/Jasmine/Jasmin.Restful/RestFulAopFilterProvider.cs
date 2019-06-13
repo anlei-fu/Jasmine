@@ -30,7 +30,6 @@ namespace Jasmine.Restful
                 _map.TryAdd(name, (IFilter<HttpFilterContext>)instance);
             }
 
-
             return _map.TryGetValue(name, out var result) ? result : null;
         }
 

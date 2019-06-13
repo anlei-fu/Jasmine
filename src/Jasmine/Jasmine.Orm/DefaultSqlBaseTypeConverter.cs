@@ -173,7 +173,7 @@ namespace Jasmine.Orm.Implements
             }
             else if (type == typeof(string))
             {
-                return formatSingleQuota((string)obj);
+                return formatSingleQuote((string)obj);
             }
             else if (_baseTypes.Contains(type))
             {
@@ -186,7 +186,7 @@ namespace Jasmine.Orm.Implements
         }
 
 
-        private string formatSingleQuota(string source)
+        private string formatSingleQuote(string source)
         {
             var sb = new StringBuilder();
 

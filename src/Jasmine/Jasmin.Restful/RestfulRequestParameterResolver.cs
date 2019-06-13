@@ -14,7 +14,7 @@ namespace Jasmine.Restful
         private RestfulRequestParameterMetaData[] _parameters;
         public object[] Resolve(HttpFilterContext context)
         {
-            var rets = new object[_parameters.Length];
+            var results = new object[_parameters.Length];
 
             for (int i = 0; i < _parameters.Length; i++)
             {
@@ -22,30 +22,30 @@ namespace Jasmine.Restful
 
                 if (_parameters[i].FromBody)
                 {
-                    rets[i] = context.HttpContext.Request.Body.ReadData(type, SerializeMode.Json);
+                    results[i] = context.HttpContext.Request.Body.ReadData(type, SerializeMode.Json);
                 }
                 else if (_parameters[i].FromQueryString)
                 {
-                    rets[i] = JsonSerializer.Instance.Deserialize(context.HttpContext.Request.Query[_parameters[i].QueryStringKey], type);
+                    results[i] = JsonSerializer.Instance.Deserialize(context.HttpContext.Request.Query[_parameters[i].QueryStringKey], type);
                 }
                 else if (_parameters[i].FromPathVariable)
                 {
-                    rets[i] = JsonSerializer.Instance.Deserialize(context.HttpContext.Request.Form[_parameters[i].PathVariableKey], type);
+                    results[i] = JsonSerializer.Instance.Deserialize(context.HttpContext.Request.Form[_parameters[i].PathVariableKey], type);
                 }
                 else if (_parameters[i].FromData)
                 {
-                    rets[i] = context.CachedDatas[_parameters[i].DataKey];
+                    results[i] = context.CachedDatas[_parameters[i].DataKey];
                 }
                 else
                 {
                     throw new ParameterCanNotResolveException();
                 }
 
-                if (rets[i] == null)
+                if (results[i] == null)
                 {
                     if (!_parameters[i].NotNull)
                     {
-                        rets[i] = JasmineDefaultValueProvider.GetDefaultValue(_parameters[i].RelatedType);
+                        results[i] = JasmineDefaultValueProvider.GetDefaultValue(_parameters[i].RelatedType);
                     }
                     else
                     {
@@ -55,7 +55,7 @@ namespace Jasmine.Restful
 
             }
 
-            return rets;
+            return results;
         }
 
     }

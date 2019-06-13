@@ -19,11 +19,11 @@ namespace Jasmine.Orm
         private string[] _stringCache = new string[58];
         private SqlTemplate[] _templateCache = new SqlTemplate[10];
 
-        private ITableMetaDataProvider _metaDataProvider => DefaultTableMetaDataProvider.Instance;
+        private ITableMetaDataProvider _tableProvider => DefaultTableMetaDataProvider.Instance;
         private ITableTemplateCacheProvider _templateProvider => DefaultTableTemplateCacheProvider.Instance;
         private Type _type;
         private string _tableName => _table.Name;
-        private TableMetaData _table => _metaDataProvider.GetTable(_type);
+        private TableMetaData _table => _tableProvider.GetTable(_type);
 
         /*
          * Keywords
@@ -84,7 +84,7 @@ namespace Jasmine.Orm
                 {
                     var builder = new StringBuilder();
 
-                    var table = _metaDataProvider.GetTable(_type);
+                    var table = _tableProvider.GetTable(_type);
 
                     var columns = new List<ColumnMetaData>();
 
@@ -176,7 +176,7 @@ namespace Jasmine.Orm
                 {
                     var builder = new StringBuilder();
 
-                    var tb = _metaDataProvider.GetTable(_type);
+                    var tb = _tableProvider.GetTable(_type);
 
                     var columns = new List<ColumnMetaData>();
 
@@ -496,7 +496,7 @@ namespace Jasmine.Orm
             lock (_locker)
             {
                 if (_stringCache[11] == null)
-                    _stringCache[11] = $"{SELECT} * {FROM} {_metaDataProvider.GetTable(_type).Name} {getLeftJoin(_tableName)} {WHERE} @condition ";
+                    _stringCache[11] = $"{SELECT} * {FROM} {_tableProvider.GetTable(_type).Name} {getLeftJoin(_tableName)} {WHERE} @condition ";
             }
 
             return _stringCache[11].Replace("@condition", condition);
@@ -554,7 +554,7 @@ namespace Jasmine.Orm
             lock (_locker)
             {
                 if (_stringCache[14] == null)
-                    _stringCache[14] = $"{SELECT} * {FROM} {_metaDataProvider.GetTable(_type).Name} {getLeftJoin(_tableName)} {WHERE} @condition {ORDERBY} @orderBy {DESC} ";
+                    _stringCache[14] = $"{SELECT} * {FROM} {_tableProvider.GetTable(_type).Name} {getLeftJoin(_tableName)} {WHERE} @condition {ORDERBY} @orderBy {DESC} ";
             }
 
             return _stringCache[14].Replace("@condition", condition)

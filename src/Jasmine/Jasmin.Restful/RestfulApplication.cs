@@ -25,7 +25,7 @@ namespace Jasmine.Restful
 
         private IWebHost _webHost;
 
-        public Task StartAsync()
+        public async Task StartAsync()
         {
 
             _webHost = WebHost.CreateDefaultBuilder()
@@ -47,23 +47,23 @@ namespace Jasmine.Restful
                               .ConfigureServices(
                                              services =>
                                             {
-                                                services.AddSingleton<ResfulMiddleware>();
+                                                services.AddSingleton<JasmineResfulMiddleware>();
                                             })
                               .Configure(
                                             app =>
                                             {
-                                                ResfulMiddleware.Dispatcher = _dispatcher;
+                                                JasmineResfulMiddleware.Dispatcher = _dispatcher;
 
-                                                app.UseMiddleware<ResfulMiddleware>();
+                                                app.UseMiddleware<JasmineResfulMiddleware>();
                                             })
                               .Build();
 
-            return _webHost.RunAsync();
+            await _webHost.RunAsync();
 
         }
-        public Task StopAsync()
+        public async Task StopAsync()
         {
-            return _webHost.StopAsync();
+            await _webHost.StopAsync();
         }
 
 

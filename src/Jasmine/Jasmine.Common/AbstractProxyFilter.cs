@@ -23,17 +23,13 @@ namespace Jasmine.Common
 
         public override Task FiltsAsync(T context)
         {
-            
             var parameters = _resolver.Resolve(context);
           
             var result = _method.Invoke(_instance, parameters);
           
             afterInvoke(context, result);
 
-            if (Next != null)
-                return Next.FiltsAsync(context);
-            else
-                return Task.CompletedTask;
+            return HasNext ? Next.FiltsAsync(context) : Task.CompletedTask;
         }
 
         /// <summary>

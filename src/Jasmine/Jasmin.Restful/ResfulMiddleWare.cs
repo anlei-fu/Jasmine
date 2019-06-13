@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Jasmine.Restful.Implement
 {
-    public class ResfulMiddleware : IMiddleware, INameFearture
+    public class JasmineResfulMiddleware : IMiddleware, INameFearture
     {
         public static IDispatcher<HttpFilterContext> Dispatcher;
 
@@ -16,7 +16,7 @@ namespace Jasmine.Restful.Implement
 
         public string Name =>"Restful-Middleware";
 
-        public async Task InvokeAsync(HttpContext context, RequestDelegate next)
+        public  Task InvokeAsync(HttpContext context, RequestDelegate next)
         {
             var filterContext = _pool.Rent();
 
@@ -24,7 +24,7 @@ namespace Jasmine.Restful.Implement
 
             try
             {
-                await Dispatcher.DispatchAsync(context.Request.Path.ToString().ToLower(), filterContext);
+                return Dispatcher.DispatchAsync(context.Request.Path.ToString().ToLower(), filterContext);
             }
             catch (Exception ex)
             {
@@ -36,6 +36,8 @@ namespace Jasmine.Restful.Implement
 
                 _pool.Recycle(filterContext);
             }
+
+            return Task.CompletedTask;
 
             //if (next != null)
             //    await next(context);

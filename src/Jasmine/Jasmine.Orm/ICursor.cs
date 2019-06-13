@@ -7,7 +7,7 @@ namespace Jasmine.Orm
     /// <summary>
     /// it's a iterator to read sql qury  results collection
     /// </summary>
-    public interface ICursor:IDisposable
+    public interface ICursor :IDisposable
     {
         /// <summary>
         /// read one row

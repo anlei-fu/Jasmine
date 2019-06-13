@@ -1,154 +1,96 @@
 ﻿using Jasmine.Common;
 using Jasmine.Configuration;
 using Jasmine.Ioc;
-using Jasmine.Restful.Attributes;
 using System;
-using System.Reflection;
 
-namespace Jasmine.Restful.Implement
+namespace Jasmine.Restful
 {
+    /// <summary>
+    ///   a restful application builder ,you can build a restful application
+    ///   through lots of config or a xml config file,the file name require is 'restful.config'
+    /// </summary>
     public class RestfulApplicationBuilder
     {
         public RestfulApplicationBuilder()
         {
-            ConfigServiceProvider(x =>
-            {
-                x.SetImplementationMapping(typeof(IRequestProcessorManager<HttpFilterContext>), typeof(RestfulProcessorManager));
-                x.AddSigleton(typeof(RestfulProcessorManager), RestfulProcessorManager.Instance);
-            });
-
-            AddRestfulService(typeof(RestfulProcessorManager));
-        }
-
-        private int _port = 10336;
-
-        private RestfulDispatcher _dispatcher = new RestfulDispatcher("restful-dispatcher", RestfulProcessorManager.Instance);
-        /// <summary>
-        /// look up  restful service by scanning types in assembly ,which marked by <see cref="RestfulAttribute"/>
-        /// </summary>
-        /// <param name="path"></param>
-        /// <returns></returns>
-        public RestfulApplicationBuilder Scan(string path)
-        {
-            foreach (var item in RestfulServiceScanner.Instance.Scan(path))
-            {
-                RestfulProcessorManager.Instance.AddProcessor(item.Path, item);
-            }
-
-            return this;
+            
         }
         /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="assembly"></param>
-        /// <returns></returns>
-        public RestfulApplicationBuilder Scan(Assembly assembly)
-        {
-            foreach (var item in RestfulServiceScanner.Instance.Scan(assembly))
-            {
-                item.Dispatcher = _dispatcher;
-
-                RestfulProcessorManager.Instance.AddProcessor(item.Path, item);
-            }
-
-            return this;
-        }
-
-        /// <summary>
-        /// 
+        ///  a service stat and config web ui 
+        ///  use any browser to open http://localhost :port/api/dashboard
         /// </summary>
         /// <returns></returns>
-        public RestfulApplicationBuilder AddRestfulService(Type type)
+        public RestfulApplicationBuilder UseDashBoard()
         {
-            var restful= RestfulServiceMetaDataReflectResolver.Instance.Resolve(type);
-
-            foreach (var item in RestfulRequestProcessorGenerator.Instance.Generate(restful))
-            {
-                RestfulProcessorManager.Instance.AddProcessor(item.Path, item);
-            }
-
             return this;
         }
         /// <summary>
-        /// look up  restful services by scanning types in assembly, limited by namespace
-        /// </summary>
-        /// <param name="assembly"></param>
-        /// <param name="nameSpace"></param>
-        /// <returns></returns>
-        public RestfulApplicationBuilder Scan(Assembly assembly, string nameSpace)
-        {
-
-            foreach (var item in RestfulServiceScanner.Instance.Scan(assembly, nameSpace))
-            {
-                RestfulProcessorManager.Instance.AddProcessor(item.Path, item);
-            }
-
-            return this;
-        }
-
-
-        public RestfulApplicationBuilder ConfigSsl()
-        {
-            return this;
-        }
-        public RestfulApplicationBuilder ConfigDispatcher(Action<RestfulDispatcher> dispatcher)
-        {
-            dispatcher(_dispatcher);
-
-            return this;
-        }
-        /// <summary>
-        /// scan all assemblies by given folder
-        /// </summary>
-        /// <param name="folder"></param>
-        /// <returns></returns>
-
-        public RestfulApplicationBuilder ScanFolder(string folder)
-        {
-            foreach (var item in RestfulServiceScanner.Instance.ScanFolder(folder))
-            {
-                RestfulProcessorManager.Instance.AddProcessor(item.Path, item);
-            }
-
-
-            return this;
-        }
-       
-        /// <summary>
-        /// to load some config , which instantiate object  needs or other 
-        /// </summary>
-        /// <param name="path"></param>
-        /// <returns></returns>
-        public RestfulApplicationBuilder LoadConfig(string path)
-        {
-            JasmineConfigurationProvider.Instance.LoadConfig(path);
-
-            return this;
-        }
-        /// <summary>
-        /// config  listening port
-        /// </summary>
-        /// <param name="port"></param>
-        /// <returns></returns>
-        public RestfulApplicationBuilder SetPort(int port)
-        {
-            _port = port;
-
-            return this;
-        }
-        /// <summary>
-        /// custum config restful service
+        /// if do't use ssl ,it doesn't need to config
+        /// <see cref="SslOption"/>
         /// </summary>
         /// <param name="config"></param>
         /// <returns></returns>
-        public RestfulApplicationBuilder ConfigProcessor(Action<IRequestProcessorManager<HttpFilterContext>> config)
+        public RestfulApplicationBuilder UseSsl(Action<SslOption> config)
         {
-            config(RestfulProcessorManager.Instance);
-
             return this;
         }
         /// <summary>
-        /// config service provider <see cref="IocServiceProvider"/>
+        /// config restful service <see cref="RestfulProcessorManager"/>
+        /// </summary>
+        /// <param name="config"></param>
+        /// <returns></returns>
+        public RestfulApplicationBuilder ConfigRestfulService(Action<RestfulProcessorManager> config)
+        {
+            return this;
+        }
+        /// <summary>
+        /// create a test file use to test application
+        /// </summary>
+        /// <param name="option"></param>
+        /// <returns></returns>
+        public RestfulApplicationBuilder GenerateTestFile(bool option)
+        {
+            return this;
+        }
+        /// <summary>
+        /// create a description file to descript application
+        /// </summary>
+        /// <param name="option"></param>
+        /// <returns></returns>
+        public RestfulApplicationBuilder GenerateDescriptionFile(bool option)
+        {
+            return this;
+        }
+        /// <summary>
+        ///  use static file  service
+        /// </summary>
+        /// <param name="config"></param>
+        /// <returns></returns>
+        public RestfulApplicationBuilder UseStaticFile(Action<StaticFileOption> config)
+        {
+            return this;
+        }
+        /// <summary>
+        /// config global  configuration  povider <see cref="JasmineConfigurationProvider"/>
+        /// </summary>
+        /// <param name="config"></param>
+        /// <returns></returns>
+        public RestfulApplicationBuilder ConfigXmlConfiguration(Action<JasmineConfigurationProvider>config)
+        {
+            return this;
+        }
+        /// <summary>
+        /// set default error filter ,the default is <see cref="Jasmine.Restful.DefaultFilters.DefaultErrorFilter"/>
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <returns></returns>
+        public RestfulApplicationBuilder UseDefaultErrorFileter<T>() where T:IFilter<HttpFilterContext>
+        {
+            return this;
+        }
+        
+        /// <summary>
+        /// config ioc service provider <see cref="IocServiceProvider"/>
         /// </summary>
         /// <param name="config"></param>
         /// <returns></returns>
@@ -165,7 +107,11 @@ namespace Jasmine.Restful.Implement
         /// <returns></returns>
         public RestfulApplication Build()
         {
-            return new RestfulApplication(_port,_dispatcher );
+            return null;
+        }
+        public RestfulApplication Build(string xmlConfigFilePath)
+        {
+            return null;
         }
     }
 }

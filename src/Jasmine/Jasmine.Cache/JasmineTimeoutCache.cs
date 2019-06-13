@@ -8,15 +8,13 @@ namespace Jasmine.Cache
 {
     public class JasmineTimeoutCache<Tkey, Tvalue> : ITimeoutCache<Tkey, Tvalue>
     {
-        public JasmineTimeoutCache(int capacity, Action<Tkey, Tvalue> itemRemoveCallback)
+        public JasmineTimeoutCache(int capacity, Action<Tkey, Tvalue> itemRemovedCallback)
         {
             Capacity = capacity;
-            _itemRemoveCallback = itemRemoveCallback;
+            _itemRemovedCallback = itemRemovedCallback;
             _scheduler =new JasmineTimeoutScheduler(new TimeoutJobManager(capacity));
             _scheduler.Start();
         }
-
-        public int Capacity { get; }
 
         private ConcurrentDictionary<Tkey, Tvalue> _innerCache = new ConcurrentDictionary<Tkey, Tvalue>();
 
@@ -24,7 +22,9 @@ namespace Jasmine.Cache
 
         private JasmineTimeoutScheduler _scheduler;
 
-        private Action<Tkey, Tvalue> _itemRemoveCallback;
+        private Action<Tkey, Tvalue> _itemRemovedCallback;
+
+        public int Capacity { get; }
 
 
         public int Count => _innerCache.Count;
@@ -43,7 +43,6 @@ namespace Jasmine.Cache
 
         public bool Cache(Tkey key, Tvalue value, long timeout)
         {
-
             if (_innerCache.TryAdd(key,value))
             {
                 var job = new TimeoutCacheJob(key, this, DateTime.Now.AddMilliseconds(timeout));
@@ -105,7 +104,7 @@ namespace Jasmine.Cache
                 if(_cache._innerCache.TryRemove(_key,out var value))
                 {
 
-                    _cache._itemRemoveCallback?.Invoke(_key, value);
+                    _cache._itemRemovedCallback?.Invoke(_key, value);
                 }
 
             }

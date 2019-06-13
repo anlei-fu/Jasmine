@@ -273,7 +273,7 @@ namespace Jamine.Parser.Html
                         _InnerTextBuilder.Append(_page[_currentIndex]);
                         skipMatchedPattern('\n');
                     }
-                    //skip js mutiple annotation
+                    //skip js mutiple line annotation
                     else if (_page[_currentIndex] == '*' && _page[_currentIndex - 1] == '/')
                     {
                         skipScriptMutipleLineAnnotation();

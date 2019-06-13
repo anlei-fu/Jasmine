@@ -52,7 +52,7 @@ namespace Jasmine.Restful
                      processor.Filter.AddLast(filter);
                 }
 
-                var proxy = new RestfulProxyFilter(item.Value.Method, _parameterResolverFactory.Create(item.Value), _serviceProvider.GetService(metaData.RelatedType), item.Value.Name);
+                var proxy = new RestfulProxyFilter(item.Value.Method, _parameterResolverFactory.Create(item.Value), _serviceProvider.GetService(metaData.RelatedType));
 
                 processor.Filter.AddLast(proxy);
 

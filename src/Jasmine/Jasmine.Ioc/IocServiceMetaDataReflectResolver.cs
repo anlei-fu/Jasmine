@@ -96,6 +96,7 @@ namespace Jasmine.Ioc
                 if (constructor.Attributes.Contains(typeof(DefaultConstructor)))
                 {
                     defaultConstructor = constructor;
+
                     break;
                 }
             }
@@ -240,9 +241,6 @@ namespace Jasmine.Ioc
 
             return metaData;
         }
-
-
-
 
     }
 }

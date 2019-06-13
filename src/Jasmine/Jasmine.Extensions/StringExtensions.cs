@@ -525,7 +525,7 @@ namespace Jasmine.Extensions
             return false;
         }
 
-        public static bool ContainsOneOf(this string input, IEnumerable<string> patterns)
+        public static bool ContainsAny(this string input, IEnumerable<string> patterns)
         {
             foreach (var item in patterns)
                 if (input.Contains(item))
