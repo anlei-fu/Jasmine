@@ -1,6 +1,11 @@
 ﻿using Jasmine.Common;
 using Jasmine.Configuration;
 using Jasmine.Ioc;
+<<<<<<< HEAD
+=======
+using Jasmine.Restful.Attributes;
+using Jasmine.Restful.DefaultServices;
+>>>>>>> d602d8538ab8a3387686c49e63db63bc558f7820
 using System;
 
 namespace Jasmine.Restful
@@ -13,7 +18,18 @@ namespace Jasmine.Restful
     {
         public RestfulApplicationBuilder()
         {
+<<<<<<< HEAD
             
+=======
+            ConfigServiceProvider(x =>
+            {
+                x.SetImplementationMapping(typeof(IRequestProcessorManager<HttpFilterContext>), typeof(RestfulProcessorManager));
+                x.AddSigleton(typeof(RestfulProcessorManager), RestfulProcessorManager.Instance);
+            });
+
+            AddRestfulService(typeof(RestfulProcessorManager));
+            AddRestfulService(typeof(LoginService));
+>>>>>>> d602d8538ab8a3387686c49e63db63bc558f7820
         }
         /// <summary>
         ///  a service stat and config web ui 
