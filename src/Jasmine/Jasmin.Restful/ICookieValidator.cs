@@ -1,9 +1,13 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Jasmine.Restful.DefaultFilters;
 
 namespace Jasmine.Restful
 {
-    public  interface ICookieValidator
+    public interface ISessionManager
     {
-        bool Validate(HttpResponse response,IRequestCookieCollection cookies);
+        string CreateSession(Level level);
+        Level? SessionExists(string session);
+        long Timeout { get; }
+
+
     }
 }

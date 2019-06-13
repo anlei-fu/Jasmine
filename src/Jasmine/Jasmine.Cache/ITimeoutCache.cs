@@ -6,7 +6,7 @@ namespace Jasmine.Cache
     {
         bool Cache(TKey key, TValue value, long timeout);
         TValue GetValue(TKey key);
-        bool AddTime(TKey key,long timeout);
+        bool AdjustTimeout(TKey key,long timeout);
         bool Conatins(TKey key);
         void Delete(TKey key);
         

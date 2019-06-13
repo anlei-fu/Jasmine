@@ -5,7 +5,6 @@ using System.Text;
 namespace Jasmine.Restful.Attributes
 {
    public class ExceptionFilterAttribute:Attribute
-
     {
     }
 }

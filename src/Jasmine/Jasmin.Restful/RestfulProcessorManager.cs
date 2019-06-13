@@ -8,6 +8,7 @@ namespace Jasmine.Restful
 {
     [Restful]
     [Path("/apimgr")]
+    [BeforeInterceptor("cookie-validate-filter")]
     public class RestfulProcessorManager : AbstractProcessorManager<HttpFilterContext>
     {
         private RestfulProcessorManager()

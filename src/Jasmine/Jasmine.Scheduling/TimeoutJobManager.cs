@@ -12,7 +12,7 @@ namespace Jasmine.Scheduling
         {
             Capacity = capacity;
         }
-        private const int DEFAULT_WAKEUP_TIME = 100000;
+        private const int DEFAULT_WAKEUP_TIMEOUT = 100*1000;//100s
 
         private ConcurrentDictionary<long, AvlTree<TimeoutJob>.Node> _jobs = new ConcurrentDictionary<long, AvlTree<TimeoutJob>.Node>();
         private AvlTree<TimeoutJob> _tree = new AvlTree<TimeoutJob>(new TimeoutJobCompare());
@@ -73,7 +73,7 @@ namespace Jasmine.Scheduling
         }
 
         /// <summary>
-        /// remove from the tree and re-add the value
+        /// remove from the tree,add time ,then re-add the value
         /// </summary>
         /// <param name="jobId"></param>
         /// <param name="millionSeconds"></param>
@@ -129,11 +129,11 @@ namespace Jasmine.Scheduling
                 var min = _tree.MinNode;
 
                 if (min == null)
-                    return DEFAULT_WAKEUP_TIME;
+                    return DEFAULT_WAKEUP_TIMEOUT;
 
                 var timeSpan =min.Data.ScheduledExcutingTime<DateTime.Now?0: (min.Data.ScheduledExcutingTime - DateTime.Now).TotalMilliseconds;
 
-                return timeSpan>DEFAULT_WAKEUP_TIME?DEFAULT_WAKEUP_TIME:(int)timeSpan;
+                return timeSpan>DEFAULT_WAKEUP_TIMEOUT?DEFAULT_WAKEUP_TIMEOUT:(int)timeSpan;
             }
         }
 

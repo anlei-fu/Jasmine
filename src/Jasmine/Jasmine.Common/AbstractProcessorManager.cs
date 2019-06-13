@@ -6,7 +6,7 @@ using System.Collections.Generic;
 
 namespace Jasmine.Common
 {
-    [BeforeInterceptor("cookie-validate-filter")]
+  
     public abstract class AbstractProcessorManager<T> : IRequestProcessorManager<T>
     {
         private ConcurrentDictionary<string, IServiceGroup> _groups = new ConcurrentDictionary<string, IServiceGroup>();

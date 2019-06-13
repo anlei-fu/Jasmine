@@ -18,6 +18,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Jasmine.Cache\Jasmine.Cache.csproj" />
     <ProjectReference Include="..\Jasmine.Common\Jasmine.Commom.csproj" />
     <ProjectReference Include="..\Jasmine.Ioc\Jasmine.Ioc.csproj" />
     <ProjectReference Include="..\Jasmine.Serialization\Jasmine.Serialization.csproj" />

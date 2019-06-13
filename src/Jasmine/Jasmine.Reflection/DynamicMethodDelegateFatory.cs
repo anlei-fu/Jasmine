@@ -9,7 +9,7 @@ namespace Jasmine.Reflection
     /// ref: https://github.com/JamesNK/Newtonsoft.Json/blob/master/Src/Newtonsoft.Json/Utilities/DynamicReflectionDelegateFactory.cs
     /// 
     /// </summary>
-    public class DynamicMethodDelegateFatory
+    internal class DynamicMethodDelegateFatory
     {
         public static Func<object, object> CreateFieldGetter(FieldInfo info)
         {

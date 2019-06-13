@@ -11,7 +11,7 @@ namespace Jasmine.Restful
         public Exception Error { get; set; }
         public object ReturnValue { get; set; }
         public Type ReturnValueType => ReturnValue?.GetType();
-        public IDictionary<string, object> CachedDatas { get; set; } = new Dictionary<string, object>();
+        public IDictionary<string, object> Datas { get; set; } = new Dictionary<string, object>();
         public IDispatcher<HttpFilterContext> Dispatcher { get; internal set; }
         public string Path => HttpContext.Request.Path;
 
@@ -20,7 +20,7 @@ namespace Jasmine.Restful
             HttpContext = context;
             Error = null;
             ReturnValue = null;
-            CachedDatas.Clear();
+            Datas.Clear();
             Dispatcher = null;
         }
         public void Reset()

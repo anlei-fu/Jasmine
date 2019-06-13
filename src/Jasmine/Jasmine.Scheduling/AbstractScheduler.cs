@@ -183,7 +183,7 @@ namespace Jasmine.Scheduling
                     {
                         _isSleeping = true;
 
-                        Monitor.Wait(_locker, GetNextJobExcutingTimeout());//sleep some time, the thread will keep running until wait timeout or new job scheduled
+                        Monitor.Wait(_locker, GetNextJobExcutingTimeout());//sleep some time, the thread will keep running when wait timeout or new job scheduled
                     }
                 }
                 else

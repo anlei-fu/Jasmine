@@ -28,6 +28,7 @@ namespace Jasmine.Ioc
 
         public object Create(IocServiceMetaData metaData, DependencyCheckNode node)
         {
+            // don't need to think about abstract or interface, it already be processed by service provider
             if (metaData.ConstrctorMetaData.Constructor.IsDefaultConstructor)//default constructor,none parameter
                 return metaData.ConstrctorMetaData.Constructor.DefaultInvoker.Invoke();
 

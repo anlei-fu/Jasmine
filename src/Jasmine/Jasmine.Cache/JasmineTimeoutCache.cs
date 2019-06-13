@@ -29,7 +29,7 @@ namespace Jasmine.Cache
 
         public int Count => _innerCache.Count;
 
-        public bool AddTime(Tkey key,  long timeout)
+        public bool AdjustTimeout(Tkey key,  long timeout)
         {
             if(_innerCache.ContainsKey(key))
             {
@@ -73,7 +73,10 @@ namespace Jasmine.Cache
 
         public IEnumerator<KeyValuePair<Tkey, Tvalue>> GetEnumerator()
         {
-            throw new System.NotImplementedException();
+            foreach (var item in _innerCache)
+            {
+                yield return item;
+            }
         }
 
         public Tvalue GetValue(Tkey key)
@@ -83,7 +86,7 @@ namespace Jasmine.Cache
 
         IEnumerator IEnumerable.GetEnumerator()
         {
-            throw new System.NotImplementedException();
+            return _innerCache.GetEnumerator();
         }
 
 
@@ -103,7 +106,6 @@ namespace Jasmine.Cache
 
                 if(_cache._innerCache.TryRemove(_key,out var value))
                 {
-
                     _cache._itemRemovedCallback?.Invoke(_key, value);
                 }
 

@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.28729.10
+# Visual Studio 15
+VisualStudioVersion = 15.0.28010.2019
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Test", "Test", "{A7BB9AAF-EF71-4F9C-8541-77B523D5DFBF}"
 EndProject
@@ -71,7 +71,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OrmTest", "OrmTest\OrmTest.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Jasmine.Orm", "Jasmine.Orm\Jasmine.Orm.csproj", "{ADA426B7-652D-45A2-B8EA-78896CD6872B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jasmine.DataStructure", "Jasmin.DataStructure\Jasmine.DataStructure.csproj", "{8FCE681F-831B-471F-9853-5F0FA194CCEF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Jasmine.DataStructure", "Jasmin.DataStructure\Jasmine.DataStructure.csproj", "{8FCE681F-831B-471F-9853-5F0FA194CCEF}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ResfulApplicationDashBoard", "ResfulApplicationDashBoard", "{97B3F324-F86D-4797-B108-D87D1A3B9511}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

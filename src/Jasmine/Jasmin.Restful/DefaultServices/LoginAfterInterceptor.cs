@@ -5,14 +5,16 @@ namespace Jasmine.Restful.DefaultServices
 {
     public class LoginAfterInterceptor : AbstractFilter<HttpFilterContext>
     {
-        public LoginAfterInterceptor() : base("login-after-interceptor")
+        public LoginAfterInterceptor(ISessionManager manager) : base("login-after-interceptor")
         {
+            _manager = manager;
         }
+        private ISessionManager _manager;
 
         public override Task FiltsAsync(HttpFilterContext context)
         {
             if (context.ReturnValue is true)
-                context.HttpContext.Response.Cookies.Append("token", "001");
+                context.HttpContext.Response.Cookies.Append("session", _manager.CreateSession(DefaultFilters.Level.Admin));
 
             return HasNext ? Next.FiltsAsync(context) : Task.CompletedTask;
         }
