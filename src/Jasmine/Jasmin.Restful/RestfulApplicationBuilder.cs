@@ -16,6 +16,7 @@ namespace Jasmine.Restful
     /// </summary>
     public class RestfulApplicationBuilder
     {
+
         public RestfulApplicationBuilder()
         {
           

@@ -24,4 +24,8 @@
     <ProjectReference Include="..\Jasmine.Serialization\Jasmine.Serialization.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="DashBoard\" />
+  </ItemGroup>
+
 </Project>

@@ -73,8 +73,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Jasmine.Orm", "Jasmine.Orm\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Jasmine.DataStructure", "Jasmin.DataStructure\Jasmine.DataStructure.csproj", "{8FCE681F-831B-471F-9853-5F0FA194CCEF}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ResfulApplicationDashBoard", "ResfulApplicationDashBoard", "{97B3F324-F86D-4797-B108-D87D1A3B9511}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
