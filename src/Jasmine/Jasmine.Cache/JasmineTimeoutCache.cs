@@ -57,7 +57,7 @@ namespace Jasmine.Cache
             return false;
         }
 
-        public bool Conatins(Tkey key)
+        public bool ConatinsKey(Tkey key)
         {
             return _innerCache.ContainsKey(key);
         }
@@ -102,7 +102,7 @@ namespace Jasmine.Cache
 
             public override void Excute()
             {
-                _cache._jobMap.TryRemove(_key, out var jobId);
+                _cache._jobMap.TryRemove(_key, out var _);
 
                 if(_cache._innerCache.TryRemove(_key,out var value))
                 {

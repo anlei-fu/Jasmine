@@ -74,13 +74,11 @@ namespace Jasmine.Extensions
         }
         public static bool HasAttribute(this XmlNode node, string key)
         {
-
             return node == null || node.Attributes == null ?false
                                                            : node.Attributes.GetNamedItem(key)!=null;
         }
         public static string GetAttribute(this XmlNode node, string key)
         {
-
             return node == null || node.Attributes == null ? null
                                                            : node.Attributes.GetNamedItem(key)?.Value;
         }

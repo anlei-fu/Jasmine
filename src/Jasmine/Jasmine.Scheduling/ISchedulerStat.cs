@@ -21,7 +21,7 @@ namespace Jasmine.Scheduling
         int JobExcuted { get; }
         /// <summary>
         /// the count of job which has been scheduled 
-        /// include the canceld job and excuted job
+        /// include the canceled job and excuted job
         /// </summary>
         int JobScheduled { get; }
         /// <summary>
@@ -37,7 +37,7 @@ namespace Jasmine.Scheduling
         /// </summary>
         int JobFailed { get; }
         /// <summary>
-        /// the count of job which successed
+        /// the count of job which excute successed
         /// </summary>
         int JobSuccessed { get; }
     }

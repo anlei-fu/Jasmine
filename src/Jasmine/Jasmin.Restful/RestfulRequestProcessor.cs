@@ -6,8 +6,8 @@ namespace Jasmine.Restful
     {
         public RestfulRequestProcessor(int maxConcurrency,string name):base(maxConcurrency,name)
         {
-            ErrorFilter = new RestfulFilterPipeline();
-            Filter = new RestfulFilterPipeline();
+            ErrorPileline = new RestfulFilterPipeline();
+            Pipeline = new RestfulFilterPipeline();
         }
         public string HttpMethod { get; set; }
         public RestfulRequestMetaData MetaData { get; set; }

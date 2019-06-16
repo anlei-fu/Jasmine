@@ -29,6 +29,11 @@ namespace Jasmine.Ioc
         {
             _metaDataManager.SetImplementationMapping(abs, impl);
         }
+
+        public Type GetImplementation(Type type)
+        {
+            return _metaDataManager.GetImplementation(type);
+        }
         public void AddProtoType(Type serviceType,object instance)
         {
             addInstance(serviceType, instance, ServiceScope.ProtoType);
@@ -45,7 +50,7 @@ namespace Jasmine.Ioc
         {
             foreach (var item in assembly.GetTypes())
             {
-                if (item.GetCustomAttribute<ServiceAttribute>()!= null)
+                if (item.GetCustomAttribute<IocAttribute>()!= null)
                     generateMetaData(item);
             }  
         }
@@ -79,8 +84,11 @@ namespace Jasmine.Ioc
 
                 /*
                  * generate impl metadata
-                 */ 
-                generateMetaData(impl);
+                 */
+                if (!_metaDataManager.ContainsKey(impl))
+                {
+                    generateMetaData(impl);
+                }
 
                 _metaDataManager.TryGetValue(impl, out metaData);
             }
@@ -97,7 +105,18 @@ namespace Jasmine.Ioc
                     _singletons.TryAdd(serviceType,instance);
                 }
 
-                return instance;
+                return _singletons[serviceType];
+            }
+            else if(metaData.Scope==ServiceScope.ProtoType)
+            {
+                if (!_singletons.TryGetValue(serviceType, out var instance))
+                {
+                    instance = _instanceCreator.Create(metaData, node);
+
+                    _singletons.TryAdd(serviceType, instance);
+                }
+
+                return _singletons[serviceType];
             }
             else
             {

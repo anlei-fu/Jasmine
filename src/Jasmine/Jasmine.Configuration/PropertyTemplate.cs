@@ -3,17 +3,17 @@ using System.Collections.Generic;
 
 namespace Jasmine.Configuration
 {
-    public  class PropertyNode
+    public  class PropertyTemplate
     {
         public string Name { get; set; }
         public string Value { get; set; }
-        public Dictionary<string,PropertyNode> Paramters { get; set; }
-        public bool IsProperty { get; set; }
+        public Dictionary<string,PropertyTemplate> SubTemplates { get; set; }
+        public bool IsPropertyTemplates { get; set; }
 
         public string GetValue(JasmineConfigurationProvider provider)
         {
 
-            if (IsProperty)
+            if (IsPropertyTemplates)
             {
                 var index = Name.IndexOf(".");
 
@@ -33,9 +33,9 @@ namespace Jasmine.Configuration
 
                 var parameters = new Dictionary<string, string>();
 
-                if (Paramters != null)
+                if (SubTemplates != null)
                 {
-                    foreach (var item in Paramters)
+                    foreach (var item in SubTemplates)
                     {
                         parameters.Add(item.Key, item.Value.GetValue(provider));
                     }

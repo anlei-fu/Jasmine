@@ -22,7 +22,7 @@ namespace Jasmine.Rpc.Server
                 {
                     try
                     {
-                        await processor.Filter.First.FiltsAsync(context);
+                        await processor.Pipeline.First.FiltsAsync(context);
                     }
                     catch (Exception ex)
                     {
@@ -30,7 +30,7 @@ namespace Jasmine.Rpc.Server
 
                         _logger?.Error(ex);
 
-                        await processor.ErrorFilter.First.FiltsAsync(context);
+                        await processor.ErrorPileline.First.FiltsAsync(context);
                     }
                 }
                 else

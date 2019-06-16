@@ -15,11 +15,11 @@ namespace Jasmine.Restful
         {
             context.HttpContext.Request.Cookies.TryGetValue("session", out var session);
 
-            var level = _manager.SessionExists(session);
+            var level = _manager.GetSession(session);
 
             if (level!=null)
             {
-                context.Datas.Add("level", (Level)level);
+                context.Datas.Add("level", (AuntenticateLevel)level);
 
                 return HasNext ? Next.FiltsAsync(context) : Task.CompletedTask;
             }

@@ -5,21 +5,35 @@ using System.Text;
 
 namespace Jasmine.Configuration
 {
+    /// <summary>
+    /// ex
+    /// 
+    /// prefix: @{prefix}say
+    /// </summary>
     public class Property:INameFearture
     {
+        /// <summary>
+        /// group belong to, contains some segements
+        /// </summary>
         public string Group { get; set; }
+        /// <summary>
+        /// property node
+        /// </summary>
         public string Name { get; set; }
-        public Template[] Templates { get; set; }
+        /// <summary>
+        /// segments
+        /// </summary>
+        public PropertySegement[] Segments { get; set; }
 
         public string GetValue(JasmineConfigurationProvider provider,Dictionary<string,string> parameters)
         {
             var builder = new StringBuilder();
 
-            foreach (var item in Templates)
+            foreach (var item in Segments)
             {
-                if (item.IsPropertyNode)
+                if (item.IsTemplate)
                 {
-                    builder.Append(item.PropertyNode.GetValue(provider));
+                    builder.Append(item.Template.GetValue(provider));
                 }
                 else if (item.IsVariable)
                 {

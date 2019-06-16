@@ -1,12 +1,12 @@
 ﻿namespace Jasmine.Configuration
 {
-    public class Template
+    public class PropertySegement
     {
         public string Value { get; set; }
         public bool IsVariable { get; set; }
 
-        public bool IsPropertyNode => PropertyNode!=null;
-        public PropertyNode PropertyNode { get; set; }
+        public bool IsTemplate => Template!=null;
+        public PropertyTemplate Template { get; set; }
 
       
     }

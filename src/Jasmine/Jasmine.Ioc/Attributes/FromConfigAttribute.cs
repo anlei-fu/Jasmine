@@ -7,8 +7,8 @@ namespace Jasmine.Ioc.Attributes
     {
         public FromConfigAttribute(string key)
         {
-            PropertyName = key;
+            ConfigKey = key;
         }
-        public string PropertyName{ get; }
+        public string ConfigKey{ get; }
     }
 }

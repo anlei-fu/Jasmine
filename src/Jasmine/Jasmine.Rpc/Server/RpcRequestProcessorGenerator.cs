@@ -30,7 +30,7 @@ namespace Jasmine.Rpc.Server
                     if (filter == null)
                         throw new FilterNotFoundException($" before filter {before} can not be found ,in type {metaData.RelatedType}, method {item.Value.Method.Name}");
 
-                    processor.Filter.AddLast(filter);
+                    processor.Pipeline.AddLast(filter);
 
                 }
 
@@ -41,12 +41,12 @@ namespace Jasmine.Rpc.Server
                     if (filter == null)
                         throw new FilterNotFoundException($" around filter {around} can not be found ,in type {metaData.RelatedType}, method {item.Value.Method.Name}");
 
-                    processor.Filter.AddLast(filter);
+                    processor.Pipeline.AddLast(filter);
                 }
 
                 var proxy = new RpcProxyFilter(item.Value.Method, _parameterResolverFactory.Create(item.Value), _serviceProvider.GetService(metaData.RelatedType), item.Value.Name,JsonSerializer.Instance);
 
-                processor.Filter.AddLast(proxy);
+                processor.Pipeline.AddLast(proxy);
 
                 foreach (var around in item.Value.AroundFilters)
                 {
@@ -55,7 +55,7 @@ namespace Jasmine.Rpc.Server
                     if (filter == null)
                         throw new FilterNotFoundException($" around filter {around} can not be found ,in type {metaData.RelatedType}, method {item.Value.Method.Name}");
 
-                    processor.Filter.AddLast(filter);
+                    processor.Pipeline.AddLast(filter);
                 }
 
                 foreach (var after in item.Value.AfterFilters)
@@ -65,7 +65,7 @@ namespace Jasmine.Rpc.Server
                     if (filter == null)
                         throw new FilterNotFoundException($" after filter {after} can not be found ,in type {metaData.RelatedType}, method {item.Value.Method.Name}");
 
-                    processor.Filter.AddLast(filter);
+                    processor.Pipeline.AddLast(filter);
                 }
 
                 foreach (var error in item.Value.ErrorFilters)
@@ -75,7 +75,7 @@ namespace Jasmine.Rpc.Server
                     if (filter == null)
                         throw new FilterNotFoundException($" error filter {error} can not be found ,in type {metaData.RelatedType}, method {item.Value.Method.Name}");
 
-                    processor.ErrorFilter.AddLast(filter);
+                    processor.ErrorPileline.AddLast(filter);
                 }
 
                 processor.Name = item.Value.Name;

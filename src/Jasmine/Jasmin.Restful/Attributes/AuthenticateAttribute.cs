@@ -5,10 +5,10 @@ namespace Jasmine.Restful.Attributes
 {
     public class AuthenticateAttribute:Attribute
     {
-        public AuthenticateAttribute(Level level)
+        public AuthenticateAttribute(AuntenticateLevel level)
         {
-            UserLevel = level;
+            Level = level;
         }
-        public Level UserLevel { get;}
+        public AuntenticateLevel Level { get;}
     }
 }

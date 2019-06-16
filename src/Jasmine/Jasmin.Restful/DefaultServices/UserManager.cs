@@ -9,7 +9,7 @@ namespace Jasmine.Restful.DefaultFilters
 {
     public class UserGroup
     {
-        public Level Level { get; set; }
+        public AuntenticateLevel Level { get; set; }
       
         public string Name { get; set; }
         public IDictionary<string, User> Users = new ConcurrentDictionaryIDictonaryAdapter<string, User>();
@@ -23,7 +23,7 @@ namespace Jasmine.Restful.DefaultFilters
         public string Group { get; set; }
     }
 
-    public enum Level
+    public enum AuntenticateLevel
     {
         User=0,
         Admin=1,
@@ -33,10 +33,10 @@ namespace Jasmine.Restful.DefaultFilters
     public interface IUserManager
     {
         bool CreateUser(string name, string password, string group);
-        bool CreateGroup(string name, Level level);
+        bool CreateGroup(string name, AuntenticateLevel level);
         bool Validate(string name, string password);
-        Level? GetUserLevel(string name);
-        Level? GetGroupLevel(string name);
+        AuntenticateLevel? GetUserLevel(string name);
+        AuntenticateLevel? GetGroupLevel(string name);
         bool UserExists(string name);
         bool UpdatePassword(string name, string password);
         bool ChangeGroup(string user, string newGroup);
@@ -71,20 +71,20 @@ namespace Jasmine.Restful.DefaultFilters
             {
                 _groups[group].Users.Add(name, new User() { Name = name, Group = group, Password = password });
 
-                makeSnapShot();
+                makeSnapshot();
 
                 return true;
             }
         }
 
-        public bool CreateGroup(string name,Level level)
+        public bool CreateGroup(string name,AuntenticateLevel level)
         {
             if (_groups.ContainsKey(name))
                 return false;
 
             _groups.Add(name, new UserGroup() { Name = name, Level = level });
 
-            makeSnapShot();
+            makeSnapshot();
 
             return true;
         }
@@ -98,15 +98,15 @@ namespace Jasmine.Restful.DefaultFilters
             return _users.TryGetValue(name, out var value) ? value.Password == password : false;
         }
 
-        public Level? GetUserLevel(string name)
+        public AuntenticateLevel? GetUserLevel(string name)
         {
             return _users.TryGetValue(name, out var value) ? 
-                                                      _groups.TryGetValue(value.Group,out var group)?(Level?)group.Level:null
+                                                      _groups.TryGetValue(value.Group,out var group)?(AuntenticateLevel?)group.Level:null
                                                                                                                                :null;
         }
-        public Level? GetGroupLevel(string name)
+        public AuntenticateLevel? GetGroupLevel(string name)
         {
-            return _groups.TryGetValue(name, out var group) ? (Level?)group.Level : null;
+            return _groups.TryGetValue(name, out var group) ? (AuntenticateLevel?)group.Level : null;
         }
         public bool GroupExists(string name)
         {
@@ -119,7 +119,7 @@ namespace Jasmine.Restful.DefaultFilters
             {
                 user.Password = password;
 
-                makeSnapShot();
+                makeSnapshot();
 
                 return true;
             }
@@ -136,7 +136,7 @@ namespace Jasmine.Restful.DefaultFilters
 
                 usr.Group = newGroup;
 
-                makeSnapShot();
+                makeSnapshot();
 
                 group.Users.Add(user, usr);
 
@@ -147,13 +147,13 @@ namespace Jasmine.Restful.DefaultFilters
                 return false;
             }
         }
-        public bool ChangeGroupLevel(string group, Level newLevel)
+        public bool ChangeGroupLevel(string group, AuntenticateLevel newLevel)
         {
             if(_groups.TryGetValue(group,out var value))
             {
                 value.Level = newLevel;
 
-                makeSnapShot();
+                makeSnapshot();
 
                 return true;
             }
@@ -170,7 +170,7 @@ namespace Jasmine.Restful.DefaultFilters
                 _groups[value.Group].Users.Remove(user);
                 _users.Remove(user);
 
-                makeSnapShot();
+                makeSnapshot();
 
                 return true;
             }
@@ -189,7 +189,7 @@ namespace Jasmine.Restful.DefaultFilters
 
                 _groups.Remove(group);
 
-                makeSnapShot();
+                makeSnapshot();
 
                 return true;
             }
@@ -197,7 +197,7 @@ namespace Jasmine.Restful.DefaultFilters
             return false;
         }
 
-        private void makeSnapShot()
+        private void makeSnapshot()
         {
 
         }

@@ -33,8 +33,8 @@ namespace Jasmine.Scheduling
 
         public int Capacity => _jobManager.Capacity;
         public int MaxConcurrency { get; }
-        public SchedulerState State { get; protected set; } = SchedulerState.Stopped;
-        public DateTime? StartTime { get; protected set; }
+        public SchedulerState State { get; private set; } = SchedulerState.Stopped;
+        public DateTime? StartTime { get; private set; }
         public TimeSpan? RunningTime => StartTime == null ? null : (TimeSpan?)(DateTime.Now - (DateTime)StartTime);
         public int JobExcuted => _jobExcuted;
         public int JobScheduled => _jobScheduled;
@@ -56,7 +56,7 @@ namespace Jasmine.Scheduling
                 }
                 else
                 {
-                    //a long run task ,use a thread use by itesef only ,do not get the thread from task scheduler
+                    //a long run task ,use a thread which use by iteself only ,do not get the thread from default-task-scheduler's thread pool
 
                     Task.Factory.StartNew(doWorkLoop, TaskCreationOptions.LongRunning);
                   
@@ -86,7 +86,7 @@ namespace Jasmine.Scheduling
 
             State = SchedulerState.Stopped;
 
-            Listener?.OnSchedulerStppped();
+            Listener?.OnSchedulerStopped();
 
             return true;
         }

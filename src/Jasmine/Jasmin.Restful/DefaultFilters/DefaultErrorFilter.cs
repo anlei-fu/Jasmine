@@ -43,6 +43,7 @@ error happed!
         public override Task FiltsAsync(HttpFilterContext context)
         {
             context.HttpContext.Response.StatusCode = HttpStatusCodes.SERVER_ERROR;
+
             context.ReturnValue = ErrorPage.Replace("@msg", context.Error.ToString())
                                            .Replace("@time", DateTime.Now.ToString());
 

@@ -9,7 +9,7 @@ namespace Jasmine.Scheduling
         void OnJobEcuteFailed(long id,Exception ex);
         void OnJobExcuteSusccefully(long id);
         void OnSchedulerStarted();
-        void OnSchedulerStppped();
+        void OnSchedulerStopped();
 
     }
 }

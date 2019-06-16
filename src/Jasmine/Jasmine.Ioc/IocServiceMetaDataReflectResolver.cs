@@ -53,7 +53,7 @@ namespace Jasmine.Ioc
 
             metaData.RelatedType = type;
 
-            if (type.IsInterfaceOrAbstraClass())
+            if (type.IsInterfaceOrAbstractClass())
             {
                 /*
                  * add impl mapping
@@ -114,14 +114,13 @@ namespace Jasmine.Ioc
                 }
             }
 
-                /*
-                 *  no constructor available
-                 */
-                if (defaultConstructor == null)
+            /*
+             *  no constructor available
+             */
+            if (defaultConstructor == null)
                 return metaData;
 
             metaData.ConstrctorMetaData = resolveConstructor(defaultConstructor);
-
 
             /*
              * resolve  field and property 
@@ -143,14 +142,10 @@ namespace Jasmine.Ioc
             foreach (var item in _reflection.GetItem(type).Methods)
             {
                 if (item.Attributes.Contains(typeof(InitiaMethodAttribute)))
-                {
                     metaData.InitMethod = resolveMethod(item);
-                }
 
-                if (item.Attributes.Contains(typeof(DestroyAttribute)))
-                {
+                if (item.Attributes.Contains(typeof(DestroyMethodAttribute)))
                     metaData.DestroyMethod = resolveMethod(item);
-                }
             }
 
             return metaData;
@@ -177,11 +172,17 @@ namespace Jasmine.Ioc
                 if (parameters[i].Attributes.Contains(typeof(DefaultValueAttribute)))
                     metaData.Parameters[i].DefaultValue = parameters[i].Attributes.GetAttribute<DefaultValueAttribute>()[0].Value;
 
+                //default value given by '=',like call(string name='sss');
+                if(!metaData.Parameters[i].HasDefaultValue&&parameters[i].ParameterInfo.HasDefaultValue)
+                {
+                    metaData.Parameters[i].DefaultValue = parameters[i].ParameterInfo.DefaultValue;
+                }
+
                 if (parameters[i].Attributes.Contains(typeof(DefaultImplementAttribute)))
                     metaData.Parameters[i].Impl = parameters[i].Attributes.GetAttribute<DefaultImplementAttribute>()[0].Impl;
 
                 if (parameters[i].Attributes.Contains(typeof(FromConfigAttribute)))
-                    metaData.Parameters[i].ConfigKey = parameters[i].Attributes.GetAttribute<FromConfigAttribute>()[0].PropertyName;
+                    metaData.Parameters[i].ConfigKey = parameters[i].Attributes.GetAttribute<FromConfigAttribute>()[0].ConfigKey;
 
                 if (parameters[i].Attributes.Contains(typeof(NotNullAttribute)))
                     metaData.Parameters[i].NotNull = true;
@@ -210,12 +211,16 @@ namespace Jasmine.Ioc
 
                 if (parameters[i].Attributes.Contains(typeof(DefaultValueAttribute)))
                     metaData.Parameters[i].DefaultValue = parameters[i].Attributes.GetAttribute<DefaultValueAttribute>()[0].Value;
+           
+                //default value given by '=',like call(string name='sss');
+                if (!metaData.Parameters[i].HasDefaultValue && parameters[i].ParameterInfo.HasDefaultValue)
+                    metaData.Parameters[i].DefaultValue = parameters[i].ParameterInfo.DefaultValue;
 
                 if (parameters[i].Attributes.Contains(typeof(DefaultImplementAttribute)))
                     metaData.Parameters[i].Impl = parameters[i].Attributes.GetAttribute<DefaultImplementAttribute>()[0].Impl;
 
                 if (parameters[i].Attributes.Contains(typeof(FromConfigAttribute)))
-                    metaData.Parameters[i].ConfigKey = parameters[i].Attributes.GetAttribute<FromConfigAttribute>()[0].PropertyName;
+                    metaData.Parameters[i].ConfigKey = parameters[i].Attributes.GetAttribute<FromConfigAttribute>()[0].ConfigKey;
 
                 if (parameters[i].Attributes.Contains(typeof(NotNullAttribute)))
                     metaData.Parameters[i].NotNull = true;
@@ -237,7 +242,9 @@ namespace Jasmine.Ioc
                 metaData.Impl = filed.Attributes.GetAttribute<DefaultImplementAttribute>()[0].Impl;
 
             if (filed.Attributes.Contains(typeof(FromConfigAttribute)))
-                metaData.ConfigKey = filed.Attributes.GetAttribute<FromConfigAttribute>()[0].PropertyName;
+                metaData.ConfigKey = filed.Attributes.GetAttribute<FromConfigAttribute>()[0].ConfigKey;
+
+            metaData.Setter = filed.Setter;
 
             return metaData;
         }

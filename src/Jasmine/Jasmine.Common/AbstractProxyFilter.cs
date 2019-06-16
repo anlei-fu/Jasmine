@@ -23,7 +23,9 @@ namespace Jasmine.Common
 
         public override Task FiltsAsync(T context)
         {
-            var parameters = _resolver.Resolve(context);
+
+            var parameters =_method.HasParameter?_resolver.Resolve(context)
+                                                :Array.Empty<object>();
           
             var result = _method.Invoke(_instance, parameters);
           

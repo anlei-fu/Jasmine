@@ -5,16 +5,15 @@ using System.Text;
 
 namespace Jasmine.Configuration
 {
-    public   class PropertyValueParser
+    public   class PropertyParser
     {
         private CharSequenceReader _reader;
         private StringBuilder _builder=new StringBuilder();
-        public Template[] Parse(string input)
+        public PropertySegement[] Parse(string input)
         {
-
             _reader = new CharSequenceReader(input);
 
-            var ls = new List<Template>();
+            var ls = new List<PropertySegement>();
 
             while (_reader.HasNext())
             {
@@ -26,12 +25,12 @@ namespace Jasmine.Configuration
 
                     if (_builder.Length!=0)
                     {
-                        ls.Add(new Template() { Value = _builder.ToString() });
+                        ls.Add(new PropertySegement() { Value = _builder.ToString() });
                         _builder.Clear();
                     }
 
-                    var template = new Template();
-                    template.PropertyNode = parseProperty();
+                    var template = new PropertySegement();
+                    template.Template = parseProperty();
 
                     ls.Add(template);
                 }
@@ -42,11 +41,11 @@ namespace Jasmine.Configuration
 
                     if (_builder.Length != 0)
                     {
-                        ls.Add(new Template() { Value = _builder.ToString() });
+                        ls.Add(new PropertySegement() { Value = _builder.ToString() });
                         _builder.Clear();
                     }
 
-                    var template = new Template();
+                    var template = new PropertySegement();
                     template.Value =parseVariable();
                     template.IsVariable = true;
                     ls.Add(template);
@@ -60,7 +59,7 @@ namespace Jasmine.Configuration
 
             if (_builder.Length != 0)
             {
-                ls.Add(new Template() { Value = _builder.ToString() });
+                ls.Add(new PropertySegement() { Value = _builder.ToString() });
             }
 
             return ls.ToArray();
@@ -89,9 +88,9 @@ namespace Jasmine.Configuration
             throw new ExpressionIncorrectException($"expression varible incompleted!");
         }
 
-        private PropertyNode parseProperty()
+        private PropertyTemplate parseProperty()
         {
-            return new PropertyNodeParser().Parse(_reader);
+            return  PropertyNodeParser.Instance.Parse(_reader);
         }
     }
 }

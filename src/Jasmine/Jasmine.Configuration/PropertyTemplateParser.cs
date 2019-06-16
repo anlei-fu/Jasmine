@@ -8,10 +8,19 @@ namespace Jasmine.Configuration
 {
     public  class PropertyNodeParser
     {
-       private CharSequenceReader _reader;
+
+        private PropertyNodeParser()
+        {
+
+        }
+
+
+        public static readonly PropertyNodeParser Instance = new PropertyNodeParser();
+
+        private CharSequenceReader _reader;
       
 
-        public PropertyNode Parse(string input)
+        public PropertyTemplate Parse(string input)
         {
             if (input == null)
                 throw new ArgumentNullException(nameof(input));
@@ -21,28 +30,28 @@ namespace Jasmine.Configuration
             return parse0();
         }
 
-        public PropertyNode Parse(CharSequenceReader reader)
+        public PropertyTemplate Parse(CharSequenceReader reader)
         {
             _reader = reader;
 
             return parse();
         }
-        private  PropertyNode  parse0()
+        private  PropertyTemplate  parse0()
         {
-            var parameterNode = new PropertyNode();
+            var parameterNode = new PropertyTemplate();
 
-            parameterNode.IsProperty = true;
+            parameterNode.IsPropertyTemplates = true;
 
             parameterNode.Name = parsePropertyName();
 
             if(_reader.HasNext())
             {
-                parameterNode.Paramters = parseParameter();
+                parameterNode.SubTemplates = parseParameter();
             }
             
             return parameterNode;
         }
-        private PropertyNode parse()
+        private PropertyTemplate parse()
         {
            
 
@@ -58,10 +67,10 @@ namespace Jasmine.Configuration
 
             return node;
         }
-        private Dictionary<string, PropertyNode> parseParameter()
+        private Dictionary<string, PropertyTemplate> parseParameter()
         {
 
-            var dic = new Dictionary<string, PropertyNode>();
+            var dic = new Dictionary<string, PropertyTemplate>();
 
             while (true)
             {
@@ -90,7 +99,7 @@ namespace Jasmine.Configuration
                 {
                     _reader.Back();
 
-                    var parameterNode = new PropertyNode();
+                    var parameterNode = new PropertyTemplate();
 
                     parameterNode.Value = parseSegment(',', ']');
 

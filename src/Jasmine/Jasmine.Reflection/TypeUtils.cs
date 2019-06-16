@@ -18,7 +18,7 @@ namespace Jasmine.Reflection
 
             return type != null;
         }
-        public static bool IsInterfaceOrAbstraClass(this Type type)
+        public static bool IsInterfaceOrAbstractClass(this Type type)
         {
             return type.IsInterface||type.IsAbstract;
         }

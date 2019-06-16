@@ -1,15 +1,12 @@
 ﻿using Jasmine.Common.Attributes;
 using Jasmine.Restful.Attributes;
 using Jasmine.Restful.DefaultFilters;
-using System.Collections.Concurrent;
 
 namespace Jasmine.Restful.DefaultServices
 {
     [Restful]
     public  class LoginService
     {
-        private ConcurrentDictionary<string, string> _user = new ConcurrentDictionary<string, string>();
-
         public LoginService(IUserManager manager)
         {
             _userManager = manager;

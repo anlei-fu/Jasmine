@@ -11,6 +11,8 @@ namespace Jasmine.Restful
         public string DataKey { get; set; }
         public string PathVariableKey { get; set; }
         public bool FromPathVariable { get; set; }
-        public bool FromForm { get; set; }
+        public bool FromForm => FormKey != null;
+        public string FormKey { get; set; }
+        public string Description { get; set; }
     }
 }

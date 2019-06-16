@@ -12,29 +12,32 @@ namespace Jasmine.Ioc
 
         }
 
-        private ConcurrentDictionary<Type, Type> _impls = new ConcurrentDictionary<Type, Type>();
+        private ConcurrentDictionary<Type, Type> _implMappings = new ConcurrentDictionary<Type, Type>();
 
         public static readonly IIocServiceMetaDataManager Instance = new IocServiceMetaDataManager();
        
 
         public void SetImplementationMapping(Type abs, Type impl)
         {
-            if (impl.IsInterfaceOrAbstraClass())
+            if (impl.IsInterfaceOrAbstractClass())
                 throw new NotImplementedException();
 
-            if (!_impls.ContainsKey(abs))
+            if(!impl.IsDerivedFrom(abs))
+                throw new NotImplementedException();
+
+            if (!_implMappings.ContainsKey(abs))
             {
-                _impls.TryAdd(abs, impl);
+                _implMappings.TryAdd(abs, impl);
             }
             else
             {
-                _impls[abs] = impl;
+                _implMappings[abs] = impl;
             }
 
         }
         public Type GetImplementation(Type abs)
         {
-            return _impls.TryGetValue(abs, out var value) ? value : null;
+            return _implMappings.TryGetValue(abs, out var value) ? value : null;
         }
 
     }

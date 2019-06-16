@@ -21,7 +21,7 @@ namespace Jasmine.Common
         public int Success => _successed;
         public int Failed => _failed;
 
-        public int Fatest { get; private set; }
+        public int Fastest { get; private set; }
 
         public int Slowest { get; private set; }
 
@@ -47,8 +47,8 @@ namespace Jasmine.Common
                 if (item.Elapsed > Slowest)
                     Slowest = (int)item.Elapsed;
 
-                if (item.Elapsed < Fatest)
-                    Fatest = (int)item.Elapsed;
+                if (item.Elapsed < Fastest)
+                    Fastest = (int)item.Elapsed;
 
 
                 
@@ -93,7 +93,7 @@ namespace Jasmine.Common
         {
             lock(_lockObject)
             {
-                Fatest = Slowest = Avarage =_total =_successed=_failed= 0;
+                Fastest = Slowest = Avarage =_total =_successed=_failed= 0;
                 Items.Clear();
             }
         }

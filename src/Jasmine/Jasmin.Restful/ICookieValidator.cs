@@ -4,8 +4,8 @@ namespace Jasmine.Restful
 {
     public interface ISessionManager
     {
-        string CreateSession(Level level);
-        Level? SessionExists(string session);
+        string CreateSession(AuntenticateLevel level);
+        AuntenticateLevel? GetSession(string session);
         long Timeout { get; }
 
 

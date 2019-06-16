@@ -30,9 +30,9 @@ namespace Jasmine.Common
 
         public string Name { get; set; }
         [JsonIgnore]
-        public IFilterPipeline<T> ErrorFilter { get; protected set; }
+        public IFilterPipeline<T> ErrorPileline { get; protected set; }
         [JsonIgnore]
-        public IFilterPipeline<T> Filter { get; protected set; }
+        public IFilterPipeline<T> Pipeline { get; protected set; }
 
         public IMetric Metric { get; } = new Metric();
 
@@ -69,7 +69,7 @@ namespace Jasmine.Common
             try
             {
 
-                await Filter.First.FiltsAsync(context);
+                await Pipeline.First.FiltsAsync(context);
                 item.Sucessed = true;
 
             }
@@ -78,7 +78,7 @@ namespace Jasmine.Common
                 item.Sucessed = false;
                 _logger?.Error(ex);
 
-                await ErrorFilter.First.FiltsAsync(context);
+                await ErrorPileline.First.FiltsAsync(context);
 
 
             }

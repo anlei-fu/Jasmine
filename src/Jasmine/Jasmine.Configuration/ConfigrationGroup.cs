@@ -1,5 +1,4 @@
-﻿using Jasmine.Configuration.Exceptions;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 
@@ -20,7 +19,7 @@ namespace Jasmine.Configuration
         {
             if (!_properties.TryAdd(property.Name, property))
             {
-                // same key  exists
+                // same key  exists to do sth 
             }
         }
 

@@ -12,11 +12,11 @@ namespace Jasmine.Common
         /// <summary>
         /// attached error filter
         /// </summary>
-        IFilterPipeline<T> ErrorFilter { get; }
+        IFilterPipeline<T> ErrorPileline { get; }
         /// <summary>
         ///  filter pipeline
         /// </summary>
-        IFilterPipeline<T> Filter { get; }
+        IFilterPipeline<T> Pipeline { get; }
         /// <summary>
         /// service metric
         /// </summary>

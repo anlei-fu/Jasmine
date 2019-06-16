@@ -11,7 +11,7 @@ namespace Jasmine.Restful
         public RestfulDispatcher(string name, IRequestProcessorManager<HttpFilterContext> processorManager) : base(name, processorManager)
         {
         }
-        private ILog _logger;
+        private ILog _logger=LogManager.GetLogger(typeof(RestfulDispatcher));
         public IStaticFileProvider FileProvider { get; set; } = new JasmineStaticFileProvider();
         public bool UseStaticFile { get; set; }
         public string VirtuePathRoot { get; set; }
@@ -50,7 +50,7 @@ namespace Jasmine.Restful
                     }
                     catch (Exception ex)
                     {
-                        _logger?.Error(ex);
+                        _logger.Error(ex);
 
                         context.HttpContext.Response.StatusCode = HttpStatusCodes.SERVER_ERROR;
                     }

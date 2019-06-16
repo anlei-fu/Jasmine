@@ -59,8 +59,8 @@ namespace Jasmine.Common
         /// <summary>
         /// reset content and parameters
         /// </summary>
-        /// <param name="input"></param>
-        void Reset(IEnumerable<T> input);
+        /// <param name="sequence"></param>
+        void Reset(IEnumerable<T> sequence);
 
 
     }

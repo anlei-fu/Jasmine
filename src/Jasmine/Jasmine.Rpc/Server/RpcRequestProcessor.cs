@@ -6,8 +6,8 @@ namespace Jasmine.Rpc.Server
     {
         public RpcRequestProcessor(int maxConcurrency,string name):base(maxConcurrency,name)
         {
-            Filter = new RpcFilterPipeline();
-            ErrorFilter = new RpcFilterPipeline();
+            Pipeline = new RpcFilterPipeline();
+            ErrorPileline = new RpcFilterPipeline();
         }
     }
 }

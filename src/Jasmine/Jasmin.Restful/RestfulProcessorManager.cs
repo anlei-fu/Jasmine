@@ -7,7 +7,7 @@ using System.Reflection;
 namespace Jasmine.Restful
 {
     [Restful]
-    [Path("/apimgr")]
+    [Path("/api")]
     [BeforeInterceptor("cookie-validate-filter")]
     public class RestfulProcessorManager : AbstractProcessorManager<HttpFilterContext>
     {
@@ -15,6 +15,8 @@ namespace Jasmine.Restful
         {
 
         }
+        public static readonly IRequestProcessorManager<HttpFilterContext> Instance = new RestfulProcessorManager();
+        public override string Name => "RestfulProcessorManager";
 
         public void Scan()
         {
@@ -25,6 +27,7 @@ namespace Jasmine.Restful
         /// </summary>
         /// <param name="path"></param>
         /// <returns></returns>
+        [RestfulIgnore]
         public void Scan(string path)
         {
             foreach (var item in RestfulServiceScanner.Instance.Scan(path))
@@ -39,6 +42,7 @@ namespace Jasmine.Restful
         /// </summary>
         /// <param name="assembly"></param>
         /// <returns></returns>
+        [RestfulIgnore]
         public void Scan(Assembly assembly)
         {
             foreach (var item in RestfulServiceScanner.Instance.Scan(assembly))
@@ -53,7 +57,7 @@ namespace Jasmine.Restful
         /// </summary>
         /// <param name="folder"></param>
         /// <returns></returns>
-
+        [RestfulIgnore]
         public void ScanFolder(string folder)
         {
             foreach (var item in RestfulServiceScanner.Instance.ScanFolder(folder))
@@ -66,6 +70,7 @@ namespace Jasmine.Restful
         /// 
         /// </summary>
         /// <returns></returns>
+        [RestfulIgnore]
         public void AddRestfulService(Type type)
         {
             var restful = RestfulServiceMetaDataReflectResolver.Instance.Resolve(type);
@@ -83,6 +88,7 @@ namespace Jasmine.Restful
         /// <param name="assembly"></param>
         /// <param name="nameSpace"></param>
         /// <returns></returns>
+        [RestfulIgnore]
         public void Scan(Assembly assembly, string nameSpace)
         {
             foreach (var item in RestfulServiceScanner.Instance.Scan(assembly, nameSpace))
@@ -91,7 +97,6 @@ namespace Jasmine.Restful
             }
             
         }
-        public static readonly IRequestProcessorManager<HttpFilterContext> Instance = new RestfulProcessorManager();
-        public override string Name => "RestfulProcessorManager";
+     
     }
 }

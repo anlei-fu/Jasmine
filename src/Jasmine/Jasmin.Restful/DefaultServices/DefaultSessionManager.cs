@@ -9,11 +9,11 @@ namespace Jasmine.Restful.DefaultFilters
         {
             Timeout = timeout;
         }
-        protected ITimeoutCache<string, Level> _sessions = new JasmineTimeoutCache<string, Level>(1000,null);
+        protected ITimeoutCache<string, AuntenticateLevel> _sessions = new JasmineTimeoutCache<string, AuntenticateLevel>(10000,null);
 
         public long Timeout { get; }
 
-        public string CreateSession(Level level)
+        public string CreateSession(AuntenticateLevel level)
         {
             var session = Guid.NewGuid().ToString();
 
@@ -22,9 +22,9 @@ namespace Jasmine.Restful.DefaultFilters
             return session;
         }
 
-        public Level? SessionExists(string session)
+        public AuntenticateLevel? GetSession(string session)
         {
-            return _sessions.Conatins(session)?(Level?)_sessions.GetValue(session):null;
+            return _sessions.ConatinsKey(session)?(AuntenticateLevel?)_sessions.GetValue(session):null;
         }
     }
 }

@@ -192,7 +192,7 @@ namespace Jasmine.Rpc.Client
                 _channel = await builder.ConnectAsync(new IPEndPoint(IPAddress.Parse(Host), Port));
 
                 /*
-                 *  login in and registe client
+                 *  login  and registe client
                  */
 
                 Invoke($"/login_internal?user={User}&password={Password}");

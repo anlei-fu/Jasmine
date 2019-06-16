@@ -17,6 +17,11 @@ namespace Jasmine.Ioc
         public string TypeFullName => RelatedType.FullName;
         public bool LazyLoad { get; internal set; }
         public IocMethodMetaData InitMethod { get;internal set; }
+
+        public bool HasInitMethod => InitMethod != null;
+
+        public bool HasDestroyMethod => DestroyMethod != null;
+
         public IocMethodMetaData DestroyMethod { get; internal set; }
         public IocConstructorMetaData ConstrctorMetaData { get; internal set; }
         public IocPropertyMetaData[] Properties { get; set; }

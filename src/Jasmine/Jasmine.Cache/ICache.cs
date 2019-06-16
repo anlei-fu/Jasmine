@@ -1,10 +1,12 @@
-﻿namespace Jasmine.Cache
-{ 
-    public  interface ICache<TKey,Tvalue>
+﻿using System.Collections.Generic;
+
+namespace Jasmine.Cache
+{
+    public  interface ICache<TKey,Tvalue>:IReadOnlyCollection<KeyValuePair<TKey,Tvalue>>
     {
-        void Cache(TKey key, Tvalue value);
-        bool Conatins(TKey key);
+        Tvalue GetValue(TKey key);
+        bool ConatinsKey(TKey key);
         void Delete(TKey key);
-        int  Count { get; }
+      
     }
 }

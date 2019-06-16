@@ -9,7 +9,7 @@ namespace Jasmine.Ioc
         public string ConfigKey { get; internal set; }
         public bool IsFromConfig => ConfigKey != null;
         public bool HasDefaultValue => DefaultValue != null;
-        public bool HasImplementType => Impl != null;
+        public bool HasImpl => Impl != null;
         public object DefaultValue { get; internal set; }
       
     }

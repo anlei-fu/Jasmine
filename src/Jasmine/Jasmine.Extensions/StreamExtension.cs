@@ -1,13 +1,11 @@
 ﻿using Jasmine.Serialization;
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Jasmine.Extensions
 {
-  public static  class StreamExtension
+    public static  class StreamExtension
     {
         public static void WriteData(this Stream stream,object data, SerializeMode mode)
         {

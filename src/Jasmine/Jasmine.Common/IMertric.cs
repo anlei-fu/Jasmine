@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace Jasmine.Common
+﻿namespace Jasmine.Common
 {
     public  interface IMetric
       
@@ -10,7 +7,7 @@ namespace Jasmine.Common
         int Total { get; }
         int Success { get; }
         int Failed { get; }
-        int Fatest { get; }
+        int Fastest { get; }
         int Slowest { get; }
         float FaileRate { get; }
         float SuccesRate { get; }

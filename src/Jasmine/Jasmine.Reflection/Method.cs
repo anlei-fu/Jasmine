@@ -15,6 +15,7 @@ namespace Jasmine.Reflection
         public bool HasReturn => ReturnType != null;
         public IParameterCache Parameters { get; set; } = new DefaultParameterCache();
         public Type[] ParamerTypies { get; set; }
+        public bool HasParameter => ParamerTypies.Length != 0;
       
         public object Invoke(object instance, object[] parameters)
         {

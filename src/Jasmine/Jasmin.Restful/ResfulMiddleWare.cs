@@ -10,7 +10,7 @@ namespace Jasmine.Restful.Implement
     {
         public static IDispatcher<HttpFilterContext> Dispatcher;
 
-        private ILog _logger;
+        private ILog _logger=LogManager.GetLogger(typeof(JasmineResfulMiddleware));
 
         private IPool<HttpFilterContext> _pool = new HttpFilterContextPool(10000);
 

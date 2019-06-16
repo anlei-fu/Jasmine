@@ -29,7 +29,7 @@ namespace Jasmine.Rpc.Server
                 {
                     try
                     {
-                        await processor.Filter.First.FiltsAsync(context);
+                        await processor.Pipeline.First.FiltsAsync(context);
 
                         await writeResponse(context.RpcContext.Response, context);
                     }
@@ -39,7 +39,7 @@ namespace Jasmine.Rpc.Server
 
                         _logger?.Error(ex);
 
-                        await processor.ErrorFilter.First.FiltsAsync(context);
+                        await processor.ErrorPileline.First.FiltsAsync(context);
 
                         await writeResponse(context.RpcContext.Response, context);
                     }

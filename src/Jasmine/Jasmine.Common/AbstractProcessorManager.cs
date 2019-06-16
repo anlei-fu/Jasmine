@@ -37,14 +37,13 @@ namespace Jasmine.Common
             }
         }
         [Description("获取全部服务数据")]
-        [Path("/api/getall")]
         public  IEnumerable< IServiceGroup> GetAllProcessor()
         {
             return _groups.Values;
         }
 
         [RestfulIgnore]
-        public bool ContainsGroup(string name)
+        public bool ContainsGroup([Description("服务组名")]string name)
         {
             return _groups.ContainsKey(name);
         }
@@ -75,21 +74,21 @@ namespace Jasmine.Common
                 yield return item;
             }
         }
-        [Path("/api/getgroup")]
+   
         [Description("获取某个服务组的统计、检测、配置数据")]
         public IServiceGroup GetGroup(string name)
         {
             return _groups.TryGetValue(name, out var value) ? value : null;
         }
-        [Path("/api/getservice")]
+     
         [Description("获取某个服务的统计、检测、配置数据")]
-        public IRequestProcessor<T> GetProcessor(string path)
+        public IRequestProcessor<T> GetProcessor([Description("服务组名")]string path)
         {
             return _pathMap.TryGetValue(path, out var value) ? value : null;
         }
-        [Path("api/removegroup")]
+    
         [Description("移除某个服务组，注意：一旦移除，必须通过重启服务器才能恢复服务")]
-        public void RemoveGroup(string name)
+        public void RemoveGroup([Description("服务组名")]string name)
         {
             if(_groups.TryGetValue(name,out var value))
             {
@@ -114,8 +113,7 @@ namespace Jasmine.Common
             }
         }
         [Description("移除某个服务，注意：一旦移除，必须通过重启服务器才能恢复服务")]
-        [Path("/api/removeservice")]
-        public void RemoveService(string path)
+        public void RemoveService([Description("服务地址")]string path)
         {
             if(_pathMap.TryRemove(path,out var value))
             {
@@ -140,14 +138,12 @@ namespace Jasmine.Common
             }
         }
         [Description("恢复某个服务组，使之正常运行")]
-        [Path("/api/resumegroup")]
-        public void ResumeGroup(string name)
+        public void ResumeGroup([Description("服务组名")]string name)
         {
             setGroupAvailable(name, true);
         }
         [Description("重启某个服务")]
-        [Path("/api/resumeservice")]
-        public void ResumeService(string path)
+        public void ResumeService([Description("服务地址")]string path)
         {
             setServiceAvailable(path, true);
         }
@@ -159,15 +155,13 @@ namespace Jasmine.Common
 
       
         [Description("关闭某个服务组")]
-        [Path("/api/shutdowgroup")]
-        public void ShutDownGroup(string name)
+        public void ShutDownGroup([Description("服务组名")]string name)
         {
             setGroupAvailable(name, false);
         }
 
         [Description("关闭某个服务")]
-        [Path("/api/shutdownservice")]
-        public void ShutDownService(string path)
+        public void ShutDownService([Description("服务路径")]string path)
         {
             setServiceAvailable(path, false);
         }

@@ -72,7 +72,7 @@ namespace Jasmine.Ioc
                     if (name != null)
                         dic.Add(name, type);
 
-                    if (type.IsInterfaceOrAbstraClass())//abstrct class impl should be instructed
+                    if (type.IsInterfaceOrAbstractClass())//abstrct class impl should be instructed
                     {
                         var impl = service.GetAttribute(IMPL);
 
@@ -84,7 +84,7 @@ namespace Jasmine.Ioc
                         if (typeimpl == null)
                             throw new TypeNotFoundException($"{impl} is not found!");
 
-                        if (typeimpl.IsInterfaceOrAbstraClass() || typeimpl.IsDerivedFrom(type))//
+                        if (typeimpl.IsInterfaceOrAbstractClass() || typeimpl.IsDerivedFrom(type))//
                             throw new NotImplementedException($"{typeimpl} is abstract or not implement {type}");
 
                         _manager.SetImplementationMapping(type, typeimpl);
@@ -151,7 +151,7 @@ namespace Jasmine.Ioc
 
                                 if (TypeUtils.TryGetType(paraTypeImplStr, out var paraTypImpl))
                                 {
-                                    if (paraTypImpl.IsInterfaceOrAbstraClass())
+                                    if (paraTypImpl.IsInterfaceOrAbstractClass())
                                         throw new NotImplementedException($"{paraTypImpl} is abstrct or interface");
 
                                     parameterCadidate.Impl = paraTypImpl;

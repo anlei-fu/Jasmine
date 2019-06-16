@@ -17,7 +17,7 @@ namespace Jasmine.Rpc.Server
 
         public override IFilter<RpcFilterContext> GetFilter(string name)
         {
-            if (!_map.ContainsKey(name))
+            if (!_nameMap.ContainsKey(name))
             {
                 var instance = _serviceProvider.GetService(Type.GetType(name));
 
@@ -26,11 +26,11 @@ namespace Jasmine.Rpc.Server
                    
                 }
 
-                _map.TryAdd(name, (IFilter<RpcFilterContext>)instance);
+                _nameMap.TryAdd(name, (IFilter<RpcFilterContext>)instance);
             }
 
 
-            return _map.TryGetValue(name, out var result) ? result : null;
+            return _nameMap.TryGetValue(name, out var result) ? result : null;
         }
     }
 }
