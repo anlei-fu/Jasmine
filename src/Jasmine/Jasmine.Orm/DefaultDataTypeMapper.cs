@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using Jasmine.Orm.Model;
 
 namespace Jasmine.Orm
 {
@@ -125,13 +124,69 @@ namespace Jasmine.Orm
 
         };
 
-        private static readonly Dictionary<Type, string> _oracleqlSc = new Dictionary<Type, string>()
-        {
+        private static readonly Dictionary<string, Type> _oracleqlSc = new Dictionary<string, Type>()
+        {    
+            //CHAR(size)：固定长度字符串，最大长度2000 bytes
+            {"char",typeof(string) },
+            //VARCHAR2(size)：可变长度的字符串，最大长度4000 bytes，可做索引的最大
+            {"varchar2",typeof(string) },
+            //NCHAR(size)：根据字符集而定的固定长度字符串，最大长度2000 bytes
+            { "nchar",typeof(string)},
+            //NVARCHAR2(size)：根据字符集而定的可变长度字符串，最大长度4000 byte
+            {"nvarchar",typeof(string) },
+            //LONG：变长的字符串，最大长度限制是2GB
+            {"long",typeof(string) },
+            //CLOB：最大长度4G
+            {"clob",typeof(string) },
+            //NCLOB：根据字符集而定的字符数据，最大长度4G
+            {"nclob",typeof(string) },
+            //
+            {"number",typeof(double) },
+            //
+            {"date",typeof(DateTime) },
+            { "timestamp",typeof(DateTime)},
+            //BLOB：最大长度4G
+            {"blob",typeof(byte[]) },
+            //RAW ：可变长度的二进制数据，最大长度2000 字节
+            {"raw",typeof(byte[]) },
+            //LONG RAW：可变长度的二进制数据，最大长度2G
+            { "longraw",typeof(byte[])},
+            //BFILE：存放在数据库外的二进制数据，最大长度4G
+            { "bfile",typeof(byte[])}
+
 
         };
         private static readonly Dictionary<Type, string> _orackeCs = new Dictionary<Type, string>()
         {
-
+          {typeof(sbyte),"number()" },
+          {typeof(sbyte?),"number()" },
+          {typeof(byte),"number()" },
+          {typeof(byte?),"number()" },
+          {typeof(ushort) ,"number()"},
+          {typeof(ushort?) ,"number()"},
+          {typeof(short) ,"number()"},
+          {typeof(short?) ,"number()"},
+          {typeof(uint) ,"number()"},
+          {typeof(uint?) ,"number()"},
+          {typeof(int) ,"number()"},
+          {typeof(int?) ,"number()"},
+          {typeof(long),"number()"},
+          {typeof(long?),"number()"},
+          {typeof(bool) ,"number()"},
+          {typeof(bool?) ,"number()"},
+          {typeof(float),"number()"},
+          {typeof(float?),"number()"},
+          {typeof(double),"number()" },
+          {typeof(double?),"number()" },
+          {typeof(decimal),"number()"},
+          {typeof(decimal?),"number()"},
+          {typeof(DateTime),"timestamp" },
+          {typeof(DateTime?),"timestamp" },
+          {typeof(DateTimeOffset),"timestamp" },
+          {typeof(DateTimeOffset?),"timestamp" },
+          {typeof(TimeSpan),"tiemstamp" },
+          {typeof(TimeSpan?),"timestamp" },
+          {typeof(string),"text" },
         };
 
         private static readonly Dictionary<Type, string> _sqlLiteqlSc = new Dictionary<Type, string>()
@@ -141,6 +196,120 @@ namespace Jasmine.Orm
         private static readonly Dictionary<Type, string> _sqlLiteCs = new Dictionary<Type, string>()
         {
 
+        };
+        private static readonly Dictionary<string, Type> _db2Sc = new Dictionary<string, Type>()
+        {
+            //n bytes定长字符串. n 大于0 不大于255. 默认 1.
+            {"character",typeof(char)},
+            //变长字符串，最大 n bytes. n大于 0 小于表空间的 page size. 最大32704.
+            {"varchar",typeof(string) },
+            //变长字符串，最大2 147 483 647.默认1.
+            {"clob",typeof(string) },
+            //定长图形字符串， n 个双字节字符. n 大于 0 小于128. 默认 1.
+            {"graphic",typeof(string) },
+            //双字节变长字符串， n不能超过 1 073 741 824.默认1.
+            {"dbclob",typeof(string) },
+            //定长或变长二进制字符串. n 大于 0 不大于 255. 默认1.
+            {"binary",typeof(string) },
+            //变长二进制字符串，n大于 0小于表空间的 page size. 最大 32704.
+            {"varbinary",typeof(string) },
+            //变长二进制字符串，n 不大于 2 147 483 647. 默认 1.
+            {"blob",typeof(string) },
+            //小整数，精度（即通常说的长度） 15 bits. 范围 -32768 到 +32767.
+            {"samllint",typeof(short) },
+            //整数，精度 31 bits的二进制整数，范围 -2147483648 到 +2147483647.
+            {"int",typeof(int) },
+            {"integer",typeof(int) },
+            //大整数，精度 63 bits二进制整数，范围 -9223372036854775808 到 +9223372036854775807.
+            {"bigint",typeof(long) },
+            //压缩十进制数，小数点位置由precision和scale决定，scale非负且小于精度.最大精度 31 digits.decimal 列中的值有同样的precision 和 scale.范围 1 - 10³¹ 到 10³¹ - 1.
+            {"decimal",typeof(decimal) },
+            {"numeric",typeof(decimal) },
+            //十进制浮点数，最大精度 34 位.（早期DB2版本不支持）
+            {"decfloat",typeof(float) },
+            //单精度浮点数，32 bits.范围大约为 -7.2E+75 到 7.2E+75.最大负值约为 -5.4E-79, 最小正值约为 5.4E-079.
+            {"real",typeof(float) },
+            //双精度浮点数，64-bits. 范围大约为 -7.2E+75 到 7.2E+75.最大负值约为 -5.4E-79, 最小正值约为 5.4E-079.
+            { "double",typeof(double)},
+            //年月日组成的日期，范围 0001-01-01 到 9999-12-31.
+            { "date",typeof(DateTime)},
+            //时分秒组成的时间，范围 00.00.00 到 24.00.00.
+            {"time",typeof(DateTime) },
+            //年月日时分秒微妙组成的时间，范围 0001-01-01-00.00.00.000000000 到 9999-12-31-24.00.00.000000000 精确到纳秒. 可保存时区信息
+            {"tiemspan",typeof(DateTime) }
+        };
+        private static readonly Dictionary<Type, string> _db2Cs = new Dictionary<Type, string>()
+        {
+            {typeof(sbyte),"character" },
+          {typeof(sbyte?),"character" },
+          {typeof(byte),"character" },
+          {typeof(byte?),"character" },
+          {typeof(ushort) ,"smallint"},
+          {typeof(ushort?) ,"samllint"},
+          {typeof(short) ,"samllint"},
+          {typeof(short?) ,"samllint"},
+          {typeof(uint) ,"int"},
+          {typeof(uint?) ,"int"},
+          {typeof(int) ,"int"},
+          {typeof(int?) ,"int"},
+          {typeof(long),"bigint"},
+          {typeof(long?),"bigint"},
+          {typeof(bool) ,"character"},
+          {typeof(bool?) ,"character"},
+          {typeof(float),"float"},
+          {typeof(float?),"float"},
+          {typeof(double),"double" },
+          {typeof(double?),"double" },
+          {typeof(decimal),"decimal"},
+          {typeof(decimal?),"decimal"},
+          {typeof(DateTime),"timestamp" },
+          {typeof(DateTime?),"timestamp" },
+          {typeof(DateTimeOffset),"timestamp" },
+          {typeof(DateTimeOffset?),"timestamp" },
+          {typeof(TimeSpan),"time" },
+          {typeof(TimeSpan?),"time" },
+          {typeof(string),"text" },
+        };
+
+        private static readonly Dictionary<string, Type> _postgre2Sc = new Dictionary<string, Type>()
+        {
+            //有符号 8 字节整数
+            {"bigint",typeof(long)},
+            //自增八字节整数
+            {"bigserial",typeof(long)},
+            //定长位串
+            {"bit",typeof(byte) },
+            //逻辑布尔量 （真/假）
+            {"boolean",typeof(bool) },
+            //二进制数据（"字节数组"）
+            {"bytea",typeof(byte[]) },
+            //变长字符串
+            {"character varying",typeof(string) },
+            //定长字符串
+            {"character",typeof(string)},
+            //日历日期（年，月，日）
+            {"date",typeof(DateTime) },
+            //双精度浮点数字
+            { "double percesion",typeof(double)},
+            //可选精度的准确数字 p,s as oracle
+            {"numeric",typeof(double) },
+            //单精度浮点数
+            {"real",typeof(float) },
+            //有符号两字节整数
+            { "samllint",typeof(short)},
+            //自增四字节整数
+            { "serial",typeof(int)},
+            //变长字符串
+            {"text",typeof(string) },
+            //日期和时间
+            { "timestamp",typeof(DateTime)},
+            //通用唯一标识符
+            {"uuid",typeof(Guid) },
+           
+        };
+        private static readonly Dictionary<Type, string> _postgre2Cs = new Dictionary<Type, string>()
+        {
+          
         };
 
         public static readonly IDataTypeMapper Instace = new DefaultDataTypeMapper();

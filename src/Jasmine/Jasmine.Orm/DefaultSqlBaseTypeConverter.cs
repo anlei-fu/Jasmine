@@ -1,4 +1,5 @@
-﻿using Jasmine.Orm.Exceptions;
+﻿using Jasmine.Common;
+using Jasmine.Orm.Exceptions;
 using Jasmine.Orm.Interfaces;
 using Jasmine.Reflection;
 using System;
@@ -63,8 +64,14 @@ namespace Jasmine.Orm.Implements
         public object FromSqlFiledValue(object value, Type type)
         {
 
+            if(value is DBNull)
+            {
+                return JasmineDefaultValueProvider.GetDefaultValue(type);
+            }
+
             if (type.IsEnum)
             {
+                return Enum.ToObject(type, value);
             }
 
             /*

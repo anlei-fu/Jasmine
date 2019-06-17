@@ -1,4 +1,5 @@
 ﻿using Jasmine.Extensions;
+using Jasmine.Orm.Exceptions;
 using Jasmine.Orm.Interfaces;
 using Jasmine.Reflection;
 using System;
@@ -37,7 +38,7 @@ namespace Jasmine.Orm.Implements
                 foreach (var item in resolveItems)
                 {
                     if (!instanceMap.ContainsKey(item.Parent))
-                        createParent(item.Parent, instanceMap,item.PropertyType);
+                        createParent(item.Parent, instanceMap);
 
                     var rawValue = context.Reader.GetValue(item.ColumnIndex);
 
@@ -51,7 +52,7 @@ namespace Jasmine.Orm.Implements
             return ls;
         }
 
-        private void createParent(string parent, Dictionary<string, object> map,Type propertyType)
+        private void createParent(string parent, Dictionary<string, object> map)
         {
             var segs = parent.Splite1("_");
 
@@ -61,11 +62,25 @@ namespace Jasmine.Orm.Implements
 
             foreach (var item in segs)
             {
-                temp += item;
+                temp  = temp==string.Empty? item:temp+"_"+item;
 
                 if (!map.ContainsKey(temp))
                 {
-                    var instance =_tableProvider.GetTable(propertyType).Constructor.Invoke();
+                    var type = _refelctionProvider.GetItem(obj.GetType()).Properties.GetItemByName(item)?.PropertyType;
+
+                    if(type==null)
+                    {
+                        throw new PropertyNotExistsException("");
+                    }
+
+
+                    var instance = _refelctionProvider.GetItem(type).Constructors.GetDefaultConstructor()?.DefaultInvoker?.Invoke();
+
+                    if(instance==null)
+                    {
+                        throw new InstanceCanNotBeCreatedException($"{type} can not be created ,require no parameter constructor!");
+                    }
+
 
                     var property = _refelctionProvider.GetItem(obj.GetType()).Properties.GetItemByName(item);
 
@@ -205,7 +220,10 @@ namespace Jasmine.Orm.Implements
 
                     Array.Copy(segs,1,array, 0,array.Length);
 
-                    var result = resolveJoinColumn(column, table.JoinColumns[segs[0]].Table, array, prefix + table.JoinColumns[segs[0]].PropertyName);
+                    prefix = prefix == string.Empty ? table.JoinColumns[segs[0]].PropertyName
+                                               : prefix + "_" + table.JoinColumns[segs[0]].PropertyName;
+
+                    var result = resolveJoinColumn(column, table.JoinColumns[segs[0]].Table, array, prefix);
 
                     if (result != null)
                         return result;

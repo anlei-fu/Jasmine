@@ -1,4 +1,4 @@
-﻿namespace Jasmine.Orm.Model
+﻿namespace Jasmine.Orm
 {
     public   enum DataSource
     {

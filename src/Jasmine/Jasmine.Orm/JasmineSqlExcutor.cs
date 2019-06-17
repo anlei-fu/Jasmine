@@ -22,9 +22,51 @@ namespace Jasmine.Orm
         private ITableMetaDataProvider _metaDataProvider => DefaultTableMetaDataProvider.Instance;
         public int BatchInsert<T>(IEnumerable<T> data, bool transanction = false)
         {
+            var table = _metaDataProvider.GetTable(typeof(T));
+            //if has join tble can just insert one by one
+            if(table.HasJoinTable)
+            {
+
+            }
+            else
+            {
+                switch (_connectionProvider.DataSource)
+                {
+                    case DataSource.SqlServer:
+                    case DataSource.MySql:
+                    case DataSource.Db2:
+                    case DataSource.Sqlite:
+                    case DataSource.Postgre:
+                    case DataSource.Access:
+                        break;
+                    case DataSource.Oracle:
+                        break;
+                    case DataSource.SyBase:
+                        break;
+                    default:
+                        break;
+                }
+            }
+
             throw new NotImplementedException();
         }
 
+        /// <summary>
+        /// sql server max batch size is 1056
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="datas"></param>
+        /// <returns></returns>
+
+        private int batchInsertSqlServer<T>(IEnumerable<T> datas)
+        {
+            return 0;
+        }
+
+        private int batchInsertOracle<T>(IEnumerable<T> datas)
+        {
+            return 0;
+        }
         public Task<int> BatchInsertAsync<T>(IEnumerable<T> data, bool transanction = false)
         {
             throw new NotImplementedException();
@@ -141,7 +183,7 @@ namespace Jasmine.Orm
 
                 return command.ExecuteNonQuery();
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 
                 throw;

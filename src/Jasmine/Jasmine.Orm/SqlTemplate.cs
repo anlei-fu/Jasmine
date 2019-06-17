@@ -46,6 +46,24 @@ namespace Jasmine.Orm
         }
     }
 
+    public class SqlTemplateMaker
+    {
+        public static SqlTemplate MakeInsert(string table,params string[] columns)
+        {
+            return null;
+        }
+
+        public static SqlTemplate MakeInsertLeft(string table,params string[] columns)
+        {
+            return null;
+        }
+        public static SqlTemplate MakeInsertRight(string table,params string[] columns)
+        {
+            return null;
+        }
+
+
+    }
     public struct SqlTemplateSegment
     {
         public SqlTemplateSegment(string value, bool isVarible)
@@ -218,7 +236,9 @@ namespace Jasmine.Orm
             return _map.Values.GetEnumerator();
         }
     }
-
+    /// <summary>
+    /// still needs optimice
+    /// </summary>
     public class SqltemplateConverter
     {
         private SqltemplateConverter()
@@ -231,6 +251,7 @@ namespace Jasmine.Orm
         
         public string Convert(SqlTemplate template, object parameters)
         {
+            // slow speed below operation,is required?
             var map = genarateMap(string.Empty, parameters);
 
             var builder = new StringBuilder();
@@ -239,9 +260,9 @@ namespace Jasmine.Orm
             {
                 if (item.IsVarible)
                 {
-                    if (map.ContainsKey(item.Value))
+                    if (map.ContainsKey(item.Value.ToLower()))
                     {
-                        builder.Append(map[item.Value]);
+                        builder.Append(map[item.Value.ToLower()]);
                     }
                     else
                     {
@@ -265,6 +286,7 @@ namespace Jasmine.Orm
             foreach (var item in JasmineReflectionCache.Instance.GetItem(obj.GetType()).Properties)
             {
                 var value = item.Getter.Invoke(obj);
+
                 var valueType = value.GetType();
 
                 var name = prefix + item.Name.ToLower();
