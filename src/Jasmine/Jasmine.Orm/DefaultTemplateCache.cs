@@ -17,7 +17,7 @@ namespace Jasmine.Orm
         }
         private readonly object _locker = new object();
         private string[] _stringCache = new string[58];
-        private SqlTemplate[] _templateCache = new SqlTemplate[10];
+        private SqlTemplate[] _templateCache = new SqlTemplate[11];
 
         private ITableMetaDataProvider _tableProvider => DefaultTableMetaDataProvider.Instance;
         private ITableTemplateCacheProvider _templateProvider => DefaultTableTemplateCacheProvider.Instance;
@@ -153,7 +153,7 @@ namespace Jasmine.Orm
                     }
                 }
 
-                builder.Append(",");
+                builder.Append(", ");
             }
 
             builder.RemoveLastComa();
@@ -299,20 +299,22 @@ namespace Jasmine.Orm
 
                     foreach (var item in columns)
                     {
-                        ls.Add(new SqlTemplateSegment(item.ColumnName, true));
-                        ls.Add(new SqlTemplateSegment(",", false));
+                        ls.Add(new SqlTemplateSegment(item.ColumnName.Replace("_",".").ToLower(), true));
+                        ls.Add(new SqlTemplateSegment(", ", false));
                     }
 
-                    if (ls[ls.Count - 1].Value == ",")
+                    if (ls[ls.Count - 1].Value == ", ")
                         ls.RemoveAt(ls.Count - 1);
 
                     ls.Add(new SqlTemplateSegment(")", false));
+
+                    ls.Add(new SqlTemplateSegment("\r\n", false));
 
                     if (_table.HasJoinTable)
                     {
                         foreach (var item in _table.JoinTables.Values)
                         {
-                            var template = _templateProvider.GetCache(item.Table.RelatedType).GetInsert();
+                            var template = _templateProvider.GetCache(item.Table.RelatedType).GetInsert(item.PropertyName.ToLower());
 
                             ls.AddRange(template.Segments);
                         }
@@ -330,10 +332,70 @@ namespace Jasmine.Orm
             return _templateCache[0];
         }
 
+       public SqlTemplate GetInsert(string prefix)
+        {
+
+            var ls = new List<SqlTemplateSegment>();
+
+            var columns = getAllColumns();
+
+            var builder = new StringBuilder();
+
+            builder.Append($"{INSERT_INTO} {_tableName}(");
+
+            foreach (var item in columns)
+            {
+                builder.Append(item.ColumnName.Replace(".", "_") + ",");
+            }
+
+            builder.RemoveLastComa();
+
+            builder.Append($"){VALUES}( ");
+
+            ls.Add(new SqlTemplateSegment(builder.ToString(), false));
+
+            foreach (var item in columns)
+            {
+                ls.Add(new SqlTemplateSegment($"{prefix}." + item.ColumnName.ToLower(), true));
+                ls.Add(new SqlTemplateSegment(",", false));
+            }
+
+            if (ls[ls.Count - 1].Value == ",")
+                ls.RemoveAt(ls.Count - 1);
+
+            ls.Add(new SqlTemplateSegment(")", false));
+
+            if (_table.HasJoinTable)
+            {
+                foreach (var item in _table.JoinTables.Values)
+                {
+                    var template = _templateProvider.GetCache(item.Table.RelatedType).GetInsert($"{prefix}.{item.PropertyName.ToLower()}");
+
+                    ls.AddRange(template.Segments);
+                }
+
+            }
+
+
+            return new SqlTemplate()
+            {
+                Segments = ls.ToArray()
+            };
+
+        }
 
         private List<ColumnMetaData> getAllColumns()
         {
-            return null;
+            var table = _tableProvider.GetTable(_type);
+
+            var columns = new List<ColumnMetaData>();
+
+            columns.AddRange(table.Columns.Values);
+
+            if (table.HasJoinColumns)
+                columns.AddRange(getJoinColumn(_table, ""));
+
+            return columns;
         }
 
 
@@ -509,7 +571,7 @@ namespace Jasmine.Orm
             if (_table.HasJoinTable)
             {
                 foreach (var item in _table.JoinTables.Values)
-                    builder.Append($"left join {item.Table.Name} on {name}.{item.SelfKey}={item.Table.Name}.{item.SelfKey} ");
+                    builder.Append($"left join {item.Table.Name} on {name}.{item.InnerKey}={item.Table.Name}.{item.OutterKey} ");
             }
 
             return builder.ToString();

@@ -40,7 +40,7 @@ namespace Jasmine.Orm.Implements
 
             while (t++ <= count && _context.Reader.Read())
             {
-                result.Add((T)resolver.Resolve(_context, type));
+                //result.Add((T)resolver.Resolve(_context, type));
             }
 
             return result;
@@ -53,8 +53,10 @@ namespace Jasmine.Orm.Implements
 
             var resolver = DefaultQueryResultResolverProvider.Instance.GetResolver(type);
 
-            return _context.Reader.Read() ? (T)resolver.Resolve(_context, type)
-                                          : default(T);
+            ///  return _context.Reader.Read() ? (T)resolver.Resolve(_context, type)
+            //                         : default(T);
+
+            return default(T);
         }
 
 
@@ -64,8 +66,10 @@ namespace Jasmine.Orm.Implements
 
             var resolver = DefaultQueryResultResolverProvider.Instance.GetResolver(type);
 
-            return await _context.Reader.ReadAsync().ConfigureAwait(false) ? (T)resolver.Resolve(_context, type)
-                                                                           : default(T);
+            /// return await _context.Reader.ReadAsync().ConfigureAwait(false) ? (T)resolver.Resolve(_context, type)
+            //    : default(T);
+
+            return default(T);
         }
 
         public async Task<IEnumerable<T>> ReadAsync<T>(int count)
@@ -80,7 +84,7 @@ namespace Jasmine.Orm.Implements
 
             while (t++ <= count && await _context.Reader.ReadAsync().ConfigureAwait(false))
             {
-                result.Add((T)resolver.Resolve(_context, type));
+               // result.Add((T)resolver.Resolve(_context, type));
             }
 
             return result;
@@ -96,7 +100,7 @@ namespace Jasmine.Orm.Implements
 
             while (_context.Reader.Read())
             {
-                result.Add((T)resolver.Resolve(_context, type));
+              //  result.Add((T)resolver.Resolve(_context, type));
             }
 
             return result;
@@ -112,7 +116,7 @@ namespace Jasmine.Orm.Implements
 
             while (await _context.Reader.ReadAsync().ConfigureAwait(false))
             {
-                result.Add((T)resolver.Resolve(_context, type));
+                //result.Add((T)resolver.Resolve(_context, type));
             }
 
             return result;

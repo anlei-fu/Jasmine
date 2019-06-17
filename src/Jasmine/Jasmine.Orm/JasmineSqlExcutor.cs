@@ -1,4 +1,5 @@
 ﻿using Jasmine.Extensions;
+using Jasmine.Orm.Implements;
 using Jasmine.Reflection;
 using System;
 using System.Collections.Generic;
@@ -10,10 +11,15 @@ namespace Jasmine.Orm
 {
     public class JasmineSqlExcutor : ISqlExcuter
     {
-        private ITableTemplateCacheProvider _templateProvider;
-        private SqltemplateConverter _templateConverter;
+        public JasmineSqlExcutor(IDbConnectionProvider provider)
+        {
+            _connectionProvider = provider;
+        }
+
+        private ITableTemplateCacheProvider _templateProvider =>DefaultTableTemplateCacheProvider.Instance;
+        private SqltemplateConverter _templateConverter => SqltemplateConverter.Instance;
         private IDbConnectionProvider _connectionProvider;
-        private ITableMetaDataProvider _metaDataProvider;
+        private ITableMetaDataProvider _metaDataProvider => DefaultTableMetaDataProvider.Instance;
         public int BatchInsert<T>(IEnumerable<T> data, bool transanction = false)
         {
             throw new NotImplementedException();
@@ -191,7 +197,7 @@ namespace Jasmine.Orm
 
         public int Excute(SqlTemplate template, object obj, bool transanction = false)
         {
-            return Excute(template, obj, transanction);
+            return Excute( _templateConverter.Convert(template,obj), transanction);
         }
 
         public async Task<int> ExcuteAsync(string sql, bool transanction = false)
@@ -332,16 +338,12 @@ namespace Jasmine.Orm
 
                 var context = new QueryResultContext(command.ExecuteReader());
 
-                var resolver = DefaultQueryResultResolverProvider.Instance.GetResolver<T>();
+               var resolver = DefaultQueryResultResolverProvider.Instance.GetResolver((typeof(T)));
 
                 var ls = new List<T>();
 
-                while (context.Reader.Read())
-                {
-                    ls.Add((T)resolver.Resolve(context, typeof(T)));
-                }
+                return resolver.Resolve<T>(context);
 
-                return ls;
 
             }
             catch (Exception)
@@ -393,13 +395,13 @@ namespace Jasmine.Orm
 
                 var context = new QueryResultContext(await command.ExecuteReaderAsync());
 
-                var resolver = DefaultQueryResultResolverProvider.Instance.GetResolver<T>();
+              //  var resolver = DefaultQueryResultResolverProvider.Instance.GetResolver<T>();
 
                 var ls = new List<T>();
 
                 while (await  context.Reader.ReadAsync())
                 {
-                    ls.Add((T)resolver.Resolve(context, typeof(T)));
+                 //   ls.Add((T)resolver.Resolve(context, typeof(T)));
                 }
 
                 return ls;
@@ -530,7 +532,9 @@ namespace Jasmine.Orm
 
                 var context = new QueryResultContext(command.ExecuteReader());
 
-                return new DefaultCursor(context, connection, _connectionProvider);
+                return null;
+
+               // return new DefaultCursor(context, connection, _connectionProvider);
             }
             catch (Exception)
             {
@@ -577,7 +581,7 @@ namespace Jasmine.Orm
 
                 var context = new QueryResultContext(await command.ExecuteReaderAsync());
 
-                return new DefaultCursor(context, connection, _connectionProvider);
+                return null;
             }
             catch (Exception)
             {
@@ -1440,7 +1444,7 @@ namespace Jasmine.Orm
 
             foreach (var item in JasmineReflectionCache.Instance.GetItem(typeof(T)).Properties)
             {
-                builder.Append($"{item.Name}={DefaultBaseTypeConvertor.Instance.ConvertToSqlString(item.PropertyType, item.Getter.Invoke(parameter))},");
+             //   builder.Append($"{item.Name}={DefaultBaseTypeConvertor.Instance.ConvertToSqlString(item.PropertyType, item.Getter.Invoke(parameter))},");
             }
 
             builder.RemoveLastComa();

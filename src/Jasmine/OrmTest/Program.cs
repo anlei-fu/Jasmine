@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Data.Common;
+using System.Data.SqlClient;
 using Jasmine.Orm;
 using Jasmine.Orm.Attributes;
 namespace OrmTest
@@ -22,10 +24,25 @@ namespace OrmTest
 
             queryWith();
 
+            var excutor = new JasmineSqlExcutor(new SqlServerConnectionProvider("Server=HW09;Database=Test;Trusted_Connection=True;"));
+
+            insert();
+
+            //  excutor.Create<Animal>();
+
+            // excutor.Insert<Animal>(new Animal());
+
+            excutor.Query<Animal>();
+
             Console.Read();
         }
 
+        static void insert()
+        {
+            Console.WriteLine(_provider.GetCache<Animal>().GetInsert().RawString);
 
+            Console.WriteLine();
+        }
         static  void create()
         {
             Console.WriteLine(_provider.GetCache<Animal>().GetCreate());
@@ -66,36 +83,36 @@ namespace OrmTest
         {
             [PrimaryKey]
             [SqlColumnType("varchar(100)")]
-         
-            public string Name { get; set; }
 
-            public int Age { get; set; }
-        
-            public bool CanFly { get; set; }
+            public string Name { get; set; } = "cog";
+
+            public int Age { get; set; } = 14;
+
+            public bool CanFly { get; set; } = true;
             [JoinColumns()]
-            public Fearture Fearture { get; set; }
+            public Fearture Fearture { get; set; } = new Fearture();
 
-            [JoinTable("Age")]
-            public Number Number { get; set; }
+            [JoinTable("Age", "Max")]
+            public Number Number { get; set; } = new Number();
         }
 
         public class Number
         {
-            public int Age { get; set; }
-            public int Max { get; set; }
-            public int Min { get; set; }
+            public int Age { get; set; } = 14;
+            public int Max { get; set; } = 1;
+            public int Min { get; set; } = 2;
         }
         public class Fearture
         {
-            public string Food { get; set; }
-            public int MaxAge { get; set; }
+            public string Food { get; set; } = "apple";
+            public int MaxAge { get; set; } = 100;
             [JoinColumns]
-            public Sleep Sleep { get; set; }
+            public Sleep Sleep { get; set; } = new Sleep();
         }
 
         public class Sleep
         {
-            public int Length { get; set; }
+            public int Length { get; set; } = 25;
         }
     }
 }

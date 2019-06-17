@@ -1,27 +1,33 @@
 <template>
   <div class="service-display">
-    <Card>
-      <!-- title -->
-      <Row>
-       <Card style="text-align:left;">
-         <p slot="title">
-          <Icon type="ios-cloud" size="45"/>系统信息  <Badage></Badage>  <span> <Button>启动</Button><Button>停止</Button></span>
-          </p>
-          <p>
-          </p>
-       </Card>
-      </Row>
-      <!-- description-->
-      <Row>
-        <p>{{this.$store.state.currentService.description}}</p>
-      </Row>
-      <!-- table -->
-      <Row>
-        <Table :columns='columns1'></Table>
-      </Row>
-      <!-- stat-->
-      <Row></Row>
-    </Card>
+    <!-- title -->
+    <Row>
+      <p>
+        <Badage>当前出状态</Badage>
+        <span>
+          <Button>启动</Button>
+          <Button>停止</Button>
+        </span>
+      </p>
+      <p>description</p>
+    </Row>
+    <!-- input ouput description  -->
+    <Row>
+      <p>{{this.$store.state.currentService.description}}</p>
+    </Row>
+    <!-- filter s -->
+    <Row>
+      <Col>
+        <Table :columns="columns1"></Table>
+      </Col>
+      <Col>
+        <Table></Table>
+      </Col>
+    </Row>
+    <!-- filters -->
+    <Row></Row>
+    <!-- log -->
+    <Row></Row>
 
     <div id="stat">
       <a @click="refresh">click me</a>
@@ -33,24 +39,28 @@
 export default {
   data() {
     return {
-        columns1: [
+      columns1: [
         {
           title: "名称",
           key: "name"
+        },
+
+        {
+          title: "位置",
+          key: "age"
         },
         {
           title: "类型",
           key: "age"
         },
         {
-          title: "说明",
+          title: "示例值",
           key: "address"
         },
         {
-          title: "示例值",
+          title: "说明",
           key: "age"
         }
-       
       ]
     };
   },

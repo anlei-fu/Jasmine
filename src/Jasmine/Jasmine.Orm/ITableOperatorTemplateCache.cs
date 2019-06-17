@@ -80,6 +80,7 @@
 
 
         SqlTemplate GetInsert();
+        SqlTemplate GetInsert(string prefix);
         SqlTemplate GetInsertWith(string table);
         SqlTemplate GetInsertPartial(params string[] columns);
         SqlTemplate GetInsertPartialWith(string table, params string[] columns);

@@ -6,6 +6,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="System.Data.SqlClient" Version="4.6.1" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\Jasmine.Common\Jasmine.Commom.csproj" />
     <ProjectReference Include="..\Jasmine.Configuration\Jasmine.Configuration.csproj" />
     <ProjectReference Include="..\Jasmine.Extensions\Jasmine.Extensions.csproj" />

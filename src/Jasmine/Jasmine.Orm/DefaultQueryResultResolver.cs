@@ -183,7 +183,7 @@ namespace Jasmine.Orm.Implements
         {
 
 
-            if (segs.Length == 0)
+            if (segs.Length == 1)
             {
                 if (table.Columns.ContainsKey(segs[0]))
                 {
@@ -202,7 +202,8 @@ namespace Jasmine.Orm.Implements
                 if (table.JoinColumns.ContainsKey(segs[0]))
                 {
                     var array = new string[segs.Length - 1];
-                    segs.CopyTo(array, 1);
+
+                    Array.Copy(segs,1,array, 0,array.Length);
 
                     var result = resolveJoinColumn(column, table.JoinColumns[segs[0]].Table, array, prefix + table.JoinColumns[segs[0]].PropertyName);
 

@@ -11,41 +11,51 @@
 <template>
   <div>
     <Row>
-      <Col span="8" style="text-align:left;">
+      <Col span="6" style="text-align:left;">
         <Card style="margin:10px 20px;">
-          <p slot="title">
-            <Icon type="ios-cloud" size="45"/>系统信息
-          </p>
-          <p class="stat-item">操作系统：{{summary.systemVersion}}</p>
-          <p class="stat-item">cpu架构：{{summary.cpuArchetetcture}}</p>
-          <p class="stat-item">运行时长：{{summary.runningTime}}</p>
-          <p class="stat-item">Cpu使用：{{summary.memoryUsage}}</p>
-          <p class="stat-item">内存使用：{{summary.memoryUsage}}</p>
+          <p slot="title">系统配置</p>
+          <p class="stat-item">Server Name:ketrel</p>
+          <p class="stat-item">Port：</p>
+          <p class="stat-item">BackLog：</p>
+          <p class="stat-item">No Delay：</p>
+          <p class="stat-item">Request Timeout：</p>
+          <p class="stat-item">Response Timeout：</p>
+          <p class="stat-item">BackLog：</p>
+          <p class="stat-item">No Delay：</p>
+          <p class="stat-item">MaxConnection：</p>
+          <p class="stat-item">ListenType：</p>
+          <p class="stat-item">Ssl Enabled：</p>
+          <p class="stat-item">Ssl Version：</p>
+          <p class="stat-item">Hand Shake Timeout：</p>
+          <p class="stat-item">Static File Enable ：</p>
+          <p class="stat-item">Virture Path Root：</p>
         </Card>
       </Col>
 
-      <Col span="8" style="text-align:left;">
+      <Col span="6" style="text-align:left;">
+        <Card style="margin:10px 20px;">
+          <p slot="title">App配置</p>
+          <p class="stat-item">App Version：</p>
+          <p class="stat-item">Dispatcher：</p>
+          <p class="stat-item">MiddleWare：</p>
+          <p class="stat-item">Service Group Count：</p>
+          <p class="stat-item">Total Service Count：</p>
+          <p class="stat-item">Test File Genarated：</p>
+          <p class="stat-item">Description File Genarated：</p>
+        </Card>
+      </Col>
+
+      <Col span="6" style="text-align:left;">
         <Card style="margin:10px 20px;">
           <p slot="title">系统信息</p>
-          <p class="stat-item">操作系统：{{summary.systemVersion}}</p>
-          <p class="stat-item">cpu架构：{{summary.cpuArchetetcture}}</p>
-          <p class="stat-item">运行时长：{{summary.runningTime}}</p>
-          <p class="stat-item">Cpu使用：{{summary.memoryUsage}}</p>
-          <p class="stat-item">内存使用：{{summary.memoryUsage}}</p>
+          <p class="stat-item">操作系统：</p>
+          <p class="stat-item">cpu架构：</p>
+          <p class="stat-item">运行时长：</p>
+          <p class="stat-item">Cpu使用：</p>
+          <p class="stat-item">内存使用：</p>
         </Card>
       </Col>
-
-      <Col span="8" style="text-align:left;">
-        <Card style="margin:10px 20px;">
-          <p slot="title">系统信息</p>
-          <p class="stat-item">操作系统：{{summary.systemVersion}}</p>
-          <p class="stat-item">cpu架构：{{summary.cpuArchetetcture}}</p>
-          <p class="stat-item">运行时长：{{summary.runningTime}}</p>
-          <p class="stat-item">Cpu使用：{{summary.memoryUsage}}</p>
-          <p class="stat-item">内存使用：{{summary.memoryUsage}}</p>
-        </Card>
-      </Col>
-
+      
     </Row>
 
     <Row>

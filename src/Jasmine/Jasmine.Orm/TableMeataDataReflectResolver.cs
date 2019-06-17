@@ -86,7 +86,7 @@ namespace Jasmine.Orm
                 //resolve join table
                 if (pattrs.Contains<JoinTableAttribute>())
                 {
-                    var joinTable = getJoinTable(item, pattrs.GetAttribute<JoinTableAttribute>()[0].ForeignKey);
+                    var joinTable = getJoinTable(item, pattrs.GetAttribute<JoinTableAttribute>()[0].Outter, pattrs.GetAttribute<JoinTableAttribute>()[0].Inner);
 
                     joinTables.Add(joinTable.Table.Name, joinTable);
 
@@ -193,19 +193,38 @@ namespace Jasmine.Orm
             foreach (var item in table.JoinTables.Values)
             {
                 bool joinKeyOk = false;
+
                 foreach (var column in table.Columns)
                 {
-                    if(column.Key.ToLower()==item.SelfKey.ToLower())
+                    if(column.Key.ToLower()==item.InnerKey.ToLower())
                     {
                         joinKeyOk = true;
                         break;
                     }
                 }
 
+
                 if(!joinKeyOk)
                 {
-                    throw new Orm.Exceptions.JoinKeyNotFountException(table,item.Table,item.SelfKey);
+                    throw new Orm.Exceptions.JoinKeyNotFountException(table,item.Table,item.InnerKey);
                 }
+
+                joinKeyOk = false;
+
+                foreach (var outterColumn in item.Table.Columns)
+                {
+                    if (outterColumn.Key.ToLower() == item.OutterKey.ToLower())
+                    {
+                        joinKeyOk = true;
+                        break;
+                    }
+                }
+                if (!joinKeyOk)
+                {
+                    throw new Orm.Exceptions.JoinKeyNotFountException(table, item.Table, item.InnerKey);
+                }
+
+
             }
 
             // check assciate query varible is ok
@@ -261,7 +280,7 @@ namespace Jasmine.Orm
 
 
 
-        public JoinTable getJoinTable(Property property, string joinKey)
+        public JoinTable getJoinTable(Property property, string outter,string inner)
         {
             if (BaseTypes.Base.Contains(property.PropertyType))
             {
@@ -269,16 +288,19 @@ namespace Jasmine.Orm
             }
 
             var joinTable = new JoinTable();
+
             var table = _provider.GetTable(property.PropertyType);
 
             joinTable.Table = table;
 
-            joinTable.SelfKey = joinKey;
+            joinTable.InnerKey = inner;
+            joinTable.OutterKey = outter;
 
             joinTable.Setter = property.Setter;
             joinTable.Getter = property.Getter;
             joinTable.OwnerType = property.OwnerType;
             joinTable.RelatedType = property.PropertyType;
+            joinTable.PropertyName = property.Name;
 
             return joinTable;
         }

@@ -13,52 +13,53 @@ namespace Jasmine.Restful
     {
         public RestfulApplication(int port, IDispatcher<HttpFilterContext> dispatcher)
         {
-            _dispatcher = dispatcher;
-            _port = port;
+           
         }
 
-        private IDispatcher<HttpFilterContext> _dispatcher;
-
-        private int _port;
-
-        private bool _portSeted;
+        private ListenOption _listenOption;
+        private SslOption _sslOption;
+        private StaticFileOption _fileOption;
+    
+        
 
         private IWebHost _webHost;
 
-        public async Task StartAsync()
+        public  Task StartAsync()
         {
 
-            _webHost = WebHost.CreateDefaultBuilder()
-                              .UseKestrel()
-                              .ConfigureKestrel(
-                                             option =>
-                                             {
-                                                 option.ConfigureEndpointDefaults(
-                                                                kestrelOptions =>
-                                                                {
-                                                                    if (!_portSeted)
-                                                                    {
-                                                                        kestrelOptions.IPEndPoint = new IPEndPoint(IPAddress.Any, _port);
+            //_webHost = WebHost.CreateDefaultBuilder()
+            //                  .UseKestrel()
+            //                  .ConfigureKestrel(
+            //                                 option =>
+            //                                 {
+            //                                     option.ConfigureEndpointDefaults(
+            //                                                    kestrelOptions =>
+            //                                                    {
+            //                                                        if (!_portSeted)
+            //                                                        {
+            //                                                            kestrelOptions.IPEndPoint = new IPEndPoint(IPAddress.Any, _port);
 
-                                                                        _portSeted = true;
-                                                                    }
-                                                                });
-                                             })
-                              .ConfigureServices(
-                                             services =>
-                                            {
-                                                services.AddSingleton<JasmineResfulMiddleware>();
-                                            })
-                              .Configure(
-                                            app =>
-                                            {
-                                                JasmineResfulMiddleware.Dispatcher = _dispatcher;
+            //                                                            _portSeted = true;
+            //                                                        }
+            //                                                    });
+            //                                 })
+            //                  .ConfigureServices(
+            //                                 services =>
+            //                                {
+            //                                    services.AddSingleton<JasmineResfulMiddleware>();
+            //                                })
+            //                  .Configure(
+            //                                app =>
+            //                                {
+            //                                    JasmineResfulMiddleware.Dispatcher = _dispatcher;
 
-                                                app.UseMiddleware<JasmineResfulMiddleware>();
-                                            })
-                              .Build();
+            //                                    app.UseMiddleware<JasmineResfulMiddleware>();
+            //                                })
+            //                  .Build();
 
-            await _webHost.RunAsync();
+            //await _webHost.RunAsync();
+
+            return null;
 
         }
         public async Task StopAsync()

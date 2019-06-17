@@ -17,6 +17,7 @@ namespace Jasmine.Orm.Implements
         private static readonly HashSet<Type> _baseTypes = new HashSet<Type>()
         {
             typeof(byte),
+            typeof(bool),
             typeof(sbyte),
             typeof(short),
             typeof(ushort),
@@ -33,6 +34,7 @@ namespace Jasmine.Orm.Implements
             typeof(Guid),
 
             typeof(byte?),
+            typeof(bool?),
             typeof(sbyte?),
             typeof(short?),
             typeof(ushort?),
@@ -170,6 +172,10 @@ namespace Jasmine.Orm.Implements
             else if (type == typeof(char))
             {
                 return (char)obj == '\'' ? "''''" : $"'{obj.ToString()}'";
+            }
+            else if(type==typeof(bool))
+            {
+                return (bool)obj == true ? "1" : "0";
             }
             else if (type == typeof(string))
             {

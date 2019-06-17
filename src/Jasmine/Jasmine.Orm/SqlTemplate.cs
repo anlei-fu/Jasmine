@@ -16,7 +16,34 @@ namespace Jasmine.Orm
     {
         public string Name { get; set; }
         public SqlTemplateSegment[] Segments { get; set; }
-        public string RawString { get; set; }
+
+        private string _rawString;
+        public string RawString
+        {
+            get
+            {
+                if(_rawString==null)
+                {
+                    var builder = new StringBuilder();
+
+                    foreach (var item in Segments)
+                    {
+                        if (item.IsVarible)
+                            builder.Append("@");
+
+                        builder.Append(item.Value);
+                    }
+
+                    _rawString = builder.ToString();
+                }
+
+                return _rawString;
+            }
+            set
+            {
+                _rawString = value;
+            }
+        }
     }
 
     public struct SqlTemplateSegment
@@ -100,6 +127,13 @@ namespace Jasmine.Orm
 
     public class SqlTemplateProvider : IReadOnlyCollection<SqlTemplate>
     {
+        private SqlTemplateProvider()
+        {
+
+        }
+
+        public static readonly SqlTemplateProvider Instance = new SqlTemplateProvider();
+
         private const string ORM_TEMPLATE_GROUP = "orm-template-group";
         private const string TEMPLATE = "template";
         private const string NAME = "name";
@@ -241,9 +275,8 @@ namespace Jasmine.Orm
                 }
                 else if (valueType.IsClass)
                 {
-                    var result = genarateMap(name, value);
 
-                    foreach (var pair in genarateMap(name, value))
+                    foreach (var pair in genarateMap(name+".", value))
                     {
                         map.Add(pair.Key, pair.Value);
                     }

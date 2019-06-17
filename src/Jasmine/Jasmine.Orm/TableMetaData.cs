@@ -71,7 +71,8 @@ namespace Jasmine.Orm
     /// </summary>
     public class JoinTable:RelatedTable
     {
-       public string SelfKey { get; set; }
+        public string OutterKey { get; set; }
+       public string InnerKey { get; set; }
        public string ParentKey { get; set; }
     }
 }
