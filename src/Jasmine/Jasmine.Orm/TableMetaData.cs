@@ -1,7 +1,7 @@
 ﻿using Jasmine.Common;
-using Jasmine.Orm.Model;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Jasmine.Orm
 {
@@ -21,6 +21,27 @@ namespace Jasmine.Orm
         public IDictionary<string, JoinColumns> JoinColumns { get; set; } = new Dictionary<string, JoinColumns>();
         public IDictionary<string, AssociateTable> AssociateTables { get; set; } = new Dictionary<string, AssociateTable>();
     
+        public string[] GetAllColumnName(string prefix="")
+        {
+            var ls = new List<string>();
+
+            prefix = prefix == string.Empty ? prefix : prefix + "_";
+
+            foreach (var item in Columns.Keys)
+            {
+                ls.Add(prefix + item);
+            }
+
+            if(HasJoinColumns)
+            {
+                foreach (var item in JoinColumns.Values)
+                {
+                    ls.AddRange(item.Table.GetAllColumnName(prefix + item.PropertyName));
+                }
+            }
+
+            return ls.ToArray();
+        }
     }
 
     public abstract class RelatedTable:IValueGetterSetter,ITypeFearture

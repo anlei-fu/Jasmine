@@ -45,8 +45,6 @@ namespace Jasmine.Restful
                             await context.HttpContext.Response.Body.WriteAsync(buffer, 0, buffer.Length);
                         }
 
-                      
-
                     }
                     catch (Exception ex)
                     {

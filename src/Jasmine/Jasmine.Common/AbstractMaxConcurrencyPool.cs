@@ -25,6 +25,7 @@ namespace Jasmine.Common
                 if(_isSleeping)
                 {
                     Monitor.PulseAll(_locker);
+
                     _isSleeping = false;
                 }
             }
@@ -46,7 +47,6 @@ namespace Jasmine.Common
                 }
                 else
                 {
-
                     _isSleeping = true;
 
                     Monitor.Wait(_locker, int.MaxValue);

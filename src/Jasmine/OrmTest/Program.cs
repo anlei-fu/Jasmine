@@ -1,20 +1,52 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data.Common;
-using System.Data.SqlClient;
-using System.Diagnostics;
-using Dapper;
+﻿using Dapper;
 using Jasmine.Orm;
 using Jasmine.Orm.Attributes;
 using Microsoft.EntityFrameworkCore;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace OrmTest
 {
     class Program
     {
+        static void Start(string title)
+        {
+            Console.WriteLine($"{title} testing start....");
+            Console.WriteLine();
+        }
+        static void End()
+        {
+            Console.WriteLine("end....");
+            Console.WriteLine();
+            Console.WriteLine();
+            Console.WriteLine();
+        }
+
+        static Stopwatch _watch = new Stopwatch();
+
+        static void startWatch()
+        {
+            _watch.Reset();
+            _watch.Restart();
+        }
+
+       static void PrintDapper()
+        {
+            Console.WriteLine($"dapper--elapsed:{_watch.ElapsedMilliseconds} ms");
+        }
+       static void PrintExcutor()
+        {
+            Console.WriteLine($"sqlexcutor--elapsed:{_watch.ElapsedMilliseconds} ms");
+        }
         static ITableTemplateCacheProvider _provider=>DefaultTableTemplateCacheProvider.Instance;
         static void Main(string[] args)
         {
+            /*
+             * 
+             * Raw sql generate ability
+             * 
+             */ 
             create();
 
             query();
@@ -29,124 +61,150 @@ namespace OrmTest
 
             //queryWith();
 
+            //insert();
+
+            /*
+             * create table 
+             */
+            // excutor.Create<Animal>();
+
+
+
             var provider = new SqlServerConnectionProvider("Server=HW09;Database=Test;Trusted_Connection=True;");
 
             var excutor = new JasmineSqlExcutor(provider);
 
-           // excutor.Create<Animal>();
-          
-            insert();
-
-            //  excutor.Create<Animal>();
-
-
             excutor.Excute("delete from animal ");
 
-            int t =100;
-            Console.WriteLine($"test sqlexcutor and dapper,data size:{t}");
+            excutor.Create<Animal>();
 
-            Console.WriteLine($"\r\ntest single row insert");
-            var inserWatch = new Stopwatch();
-            inserWatch.Start();
+            int t =1000;
+
+
+            Console.WriteLine($"test sqlexcutor and dapper speed,data size is {t}");
+
+
             var connetion = provider.Rent();
+
+            //data
             var ls = new List<Animal>();
 
             for (int i = 0; i < t; i++)
             {
                 var animal = new Animal();
 
-                //animal.Age = animal.Number.Max = i;
                 animal.Name = i.ToString();
 
-                
-               connetion.Execute("insert into animal(name,age,canfly) values (@Name,@Age,@CanFly)",animal);
+                ls.Add(animal);
             }
 
-            Console.WriteLine($" dapper insert {t} row elapse:{inserWatch.ElapsedMilliseconds} ");
+
+
+
+            Start("single row insert");
+
+            startWatch();
+           
+            foreach (var item in ls)
+                connetion.Execute("insert into animal(name,age,canfly) values (@Name,@Age,@CanFly)", item);
+
+            PrintDapper();
+           
 
             excutor.Excute("delete from animal ");
 
-            inserWatch.Reset();
-            inserWatch.Restart();
-            for (int i = 0; i < t; i++)
-            {
-                var animal = new Animal();
+            startWatch();
 
-                //animal.Age = animal.Number.Max = i;
-                animal.Name = i.ToString();
+            foreach (var item in ls)
+                excutor.Insert<Animal>(item);
+
+            PrintExcutor();
+
+            End();
 
 
-                excutor.Insert(animal);
-            }
+
 
             excutor.Excute("delete from animal ");
 
-            Console.WriteLine($" sqlexcutor insert {t} row elapse:{inserWatch.ElapsedMilliseconds} ");
 
 
-            Console.WriteLine($"\r\ntest insert partial single row insert");
-             inserWatch = new Stopwatch();
-            inserWatch.Start();
+
+
+            Start("test single row partial insert");
+           
              connetion = provider.Rent();
-             ls = new List<Animal>();
 
-            for (int i = 0; i < t; i++)
-            {
-                var animal = new Animal();
+            startWatch();
 
-                //animal.Age = animal.Number.Max = i;
-                animal.Name = i.ToString();
+            foreach (var item in ls)
+                connetion.Execute("insert into animal(name,age) values (@Name,@Age)", item);
 
-
-                connetion.Execute("insert into animal(name,age) values (@Name,@Age)", animal);
-            }
-
-            Console.WriteLine($" dapper insert {t} row elapse:{inserWatch.ElapsedMilliseconds} ");
+            PrintDapper();
+            
 
             excutor.Excute("delete from animal ");
 
-            inserWatch.Reset();
-            inserWatch.Restart();
-            for (int i = 0; i < t; i++)
-            {
-                var animal = new Animal();
+            startWatch();
 
-                //animal.Age = animal.Number.Max = i;
-                animal.Name = i.ToString();
+            foreach (var item in ls)
+                excutor.InsertPartial<Animal>(item, "Name", "Age");
 
-
-                excutor.InsertPartial(animal,"Name","Age");
-            }
-
-
-            Console.WriteLine($" sqlexcutor insert {t} row elapse:{inserWatch.ElapsedMilliseconds} ");
+            PrintExcutor();
+            End();
 
 
 
+            Start(" full query");
 
-            Console.WriteLine($"\r\ntest query");
-            // excutor.Insert<Animal>(new Animal());
-
-            inserWatch.Reset();
-            inserWatch.Restart();
-
+            startWatch();
+          
             var result = connetion.Query<Animal>("select * from animal");
+            PrintDapper();
 
-        //var ls=    excutor.Query<Animal>();
+            startWatch();
+            result = excutor.Query<Animal>();
+            PrintExcutor();
+            End();
 
-            Console.WriteLine($"dapper query {t} row elapse:{inserWatch.ElapsedMilliseconds} ");
 
-            inserWatch.Reset();
-            inserWatch.Restart();
-
-           //  result = excutor.Query<Animal>("select * from animal");
-
-            Console.WriteLine($"sqlexcutor query {t} row elapse:{inserWatch.ElapsedMilliseconds} ");
+            excutor.Excute("delete from animal ");
 
 
 
-            Console.WriteLine($"test batch insert");
 
+            Start("batch insert");
+            startWatch();
+            connetion.Execute("insert into animal(name,age,canfly) values(@Name,@Age,@CanFly)", ls);
+            PrintDapper();
+            excutor.Excute("delete from animal ");
+
+            startWatch();
+            excutor.BatchInsert<Animal>(ls);
+            PrintExcutor();
+            End();
+
+
+
+
+            excutor.Excute("delete from animal ");
+
+            Start("test batch insert partial....");
+            startWatch();
+            connetion.Execute("insert into animal(name,age) values(@Name,@Age)", ls);
+            PrintDapper();
+
+            excutor.Excute("delete from animal ");
+
+            startWatch();
+            excutor.BatchInsertPartial<Animal>(new string[] {"Name","Age" },ls);
+            PrintExcutor();
+            End();
+
+            foreach (var item in excutor.QueryTopOrderByDesc<Animal>(10, "Name"))
+            {
+                Console.WriteLine(item.Name);
+            }
 
 
             Console.Read();

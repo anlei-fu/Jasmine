@@ -158,13 +158,13 @@ namespace Jasmine.Orm
         };
         private static readonly Dictionary<Type, string> _orackeCs = new Dictionary<Type, string>()
         {
-          {typeof(sbyte),"number()" },
-          {typeof(sbyte?),"number()" },
-          {typeof(byte),"number()" },
-          {typeof(byte?),"number()" },
-          {typeof(ushort) ,"number()"},
-          {typeof(ushort?) ,"number()"},
-          {typeof(short) ,"number()"},
+          {typeof(sbyte),"number(1)" },
+          {typeof(sbyte?),"number(1)" },
+          {typeof(byte),"number(1)" },
+          {typeof(byte?),"number(1)" },
+          {typeof(ushort) ,"number(2)"},
+          {typeof(ushort?) ,"number(2)"},
+          {typeof(short) ,"number(2)"},
           {typeof(short?) ,"number()"},
           {typeof(uint) ,"number()"},
           {typeof(uint?) ,"number()"},
@@ -172,8 +172,8 @@ namespace Jasmine.Orm
           {typeof(int?) ,"number()"},
           {typeof(long),"number()"},
           {typeof(long?),"number()"},
-          {typeof(bool) ,"number()"},
-          {typeof(bool?) ,"number()"},
+          {typeof(bool) ,"number(1)"},
+          {typeof(bool?) ,"number(1)"},
           {typeof(float),"number()"},
           {typeof(float?),"number()"},
           {typeof(double),"number()" },
@@ -275,26 +275,34 @@ namespace Jasmine.Orm
         {
             //有符号 8 字节整数
             {"bigint",typeof(long)},
+              //有符号 8 字节整数
+            {"char",typeof(char)},
             //自增八字节整数
             {"bigserial",typeof(long)},
             //定长位串
             {"bit",typeof(byte) },
             //逻辑布尔量 （真/假）
-            {"boolean",typeof(bool) },
+            {"bool",typeof(bool) },
+            //
+            {"int2",typeof(short) },
+            {"int4",typeof(int) },
+            {"int8",typeof(long) },
             //二进制数据（"字节数组"）
             {"bytea",typeof(byte[]) },
             //变长字符串
             {"character varying",typeof(string) },
             //定长字符串
             {"character",typeof(string)},
+             //定长字符串
+            {"varchar",typeof(string)},
             //日历日期（年，月，日）
             {"date",typeof(DateTime) },
             //双精度浮点数字
-            { "double percesion",typeof(double)},
+            { "float8",typeof(double)},
             //可选精度的准确数字 p,s as oracle
-            {"numeric",typeof(double) },
+            {"numeric",typeof(decimal) },
             //单精度浮点数
-            {"real",typeof(float) },
+            {"float4",typeof(float) },
             //有符号两字节整数
             { "samllint",typeof(short)},
             //自增四字节整数
@@ -303,6 +311,10 @@ namespace Jasmine.Orm
             {"text",typeof(string) },
             //日期和时间
             { "timestamp",typeof(DateTime)},
+            //日期和时间
+            { "time",typeof(TimeSpan)},
+             //日期和时间
+            { "timetz",typeof(DateTimeOffset)},
             //通用唯一标识符
             {"uuid",typeof(Guid) },
            

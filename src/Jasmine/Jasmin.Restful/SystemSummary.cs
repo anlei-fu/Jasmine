@@ -21,7 +21,7 @@ namespace Jasmine.Restful
         public string ListenPort { get; set; }
         public string SystemVersion => RuntimeEnvironment.GetSystemVersion();
         public string FailedCount { get; set; }
-        public string ApplicationVersion { get; set; } = "Jasmine restful application v1.0.0.0";
+        public string ApplicationVersion => "Jasmine restful application v1.0.0.0";
         public string Archtecture =>RuntimeInformation.OSArchitecture.ToString();
     }
 }

@@ -40,9 +40,14 @@ namespace Jasmine.Orm.Implements
                     if (!instanceMap.ContainsKey(item.Parent))
                         createParent(item.Parent, instanceMap);
 
-                    var rawValue = context.Reader.GetValue(item.ColumnIndex);
 
-                    item.Setter.Invoke(instanceMap[item.Parent], _baseTypeConvertor.FromSqlFiledValue(rawValue, item.PropertyType));
+                    var result = context.Reader.IsDBNull(item.ColumnIndex);
+                    if (!result)
+                    {
+                        var rawValue = context.Reader.GetValue(item.ColumnIndex);
+
+                        item.Setter.Invoke(instanceMap[item.Parent], _baseTypeConvertor.FromSqlFiledValue(rawValue, item.PropertyType));
+                    }
 
                 }
 

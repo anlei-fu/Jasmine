@@ -29,8 +29,6 @@ namespace Jasmine.Restful
                 {
                     throw new AopFilterCanNotBeCreatedException($"{name} can not be created! may ioc service config incorrect or not config");
                 }
-
-              
             }
 
             return _map[_nameMap[name]];

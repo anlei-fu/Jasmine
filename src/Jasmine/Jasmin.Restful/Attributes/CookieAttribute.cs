@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Jasmine.Restful.Attributes
 {
-    class CookieAttribute
+  public  class CookieAttribute:Attribute
     {
     }
 }

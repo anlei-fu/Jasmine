@@ -1,4 +1,6 @@
 ﻿using System.Collections.Generic;
+using System.Data;
+using System.Data.Common;
 using System.Threading.Tasks;
 
 namespace Jasmine.Orm
@@ -40,7 +42,13 @@ namespace Jasmine.Orm
         /// <returns></returns>
         IEnumerable<T> Query<T>(SqlTemplate template, object obj);
 
-        
+
+        int CallProcedure(string name, object parameter);
+        Task<int> CallProcedureAsync(string name, object parameter);
+        int CallProcedure(string name, IEnumerable<DbParameter> parameters);
+        Task<int> CallProcedureAsync(string name, IEnumerable<DbParameter> parameters);
+
+
 
         /*
          *  return full column
@@ -56,10 +64,10 @@ namespace Jasmine.Orm
          *  full conditional
          *  e.g  condition; age>10 ,'where' is not required
          */ 
-        IEnumerable<T> QueryConditional<T>(string condition);
-        IEnumerable<T> QueryConditionalWith<T>(string table, string condition);
-        IEnumerable<T> QueryConditionalOrderByAsc<T>(string condition,string orderBy);
-        IEnumerable<T> QueryConditionalWith<T>(string table, string condition, string orderBy);
+        IEnumerable<T> QueryConditional<T>(string condition, object parameter);
+        IEnumerable<T> QueryConditionalWith<T>(string table, string condition,object parameter);
+        IEnumerable<T> QueryConditionalOrderByAsc<T>(string condition, object parameter, string orderBy);
+        IEnumerable<T> QueryConditionalWith<T>(string table, string condition, object parameter, string orderBy);
 
         /*
          *  partial
@@ -85,12 +93,12 @@ namespace Jasmine.Orm
         IEnumerable<T> QueryPartialOrderByDesc<T>(string orderBy, params string[] columns);
         IEnumerable<T> QueryPartialOrderByDescWith<T>(string table, string orderBy, params string[] columns);
         // partial conditional
-        IEnumerable<T> QueryPartialConditional<T>(string condition, params string[] columns);
-        IEnumerable<T> QueryPartialConditionalOrderByAsc<T>(string condition, string orderBy, params string[] columns);
-        IEnumerable<T> QueryPartialConditionalOrderByAscWith<T>(string table, string condition, string orderBy, params string[] columns);
-        IEnumerable<T> QueryPartialConditionalOrderByDesc<T>(string condition, string orderBy, params string[] columns);
-        IEnumerable<T> QueryPartialConditionalOrderByDescWith<T>(string table, string condition, string orderBy, params string[] columns);
-        IEnumerable<T> QueryPartialConditionalWith<T>(string table, string condition, params string[] columns);
+        IEnumerable<T> QueryPartialConditional<T>(string condition, object parameter, params string[] columns);
+        IEnumerable<T> QueryPartialConditionalOrderByAsc<T>(string condition, object parameter, string orderBy, params string[] columns);
+        IEnumerable<T> QueryPartialConditionalOrderByAscWith<T>(string table, string condition, object parameter, string orderBy, params string[] columns);
+        IEnumerable<T> QueryPartialConditionalOrderByDesc<T>(string condition, object parameter, string orderBy, params string[] columns);
+        IEnumerable<T> QueryPartialConditionalOrderByDescWith<T>(string table, string condition, object parameter, string orderBy, params string[] columns);
+        IEnumerable<T> QueryPartialConditionalWith<T>(string table, string condition, object parameter, params string[] columns);
 
        /*
         *  top
@@ -103,12 +111,12 @@ namespace Jasmine.Orm
         IEnumerable<T> QueryTopOrderByDesc<T>(int count, string orderBy);
         IEnumerable<T> QueryTopOrderByDescWith<T>(string table, int count, string orderBy);
         // full conditional
-        IEnumerable<T> QueryTopConditional<T>(int count, string condition);
-        IEnumerable<T> QueryTopConditionalWith<T>(string table, int count, string condition);
-        IEnumerable<T> QueryTopConditionalOrderByAsc<T>(int count, string condition,string orderBy);
-        IEnumerable<T> QueryTopConditionalOrderByAscWith<T>(string table,int count, string condition, string orderBy);
-        IEnumerable<T> QueryTopConditionalOrderByDesc<T>(int count, string condition, string orderBy);
-        IEnumerable<T> QueryTopConditionalOrderByDescWith<T>(string table, int count, string condition, string orderBy);
+        IEnumerable<T> QueryTopConditional<T>(int count, string condition, object parameter);
+        IEnumerable<T> QueryTopConditionalWith<T>(string table, int count, string condition, object parameter);
+        IEnumerable<T> QueryTopConditionalOrderByAsc<T>(int count, string condition, object parameter, string orderBy);
+        IEnumerable<T> QueryTopConditionalOrderByAscWith<T>(string table,int count, string condition, object parameter, string orderBy);
+        IEnumerable<T> QueryTopConditionalOrderByDesc<T>(int count, string condition, object parameter, string orderBy);
+        IEnumerable<T> QueryTopConditionalOrderByDescWith<T>(string table, int count, string condition, object parameter, string orderBy);
         // top  partial 
         IEnumerable<T> QueryTopPartial<T>(int count, params string[] columns);
         IEnumerable<T> QueryTopPartialWith<T>(string table, int count, params string[] column);
@@ -116,12 +124,12 @@ namespace Jasmine.Orm
         IEnumerable<T> QueryTopPartialOrderByAscWith<T>(string table, int count, string orderBy, params string[] columns);
         IEnumerable<T> QueryTopPartialOrderByDesc<T>(int count, string orderBy, params string[] columns);
         IEnumerable<T> QueryTopPartialOrderByDescWith<T>(string table, int count, string orderBy, params string[] columns);
-        IEnumerable<T> QueryTopPartialConditional<T>(int count, string condition, params string[] columns);
-        IEnumerable<T> QueryTopPartialConditionalWith<T>(string table, int count, string conditiona, params string[] columns);
-        IEnumerable<T> QueryTopPartialConditionalOrderByAsc<T>(int count, string condition, string orderBy, params string[] columns);
-        IEnumerable<T> QueryTopPartialConditionalOrderByAscWith<T>(string table, int count, string condition, string orderBy, params string[] columns);
-        IEnumerable<T> QueryTopPartialConditionalOrderByDesc<T>(int count, string condition, string orderBy, params string[] columns);
-        IEnumerable<T> QueryTopPartialConditionalOrderByDescWith<T>(string table, int count, string condition, string orderBy, params string[] columns);
+        IEnumerable<T> QueryTopPartialConditional<T>(int count, string condition, object parameter, params string[] columns);
+        IEnumerable<T> QueryTopPartialConditionalWith<T>(string table, int count, string conditiona, object parameter, params string[] columns);
+        IEnumerable<T> QueryTopPartialConditionalOrderByAsc<T>(int count, string condition, object parameter, string orderBy, params string[] columns);
+        IEnumerable<T> QueryTopPartialConditionalOrderByAscWith<T>(string table, int count, string condition, object parameter, string orderBy, params string[] columns);
+        IEnumerable<T> QueryTopPartialConditionalOrderByDesc<T>(int count, string condition, object parameter, string orderBy, params string[] columns);
+        IEnumerable<T> QueryTopPartialConditionalOrderByDescWith<T>(string table, int count, string condition, object parameter, string orderBy, params string[] columns);
 
 
 
@@ -129,7 +137,7 @@ namespace Jasmine.Orm
         * raw sql
         */
         Task<IEnumerable<T>> QueryAsync<T>(string sql);
-        Task<IEnumerable<T>> QueryAsync<T>(string template, object obj);
+        Task<IEnumerable<T>> QueryAsync<T>(string template, object parameter);
         Task<IEnumerable<T>> QueryAsync<T>(SqlTemplate template, object obj);
 
 
@@ -147,10 +155,10 @@ namespace Jasmine.Orm
         /*
          *  full conditional
          */
-        Task<IEnumerable<T>> QueryConditionalAsync<T>(string condition);
-        Task<IEnumerable<T>> QueryConditionalWithAsync<T>(string table, string condition);
-        Task<IEnumerable<T>> QueryConditionalOrderByAscAsync<T>(string condition, string orderBy);
-        Task<IEnumerable<T>> QueryConditionalWithAsync<T>(string table, string condition, string orderBy);
+        Task<IEnumerable<T>> QueryConditionalAsync<T>(string condition, object parameter);
+        Task<IEnumerable<T>> QueryConditionalWithAsync<T>(string table, string condition, object parameter);
+        Task<IEnumerable<T>> QueryConditionalOrderByAscAsync<T>(string condition, object parameter, string orderBy);
+        Task<IEnumerable<T>> QueryConditionalWithAsync<T>(string table, string condition, object parameter, string orderBy);
 
         /*
          *  partial
@@ -162,12 +170,12 @@ namespace Jasmine.Orm
         Task<IEnumerable<T>> QueryPartialOrderByDescAsync<T>(string orderBy, params string[] columns);
         Task<IEnumerable<T>> QueryPartialOrderByDescWithAsync<T>(string table, string orderBy, params string[] columns);
         // partial conditional
-        Task<IEnumerable<T>> QueryPartialConditionalAsync<T>(string condition, params string[] columns);
-        Task<IEnumerable<T>> QueryPartialConditionalOrderByAscAsync<T>(string condition, string orderBy, params string[] columns);
-        Task<IEnumerable<T>> QueryPartialConditionalOrderByAscWithAsync<T>(string table, string condition, string orderBy, params string[] columns);
-        Task<IEnumerable<T>> QueryPartialConditionalOrderByDescAsync<T>(string condition, string orderBy, params string[] columns);
-        Task<IEnumerable<T>> QueryPartialConditionalOrderByDescWithAsync<T>(string table, string condition, string orderBy, params string[] columns);
-        Task<IEnumerable<T>> QueryPartialConditionalWithAsync<T>(string table, string condition, params string[] columns);
+        Task<IEnumerable<T>> QueryPartialConditionalAsync<T>(string condition, object parameter, params string[] columns);
+        Task<IEnumerable<T>> QueryPartialConditionalOrderByAscAsync<T>(string condition, object parameter, string orderBy, params string[] columns);
+        Task<IEnumerable<T>> QueryPartialConditionalOrderByAscWithAsync<T>(string table, string condition, object parameter, string orderBy, params string[] columns);
+        Task<IEnumerable<T>> QueryPartialConditionalOrderByDescAsync<T>(string condition, object parameter, string orderBy, params string[] columns);
+        Task<IEnumerable<T>> QueryPartialConditionalOrderByDescWithAsync<T>(string table, string condition, object parameter, string orderBy, params string[] columns);
+        Task<IEnumerable<T>> QueryPartialConditionalWithAsync<T>(string table, string condition, object parameter, params string[] columns);
 
         /*
          *  top
@@ -180,12 +188,12 @@ namespace Jasmine.Orm
         Task<IEnumerable<T>> QueryTopOrderByDescAsync<T>(int count, string orderBy);
         Task<IEnumerable<T>> QueryTopOrderByDescWithAsync<T>(string table, int count, string orderBy);
         // full conditional
-        Task<IEnumerable<T>> QueryTopConditionalAsync<T>(int count, string condition);
-        Task<IEnumerable<T>> QueryTopConditionalWithAsync<T>(string table, int count, string condition);
-        Task<IEnumerable<T>> QueryTopConditionalOrderByAscAsync<T>(int count, string condition, string orderBy);
-        Task<IEnumerable<T>> QueryTopConditionalOrderByAscWithAsync<T>(string table, int count, string condition, string orderBy);
-        Task<IEnumerable<T>> QueryTopConditionalOrderByDescAsync<T>(int count, string condition, string orderBy);
-        Task<IEnumerable<T>> QueryTopConditionalOrderByDescWithAsync<T>(string table, int count, string condition, string orderBy);
+        Task<IEnumerable<T>> QueryTopConditionalAsync<T>(int count, string condition, object parameter);
+        Task<IEnumerable<T>> QueryTopConditionalWithAsync<T>(string table, int count, string condition, object parameter);
+        Task<IEnumerable<T>> QueryTopConditionalOrderByAscAsync<T>(int count, string condition, object parameter, string orderBy);
+        Task<IEnumerable<T>> QueryTopConditionalOrderByAscWithAsync<T>(string table, int count, string condition, object parameter, string orderBy);
+        Task<IEnumerable<T>> QueryTopConditionalOrderByDescAsync<T>(int count, string condition, object parameter, string orderBy);
+        Task<IEnumerable<T>> QueryTopConditionalOrderByDescWithAsync<T>(string table, int count, string condition, object parameter, string orderBy);
         // top  partial 
         Task<IEnumerable<T>> QueryTopPartialAsync<T>(int count, params string[] columns);
         Task<IEnumerable<T>> QueryTopPartialWithAsync<T>(string table, int count, params string[] column);
@@ -193,12 +201,12 @@ namespace Jasmine.Orm
         Task<IEnumerable<T>> QueryTopPartialOrderByAscWithAsync<T>(string table, int count, string orderBy, params string[] columns);
         Task<IEnumerable<T>> QueryTopPartialOrderByDescAsync<T>(int count, string orderBy, params string[] columns);
         Task<IEnumerable<T>> QueryTopPartialOrderByDescWithAsync<T>(string table, int count, string orderBy, params string[] columns);
-        Task<IEnumerable<T>> QueryTopPartialConditionalAsync<T>(int count, string condition, params string[] columns);
-        Task<IEnumerable<T>> QueryTopPartialConditionalWithAsync<T>(string table, int count, string conditiona, params string[] columns);
-        Task<IEnumerable<T>> QueryTopPartialConditionalOrderByAscAsync<T>(int count, string condition, string orderBy, params string[] columns);
-        Task<IEnumerable<T>> QueryTopPartialConditionalOrderByAscWithAsync<T>(string table, int count, string condition, string orderBy, params string[] columns);
-        Task<IEnumerable<T>> QueryTopPartialConditionalOrderByDescAsync<T>(int count, string condition, string orderBy, params string[] columns);
-        Task<IEnumerable<T>> QueryTopPartialConditionalOrderByDescWithAsync<T>(string table, int count, string condition, string orderBy, params string[] columns);
+        Task<IEnumerable<T>> QueryTopPartialConditionalAsync<T>(int count, string condition, object parameter, params string[] columns);
+        Task<IEnumerable<T>> QueryTopPartialConditionalWithAsync<T>(string table, int count, string conditiona, object parameter, params string[] columns);
+        Task<IEnumerable<T>> QueryTopPartialConditionalOrderByAscAsync<T>(int count, string condition, object parameter, string orderBy, params string[] columns);
+        Task<IEnumerable<T>> QueryTopPartialConditionalOrderByAscWithAsync<T>(string table, int count, string condition, object parameter, string orderBy, params string[] columns);
+        Task<IEnumerable<T>> QueryTopPartialConditionalOrderByDescAsync<T>(int count, string condition, object parameter, string orderBy, params string[] columns);
+        Task<IEnumerable<T>> QueryTopPartialConditionalOrderByDescWithAsync<T>(string table, int count, string condition, object parameter, string orderBy, params string[] columns);
 
 
 
@@ -228,10 +236,10 @@ namespace Jasmine.Orm
         /*
          *  full conditional
          */
-        ICursor QueryConditionalCursor<T>(string condition);
-        ICursor QueryConditionalWithCursor<T>(string table, string condition);
-        ICursor QueryConditionalOrderByAscCursor<T>(string condition, string orderBy);
-        ICursor QueryConditionalWithCursor<T>(string table, string condition, string orderBy);
+        ICursor QueryConditionalCursor<T>(string condition, object parameter);
+        ICursor QueryConditionalWithCursor<T>(string table, string condition, object parameter);
+        ICursor QueryConditionalOrderByAscCursor<T>(string condition, object parameter, string orderBy);
+        ICursor QueryConditionalWithCursor<T>(string table, string condition, object parameter, string orderBy);
 
         /*
          *  partial
@@ -243,12 +251,12 @@ namespace Jasmine.Orm
         ICursor QueryPartialOrderByDescCursor<T>(string orderBy, params string[] columns);
         ICursor QueryPartialOrderByDescWithCursor<T>(string table, string orderBy, params string[] columns);
         // partial conditional
-        ICursor QueryPartialConditionalCursor<T>(string condition, params string[] columns);
-        ICursor QueryPartialConditionalOrderByAscCursor<T>(string condition, string orderBy, params string[] columns);
-        ICursor QueryPartialConditionalOrderByAscWithCursor<T>(string table, string condition, string orderBy, params string[] columns);
-        ICursor QueryPartialConditionalOrderByDescCursor<T>(string condition, string orderBy, params string[] columns);
-        ICursor QueryPartialConditionalOrderByDescWithCursor<T>(string table, string condition, string orderBy, params string[] columns);
-        ICursor QueryPartialConditionalWithCursor<T>(string table, string condition, params string[] columns);
+        ICursor QueryPartialConditionalCursor<T>(string condition, object parameter, params string[] columns);
+        ICursor QueryPartialConditionalOrderByAscCursor<T>(string condition, object parameter, string orderBy, params string[] columns);
+        ICursor QueryPartialConditionalOrderByAscWithCursor<T>(string table, string condition, object parameter, string orderBy, params string[] columns);
+        ICursor QueryPartialConditionalOrderByDescCursor<T>(string condition, object parameter, string orderBy, params string[] columns);
+        ICursor QueryPartialConditionalOrderByDescWithCursor<T>(string table, string condition, object parameter, string orderBy, params string[] columns);
+        ICursor QueryPartialConditionalWithCursor<T>(string table, string condition, object parameter, params string[] columns);
 
         /*
          *  top
@@ -261,12 +269,12 @@ namespace Jasmine.Orm
         ICursor QueryTopOrderByDescCursor<T>(int count, string orderBy);
         ICursor QueryTopOrderByDescWithCursor<T>(string table, int count, string orderBy);
         // full conditional
-        ICursor QueryTopConditionalCursor<T>(int count, string condition);
-        ICursor QueryTopConditionalWithCursor<T>(string table, int count, string condition);
-        ICursor QueryTopConditionalOrderByAscCursor<T>(int count, string condition, string orderBy);
-        ICursor QueryTopConditionalOrderByAscWithCursor<T>(string table, int count, string condition, string orderBy);
-        ICursor QueryTopConditionalOrderByDescCursor<T>(int count, string condition, string orderBy);
-        ICursor QueryTopConditionalOrderByDescWithCursor<T>(string table, int count, string condition, string orderBy);
+        ICursor QueryTopConditionalCursor<T>(int count, string condition, object parameter);
+        ICursor QueryTopConditionalWithCursor<T>(string table, int count, string condition, object parameter);
+        ICursor QueryTopConditionalOrderByAscCursor<T>(int count, string condition, object parameter, string orderBy);
+        ICursor QueryTopConditionalOrderByAscWithCursor<T>(string table, int count, string condition, object parameter, string orderBy);
+        ICursor QueryTopConditionalOrderByDescCursor<T>(int count, string condition, object parameter, string orderBy);
+        ICursor QueryTopConditionalOrderByDescWithCursor<T>(string table, int count, string condition, object parameter, string orderBy);
         // top  partial 
         ICursor QueryTopPartialCursor<T>(int count, params string[] columns);
         ICursor QueryTopPartialWithCursor<T>(string table, int count, params string[] column);
@@ -274,12 +282,12 @@ namespace Jasmine.Orm
         ICursor QueryTopPartialOrderByAscWithCursor<T>(string table, int count, string orderBy, params string[] columns);
         ICursor QueryTopPartialOrderByDescCursor<T>(int count, string orderBy, params string[] columns);
         ICursor QueryTopPartialOrderByDescWithCursor<T>(string table, int count, string orderBy, params string[] columns);
-        ICursor QueryTopPartialConditionalCursor<T>(int count, string condition, params string[] columns);
-        ICursor QueryTopPartialConditionalWithCursor<T>(string table, int count, string conditiona, params string[] columns);
-        ICursor QueryTopPartialConditionalOrderByAscCursor<T>(int count, string condition, string orderBy, params string[] columns);
-        ICursor QueryTopPartialConditionalOrderByAscWithCursor<T>(string table, int count, string condition, string orderBy, params string[] columns);
-        ICursor QueryTopPartialConditionalOrderByDescCursor<T>(int count, string condition, string orderBy, params string[] columns);
-        ICursor QueryTopPartialConditionalOrderByDescWithCursor<T>(string table, int count, string condition, string orderBy, params string[] columns);
+        ICursor QueryTopPartialConditionalCursor<T>(int count, string condition, object parameter, params string[] columns);
+        ICursor QueryTopPartialConditionalWithCursor<T>(string table, int count, string conditiona, object parameter, params string[] columns);
+        ICursor QueryTopPartialConditionalOrderByAscCursor<T>(int count, string condition, object parameter, string orderBy, params string[] columns);
+        ICursor QueryTopPartialConditionalOrderByAscWithCursor<T>(string table, int count, string condition, object parameter, string orderBy, params string[] columns);
+        ICursor QueryTopPartialConditionalOrderByDescCursor<T>(int count, string condition, object parameter, string orderBy, params string[] columns);
+        ICursor QueryTopPartialConditionalOrderByDescWithCursor<T>(string table, int count, string condition, object parameter, string orderBy, params string[] columns);
 
 
 
@@ -315,12 +323,12 @@ namespace Jasmine.Orm
         Task<ICursor> QueryPartialOrderByDescCursorAsync<T>(string orderBy, params string[] columns);
         Task<ICursor> QueryPartialOrderByDescWithCursorAsync<T>(string table, string orderBy, params string[] columns);
         // partial conditional
-        Task<ICursor> QueryPartialConditionalCursorAsync<T>(string condition, params string[] columns);
-        Task<ICursor> QueryPartialConditionalOrderByAscCursorAsync<T>(string condition, string orderBy, params string[] columns);
-        Task<ICursor> QueryPartialConditionalOrderByAscWithCursorAsync<T>(string table, string condition, string orderBy, params string[] columns);
-        Task<ICursor> QueryPartialConditionalOrderByDescCursorAsync<T>(string condition, string orderBy, params string[] columns);
-        Task<ICursor> QueryPartialConditionalOrderByDescWithCursorAsync<T>(string table, string condition, string orderBy, params string[] columns);
-        Task<ICursor> QueryPartialConditionalWithCursorAsync<T>(string table, string condition, params string[] columns);
+        Task<ICursor> QueryPartialConditionalCursorAsync<T>(string condition, object parameter, params string[] columns);
+        Task<ICursor> QueryPartialConditionalOrderByAscCursorAsync<T>(string condition, object parameter, string orderBy, params string[] columns);
+        Task<ICursor> QueryPartialConditionalOrderByAscWithCursorAsync<T>(string table, string condition, object parameter, string orderBy, params string[] columns);
+        Task<ICursor> QueryPartialConditionalOrderByDescCursorAsync<T>(string condition, object parameter, string orderBy, params string[] columns);
+        Task<ICursor> QueryPartialConditionalOrderByDescWithCursorAsync<T>(string table, string condition, object parameter, string orderBy, params string[] columns);
+        Task<ICursor> QueryPartialConditionalWithCursorAsync<T>(string table, string condition, object parameter, params string[] columns);
 
         /*
          *  top
@@ -333,12 +341,12 @@ namespace Jasmine.Orm
         Task<ICursor> QueryTopOrderByDescCursorAsync<T>(int count, string orderBy);
         Task<ICursor> QueryTopOrderByDescWithCursorAsync<T>(string table, int count, string orderBy);
         // full conditional
-        Task<ICursor> QueryTopConditionalCursorAsync<T>(int count, string condition);
-        Task<ICursor> QueryTopConditionalWithCursorAsync<T>(string table, int count, string condition);
-        Task<ICursor> QueryTopConditionalOrderByAscCursorAsync<T>(int count, string condition, string orderBy);
-        Task<ICursor> QueryTopConditionalOrderByAscWithCursorAsync<T>(string table, int count, string condition, string orderBy);
-        Task<ICursor> QueryTopConditionalOrderByDescCursorAsync<T>(int count, string condition, string orderBy);
-        Task<ICursor> QueryTopConditionalOrderByDescWithCursorAsync<T>(string table, int count, string condition, string orderBy);
+        Task<ICursor> QueryTopConditionalCursorAsync<T>(int count, string condition, object parameter);
+        Task<ICursor> QueryTopConditionalWithCursorAsync<T>(string table, int count, string condition, object parameter);
+        Task<ICursor> QueryTopConditionalOrderByAscCursorAsync<T>(int count, string condition, object parameter, string orderBy);
+        Task<ICursor> QueryTopConditionalOrderByAscWithCursorAsync<T>(string table, int count, string condition, object parameter, string orderBy);
+        Task<ICursor> QueryTopConditionalOrderByDescCursorAsync<T>(int count, string condition, object parameter, string orderBy);
+        Task<ICursor> QueryTopConditionalOrderByDescWithCursorAsync<T>(string table, int count, string condition, object parameter, string orderBy);
         // top  partial 
         Task<ICursor> QueryTopPartialCursorAsync<T>(int count, params string[] columns);
         Task<ICursor> QueryTopPartialWithCursorAsync<T>(string table, int count, params string[] column);
@@ -346,22 +354,22 @@ namespace Jasmine.Orm
         Task<ICursor> QueryTopPartialOrderByAscWithCursorAsync<T>(string table, int count, string orderBy, params string[] columns);
         Task<ICursor> QueryTopPartialOrderByDescCursorAsync<T>(int count, string orderBy, params string[] columns);
         Task<ICursor> QueryTopPartialOrderByDescWithCursorAsync<T>(string table, int count, string orderBy, params string[] columns);
-        Task<ICursor> QueryTopPartialConditionalCursorAsync<T>(int count, string condition, params string[] columns);
-        Task<ICursor> QueryTopPartialConditionalWithCursorAsync<T>(string table, int count, string conditiona, params string[] columns);
-        Task<ICursor> QueryTopPartialConditionalOrderByAscCursorAsync<T>(int count, string condition, string orderBy, params string[] columns);
-        Task<ICursor> QueryTopPartialConditionalOrderByAscWithCursorAsync<T>(string table, int count, string condition, string orderBy, params string[] columns);
-        Task<ICursor> QueryTopPartialConditionalOrderByDescCursorAsync<T>(int count, string condition, string orderBy, params string[] columns);
-        Task<ICursor> QueryTopPartialConditionalOrderByDescWithCursorAsync<T>(string table, int count, string condition, string orderBy, params string[] columns);
+        Task<ICursor> QueryTopPartialConditionalCursorAsync<T>(int count, string condition, object parameter, params string[] columns);
+        Task<ICursor> QueryTopPartialConditionalWithCursorAsync<T>(string table, int count, string conditiona, object parameter, params string[] columns);
+        Task<ICursor> QueryTopPartialConditionalOrderByAscCursorAsync<T>(int count, string condition, object parameter, string orderBy, params string[] columns);
+        Task<ICursor> QueryTopPartialConditionalOrderByAscWithCursorAsync<T>(string table, int count, string condition, object parameter, string orderBy, params string[] columns);
+        Task<ICursor> QueryTopPartialConditionalOrderByDescCursorAsync<T>(int count, string condition, object parameter, string orderBy, params string[] columns);
+        Task<ICursor> QueryTopPartialConditionalOrderByDescWithCursorAsync<T>(string table, int count, string condition, object parameter, string orderBy, params string[] columns);
 
         #endregion
 
         /*
          * batch insert
          */
-        int BatchInsert<T>(IEnumerable<T> data,bool transanction=false);
-        int BatchInsertWith<T>(string table, IEnumerable<T> datas, bool transanction = false);
-        int BatchInsertPartial<T>(string[] columns, IEnumerable<T> data,bool transanction= false);
-        int BatchInsertPartialWith<T>(string table, string[] columns, IEnumerable<T> datas, bool transanction = false);
+        int BatchInsert<T>(IEnumerable<object> data,DbTransaction transanction=null);
+        int BatchInsertWith<T>(string table, IEnumerable<object> datas, DbTransaction transanction=null);
+        int BatchInsertPartial<T>(string[] columns, IEnumerable<object> data,DbTransaction transanction= null);
+        int BatchInsertPartialWith<T>(string table, string[] columns, IEnumerable<object> datas, DbTransaction transanction=null);
 
 
         /*
@@ -373,8 +381,8 @@ namespace Jasmine.Orm
         /*
          * delete 
          */ 
-        int Delete(string table, string condition, bool transanction = false);
-        int Delete<T>(string condition, bool transanction = false);
+        int Delete(string table, string condition, object parameter, DbTransaction transanction=null);
+        int Delete<T>(string condition, object parameter, DbTransaction transanction=null);
 
         /*
          *  drop
@@ -386,20 +394,20 @@ namespace Jasmine.Orm
         /*
          *  excute commond
          */ 
-        int Excute(string sql, bool transanction = false);
+        int Excute(string sql, DbTransaction transanction=null);
 
-        int Excute(string template, object obj, bool transanction = false);
+        int Excute(string template, object obj, DbTransaction transanction=null);
 
-        int Excute(SqlTemplate template, object obj, bool transanction = false);
+        int Excute(SqlTemplate template, object obj, DbTransaction transanction=null);
 
        
         /*
          *  insert single row
          */ 
-        int Insert<T>(T data);
-        int InsertWith<T>(string table, T data);
-        int InsertPartial<T>( T data,params string[] columns);
-        int InsertPartialWith<T>(string table,  T data,params string[] columns);
+        int Insert<T>(object data);
+        int InsertWith<T>(string table, object data);
+        int InsertPartial<T>( object data,params string[] columns);
+        int InsertPartialWith<T>(string table,  object data,params string[] columns);
 
 
         /*
@@ -423,10 +431,10 @@ namespace Jasmine.Orm
         /*
         * batch insert
         */
-        Task<int> BatchInsertAsync<T>(IEnumerable<T> data, bool transanction = false);
-        Task<int> BatchInsertWithAsync<T>(string table, IEnumerable<T> datas, bool transanction = false);
-        Task<int> BatchInsertPartialAsync<T>(IEnumerable<T> data, bool transanction , params string[] columns);
-        Task<int> BatchInsertPartialWithAsync<T>(string table,  IEnumerable<T> datas, bool transanction , params string[] columns);
+        Task<int> BatchInsertAsync<T>(IEnumerable<object> data, DbTransaction transanction=null);
+        Task<int> BatchInsertWithAsync<T>(string table, IEnumerable<object> datas, DbTransaction transanction=null);
+        Task<int> BatchInsertPartialAsync<T>(IEnumerable<object> data, DbTransaction transanction , params string[] columns);
+        Task<int> BatchInsertPartialWithAsync<T>(string table,  IEnumerable<object> datas, DbTransaction transanction , params string[] columns);
 
 
         /*
@@ -438,8 +446,8 @@ namespace Jasmine.Orm
         /*
          * delete 
          */
-        Task<int> DeleteAsync(string table, string condition, bool transanction = false);
-        Task<int> DeleteAsync<T>(string condition, bool transanction = false);
+        Task<int> DeleteAsync(string table, string condition, object parameter, DbTransaction transanction=null);
+        Task<int> DeleteAsync<T>(string condition, object parameter, DbTransaction transanction=null);
 
         /*
          *  drop
@@ -451,20 +459,20 @@ namespace Jasmine.Orm
         /*
          *  excute commond
          */
-        Task<int> ExcuteAsync(string sql, bool transanction = false);
+        Task<int> ExcuteAsync(string sql, DbTransaction transanction=null);
 
-        Task<int> ExcuteAsync(string template, object obj, bool transanction = false);
+        Task<int> ExcuteAsync(string template, object obj, DbTransaction transanction=null);
 
-        Task<int> ExcuteAsync(SqlTemplate template, object obj, bool transanction = false);
+        Task<int> ExcuteAsync(SqlTemplate template, object obj, DbTransaction transanction=null);
 
 
         /*
          *  insert single row
          */
-        Task<int> InsertAsync<T>(T data);
-        Task<int> InsertWithAsync<T>(string table, T data);
-        Task<int> InsertPartialAsync<T>( T data,params string[] columns );
-        Task<int> InsertPartialWithAsync<T>(string table,  T data, params string[] columns);
+        Task<int> InsertAsync<T>(object data);
+        Task<int> InsertWithAsync<T>(string table, object data);
+        Task<int> InsertPartialAsync<T>( object data,params string[] columns );
+        Task<int> InsertPartialWithAsync<T>(string table,  object data, params string[] columns);
 
 
         /*

@@ -1,8 +1,6 @@
 ﻿using Jasmine.Extensions;
 using Jasmine.Orm.Attributes;
 using Jasmine.Orm.Exceptions;
-using Jasmine.Orm.Interfaces;
-using Jasmine.Orm.Model;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -113,13 +111,10 @@ namespace Jasmine.Orm
             return _stringCache[0];
         }
 
-
-
-        private string createSqlServerInternal(string name, IEnumerable<ColumnMetaData> columns)
+        private string getColumnCreations(IEnumerable<ColumnMetaData> columns)
         {
-            var builder = new StringBuilder();
 
-            builder.Append($"{CREATE_TABLE} {name} (");
+            var builder = new StringBuilder();
 
             foreach (var item in columns)
             {
@@ -161,7 +156,45 @@ namespace Jasmine.Orm
             builder.Append(")");
 
             return builder.ToString();
+        }
 
+        private string createSqlServerInternal(string name, IEnumerable<ColumnMetaData> columns)
+        {
+            var builder = new StringBuilder();
+
+            builder.Append($" If OBJECT_ID('{name}') is null  {CREATE_TABLE} {name} (");
+
+            builder.Append(getColumnCreations(columns));
+
+            return builder.ToString();
+
+        }
+
+        private string createPostgre(string name,IEnumerable<ColumnMetaData> columns)
+        {
+            var builder = new StringBuilder();
+
+            builder.Append($"If ( to_regclass('{name}') is null  ) Then  {CREATE_TABLE} {name} (")
+                   .Append(getColumnCreations(columns))
+                   .Append("End If");
+
+            return builder.ToString();
+
+        }
+        /// <summary>
+        /// oracle, splite, the same
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="columns"></param>
+        /// <returns></returns>
+        private string createMysql(string name, IEnumerable<ColumnMetaData> columns)
+        {
+            var builder = new StringBuilder();
+
+            builder.Append($" If Not Exists '{name}'  {CREATE_TABLE} {name} (")
+                   .Append(getColumnCreations(columns));
+
+            return builder.ToString();
         }
 
         /// <summary>
@@ -299,7 +332,7 @@ namespace Jasmine.Orm
 
                     foreach (var item in columns)
                     {
-                        ls.Add(new SqlTemplateSegment(item.ColumnName.Replace("_",".").ToLower(), true));
+                        ls.Add(new SqlTemplateSegment(item.ColumnName.Replace("_","."), true));
                         ls.Add(new SqlTemplateSegment(", ", false));
                     }
 
@@ -314,7 +347,7 @@ namespace Jasmine.Orm
                     {
                         foreach (var item in _table.JoinTables.Values)
                         {
-                            var template = _templateProvider.GetCache(item.Table.RelatedType).GetInsert(item.PropertyName.ToLower());
+                            var template = _templateProvider.GetCache(item.Table.RelatedType).GetInsert(item.PropertyName);
 
                             ls.AddRange(template.Segments);
                         }

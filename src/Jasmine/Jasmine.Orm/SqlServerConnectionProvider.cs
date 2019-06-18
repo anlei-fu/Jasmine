@@ -18,6 +18,12 @@ namespace Jasmine.Orm
         {
             return new SqlConnection(ConnctionString);
         }
+        public override void Recycle(DbConnection item)
+        {
+            item.Close();
+
+            base.Recycle(item);
+        }
     }
 
     public class SqlSeverMaxConcurrecyConnectionProvider : AbstractMaxConcurrencyPool<DbConnection>, IDbConnectionProvider

@@ -16,13 +16,25 @@ namespace Jasmine.Orm
     {
         public string Name { get; set; }
         public SqlTemplateSegment[] Segments { get; set; }
+       
+        public string[] GetVaribleNames()
+        {
+            var result = new List<string>();
 
+            foreach (var item in Segments)
+            {
+                if (item.IsVarible)
+                    result.Add(item.Value);
+            }
+
+            return result.ToArray();
+        }
         private string _rawString;
         public string RawString
         {
             get
             {
-                if(_rawString==null)
+                if (_rawString == null)
                 {
                     var builder = new StringBuilder();
 
@@ -48,18 +60,62 @@ namespace Jasmine.Orm
 
     public class SqlTemplateMaker
     {
-        public static SqlTemplate MakeInsert(string table,params string[] columns)
+        public static SqlTemplate MakeInsert(string table, params string[] columns)
         {
-            return null;
+            var left = MakeInsertLeft(table, columns);
+            var right = MakeInsertRight(columns);
+
+            var ls = new List<SqlTemplateSegment>();
+            ls.Add(new SqlTemplateSegment(left, false));
+            ls.AddRange(right.Segments);
+
+           return new SqlTemplate()
+            {
+                Segments = ls.ToArray()
+            };
         }
 
-        public static SqlTemplate MakeInsertLeft(string table,params string[] columns)
+        public static string MakeInsertLeft(string table, params string[] columns)
         {
-            return null;
+            var builder = new StringBuilder();
+
+            builder.Append($"Insert Into {table}(");
+
+            foreach (var item in columns)
+            {
+                builder.Append(item.Replace(".","_")).Append(",");
+            }
+
+            builder.RemoveLastComa();
+
+            builder.Append(") Values ");
+
+            return builder.ToString();
+
         }
-        public static SqlTemplate MakeInsertRight(string table,params string[] columns)
+        public static SqlTemplate MakeInsertRight( params string[] columns)
         {
-            return null;
+            var ls = new List<SqlTemplateSegment>();
+
+            ls.Add(new SqlTemplateSegment("(", false));
+
+            foreach (var item in columns)
+            {
+                ls.Add(new SqlTemplateSegment(item, true));
+
+                ls.Add(new SqlTemplateSegment(",", false));
+            }
+
+            if (ls[ls.Count - 1].Value == ",")
+                ls.RemoveAt(ls.Count - 1);
+
+            ls.Add(new SqlTemplateSegment(")", false));
+
+            return new SqlTemplate()
+            {
+                Segments = ls.ToArray()
+            };
+
         }
 
 
@@ -166,7 +222,7 @@ namespace Jasmine.Orm
 
             xml.Load(xmlPath);
 
-            foreach (var item in xml.GetAll(x=>x.Name==ORM_TEMPLATE_GROUP))
+            foreach (var item in xml.GetAll(x => x.Name == ORM_TEMPLATE_GROUP))
             {
                 var name = item.GetAttribute(NAME);
 
@@ -179,14 +235,14 @@ namespace Jasmine.Orm
                 {
                     var tptName = templateNode.GetAttribute(NAME);
 
-                    if (name == null)
+                    if (tptName == null)
                     {
                         throw new RequiredAttributeNotFoundException($"required attribute {NAME} of {TEMPLATE} tag not found!");
                     }
 
                     var template = SqlTemplateParser.Parse(templateNode.InnerText);
 
-                    template.Name = name +"."+ tptName;
+                    template.Name = name + "." + tptName;
 
                     Add(template);
                 }
@@ -248,26 +304,16 @@ namespace Jasmine.Orm
 
         public static readonly SqltemplateConverter Instance = new SqltemplateConverter();
 
-        
+
         public string Convert(SqlTemplate template, object parameters)
         {
-            // slow speed below operation,is required?
-            var map = genarateMap(string.Empty, parameters);
-
             var builder = new StringBuilder();
 
             foreach (var item in template.Segments)
             {
                 if (item.IsVarible)
                 {
-                    if (map.ContainsKey(item.Value.ToLower()))
-                    {
-                        builder.Append(map[item.Value.ToLower()]);
-                    }
-                    else
-                    {
-                        throw new ParameterNotFoundException($"requierd parameter @{item.Value} can not be found by given parameter instance ({parameters}),{template.RawString} ");
-                    }
+                    builder.Append(getParameterStringValue(item.Value, parameters));
                 }
                 else
                 {
@@ -279,34 +325,23 @@ namespace Jasmine.Orm
         }
 
 
-        private Dictionary<string, string> genarateMap(string prefix, object obj)
+        private string getParameterStringValue(string name, object obj)
         {
-            var map = new Dictionary<string, string>();
+            var temp = obj;
 
-            foreach (var item in JasmineReflectionCache.Instance.GetItem(obj.GetType()).Properties)
+            foreach (var item in name.Splite1("."))
             {
-                var value = item.Getter.Invoke(obj);
+                var property = JasmineReflectionCache.Instance.GetItem(obj.GetType()).Properties.GetItemByName(item);
 
-                var valueType = value.GetType();
+                if (property == null)
+                    throw new ParameterNotFoundException($"parameter @{name} can not be found by given isntance {obj} ");
 
-                var name = prefix + item.Name.ToLower();
-
-                if (BaseTypes.Base.Contains(valueType))
-                {
-                    map.Add(name, DefaultBaseTypeConvertor.Instance.ConvertToSqlString(valueType, value));
-                }
-                else if (valueType.IsClass)
-                {
-
-                    foreach (var pair in genarateMap(name+".", value))
-                    {
-                        map.Add(pair.Key, pair.Value);
-                    }
-                }
+                temp = property.GetValue(temp);
 
             }
 
-            return map;
+            return DefaultBaseTypeConvertor.Instance.ConvertToSqlString(temp.GetType(), temp);
+
         }
 
     }

@@ -1,5 +1,4 @@
-﻿using Jasmine.Orm.Model;
-using System;
+﻿using System;
 
 namespace Jasmine.Orm.Attributes
 {

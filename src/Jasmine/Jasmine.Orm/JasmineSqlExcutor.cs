@@ -3,6 +3,7 @@ using Jasmine.Orm.Implements;
 using Jasmine.Reflection;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Data.Common;
 using System.Text;
 using System.Threading.Tasks;
@@ -18,14 +19,26 @@ namespace Jasmine.Orm
 
         private ITableTemplateCacheProvider _templateProvider =>DefaultTableTemplateCacheProvider.Instance;
         private SqltemplateConverter _templateConverter => SqltemplateConverter.Instance;
+
         private IDbConnectionProvider _connectionProvider;
         private ITableMetaDataProvider _metaDataProvider => DefaultTableMetaDataProvider.Instance;
-        public int BatchInsert<T>(IEnumerable<T> data, bool transanction = false)
+        public int BatchInsert<T>(IEnumerable<object> datas, DbTransaction transaction=null)
         {
             var table = _metaDataProvider.GetTable(typeof(T));
-            //if has join tble can just insert one by one
+            //if has join table can just insert one by one
             if(table.HasJoinTable)
             {
+                var template = _templateProvider.GetCache<T>().GetInsert();
+
+                var builder = new StringBuilder();
+
+                foreach (var item in datas)
+                {
+                    builder.Append(_templateConverter.Convert(template, item))
+                           .Append("\r\n");
+                }
+
+                return Excute(builder.ToString(), transaction);
 
             }
             else
@@ -38,7 +51,7 @@ namespace Jasmine.Orm
                     case DataSource.Sqlite:
                     case DataSource.Postgre:
                     case DataSource.Access:
-                        break;
+                        return Excute(getBatchInsertNormalSql<T>(datas,table.GetAllColumnName()), transaction);
                     case DataSource.Oracle:
                         break;
                     case DataSource.SyBase:
@@ -58,46 +71,103 @@ namespace Jasmine.Orm
         /// <param name="datas"></param>
         /// <returns></returns>
 
-        private int batchInsertSqlServer<T>(IEnumerable<T> datas)
+        private string getBatchInsertNormalSql<T>(IEnumerable<object> datas,params string[] columns)
+        {
+            var table = _metaDataProvider.GetTable(typeof(T));
+            var left = SqlTemplateMaker.MakeInsertLeft(table.Name,columns);
+            var right = SqlTemplateMaker.MakeInsertRight(columns);
+
+            var builder = new StringBuilder();
+
+            builder.Append(left);
+
+            foreach (var item in datas)
+            {
+                builder.Append(_templateConverter.Convert(right, item));
+
+                builder.Append(",");
+            }
+
+            builder.RemoveLastComa();
+
+            return builder.ToString();
+
+        }
+
+        private int batchInsertOracle<T>(IEnumerable<object> datas)
         {
             return 0;
         }
-
-        private int batchInsertOracle<T>(IEnumerable<T> datas)
+        public Task<int> BatchInsertAsync<T>(IEnumerable<object> data, DbTransaction transaction=null)
         {
+            throw new NotImplementedException();
+        }
+
+        public int BatchInsertPartial<T>(string[] columns, IEnumerable<object> data, DbTransaction transaction=null)
+        {
+            switch (_connectionProvider.DataSource)
+            {
+                case DataSource.SqlServer:
+                case DataSource.MySql:
+                case DataSource.Db2:
+                case DataSource.Sqlite:
+                case DataSource.Postgre:
+                case DataSource.Access:
+                    return Excute(getBatchInsertNormalSql<T>(data, columns), transaction);
+
+                case DataSource.Oracle:
+                    break;
+                case DataSource.SyBase:
+                    break;
+                default:
+                    break;
+            }
+
             return 0;
         }
-        public Task<int> BatchInsertAsync<T>(IEnumerable<T> data, bool transanction = false)
+
+
+   
+
+    
+        public Task<int> BatchInsertPartialAsync<T>( IEnumerable<object> data, DbTransaction transaction, params string[] columns)
+        {
+            switch (_connectionProvider.DataSource)
+            {
+                case DataSource.SqlServer:
+                case DataSource.MySql:
+                case DataSource.Db2:
+                case DataSource.Sqlite:
+                case DataSource.Postgre:
+                case DataSource.Access:
+                    return ExcuteAsync(getBatchInsertNormalSql<T>(data, columns), transaction);
+                case DataSource.Oracle:
+                    break;
+                case DataSource.SyBase:
+                    break;
+                default:
+                    break;
+            }
+
+            return null;
+        }
+
+        public int BatchInsertPartialWith<T>(string table, string[] columns, IEnumerable<object> datas, DbTransaction transaction=null)
         {
             throw new NotImplementedException();
         }
 
-        public int BatchInsertPartial<T>(string[] columns, IEnumerable<T> data, bool transanction = false)
+        public Task<int> BatchInsertPartialWithAsync<T>(string table,  IEnumerable<object> datas, DbTransaction transaction=null , params string[] columns)
         {
             throw new NotImplementedException();
         }
 
-        public Task<int> BatchInsertPartialAsync<T>( IEnumerable<T> data, bool transanction, params string[] columns)
+        public int BatchInsertWith<T>(string table, IEnumerable<object> datas, DbTransaction transaction=null)
         {
             throw new NotImplementedException();
         }
 
-        public int BatchInsertPartialWith<T>(string table, string[] columns, IEnumerable<T> datas, bool transanction = false)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<int> BatchInsertPartialWithAsync<T>(string table,  IEnumerable<T> datas, bool transanction , params string[] columns)
-        {
-            throw new NotImplementedException();
-        }
-
-        public int BatchInsertWith<T>(string table, IEnumerable<T> datas, bool transanction = false)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<int> BatchInsertWithAsync<T>(string table, IEnumerable<T> datas, bool transanction = false)
+        public Task<int> BatchInsertWithAsync<T>(string table, IEnumerable<object> datas, DbTransaction transaction=null)
         {
             throw new NotImplementedException();
         }
@@ -122,24 +192,43 @@ namespace Jasmine.Orm
             return ExcuteAsync(_templateProvider.GetCache<T>().GetCreateWith(table));
         }
 
-        public int Delete(string table, string condition, bool transanction = false)
+
+        public int DeleteAll<T>()
         {
-            return Excute($" Delete From {table} Where {condition}", transanction);
+            return 0;
+        } 
+        public Task<int> DeleteAllAsync<T>()
+        {
+            return null;
         }
 
-        public int Delete<T>(string condition, bool transanction = false)
+        public int DeleteAll(string table)
         {
-            return Excute(_templateProvider.GetCache<T>().GetDelete(condition), transanction);
+            return 0;
+        }
+        public Task<int> DeleteAllAsync(string table)
+        {
+            return null;
         }
 
-        public Task<int> DeleteAsync(string table, string condition, bool transanction = false)
+        public int Delete(string table, string condition,object parameter, DbTransaction transaction=null)
         {
-            return ExcuteAsync($" Delete From {table} Where {condition}", transanction);
+            return Excute($" Delete From {table} Where {condition}", transaction);
         }
 
-        public Task<int> DeleteAsync<T>(string condition, bool transanction = false)
+        public int Delete<T>(string condition,object parameter, DbTransaction transaction=null)
         {
-            return ExcuteAsync($" Delete From {_metaDataProvider.GetTable(typeof(T)).Name} Where {condition}", transanction);
+            return Excute(_templateProvider.GetCache<T>().GetDelete(condition), transaction);
+        }
+
+        public Task<int> DeleteAsync(string table, string condition,object parameter, DbTransaction transaction=null)
+        {
+            return ExcuteAsync($" Delete From {table} Where {condition}", transaction);
+        }
+
+        public Task<int> DeleteAsync<T>(string condition, object parameter,DbTransaction transaction=null)
+        {
+            return ExcuteAsync($" Delete From {_metaDataProvider.GetTable(typeof(T)).Name} Where {condition}", transaction);
         }
 
         public int Drop(string name)
@@ -162,12 +251,11 @@ namespace Jasmine.Orm
             return ExcuteAsync(_templateProvider.GetCache<T>().GetDrop());
         }
 
-        public int Excute(string sql, bool transanction = false)
+        public int Excute(string sql, DbTransaction transaction=null)
         {
-            if (transanction)
-                return ExcuteTransanction(sql);
+           
 
-            var connection = _connectionProvider.Rent();
+            var connection = transaction!=null?transaction.Connection: _connectionProvider.Rent();
 
             
             try
@@ -198,7 +286,7 @@ namespace Jasmine.Orm
         {
             var connection = _connectionProvider.Rent();
 
-            DbTransaction transanction = null;
+            DbTransaction transaction = null;
 
             try
             {
@@ -211,16 +299,16 @@ namespace Jasmine.Orm
 
                 command.CommandText = sql;
 
-                transanction = connection.BeginTransaction();
+                transaction = connection.BeginTransaction();
 
-                transanction.Commit();
+                transaction.Commit();
 
                 return 1;
             }
             catch (Exception)
             {
-                if (transanction != null)
-                    transanction.Rollback();
+                if (transaction != null)
+                    transaction.Rollback();
                 
                 throw;
             }
@@ -230,24 +318,22 @@ namespace Jasmine.Orm
             }
         }
 
-        public int Excute(string template, object obj, bool transanction = false)
+        public int Excute(string template, object obj, DbTransaction transaction=null)
         {
             var tpt = SqlTemplateParser.Parse(template);
 
-            return Excute(tpt, obj, transanction);
+            return Excute(tpt, obj, transaction);
         }
 
-        public int Excute(SqlTemplate template, object obj, bool transanction = false)
+        public int Excute(SqlTemplate template, object obj, DbTransaction transaction=null)
         {
-            return Excute( _templateConverter.Convert(template,obj), transanction);
+            return Excute( _templateConverter.Convert(template,obj), transaction);
         }
 
-        public async Task<int> ExcuteAsync(string sql, bool transanction = false)
+        public async Task<int> ExcuteAsync(string sql, DbTransaction transaction=null)
         {
-            if (transanction)
-                return await ExcuteTransanctionAsync(sql);
 
-            var connection = _connectionProvider.Rent();
+            var connection =transaction!=null?transaction.Connection:_connectionProvider.Rent();
 
             try
             {
@@ -280,7 +366,7 @@ namespace Jasmine.Orm
         {
             var connection = _connectionProvider.Rent();
 
-            DbTransaction transanction = null;
+            DbTransaction transaction = null;
             try
             {
                 if (connection.State != System.Data.ConnectionState.Open)
@@ -292,16 +378,16 @@ namespace Jasmine.Orm
 
                 command.CommandText = sql;
 
-                transanction = connection.BeginTransaction();
+                transaction = connection.BeginTransaction();
 
-                transanction.Commit();
+                transaction.Commit();
 
                 return 1;
             }
             catch (Exception)
             {
-                if (transanction != null)
-                    transanction.Rollback();
+                if (transaction != null)
+                    transaction.Rollback();
 
                 throw;
             }
@@ -311,54 +397,62 @@ namespace Jasmine.Orm
             }
         }
 
-        public Task<int> ExcuteAsync(string template, object obj, bool transanction = false)
+        public Task<int> ExcuteAsync(string template, object obj, DbTransaction transaction=null)
         {
             var tpt = SqlTemplateParser.Parse(template);
 
-            return ExcuteAsync(tpt,obj, transanction);
+            return ExcuteAsync(tpt,obj, transaction);
         }
 
-        public Task<int> ExcuteAsync(SqlTemplate template, object obj, bool transanction = false)
+        public Task<int> ExcuteAsync(SqlTemplate template, object obj, DbTransaction transaction=null)
         {
-            return ExcuteAsync(template, obj, transanction);
+            return ExcuteAsync(template, obj, transaction);
         }
 
-        public int Insert<T>(T data)
+        public int Insert<T>(object data)
         {
             return Excute(_templateProvider.GetCache<T>().GetInsert(), data);
         }
 
-        public Task<int> InsertAsync<T>(T data)
+        public Task<int> InsertAsync<T>(object data)
         {
             return ExcuteAsync(_templateProvider.GetCache<T>().GetInsert(), data);
         }
 
-        public int InsertPartial<T>( T data,params string[] columns)
+        public int InsertPartial<T>( object data,params string[] columns)
         {
-            return Excute(_templateProvider.GetCache<T>().GetInsertPartial(columns), data);
+            var tpt = SqlTemplateMaker.MakeInsert(_metaDataProvider.GetTable(typeof(T)).Name, columns);
+
+            return Excute(tpt,data);
         }
 
-        public Task<int> InsertPartialAsync<T>( T data, params string[] columns)
+        public Task<int> InsertPartialAsync<T>( object data, params string[] columns)
         {
-            return ExcuteAsync(_templateProvider.GetCache<T>().GetInsertPartial(columns), data);
+            var tpt = SqlTemplateMaker.MakeInsert(_metaDataProvider.GetTable(typeof(T)).Name, columns);
+
+            return ExcuteAsync(tpt, data);
         }
 
-        public int InsertPartialWith<T>(string table, T data, params string[] columns)
+        public int InsertPartialWith<T>(string table, object data, params string[] columns)
         {
-            return Excute(_templateProvider.GetCache<T>().GetInsertPartialWith(table,columns), data);
+            var tpt = SqlTemplateMaker.MakeInsert(table, columns);
+
+            return Excute(tpt, data);
         }
 
-        public Task<int> InsertPartialWithAsync<T>(string table, T data, params string[] columns)
+        public Task<int> InsertPartialWithAsync<T>(string table, object data, params string[] columns)
         {
-            return ExcuteAsync(_templateProvider.GetCache<T>().GetInsertPartialWith(table, columns), data);
+            var tpt = SqlTemplateMaker.MakeInsert(table, columns);
+
+            return ExcuteAsync(tpt, data);
         }
 
-        public int InsertWith<T>(string table, T data)
+        public int InsertWith<T>(string table, object data)
         {
             return Excute(_templateProvider.GetCache<T>().GetInsertWith(table), data);
         }
 
-        public Task<int> InsertWithAsync<T>(string table, T data)
+        public Task<int> InsertWithAsync<T>(string table, object data)
         {
             return ExcuteAsync(_templateProvider.GetCache<T>().GetInsertWith(table), data);
         }
@@ -382,7 +476,6 @@ namespace Jasmine.Orm
 
                var resolver = DefaultQueryResultResolverProvider.Instance.GetResolver((typeof(T)));
 
-                var ls = new List<T>();
 
                 return resolver.Resolve<T>(context);
 
@@ -411,10 +504,7 @@ namespace Jasmine.Orm
             return Query<T>(_templateConverter.Convert(template, obj));
         }
 
-        private string convert(SqlTemplate template, object parameter)
-        {
-            return _templateConverter.Convert(template, parameter);
-        }
+      
         public IEnumerable<T> Query<T>()
         {
             return Query<T>(_templateProvider.GetCache<T>().GetQuery());
@@ -477,82 +567,82 @@ namespace Jasmine.Orm
             return QueryAsync<T>(_templateProvider.GetCache<T>().GetQuery());
         }
 
-        public IEnumerable<T> QueryConditional<T>(string condition)
+        public IEnumerable<T> QueryConditional<T>(string condition,object parameter)
         {
             return Query<T>(_templateProvider.GetCache<T>().GetQueryConditional(condition));
         }
 
-        public Task<IEnumerable<T>> QueryConditionalAsync<T>(string condition)
+        public Task<IEnumerable<T>> QueryConditionalAsync<T>(string condition,object parameter)
         {
             return QueryAsync<T>(_templateProvider.GetCache<T>().GetQueryConditional(condition));
         }
 
-        public ICursor QueryConditionalCursor<T>(string condition)
+        public ICursor QueryConditionalCursor<T>(string condition,object parameter)
         {
             return QueryCursor<T>(_templateProvider.GetCache<T>().GetQueryConditional(condition));
         }
 
-        public Task<ICursor> QueryConditionalCursorAsync<T>(string condition)
+        public Task<ICursor> QueryConditionalCursorAsync<T>(string condition,object parameter)
         {
             return QueryCursorAsync<T>(_templateProvider.GetCache<T>().GetQueryConditional(condition));
         }
 
-        public IEnumerable<T> QueryConditionalOrderByAsc<T>(string condition, string orderBy)
+        public IEnumerable<T> QueryConditionalOrderByAsc<T>(string condition,object parameter, string orderBy)
         {
             return Query<T>(_templateProvider.GetCache<T>().GetQueryConditionalOrderByAsc(condition,orderBy));
         }
 
-        public Task<IEnumerable<T>> QueryConditionalOrderByAscAsync<T>(string condition, string orderBy)
+        public Task<IEnumerable<T>> QueryConditionalOrderByAscAsync<T>(string condition,object parameter, string orderBy)
         {
             return QueryAsync<T>(_templateProvider.GetCache<T>().GetQueryConditionalOrderByAsc(condition, orderBy));
         }
 
-        public ICursor QueryConditionalOrderByAscCursor<T>(string condition, string orderBy)
+        public ICursor QueryConditionalOrderByAscCursor<T>(string condition,object parameter ,string orderBy)
         {
             return QueryCursor<T>(_templateProvider.GetCache<T>().GetQueryConditionalOrderByAsc(condition, orderBy));
         }
 
-        public Task<ICursor> QueryConditionalOrderByAscCursorAsync<T>(string condition, string orderBy)
+        public Task<ICursor> QueryConditionalOrderByAscCursorAsync<T>(string condition, object parameter, string orderBy)
         {
             return QueryCursorAsync<T>(_templateProvider.GetCache<T>().GetQueryConditionalOrderByAsc(condition, orderBy));
         }
 
-        public IEnumerable<T> QueryConditionalWith<T>(string table, string condition)
+        public IEnumerable<T> QueryConditionalWith<T>(string table, string condition, object parameter)
         {
             return Query<T>(_templateProvider.GetCache<T>().GetQueryConditionalWith(table, condition));
         }
 
-        public IEnumerable<T> QueryConditionalWith<T>(string table, string condition, string orderBy)
+        public IEnumerable<T> QueryConditionalWith<T>(string table, string condition, object parameter, string orderBy)
         {
             throw new NotImplementedException();
         }
 
-        public Task<IEnumerable<T>> QueryConditionalWithAsync<T>(string table, string condition)
+        public Task<IEnumerable<T>> QueryConditionalWithAsync<T>(string table, string condition, object parameter)
         {
             return QueryAsync<T>(_templateProvider.GetCache<T>().GetQueryConditionalWith(table, condition));
         }
 
-        public Task<IEnumerable<T>> QueryConditionalWithAsync<T>(string table, string condition, string orderBy)
+        public Task<IEnumerable<T>> QueryConditionalWithAsync<T>(string table, string condition, object parameter, string orderBy)
         {
             return QueryAsync<T>(_templateProvider.GetCache<T>().GetQueryConditionalWith(table, condition));
         }
 
-        public ICursor QueryConditionalWithCursor<T>(string table, string condition)
+        public ICursor QueryConditionalWithCursor<T>(string table, string condition, object parameter)
         {
             return QueryCursor<T>(_templateProvider.GetCache<T>().GetQueryConditionalWith(table, condition));
         }
 
-        public ICursor QueryConditionalWithCursor<T>(string table, string condition, string orderBy)
+        public ICursor QueryConditionalWithCursor<T>(string table, string condition, object parameter, string orderBy)
         {
             throw new NotImplementedException();
         }
 
-        public Task<ICursor> QueryConditionalWithCursorAsync<T>(string table, string condition)
+        public Task<ICursor> QueryConditionalWithCursorAsync<T>(string table, string condition, object parameter)
         {
             return QueryCursorAsync<T>(_templateProvider.GetCache<T>().GetQueryConditionalWith(table, condition));
         }
 
-        public Task<ICursor> QueryConditionalWithCursorAsync<T>(string table, string condition, string orderBy)
+        public Task<ICursor> QueryConditionalWithCursorAsync<T>(string table, string condition, object parameter, string orderBy)
         {
             throw new NotImplementedException();
         }
@@ -598,7 +688,7 @@ namespace Jasmine.Orm
 
         public ICursor QueryCursor<T>(SqlTemplate template, object obj)
         {
-            return QueryCursor<T>(convert(template, obj));
+            return QueryCursor<T>(_templateConverter.Convert(template, obj));
         }
 
         public ICursor QueryCursor<T>()
@@ -644,7 +734,7 @@ namespace Jasmine.Orm
 
         public Task<ICursor> QueryCursorAsync<T>(SqlTemplate template, object obj)
         {
-            return QueryCursorAsync<T>(convert(template, obj));
+            return QueryCursorAsync<T>(_templateConverter.Convert(template, obj));
         }
 
         public Task<ICursor> QueryCursorAsync<T>()
@@ -742,122 +832,122 @@ namespace Jasmine.Orm
             return QueryAsync<T>(_templateProvider.GetCache<T>().GetQueryPartial(columns));
         }
 
-        public IEnumerable<T> QueryPartialConditional<T>(string condition, params string[] columns)
+        public IEnumerable<T> QueryPartialConditional<T>(string condition, object parameter, params string[] columns)
         {
             return Query<T>(_templateProvider.GetCache<T>().GetQueryPartialConditional(condition,columns));
         }
 
-        public Task<IEnumerable<T>> QueryPartialConditionalAsync<T>(string condition, params string[] columns)
+        public Task<IEnumerable<T>> QueryPartialConditionalAsync<T>(string condition,object parameter, params string[] columns)
         {
             return QueryAsync<T>(_templateProvider.GetCache<T>().GetQueryPartialConditional(condition, columns));
         }
 
-        public ICursor QueryPartialConditionalCursor<T>(string condition, params string[] columns)
+        public ICursor QueryPartialConditionalCursor<T>(string condition, object parameter, params string[] columns)
         {
             return QueryCursor<T>(_templateProvider.GetCache<T>().GetQueryPartialConditional(condition, columns));
         }
 
-        public Task<ICursor> QueryPartialConditionalCursorAsync<T>(string condition, params string[] columns)
+        public Task<ICursor> QueryPartialConditionalCursorAsync<T>(string condition, object parameter, params string[] columns)
         {
             return QueryCursorAsync<T>(_templateProvider.GetCache<T>().GetQueryPartialConditional(condition, columns));
         }
 
-        public IEnumerable<T> QueryPartialConditionalOrderByAsc<T>(string condition, string orderBy, params string[] columns)
+        public IEnumerable<T> QueryPartialConditionalOrderByAsc<T>(string condition, object parameter, string orderBy, params string[] columns)
         {
             return Query<T>(_templateProvider.GetCache<T>().GetQueryPartialConditionalOrderByAsc(condition,orderBy, columns));
         }
 
-        public Task<IEnumerable<T>> QueryPartialConditionalOrderByAscAsync<T>(string condition, string orderBy, params string[] columns)
+        public Task<IEnumerable<T>> QueryPartialConditionalOrderByAscAsync<T>(string condition, object parameter, string orderBy, params string[] columns)
         {
             return QueryAsync<T>(_templateProvider.GetCache<T>().GetQueryPartialConditionalOrderByAsc(condition, orderBy, columns));
         }
 
-        public ICursor QueryPartialConditionalOrderByAscCursor<T>(string condition, string orderBy, params string[] columns)
+        public ICursor QueryPartialConditionalOrderByAscCursor<T>(string condition, object parameter, string orderBy, params string[] columns)
         {
             return QueryCursor<T>(_templateProvider.GetCache<T>().GetQueryPartialConditionalOrderByAsc(condition, orderBy, columns));
         }
 
-        public Task<ICursor> QueryPartialConditionalOrderByAscCursorAsync<T>(string condition, string orderBy, params string[] columns)
+        public Task<ICursor> QueryPartialConditionalOrderByAscCursorAsync<T>(string condition, object parameter, string orderBy, params string[] columns)
         {
             return QueryCursorAsync<T>(_templateProvider.GetCache<T>().GetQueryPartialConditionalOrderByAsc(condition, orderBy, columns));
         }
 
-        public IEnumerable<T> QueryPartialConditionalOrderByAscWith<T>(string table, string condition, string orderBy, params string[] columns)
+        public IEnumerable<T> QueryPartialConditionalOrderByAscWith<T>(string table, string condition, object parameter, string orderBy, params string[] columns)
         {
             return Query<T>(_templateProvider.GetCache<T>().GetQueryPartialConditionalOrderByAscWith(table,condition, orderBy, columns));
         }
 
-        public Task<IEnumerable<T>> QueryPartialConditionalOrderByAscWithAsync<T>(string table, string condition, string orderBy, params string[] columns)
+        public Task<IEnumerable<T>> QueryPartialConditionalOrderByAscWithAsync<T>(string table, string condition, object parameter, string orderBy, params string[] columns)
         {
             return QueryAsync<T>(_templateProvider.GetCache<T>().GetQueryPartialConditionalOrderByAscWith(table, condition, orderBy, columns));
         }
 
-        public ICursor QueryPartialConditionalOrderByAscWithCursor<T>(string table, string condition, string orderBy, params string[] columns)
+        public ICursor QueryPartialConditionalOrderByAscWithCursor<T>(string table, string condition, object parameter, string orderBy, params string[] columns)
         {
             return QueryCursor<T>(_templateProvider.GetCache<T>().GetQueryPartialConditionalOrderByAscWith(table, condition, orderBy, columns));
         }
 
-        public Task<ICursor> QueryPartialConditionalOrderByAscWithCursorAsync<T>(string table, string condition, string orderBy, params string[] columns)
+        public Task<ICursor> QueryPartialConditionalOrderByAscWithCursorAsync<T>(string table, string condition, object parameter, string orderBy, params string[] columns)
         {
             return QueryCursorAsync<T>(_templateProvider.GetCache<T>().GetQueryPartialConditionalOrderByAscWith(table, condition, orderBy, columns));
         }
 
-        public IEnumerable<T> QueryPartialConditionalOrderByDesc<T>(string condition, string orderBy, params string[] columns)
+        public IEnumerable<T> QueryPartialConditionalOrderByDesc<T>(string condition, object parameter, string orderBy, params string[] columns)
         {
             return Query<T>(_templateProvider.GetCache<T>().GetQueryPartialConditionalOrderByDesc(condition, orderBy, columns));
         }
 
-        public Task<IEnumerable<T>> QueryPartialConditionalOrderByDescAsync<T>(string condition, string orderBy, params string[] columns)
+        public Task<IEnumerable<T>> QueryPartialConditionalOrderByDescAsync<T>(string condition, object parameter, string orderBy, params string[] columns)
         {
             return QueryAsync<T>(_templateProvider.GetCache<T>().GetQueryPartialConditionalOrderByDesc(condition, orderBy, columns));
         }
 
-        public ICursor QueryPartialConditionalOrderByDescCursor<T>(string condition, string orderBy, params string[] columns)
+        public ICursor QueryPartialConditionalOrderByDescCursor<T>(string condition, object parameter, string orderBy, params string[] columns)
         {
             return QueryCursor<T>(_templateProvider.GetCache<T>().GetQueryPartialConditionalOrderByDesc(condition, orderBy, columns));
         }
 
-        public Task<ICursor> QueryPartialConditionalOrderByDescCursorAsync<T>(string condition, string orderBy, params string[] columns)
+        public Task<ICursor> QueryPartialConditionalOrderByDescCursorAsync<T>(string condition, object parameter, string orderBy, params string[] columns)
         {
             return QueryCursorAsync<T>(_templateProvider.GetCache<T>().GetQueryPartialConditionalOrderByDesc(condition, orderBy, columns));
         }
 
-        public IEnumerable<T> QueryPartialConditionalOrderByDescWith<T>(string table, string condition, string orderBy, params string[] columns)
+        public IEnumerable<T> QueryPartialConditionalOrderByDescWith<T>(string table, string condition, object parameter, string orderBy, params string[] columns)
         {
             return Query<T>(_templateProvider.GetCache<T>().GetQueryPartialConditionalOrderByDescWith(table,condition, orderBy, columns));
         }
 
-        public Task<IEnumerable<T>> QueryPartialConditionalOrderByDescWithAsync<T>(string table, string condition, string orderBy, params string[] columns)
+        public Task<IEnumerable<T>> QueryPartialConditionalOrderByDescWithAsync<T>(string table, string condition, object parameter, string orderBy, params string[] columns)
         {
             return QueryAsync<T>(_templateProvider.GetCache<T>().GetQueryPartialConditionalOrderByDescWith(table, condition, orderBy, columns));
         }
 
-        public ICursor QueryPartialConditionalOrderByDescWithCursor<T>(string table, string condition, string orderBy, params string[] columns)
+        public ICursor QueryPartialConditionalOrderByDescWithCursor<T>(string table, string condition, object parameter, string orderBy, params string[] columns)
         {
             return QueryCursor<T>(_templateProvider.GetCache<T>().GetQueryPartialConditionalOrderByDescWith(table, condition, orderBy, columns));
         }
 
-        public Task<ICursor> QueryPartialConditionalOrderByDescWithCursorAsync<T>(string table, string condition, string orderBy, params string[] columns)
+        public Task<ICursor> QueryPartialConditionalOrderByDescWithCursorAsync<T>(string table, string condition, object parameter, string orderBy, params string[] columns)
         {
             return QueryCursorAsync<T>(_templateProvider.GetCache<T>().GetQueryPartialConditionalOrderByDescWith(table, condition, orderBy, columns));
         }
 
-        public IEnumerable<T> QueryPartialConditionalWith<T>(string table, string condition, params string[] columns)
+        public IEnumerable<T> QueryPartialConditionalWith<T>(string table, string condition, object parameter, params string[] columns)
         {
             return Query<T>(_templateProvider.GetCache<T>().GetQueryPartialConditionalWith(table, condition, columns));
         }
 
-        public Task<IEnumerable<T>> QueryPartialConditionalWithAsync<T>(string table, string condition, params string[] columns)
+        public Task<IEnumerable<T>> QueryPartialConditionalWithAsync<T>(string table, string condition, object parameter, params string[] columns)
         {
             return QueryAsync<T>(_templateProvider.GetCache<T>().GetQueryPartialConditionalWith(table, condition, columns));
         }
 
-        public ICursor QueryPartialConditionalWithCursor<T>(string table, string condition, params string[] columns)
+        public ICursor QueryPartialConditionalWithCursor<T>(string table, string condition, object parameter, params string[] columns)
         {
             return QueryCursor<T>(_templateProvider.GetCache<T>().GetQueryPartialConditionalWith(table, condition, columns));
         }
 
-        public Task<ICursor> QueryPartialConditionalWithCursorAsync<T>(string table, string condition, params string[] columns)
+        public Task<ICursor> QueryPartialConditionalWithCursorAsync<T>(string table, string condition, object parameter, params string[] columns)
         {
             return QueryCursorAsync<T>(_templateProvider.GetCache<T>().GetQueryPartialConditionalWith(table, condition, columns));
         }
@@ -982,122 +1072,122 @@ namespace Jasmine.Orm
             return QueryAsync<T>(_templateProvider.GetCache<T>().GetQueryTop(count));
         }
 
-        public IEnumerable<T> QueryTopConditional<T>(int count, string condition)
+        public IEnumerable<T> QueryTopConditional<T>(int count, string condition, object parameter)
         {
             return Query<T>(_templateProvider.GetCache<T>().GetQueryTopConditional(count,condition));
         }
 
-        public Task<IEnumerable<T>> QueryTopConditionalAsync<T>(int count, string condition)
+        public Task<IEnumerable<T>> QueryTopConditionalAsync<T>(int count, string condition, object parameter)
         {
             return QueryAsync<T>(_templateProvider.GetCache<T>().GetQueryTopConditional(count, condition));
         }
 
-        public ICursor QueryTopConditionalCursor<T>(int count, string condition)
+        public ICursor QueryTopConditionalCursor<T>(int count, string condition,object parameter)
         {
             return QueryCursor<T>(_templateProvider.GetCache<T>().GetQueryTopConditional(count, condition));
         }
 
-        public Task<ICursor> QueryTopConditionalCursorAsync<T>(int count, string condition)
+        public Task<ICursor> QueryTopConditionalCursorAsync<T>(int count, string condition, object parameter)
         {
             return QueryCursorAsync<T>(_templateProvider.GetCache<T>().GetQueryTopConditional(count, condition));
         }
 
-        public IEnumerable<T> QueryTopConditionalOrderByAsc<T>(int count, string condition, string orderBy)
+        public IEnumerable<T> QueryTopConditionalOrderByAsc<T>(int count, string condition, object parameter, string orderBy)
         {
             return Query<T>(_templateProvider.GetCache<T>().GetQueryTopConditionalOrderByAsc(count,orderBy, condition));
         }
 
-        public Task<IEnumerable<T>> QueryTopConditionalOrderByAscAsync<T>(int count, string condition, string orderBy)
+        public Task<IEnumerable<T>> QueryTopConditionalOrderByAscAsync<T>(int count, string condition, object parameter, string orderBy)
         {
             return QueryAsync<T>(_templateProvider.GetCache<T>().GetQueryTopConditionalOrderByAsc(count, orderBy, condition));
         }
 
-        public ICursor QueryTopConditionalOrderByAscCursor<T>(int count, string condition, string orderBy)
+        public ICursor QueryTopConditionalOrderByAscCursor<T>(int count, string condition, object parameter, string orderBy)
         {
             return QueryCursor<T>(_templateProvider.GetCache<T>().GetQueryTopConditionalOrderByAsc(count, orderBy, condition));
         }
 
-        public Task<ICursor> QueryTopConditionalOrderByAscCursorAsync<T>(int count, string condition, string orderBy)
+        public Task<ICursor> QueryTopConditionalOrderByAscCursorAsync<T>(int count, string condition, object parameter, string orderBy)
         {
             return QueryCursorAsync<T>(_templateProvider.GetCache<T>().GetQueryTopConditionalOrderByAsc(count, orderBy, condition));
         }
 
-        public IEnumerable<T> QueryTopConditionalOrderByAscWith<T>(string table, int count, string condition, string orderBy)
+        public IEnumerable<T> QueryTopConditionalOrderByAscWith<T>(string table, int count, string condition, object parameter, string orderBy)
         {
             return Query<T>(_templateProvider.GetCache<T>().GetQueryTopConditionalOrderByAscWith(table,count, orderBy, condition));
         }
 
-        public Task<IEnumerable<T>> QueryTopConditionalOrderByAscWithAsync<T>(string table, int count, string condition, string orderBy)
+        public Task<IEnumerable<T>> QueryTopConditionalOrderByAscWithAsync<T>(string table, int count, string condition, object parameter, string orderBy)
         {
             return QueryAsync<T>(_templateProvider.GetCache<T>().GetQueryTopConditionalOrderByAscWith(table, count, orderBy, condition));
         }
 
-        public ICursor QueryTopConditionalOrderByAscWithCursor<T>(string table, int count, string condition, string orderBy)
+        public ICursor QueryTopConditionalOrderByAscWithCursor<T>(string table, int count, string condition, object parameter, string orderBy)
         {
             return QueryCursor<T>(_templateProvider.GetCache<T>().GetQueryTopConditionalOrderByAscWith(table, count, orderBy, condition));
         }
 
-        public Task<ICursor> QueryTopConditionalOrderByAscWithCursorAsync<T>(string table, int count, string condition, string orderBy)
+        public Task<ICursor> QueryTopConditionalOrderByAscWithCursorAsync<T>(string table, int count, string condition, object parameter, string orderBy)
         {
             return QueryCursorAsync<T>(_templateProvider.GetCache<T>().GetQueryTopConditionalOrderByAscWith(table, count, orderBy, condition));
         }
 
-        public IEnumerable<T> QueryTopConditionalOrderByDesc<T>(int count, string condition, string orderBy)
+        public IEnumerable<T> QueryTopConditionalOrderByDesc<T>(int count, string condition, object parameter, string orderBy)
         {
             return Query<T>(_templateProvider.GetCache<T>().GetQueryTopConditionalOrderByDesc( count, orderBy, condition));
         }
 
-        public Task<IEnumerable<T>> QueryTopConditionalOrderByDescAsync<T>(int count, string condition, string orderBy)
+        public Task<IEnumerable<T>> QueryTopConditionalOrderByDescAsync<T>(int count, string condition, object parameter, string orderBy)
         {
             return QueryAsync<T>(_templateProvider.GetCache<T>().GetQueryTopConditionalOrderByDesc(count, orderBy, condition));
         }
 
-        public ICursor QueryTopConditionalOrderByDescCursor<T>(int count, string condition, string orderBy)
+        public ICursor QueryTopConditionalOrderByDescCursor<T>(int count, string condition, object parameter, string orderBy)
         {
             return QueryCursor<T>(_templateProvider.GetCache<T>().GetQueryTopConditionalOrderByDesc(count, orderBy, condition));
         }
 
-        public Task<ICursor> QueryTopConditionalOrderByDescCursorAsync<T>(int count, string condition, string orderBy)
+        public Task<ICursor> QueryTopConditionalOrderByDescCursorAsync<T>(int count, string condition, object parameter, string orderBy)
         {
             return QueryCursorAsync<T>(_templateProvider.GetCache<T>().GetQueryTopConditionalOrderByDesc(count, orderBy, condition));
         }
 
-        public IEnumerable<T> QueryTopConditionalOrderByDescWith<T>(string table, int count, string condition, string orderBy)
+        public IEnumerable<T> QueryTopConditionalOrderByDescWith<T>(string table, int count, string condition, object parameter, string orderBy)
         {
             return Query<T>(_templateProvider.GetCache<T>().GetQueryTopConditionalOrderByDescWith(table,count, orderBy, condition));
         }
 
-        public Task<IEnumerable<T>> QueryTopConditionalOrderByDescWithAsync<T>(string table, int count, string condition, string orderBy)
+        public Task<IEnumerable<T>> QueryTopConditionalOrderByDescWithAsync<T>(string table, int count, string condition, object parameter, string orderBy)
         {
             return QueryAsync<T>(_templateProvider.GetCache<T>().GetQueryTopConditionalOrderByDescWith(table, count, orderBy, condition));
         }
 
-        public ICursor QueryTopConditionalOrderByDescWithCursor<T>(string table, int count, string condition, string orderBy)
+        public ICursor QueryTopConditionalOrderByDescWithCursor<T>(string table, int count, string condition, object parameter, string orderBy)
         {
             return QueryCursor<T>(_templateProvider.GetCache<T>().GetQueryTopConditionalOrderByDescWith(table, count, orderBy, condition));
         }
 
-        public Task<ICursor> QueryTopConditionalOrderByDescWithCursorAsync<T>(string table, int count, string condition, string orderBy)
+        public Task<ICursor> QueryTopConditionalOrderByDescWithCursorAsync<T>(string table, int count, string condition, object parameter, string orderBy)
         {
             return QueryCursorAsync<T>(_templateProvider.GetCache<T>().GetQueryTopConditionalOrderByDescWith(table, count, orderBy, condition));
         }
 
-        public IEnumerable<T> QueryTopConditionalWith<T>(string table, int count, string condition)
+        public IEnumerable<T> QueryTopConditionalWith<T>(string table, int count, string condition,object parameter )
         {
             return Query<T>(_templateProvider.GetCache<T>().GetQueryTopConditionalWith(table, count,condition));
         }
 
-        public Task<IEnumerable<T>> QueryTopConditionalWithAsync<T>(string table, int count, string condition)
+        public Task<IEnumerable<T>> QueryTopConditionalWithAsync<T>(string table, int count, string condition, object parameter)
         {
             return QueryAsync<T>(_templateProvider.GetCache<T>().GetQueryTopConditionalWith(table, count, condition));
         }
 
-        public ICursor QueryTopConditionalWithCursor<T>(string table, int count, string condition)
+        public ICursor QueryTopConditionalWithCursor<T>(string table, int count, string condition, object parameter)
         {
             return QueryCursor<T>(_templateProvider.GetCache<T>().GetQueryTopConditionalWith(table, count, condition));
         }
 
-        public Task<ICursor> QueryTopConditionalWithCursorAsync<T>(string table, int count, string condition)
+        public Task<ICursor> QueryTopConditionalWithCursorAsync<T>(string table, int count, string condition,object parameter)
         {
             return QueryCursorAsync<T>(_templateProvider.GetCache<T>().GetQueryTopConditionalWith(table, count, condition));
         }
@@ -1202,122 +1292,122 @@ namespace Jasmine.Orm
             return QueryAsync<T>(_templateProvider.GetCache<T>().GetQueryTopPartial(count, columns));
         }
 
-        public IEnumerable<T> QueryTopPartialConditional<T>(int count, string condition, params string[] columns)
+        public IEnumerable<T> QueryTopPartialConditional<T>(int count, string condition, object parameter, params string[] columns)
         {
             return Query<T>(_templateProvider.GetCache<T>().GetQueryTopPartialConditional(count,condition, columns));
         }
 
-        public Task<IEnumerable<T>> QueryTopPartialConditionalAsync<T>(int count, string condition, params string[] columns)
+        public Task<IEnumerable<T>> QueryTopPartialConditionalAsync<T>(int count, string condition, object parameter, params string[] columns)
         {
             return QueryAsync<T>(_templateProvider.GetCache<T>().GetQueryTopPartialConditional(count, condition, columns));
         }
 
-        public ICursor QueryTopPartialConditionalCursor<T>(int count, string condition, params string[] columns)
+        public ICursor QueryTopPartialConditionalCursor<T>(int count, string condition, object parameter, params string[] columns)
         {
             return QueryCursor<T>(_templateProvider.GetCache<T>().GetQueryTopPartialConditional(count, condition, columns));
         }
 
-        public Task<ICursor> QueryTopPartialConditionalCursorAsync<T>(int count, string condition, params string[] columns)
+        public Task<ICursor> QueryTopPartialConditionalCursorAsync<T>(int count, string condition, object parameter, params string[] columns)
         {
             return QueryCursorAsync<T>(_templateProvider.GetCache<T>().GetQueryTopPartialConditional(count, condition, columns));
         }
 
-        public IEnumerable<T> QueryTopPartialConditionalOrderByAsc<T>(int count, string condition, string orderBy, params string[] columns)
+        public IEnumerable<T> QueryTopPartialConditionalOrderByAsc<T>(int count, string condition, object parameter, string orderBy, params string[] columns)
         {
             return Query<T>(_templateProvider.GetCache<T>().GetQueryTopPartialConditionalOrderByAsc(count, condition, orderBy,columns));
         }
 
-        public Task<IEnumerable<T>> QueryTopPartialConditionalOrderByAscAsync<T>(int count, string condition, string orderBy, params string[] columns)
+        public Task<IEnumerable<T>> QueryTopPartialConditionalOrderByAscAsync<T>(int count, string condition, object parameter, string orderBy, params string[] columns)
         {
             return QueryAsync<T>(_templateProvider.GetCache<T>().GetQueryTopPartialConditionalOrderByAsc(count, condition, orderBy, columns));
         }
 
-        public ICursor QueryTopPartialConditionalOrderByAscCursor<T>(int count, string condition, string orderBy, params string[] columns)
+        public ICursor QueryTopPartialConditionalOrderByAscCursor<T>(int count, string condition, object parameter, string orderBy, params string[] columns)
         {
             return QueryCursor<T>(_templateProvider.GetCache<T>().GetQueryTopPartialConditionalOrderByAsc(count, condition, orderBy, columns));
         }
 
-        public Task<ICursor> QueryTopPartialConditionalOrderByAscCursorAsync<T>(int count, string condition, string orderBy, params string[] columns)
+        public Task<ICursor> QueryTopPartialConditionalOrderByAscCursorAsync<T>(int count, string condition, object parameter, string orderBy, params string[] columns)
         {
             return QueryCursorAsync<T>(_templateProvider.GetCache<T>().GetQueryTopPartialConditionalOrderByAsc(count, condition, orderBy, columns));
         }
 
-        public IEnumerable<T> QueryTopPartialConditionalOrderByAscWith<T>(string table, int count, string condition, string orderBy, params string[] columns)
+        public IEnumerable<T> QueryTopPartialConditionalOrderByAscWith<T>(string table, int count, string condition, object parameter, string orderBy, params string[] columns)
         {
             return Query<T>(_templateProvider.GetCache<T>().GetQueryTopPartialConditionalOrderByAscWith(table,count, condition, orderBy, columns));
         }
 
-        public Task<IEnumerable<T>> QueryTopPartialConditionalOrderByAscWithAsync<T>(string table, int count, string condition, string orderBy, params string[] columns)
+        public Task<IEnumerable<T>> QueryTopPartialConditionalOrderByAscWithAsync<T>(string table, int count, string condition, object parameter, string orderBy, params string[] columns)
         {
             return QueryAsync<T>(_templateProvider.GetCache<T>().GetQueryTopPartialConditionalOrderByAscWith(table, count, condition, orderBy, columns));
         }
 
-        public ICursor QueryTopPartialConditionalOrderByAscWithCursor<T>(string table, int count, string condition, string orderBy, params string[] columns)
+        public ICursor QueryTopPartialConditionalOrderByAscWithCursor<T>(string table, int count, string condition, object parameter, string orderBy, params string[] columns)
         {
             return QueryCursor<T>(_templateProvider.GetCache<T>().GetQueryTopPartialConditionalOrderByAscWith(table, count, condition, orderBy, columns));
         }
 
-        public Task<ICursor> QueryTopPartialConditionalOrderByAscWithCursorAsync<T>(string table, int count, string condition, string orderBy, params string[] columns)
+        public Task<ICursor> QueryTopPartialConditionalOrderByAscWithCursorAsync<T>(string table, int count, string condition, object parameter, string orderBy, params string[] columns)
         {
             return QueryCursorAsync<T>(_templateProvider.GetCache<T>().GetQueryTopPartialConditionalOrderByAscWith(table, count, condition, orderBy, columns));
         }
 
-        public IEnumerable<T> QueryTopPartialConditionalOrderByDesc<T>(int count, string condition, string orderBy, params string[] columns)
+        public IEnumerable<T> QueryTopPartialConditionalOrderByDesc<T>(int count, string condition, object parameter, string orderBy, params string[] columns)
         {
             return Query<T>(_templateProvider.GetCache<T>().GetQueryTopPartialConditionalOrderByDesc( count, condition, orderBy, columns));
         }
 
-        public Task<IEnumerable<T>> QueryTopPartialConditionalOrderByDescAsync<T>(int count, string condition, string orderBy, params string[] columns)
+        public Task<IEnumerable<T>> QueryTopPartialConditionalOrderByDescAsync<T>(int count, string condition, object parameter, string orderBy, params string[] columns)
         {
             return QueryAsync<T>(_templateProvider.GetCache<T>().GetQueryTopPartialConditionalOrderByDesc(count, condition, orderBy, columns));
         }
 
-        public ICursor QueryTopPartialConditionalOrderByDescCursor<T>(int count, string condition, string orderBy, params string[] columns)
+        public ICursor QueryTopPartialConditionalOrderByDescCursor<T>(int count, string condition, object parameter, string orderBy, params string[] columns)
         {
             return QueryCursor<T>(_templateProvider.GetCache<T>().GetQueryTopPartialConditionalOrderByDesc(count, condition, orderBy, columns));
         }
 
-        public Task<ICursor> QueryTopPartialConditionalOrderByDescCursorAsync<T>(int count, string condition, string orderBy, params string[] columns)
+        public Task<ICursor> QueryTopPartialConditionalOrderByDescCursorAsync<T>(int count, string condition, object parameter, string orderBy, params string[] columns)
         {
             return QueryCursorAsync<T>(_templateProvider.GetCache<T>().GetQueryTopPartialConditionalOrderByDesc(count, condition, orderBy, columns));
         }
 
-        public IEnumerable<T> QueryTopPartialConditionalOrderByDescWith<T>(string table, int count, string condition, string orderBy, params string[] columns)
+        public IEnumerable<T> QueryTopPartialConditionalOrderByDescWith<T>(string table, int count, string condition, object parameter, string orderBy, params string[] columns)
         {
             return Query<T>(_templateProvider.GetCache<T>().GetQueryTopPartialConditionalOrderByDescWith(table,count, condition, orderBy, columns));
         }
 
-        public Task<IEnumerable<T>> QueryTopPartialConditionalOrderByDescWithAsync<T>(string table, int count, string condition, string orderBy, params string[] columns)
+        public Task<IEnumerable<T>> QueryTopPartialConditionalOrderByDescWithAsync<T>(string table, int count, string condition, object parameter, string orderBy, params string[] columns)
         {
             return QueryAsync<T>(_templateProvider.GetCache<T>().GetQueryTopPartialConditionalOrderByDescWith(table, count, condition, orderBy, columns));
         }
 
-        public ICursor QueryTopPartialConditionalOrderByDescWithCursor<T>(string table, int count, string condition, string orderBy, params string[] columns)
+        public ICursor QueryTopPartialConditionalOrderByDescWithCursor<T>(string table, int count, string condition, object parameter, string orderBy, params string[] columns)
         {
             return QueryCursor<T>(_templateProvider.GetCache<T>().GetQueryTopPartialConditionalOrderByDescWith(table, count, condition, orderBy, columns));
         }
 
-        public Task<ICursor> QueryTopPartialConditionalOrderByDescWithCursorAsync<T>(string table, int count, string condition, string orderBy, params string[] columns)
+        public Task<ICursor> QueryTopPartialConditionalOrderByDescWithCursorAsync<T>(string table, int count, string condition, object parameter, string orderBy, params string[] columns)
         {
             return QueryCursorAsync<T>(_templateProvider.GetCache<T>().GetQueryTopPartialConditionalOrderByDescWith(table, count, condition, orderBy, columns));
         }
 
-        public IEnumerable<T> QueryTopPartialConditionalWith<T>(string table, int count, string condition, params string[] columns)
+        public IEnumerable<T> QueryTopPartialConditionalWith<T>(string table, int count, string condition, object parameter, params string[] columns)
         {
             return Query<T>(_templateProvider.GetCache<T>().GetQueryTopPartialConditionalWith(table,count, condition, columns));
         }
 
-        public Task<IEnumerable<T>> QueryTopPartialConditionalWithAsync<T>(string table, int count, string condition, params string[] columns)
+        public Task<IEnumerable<T>> QueryTopPartialConditionalWithAsync<T>(string table, int count, string condition, object parameter, params string[] columns)
         {
             return QueryAsync<T>(_templateProvider.GetCache<T>().GetQueryTopPartialConditionalWith(table, count, condition, columns));
         }
 
-        public ICursor QueryTopPartialConditionalWithCursor<T>(string table, int count, string condition, params string[] columns)
+        public ICursor QueryTopPartialConditionalWithCursor<T>(string table, int count, string condition, object parameter, params string[] columns)
         {
             return QueryCursor<T>(_templateProvider.GetCache<T>().GetQueryTopPartialConditionalWith(table, count, condition, columns));
         }
 
-        public Task<ICursor> QueryTopPartialConditionalWithCursorAsync<T>(string table, int count, string condition, params string[] columns)
+        public Task<ICursor> QueryTopPartialConditionalWithCursorAsync<T>(string table, int count, string condition, object parameter, params string[] columns)
         {
             return QueryCursorAsync<T>(_templateProvider.GetCache<T>().GetQueryTopPartialConditionalWith(table, count, condition, columns));
         }
@@ -1530,6 +1620,26 @@ namespace Jasmine.Orm
         public Task<int> UpdateWithAsync<T>(string table, object parameter)
         {
             return ExcuteAsync(buildUpdate<T>(table, parameter));
+        }
+
+        public int CallProcedure(string name, object parameter)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<int> CallProcedureAsync(string name, object parameter)
+        {
+            throw new NotImplementedException();
+        }
+
+        public int CallProcedure(string name, IEnumerable<DbParameter> parameters)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<int> CallProcedureAsync(string name, IEnumerable<DbParameter> parameters)
+        {
+            throw new NotImplementedException();
         }
     }
 }

@@ -1,10 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Jasmine.Restful.Attributes
 {
-    class HearderAttribute
+    public class HearderAttribute:Attribute
     {
     }
 }
