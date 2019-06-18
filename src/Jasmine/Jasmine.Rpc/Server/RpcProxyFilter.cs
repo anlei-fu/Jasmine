@@ -4,7 +4,7 @@ using Jasmine.Serialization;
 
 namespace Jasmine.Rpc.Server
 {
-    public class RpcProxyFilter : AbstractProxyFilter<RpcFilterContext>
+    public class RpcProxyFilter : AbstractInvokationProxyFilter<RpcFilterContext>
     {
         public RpcProxyFilter(Method method,
                               IRequestParamteterResolver<RpcFilterContext> resolver,

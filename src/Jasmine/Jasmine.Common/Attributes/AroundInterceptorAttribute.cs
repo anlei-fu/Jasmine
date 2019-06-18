@@ -1,8 +1,10 @@
-﻿namespace Jasmine.Common.Attributes
+﻿using System;
+
+namespace Jasmine.Common.Attributes
 {
     public class AroundInterceptorAttribute : InterceptorAttribute
     {
-        public AroundInterceptorAttribute(string name) : base(name)
+        public AroundInterceptorAttribute(Type type) : base(type)
         {
         }
     }

@@ -1,12 +1,13 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace Jasmine.Common
 {
     public  class AopServiceMetaData:ServiceMetaDataBase
     {
-        public IList<string> BeforeFilters { get; set; }
-        public IList<string> AfterFilters { get; set; }
-        public IList<string> AroundFilters { get; set; }
-        public IList<string> ErrorFilters { get; set; }
+        public IList<Type> BeforeFilters { get; set; }
+        public IList<Type> AfterFilters { get; set; }
+        public IList<Type> AroundFilters { get; set; }
+        public IList<Type> ErrorFilters { get; set; }
     }
 }

@@ -1,6 +1,5 @@
 ﻿using Jasmine.Common;
 using Jasmine.Ioc;
-using Jasmine.Restful.Exceptions;
 using System;
 using System.Collections.Generic;
 
@@ -21,69 +20,88 @@ namespace Jasmine.Restful
 
         public static readonly IRequestProcessorGenerator<HttpFilterContext, RestfulServiceMetaData> Instance = new RestfulRequestProcessorGenerator();
 
+        private IList<IFilter<HttpFilterContext>> buildFilters(IList<Type> filterTypes)
+        {
+            var ls = new List<IFilter<HttpFilterContext>>();
 
+            foreach (var item in filterTypes)
+            {
+                ls.AddRange(buildFilter(item));
+            }
+
+            return ls;
+        }
+
+        private IList<IFilter<HttpFilterContext>> buildFilter(Type type)
+        {
+           if(!RestfulFilterMetaDataManager.Instance.ContainsKey(type))
+            {
+                RestfulFilterMetaDataManager.Instance.Add(type, RestfulFilterMetaDataReflectResolver.Instance.Resolve(type));
+            }
+
+            var ls = new List<IFilter<HttpFilterContext>>();
+
+           if(RestfulFilterMetaDataManager.Instance.TryGetValue(type,out var metaData))
+            {
+                foreach (var item in metaData.BeforeFilters)
+                    ls.AddRange(buildFilter(item));
+
+                foreach (var item in metaData.AroundFilters)
+                    ls.AddRange(buildFilter(item));
+
+                ls.Add(_aopProvider.GetFilter<Type>());
+
+                foreach (var item in metaData.AroundFilters)
+                    ls.AddRange(buildFilter(item));
+
+                foreach (var item in metaData.AfterFilters)
+                    ls.AddRange(buildFilter(item));
+            }
+
+            return ls;
+        }
 
         public IRequestProcessor<HttpFilterContext>[] Generate(RestfulServiceMetaData metaData)
         {
             var ls = new List<IRequestProcessor<HttpFilterContext>>();
 
+            var instance = _serviceProvider.GetService(metaData.RelatedType);
+
             foreach (var item in metaData.Requests)
             {
                 var processor = new RestfulRequestProcessor(1000,item.Key);
 
-                foreach (var before in item.Value.BeforeFilters)
+                processor.Pipeline = new RestfulFilterPipeline();
+                processor.ErrorPileline = new RestfulFilterPipeline();
+
+                foreach (var before in buildFilters(item.Value.BeforeFilters))
                 {
-                    var filter = _aopProvider.GetFilter(before);
-
-                    if (filter == null)
-                        throw new FilterNotFoundException($" before filter {before} can not be found ,in type {metaData.RelatedType}, method {item.Value.Method.Name}");
-
-                    processor.Pipeline.AddLast(filter);
-
+                    processor.Pipeline.AddLast(before);
                 }
 
-                foreach ( var around in item.Value.AroundFilters)
+                foreach (var around in buildFilters(item.Value.AroundFilters))
                 {
-                    var filter = _aopProvider.GetFilter(around);
-
-                    if (filter == null)
-                        throw new FilterNotFoundException($" around filter {around} can not be found ,in type {metaData.RelatedType}, method {item.Value.Method.Name}");
-
-                     processor.Pipeline.AddLast(filter);
+                    processor.Pipeline.AddLast(around);
                 }
 
-                var proxy = new RestfulProxyFilter(item.Value.Method, _parameterResolverFactory.Create(item.Value), _serviceProvider.GetService(metaData.RelatedType));
+                var proxy = new RestfulInvokationProxyFilter(item.Value.Method, RestfulParameterResolverFactory.Instance.Create(item.Value), instance);
 
                 processor.Pipeline.AddLast(proxy);
 
-                foreach (var around in item.Value.AroundFilters)
+                foreach (var around in buildFilters(item.Value.AroundFilters))
                 {
-                    var filter = _aopProvider.GetFilter(around);
-
-                    if (filter == null)
-                        throw new FilterNotFoundException($" around filter {around} can not be found ,in type {metaData.RelatedType}, method {item.Value.Method.Name}");
-
-                    processor.Pipeline.AddLast(filter);
+                    processor.Pipeline.AddLast(around);
                 }
 
-                foreach (var after in item.Value.AfterFilters)
+                foreach (var after in buildFilters(item.Value.AfterFilters))
                 {
-                    var filter = _aopProvider.GetFilter(after);
-
-                    if (filter == null)
-                        throw new FilterNotFoundException($" after filter {after} can not be found ,in type {metaData.RelatedType}, method {item.Value.Method.Name}");
-
-                    processor.Pipeline.AddLast(filter);
+                    processor.Pipeline.AddLast(after);
                 }
 
-                foreach (var error in item.Value.ErrorFilters)
+
+                foreach (var error in buildFilters(item.Value.ErrorFilters))
                 {
-                    var filter = _aopProvider.GetFilter(error);
-
-                    if (filter == null)
-                        throw new FilterNotFoundException($" error filter {error} can not be found ,in type {metaData.RelatedType}, method {item.Value.Method.Name}");
-
-                    processor.ErrorPileline.AddLast(filter);
+                    processor.ErrorPileline.AddLast(error);
                 }
 
                 processor.Description = item.Value.Description;

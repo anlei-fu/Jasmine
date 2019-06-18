@@ -130,7 +130,7 @@ namespace Jasmine.Ioc
             foreach (var item in _reflection.GetItem(type).Fileds.Union(_reflection.GetItem(type).Properties))
             {
                 if (item.Attributes.Contains(typeof(AutoWiredAttribute)))
-                    properties.Add(resolvePoperty(item));
+                    properties.Add(resolveProperty(item));
             }
 
             metaData.Properties = properties.ToArray();
@@ -228,7 +228,7 @@ namespace Jasmine.Ioc
 
             return metaData;
         }
-        private IocPropertyMetaData resolvePoperty(Field filed)
+        private IocPropertyMetaData resolveProperty(Field filed)
         {
             var metaData = new IocPropertyMetaData();
 

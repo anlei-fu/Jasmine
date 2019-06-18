@@ -13,7 +13,7 @@ namespace Jasmine.Restful.DefaultServices
         }
 
         private IUserManager _userManager;
-        [AfterInterceptor("Jasmine.Restful.DefaultServices.LoginAfterInterceptor")]
+        [AfterInterceptor(typeof(LoginAfterInterceptor))]
         [Path("/api/login")]
         public bool Login(string user,string password)
         {

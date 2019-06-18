@@ -13,8 +13,6 @@ namespace Jasmine.Restful
         }
         private ILog _logger=LogManager.GetLogger(typeof(RestfulDispatcher));
         public IStaticFileProvider FileProvider { get; set; } = new JasmineStaticFileProvider();
-        public bool UseStaticFile { get; set; }
-        public string VirtuePathRoot { get; set; }
     
         public override async Task DispatchAsync(string path, HttpFilterContext context)
         {
@@ -36,6 +34,9 @@ namespace Jasmine.Restful
 
                         //handle processor output
 
+                        if (RestfulApplicationGlobalConfig.EnableCrossDomain)
+                            context.HttpContext.Response.Headers.Add("Access-Control-Allow-Origin", "*");
+
                         context.HttpContext.Response.Headers.Add("Access-Control-Allow-Origin", "*");
 
                         if (context.ReturnValue != null)
@@ -50,7 +51,8 @@ namespace Jasmine.Restful
                     {
                         _logger.Error(ex);
 
-                        context.HttpContext.Response.StatusCode = HttpStatusCodes.SERVER_ERROR;
+                        if (!context.HttpContext.Response.HasStarted)
+                            context.HttpContext.Response.StatusCode = HttpStatusCodes.SERVER_ERROR;
                     }
                 }
                 /*
@@ -68,9 +70,9 @@ namespace Jasmine.Restful
             /*
              *  static file enabled 
              */ 
-            else if(UseStaticFile)
+            else if(RestfulApplicationGlobalConfig.StaticFileEnabled)
             {
-                var stream = FileProvider.GetAsync(VirtuePathRoot + path);
+                var stream = await FileProvider.GetStreamAsync(RestfulApplicationGlobalConfig.VirtueRootPath + path);
 
                 /*
                  *  file not exists
@@ -106,7 +108,6 @@ namespace Jasmine.Restful
              */
 
             await context.HttpContext.Response.Body.FlushAsync();
-
 
         }
     }

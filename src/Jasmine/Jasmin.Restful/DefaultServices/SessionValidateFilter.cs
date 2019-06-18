@@ -6,7 +6,7 @@ namespace Jasmine.Restful
 {
     public class SessionValidateFilter : AbstractFilter<HttpFilterContext>
     {
-        public SessionValidateFilter(ISessionManager manager) : base("Session-Validate-Filter")
+        public SessionValidateFilter(ISessionManager manager) 
         {
             _manager = manager;
         }
@@ -15,11 +15,11 @@ namespace Jasmine.Restful
         {
             context.HttpContext.Request.Cookies.TryGetValue("session", out var session);
 
-            var level = _manager.GetSession(session);
+            var user = _manager.GetSession(session);
 
-            if (level!=null)
+            if (user!=null)
             {
-                context.Datas.Add("level", (AuntenticateLevel)level);
+                context.PipelineDatas.Add("level", user);
 
                 return HasNext ? Next.FiltsAsync(context) : Task.CompletedTask;
             }

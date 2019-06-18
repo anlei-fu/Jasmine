@@ -30,9 +30,9 @@ namespace Jasmine.Common
 
         public string Name { get; set; }
         [JsonIgnore]
-        public IFilterPipeline<T> ErrorPileline { get; protected set; }
+        public IFilterPipeline<T> ErrorPileline { get;  set; }
         [JsonIgnore]
-        public IFilterPipeline<T> Pipeline { get; protected set; }
+        public IFilterPipeline<T> Pipeline { get;  set; }
 
         public IMetric Metric { get; } = new Metric();
 
@@ -42,7 +42,7 @@ namespace Jasmine.Common
         {
             get
             {
-               return    _available && _currentConcurrency < MaxConcurrency;
+               return  _available && _currentConcurrency < MaxConcurrency;
             }
         }
 
@@ -69,7 +69,8 @@ namespace Jasmine.Common
             try
             {
 
-                await Pipeline.First.FiltsAsync(context);
+                await Pipeline.First.FiltsAsync(context).ConfigureAwait(false);
+
                 item.Sucessed = true;
 
             }
@@ -78,7 +79,7 @@ namespace Jasmine.Common
                 item.Sucessed = false;
                 _logger?.Error(ex);
 
-                await ErrorPileline.First.FiltsAsync(context);
+                await ErrorPileline.First.FiltsAsync(context).ConfigureAwait(false);
 
 
             }

@@ -8,13 +8,13 @@ namespace Jasmine.Common
     /// proxy a method invokation ,in a filter pipeline 
     /// </summary>
     /// <typeparam name="T"> context type</typeparam>
-    public abstract class AbstractProxyFilter<T> : AbstractFilter<T>
+    public abstract class AbstractInvokationProxyFilter<T> : AbstractFilter<T>
     {
-        public AbstractProxyFilter(Method method, IRequestParamteterResolver<T> resolver, object instance, string name) : base(name)
+        public AbstractInvokationProxyFilter(Method method, IRequestParamteterResolver<T> resolver, object instance) 
         {
-            _instance = instance ?? throw new ArgumentNullException();
-            _method = method ?? throw new ArgumentException();
-            _resolver = resolver ?? throw new ArgumentException();
+            _instance = instance ?? throw new ArgumentNullException(nameof(method));
+            _method = method ?? throw new ArgumentException(nameof(resolver));
+            _resolver = resolver ?? throw new ArgumentException(nameof(instance));
         }
         private object _instance;
         private Method _method;
@@ -35,7 +35,7 @@ namespace Jasmine.Common
         }
 
         /// <summary>
-        ///  leave a interceptor , after method susccessfully invoked
+        ///  leave a intercept interface to do something after method susccessfully invoked
         /// </summary>
         /// <param name="context"></param>
         /// <param name="_return"> invoke result</param>

@@ -5,7 +5,7 @@ namespace Jasmine.Common.Attributes
    
     public class BeforeInterceptorAttribute : InterceptorAttribute
     {
-        public BeforeInterceptorAttribute(string name) : base(name)
+        public BeforeInterceptorAttribute(Type type) : base(type)
         {
         }
     }

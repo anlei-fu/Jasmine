@@ -4,11 +4,11 @@ namespace Jasmine.Common
 {
     public abstract class AbstractFilter<T> : IFilter<T>
     {
-        public AbstractFilter(string name)
+        public AbstractFilter()
         {
-            Name = name;
+          
         }
-        public string Name { get; }
+        public  string Name => GetType().FullName;
 
         public IFilter<T> Next { get; set; }
 

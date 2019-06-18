@@ -2,6 +2,7 @@
 using Jasmine.Reflection;
 using Jasmine.Serialization;
 using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 
 namespace Jasmine.Restful
@@ -21,12 +22,12 @@ namespace Jasmine.Restful
         public RestfulRequestParameterMetaData[] Parameters { get; internal set; }
 
         public string ExampleParameter { get; set; }
-        public IList<string> BeforeFilters { get; } = new List<string>();
+        public IList<Type> BeforeFilters { get; } = new List<Type>();
 
-        public IList<string> AfterFilters { get; } = new List<string>();
+        public IList<Type> AfterFilters { get; } = new List<Type>();
 
-        public IList<string> AroundFilters { get; } = new List<string>();
+        public IList<Type> AroundFilters { get; } = new List<Type>();
 
-        public IList<string> ErrorFilters { get; } = new List<string>();
+        public IList<Type> ErrorFilters { get; } = new List<Type>();
     }
 }

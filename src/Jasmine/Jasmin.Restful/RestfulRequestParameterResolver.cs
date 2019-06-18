@@ -34,7 +34,19 @@ namespace Jasmine.Restful
                 }
                 else if (_parameters[i].FromData)
                 {
-                    results[i] = context.Datas[_parameters[i].DataKey];
+                    results[i] = context.PipelineDatas[_parameters[i].DataKey];
+                }
+                else if(_parameters[i].FromHeader)
+                {
+
+                }
+                else if(_parameters[i].FromCookie)
+                {
+
+                }
+                else if(_parameters[i].FromReturn)
+                {
+
                 }
                 else
                 {

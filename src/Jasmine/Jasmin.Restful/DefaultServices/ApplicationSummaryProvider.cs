@@ -7,7 +7,7 @@ namespace Jasmine.Restful.DefaultServices
     public  class ApplicationSummaryProvider
     {
         [Path("/api/getsummary")]
-        public SystemSummary GetSummary()
+        public RestfulApplicationSummary GetSummary()
         {
             return null;
         }

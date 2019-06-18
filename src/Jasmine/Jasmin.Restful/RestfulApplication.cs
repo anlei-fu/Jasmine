@@ -1,4 +1,4 @@
-﻿using Jasmine.Common;
+﻿using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using System.Threading.Tasks;
 
@@ -6,60 +6,44 @@ namespace Jasmine.Restful
 {
     public class RestfulApplication
     {
-        public RestfulApplication(int port, IDispatcher<HttpFilterContext> dispatcher)
+        private RestfulApplication()
         {
            
         }
 
-        private ListenOption _listenOption;
-        private SslOption _sslOption;
-        private StaticFileOption _fileOption;
-    
-        
+        private readonly object _locker = new object();
+        private bool _running = false;
 
-        private IWebHost _webHost;
 
-        public  Task StartAsync()
+        private IWebHost _server;
+
+        public async Task<bool> StartAsync()
         {
+            lock(_locker)
+            {
+                if (_running)
+                    return false;
+            }
 
-            //_webHost = WebHost.CreateDefaultBuilder()
-            //                  .UseKestrel()
-            //                  .ConfigureKestrel(
-            //                                 option =>
-            //                                 {
-            //                                     option.ConfigureEndpointDefaults(
-            //                                                    kestrelOptions =>
-            //                                                    {
-            //                                                        if (!_portSeted)
-            //                                                        {
-            //                                                            kestrelOptions.IPEndPoint = new IPEndPoint(IPAddress.Any, _port);
 
-            //                                                            _portSeted = true;
-            //                                                        }
-            //                                                    });
-            //                                 })
-            //                  .ConfigureServices(
-            //                                 services =>
-            //                                {
-            //                                    services.AddSingleton<JasmineResfulMiddleware>();
-            //                                })
-            //                  .Configure(
-            //                                app =>
-            //                                {
-            //                                    JasmineResfulMiddleware.Dispatcher = _dispatcher;
+            _server = WebHost.CreateDefaultBuilder().Build();
 
-            //                                    app.UseMiddleware<JasmineResfulMiddleware>();
-            //                                })
-            //                  .Build();
+            await _server.RunAsync();
 
-            //await _webHost.RunAsync();
-
-            return null;
+            return true;
 
         }
-        public async Task StopAsync()
+        public  async Task<bool> StopAsync()
         {
-            await _webHost.StopAsync();
+            lock (_locker)
+            {
+                if (_running)
+                    return false;
+            }
+
+            await _server.StopAsync();
+
+            return true;
         }
 
 

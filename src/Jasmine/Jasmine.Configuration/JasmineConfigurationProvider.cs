@@ -91,7 +91,7 @@ namespace Jasmine.Configuration
          * ${}$  represent a exists config template
          * @{}@  respresent a varible
          * 
-         * [] represent a  real value to replace varible parameter ,parameters splite by ',', as form  [paraname;value,paraname:value]
+         * [] represent a  real value to replace varible parameter ,parameters splite by ',', as form  [paraname1;value,paraname2:value]
          * value can get from another template  [paraname:template] as like 'address.localhost[host:${address.host}$,port:${adress.port}$]'
          * 
          * every template must use full name to visit
@@ -101,7 +101,7 @@ namespace Jasmine.Configuration
          * group by tag '<config-group></config-group name=''>','name' attr is required,name as a namespace of config
          * template  name equels  to tag name  ,can use a value attr to represent like '<localhost value="127.0.0.1:80">' or inner-text
          * like '<localhost>127.0.0.1:80</localhost>',it  also can be empty
-         *  can use a '<import path=""/>' to load a another config file,path attr is required and suggest  using full path, so import  is a key keyword,
+         *  can use a '<import path=""/>' to load a another config file,path attr is required and suggest  using full path, so 'import'  is a  keyword,
          *  it can not use to represent a template name
          * 
          * warn: maybe throw a stack overflow exception, cause template dependency loop,

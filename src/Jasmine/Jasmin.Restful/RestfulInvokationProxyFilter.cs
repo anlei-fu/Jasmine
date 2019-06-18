@@ -6,9 +6,9 @@ namespace Jasmine.Restful
     /// <summary>
     /// reflect invoke service method
     /// </summary>
-    public class RestfulProxyFilter : AbstractProxyFilter<HttpFilterContext>
+    public class RestfulInvokationProxyFilter : AbstractInvokationProxyFilter<HttpFilterContext>
     {
-        public RestfulProxyFilter(Method method, IRequestParamteterResolver<HttpFilterContext> resolver, object instance) : base(method, resolver, instance, "restful-proxy-filter")
+        public RestfulInvokationProxyFilter(Method method, IRequestParamteterResolver<HttpFilterContext> resolver, object instance) : base(method, resolver, instance)
         {
         }
 

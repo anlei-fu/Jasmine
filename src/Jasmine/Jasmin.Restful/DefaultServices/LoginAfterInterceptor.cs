@@ -5,7 +5,7 @@ namespace Jasmine.Restful.DefaultServices
 {
     public class LoginAfterInterceptor : AbstractFilter<HttpFilterContext>
     {
-        public LoginAfterInterceptor(ISessionManager manager) : base("login-after-interceptor")
+        public LoginAfterInterceptor(ISessionManager manager) 
         {
             _manager = manager;
         }

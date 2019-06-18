@@ -8,11 +8,15 @@ namespace Jasmine.Restful.Implement
 {
     public class JasmineResfulMiddleware : IMiddleware, INameFearture
     {
-        public static IDispatcher<HttpFilterContext> Dispatcher;
+        public JasmineResfulMiddleware()
+        {
+            _pool = new HttpFilterContextPool(_dispatcher, 1000);
+        }
+        private IDispatcher<HttpFilterContext> _dispatcher=new RestfulDispatcher("restful-dispatcher",RestfulApplicationGlobalConfig.ProcessorManager);
 
         private ILog _logger=LogManager.GetLogger(typeof(JasmineResfulMiddleware));
 
-        private IPool<HttpFilterContext> _pool = new HttpFilterContextPool(10000);
+        private IPool<HttpFilterContext> _pool;
 
         public string Name =>"Restful-Middleware";
 
@@ -24,7 +28,7 @@ namespace Jasmine.Restful.Implement
 
             try
             {
-                return Dispatcher.DispatchAsync(context.Request.Path.ToString().ToLower(), filterContext);
+                return _dispatcher.DispatchAsync(context.Request.Path.ToString().ToLower(), filterContext);
             }
             catch (Exception ex)
             {

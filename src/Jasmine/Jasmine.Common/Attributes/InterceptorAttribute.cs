@@ -3,12 +3,12 @@
 namespace Jasmine.Common.Attributes
 {
     [AttributeUsage(AttributeTargets.Class|AttributeTargets.Method,AllowMultiple =true,Inherited =true)]
-    public abstract  class InterceptorAttribute:Attribute,INameFearture
+    public abstract  class InterceptorAttribute:Attribute
     {
-        public InterceptorAttribute(string name)
+        public InterceptorAttribute(Type type)
         {
-            Name = name;
+            FilterType = type;
         }
-        public string Name { get; }
+        public  Type FilterType { get; }
     }
 }

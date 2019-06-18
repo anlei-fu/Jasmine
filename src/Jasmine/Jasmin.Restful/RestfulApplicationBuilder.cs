@@ -1,8 +1,6 @@
 ﻿using Jasmine.Common;
 using Jasmine.Configuration;
 using Jasmine.Ioc;
-using Jasmine.Restful.Attributes;
-using Jasmine.Restful.DefaultServices;
 using System;
 
 namespace Jasmine.Restful
@@ -18,51 +16,49 @@ namespace Jasmine.Restful
         {
           
         }
-
-        private ListenOption _listenOption = new ListenOption()
+   
+        public RestfulApplicationBuilder ConfigServer(Action<ServerConfig> config)
         {
-
-        };
-
-        private SslOption _sslOption = new SslOption()
+            return this;
+        }
+        public RestfulApplicationBuilder GenerateTestFile()
         {
+            RestfulApplicationGlobalConfig.GenerateTestFile = true;
 
-        };
+            return this;
+        }
 
-        private StaticFileOption _fileOption = new StaticFileOption()
+        public RestfulApplicationBuilder ConfigLog4()
         {
+            return this;
+        }
 
-        };
-        private RestfulProcessorManager _processorManager => RestfulProcessorManager.Instance;
+        public RestfulApplicationBuilder SetDebugMode()
+        {
+            return this;
+        }
 
-        private bool _useDashBoard = false;
-        private bool _useSsl = false;
-        private bool _generateTestFile=false;
-        private bool _generateDescrptionFile = false;
+        public RestfulApplicationBuilder GenerateDescription()
+        {
+            RestfulApplicationGlobalConfig.GenerateTestFile = true;
+            return this;
+        }
         /// <summary>
         ///  a service stat and config web ui 
         ///  use any browser to open http://localhost :port/api/dashboard
         /// </summary>
         /// <returns></returns>
-        public RestfulApplicationBuilder UseDashBoard()
+        public RestfulApplicationBuilder DisableDashBoard()
         {
-            _useDashBoard = true;
+           RestfulApplicationGlobalConfig.UseDashBorad=false;
             return this;
         }
-        /// <summary>
-        /// if do't use ssl ,it doesn't need to config
-        /// <see cref="SslOption"/>
-        /// </summary>
-        /// <param name="config"></param>
-        /// <returns></returns>
-        public RestfulApplicationBuilder UseSsl(Action<SslOption> config)
+
+        public RestfulApplicationBuilder DisnableSystemHttpApi()
         {
-            _useSsl = true;
-
-            config(_sslOption);
-
             return this;
         }
+       
         /// <summary>
         /// config restful service <see cref="RestfulProcessorManager"/>
         /// </summary>
@@ -70,41 +66,20 @@ namespace Jasmine.Restful
         /// <returns></returns>
         public RestfulApplicationBuilder ConfigRestfulService(Action<RestfulProcessorManager> config)
         {
-            config(_processorManager);
+            config(RestfulApplicationGlobalConfig.ProcessorManager);
 
             return this;
         }
-        /// <summary>
-        /// create a test file use to test application
-        /// </summary>
-        /// <param name="option"></param>
-        /// <returns></returns>
-        public RestfulApplicationBuilder GenerateTestFile()
+      
+        public RestfulApplicationBuilder UseStaticFile(string virtueRootPath,long maxMemoryUsage)
         {
-            _generateTestFile = true;
-            return this;
-        }
-        /// <summary>
-        /// create a description file to descript application
-        /// </summary>
-        /// <param name="option"></param>
-        /// <returns></returns>
-        public RestfulApplicationBuilder GenerateDescriptionFile()
-        {
-            _generateDescrptionFile = true;
-            return this;
-        }
-        /// <summary>
-        ///  use static file  service
-        /// </summary>
-        /// <param name="config"></param>
-        /// <returns></returns>
-        public RestfulApplicationBuilder UseStaticFile(Action<StaticFileOption> config)
-        {
-            config(_fileOption);
+            RestfulApplicationGlobalConfig.VirtueRootPath = virtueRootPath;
+            RestfulApplicationGlobalConfig.StaticFileEnabled = true;
+            RestfulApplicationGlobalConfig.MaxFileCacheMeomoryUsage = maxMemoryUsage;
 
             return this;
         }
+  
         /// <summary>
         /// config global  configuration  povider <see cref="JasmineConfigurationProvider"/>
         /// </summary>
@@ -123,6 +98,10 @@ namespace Jasmine.Restful
         /// <returns></returns>
         public RestfulApplicationBuilder UseDefaultErrorFileter<T>() where T:IFilter<HttpFilterContext>
         {
+            RestfulApplicationGlobalConfig.UseDefaultErrorFilter = true;
+
+            RestfulApplicationGlobalConfig.DefaultErrorFilter = typeof(T);
+
             return this;
         }
         
@@ -146,7 +125,7 @@ namespace Jasmine.Restful
         {
             return null;
         }
-        public RestfulApplication Build(string xmlConfigFilePath)
+        public RestfulApplicationBuilder LoadConfigFile(string xmlConfigFilePath)
         {
             return null;
         }

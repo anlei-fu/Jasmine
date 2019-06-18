@@ -4,7 +4,7 @@ namespace Jasmine.Common.Attributes
 {
     public class ErrorInterceptor : InterceptorAttribute
     {
-        public ErrorInterceptor(string name) : base(name)
+        public ErrorInterceptor(Type type) : base(type)
         {
         }
     }

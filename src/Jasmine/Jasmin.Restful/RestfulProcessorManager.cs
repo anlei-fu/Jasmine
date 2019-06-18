@@ -8,7 +8,7 @@ namespace Jasmine.Restful
 {
     [Restful]
     [Path("/api")]
-    [BeforeInterceptor("cookie-validate-filter")]
+    [BeforeInterceptor(typeof(SessionValidateFilter))]
     public class RestfulProcessorManager : AbstractProcessorManager<HttpFilterContext>
     {
         private RestfulProcessorManager()
@@ -16,7 +16,7 @@ namespace Jasmine.Restful
 
         }
         public static readonly IRequestProcessorManager<HttpFilterContext> Instance = new RestfulProcessorManager();
-        public override string Name => "RestfulProcessorManager";
+        public override string Name => "Restful-Processor-Manager";
 
         public void Scan()
         {

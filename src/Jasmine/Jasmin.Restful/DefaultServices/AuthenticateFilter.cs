@@ -6,7 +6,7 @@ namespace Jasmine.Restful.DefaultServices
 {
     public class AuthenticateFilter : AbstractFilter<HttpFilterContext>
     {
-        public AuthenticateFilter(AuntenticateLevel level) : base("Aunthenticate-Filter")
+        public AuthenticateFilter(AuntenticateLevel level) 
         {
             _level = level;
         }
@@ -16,9 +16,9 @@ namespace Jasmine.Restful.DefaultServices
         {
             bool pass = false;
 
-            if(context.Datas.ContainsKey("level"))
+            if(context.PipelineDatas.ContainsKey("level"))
             {
-                if ((int)context.Datas["level"] >= (int)_level)
+                if ((int)context.PipelineDatas["level"] >= (int)_level)
                     pass = true;
             }
 

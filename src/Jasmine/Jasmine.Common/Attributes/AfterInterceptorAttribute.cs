@@ -1,8 +1,10 @@
-﻿namespace Jasmine.Common.Attributes
+﻿using System;
+
+namespace Jasmine.Common.Attributes
 {
     public class AfterInterceptorAttribute : InterceptorAttribute
     {
-        public AfterInterceptorAttribute(string name) : base(name)
+        public AfterInterceptorAttribute(Type type) : base(type)
         {
         }
     }

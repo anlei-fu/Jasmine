@@ -55,28 +55,28 @@ namespace Jasmine.Restful
                 {
                     foreach (var before in item)
                     {
-                        metaData.BeforeFilters.Add(((BeforeInterceptorAttribute)before).Name);
+                        metaData.BeforeFilters.Add(((BeforeInterceptorAttribute)before).FilterType);
                     }
                 }
                 else if (attrType == typeof(AfterInterceptorAttribute))
                 {
                     foreach (var after in item)
                     {
-                        metaData.BeforeFilters.Add(((AfterInterceptorAttribute)after).Name);
+                        metaData.BeforeFilters.Add(((AfterInterceptorAttribute)after).FilterType);
                     }
                 }
                 else if (attrType == typeof(AroundInterceptorAttribute))
                 {
                     foreach (var around in item)
                     {
-                        metaData.BeforeFilters.Add(((AroundInterceptorAttribute)around).Name);
+                        metaData.BeforeFilters.Add(((AroundInterceptorAttribute)around).FilterType);
                     }
                 }
                 else if (attrType == typeof(ErrorInterceptor))
                 {
                     foreach (var error in item)
                     {
-                        metaData.BeforeFilters.Add(((ErrorInterceptor)error).Name);
+                        metaData.BeforeFilters.Add(((ErrorInterceptor)error).FilterType);
                     }
                 }
                 else if (attrType == typeof(SerializationModeAtribute))
@@ -205,28 +205,28 @@ namespace Jasmine.Restful
                 {
                     foreach (var before in item)
                     {
-                        metaData.BeforeFilters.Add(((BeforeInterceptorAttribute)before).Name);
+                        metaData.BeforeFilters.Add(((BeforeInterceptorAttribute)before).FilterType);
                     }
                 }
                 else if (attrType == typeof(AfterInterceptorAttribute))
                 {
                     foreach (var after in item)
                     {
-                        metaData.BeforeFilters.Add(((AfterInterceptorAttribute)after).Name);
+                        metaData.BeforeFilters.Add(((AfterInterceptorAttribute)after).FilterType);
                     }
                 }
                 else if (attrType == typeof(AroundInterceptorAttribute))
                 {
                     foreach (var around in item)
                     {
-                        metaData.BeforeFilters.Add(((AroundInterceptorAttribute)around).Name);
+                        metaData.BeforeFilters.Add(((AroundInterceptorAttribute)around).FilterType);
                     }
                 }
                 else if (attrType == typeof(ErrorInterceptor))
                 {
                     foreach (var error in item)
                     {
-                        metaData.BeforeFilters.Add(((ErrorInterceptor)error).Name);
+                        metaData.BeforeFilters.Add(((ErrorInterceptor)error).FilterType);
                     }
                 }
                 else if (attrType == typeof(SerializationModeAtribute))
