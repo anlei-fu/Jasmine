@@ -3,28 +3,16 @@ using System;
 using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Linq;
+using System.Threading.Tasks;
 
 namespace Jasmine.Cache
 {
-    /// <summary>
-    /// lru-k cache
-    /// it cache latest recent used item wthin in capacity
-    /// </summary>
-    /// <typeparam name="Tkey"></typeparam>
-    /// <typeparam name="Tvalue"></typeparam>
-    public class JasmineLruCache<Tkey, Tvalue> : ICache<Tkey, Tvalue>
+    public class LruFileCache :IReadOnlyCollection<KeyValuePair<string, byte[]>>
     {
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="threshold"> over it in time interval will be pushed into cache  </param>
-        /// <param name="capacity"></param>
-        /// <param name="loader">laod value by key <see cref="ILoader{Tkey, TValue}"/></param>
-        /// <param name="checkInterval"><see cref="LruTimeoutJob"/>  will clear precache every interval</param>
-        public JasmineLruCache(byte threshold, int capacity, ILoader<Tkey, Tvalue> loader, int checkInterval)
+
+        public LruFileCache(byte threshold, long maxMemoryUsage, int checkInterval, IFileLoader loader)
         {
-            Capacity = capacity;
+            MaxMemoryUsage = maxMemoryUsage;
             _threshold = threshold;
 
             _loader = loader ?? throw new ArgumentNullException(nameof(loader));
@@ -34,29 +22,25 @@ namespace Jasmine.Cache
             var job = new LruTimeoutJob(_precache, checkInterval);
             _scheduler.Schedule(job);
         }
+        private readonly ConcurrentDictionary<string, byte[]> _innerCache = new ConcurrentDictionary<string, byte[]>();
+        private readonly ConcurrentDictionary<string, byte> _precache = new ConcurrentDictionary<string, byte>();
+        private readonly ConcurrentDictionary<string, Node> _orderQueue = new ConcurrentDictionary<string, Node>();
 
-        private readonly ConcurrentDictionary<Tkey, Tvalue> _innerCache = new ConcurrentDictionary<Tkey, Tvalue>();
-        private readonly ConcurrentDictionary<Tkey, byte> _precache = new ConcurrentDictionary<Tkey, byte>();
-        private readonly ConcurrentDictionary<Tkey, Node> _orderQueue = new ConcurrentDictionary<Tkey, Node>();
-        private readonly ILoader<Tkey, Tvalue> _loader;
+        private readonly IFileLoader _loader;
         private byte _threshold;
         private readonly object _locker = new object();
         private readonly Node _head = new Node();
         private readonly Node _tail = new Node();
         private readonly JasmineTimeoutScheduler _scheduler;
         private bool _started;
-        public int Capacity { get; }
+        public long MaxMemoryUsage { get; }
+        public long CurrentUsage { get; private set; }
         public int Count => _innerCache.Count;
-
-        public IList<Tkey> Keys => _innerCache.Keys.ToList();
-
-        public IList<Tvalue> Values => _innerCache.Values.ToList();
-
         public void Start()
         {
-            lock(_locker)
+            lock (_locker)
             {
-                if(!_started)
+                if (!_started)
                 {
                     _started = true;
 
@@ -77,12 +61,14 @@ namespace Jasmine.Cache
                 }
             }
         }
-        public bool ConatinsKey(Tkey key)
+
+
+        public bool ConatinsKey(string key)
         {
             return _innerCache.ContainsKey(key);
         }
 
-        public void Delete(Tkey key)
+        public void Delete(string key)
         {
             if (_innerCache.TryRemove(key, out var _))
             {
@@ -93,9 +79,16 @@ namespace Jasmine.Cache
             }
         }
 
-        public Tvalue GetValue(Tkey key)
+        public IEnumerator<KeyValuePair<string, byte[]>> GetEnumerator()
         {
-            // move to first
+            foreach (var item in _innerCache)
+            {
+                yield return item;
+            }
+        }
+
+        public async Task<byte[]> GetFileAsync(string key)
+        {
             if (_innerCache.TryGetValue(key, out var value))
             {
                 lock (_locker)
@@ -119,14 +112,14 @@ namespace Jasmine.Cache
             else
             {
                 // try load value
-                var result = _loader.Load(key);
+                var result =  await _loader.LoadAsync(key);
 
                 lock (_locker)
                 {
                     // load failed
-                    if (result.Equals(default(Tvalue)))
+                    if (result == null)
                     {
-                        return result;
+                        return null;
                     }
 
                     _precache.TryAdd(key, 0);
@@ -141,12 +134,21 @@ namespace Jasmine.Cache
                             Key = key
                         };
 
+                        CurrentUsage += value.Length;
+
                         _orderQueue.TryAdd(key, node);
 
                         _innerCache.TryAdd(key, value);
 
+                        var temp = _head.Next;
+
+                        temp.Previous = node;
+                        node.Next = temp;
+                        node.Previous = _head;
+                        _head.Next = node;
+
                         // over capacity  remove last
-                        if (_orderQueue.Count > Capacity)
+                        while (CurrentUsage > MaxMemoryUsage)
                         {
                             var last = _tail.Previous;
 
@@ -155,13 +157,7 @@ namespace Jasmine.Cache
 
                             last.Previous = last.Next = null;
 
-                            var temp = _head.Next;
-
-                            temp.Previous = node;
-                            node.Next = temp;
-                            node.Previous = _head;
-                            _head.Next = node;
-
+                            _innerCache.TryRemove(last.Key, out var discard);
                             _orderQueue.TryRemove(last.Key, out var _);
                         }
                     }
@@ -173,29 +169,20 @@ namespace Jasmine.Cache
             }
         }
 
-        public IEnumerator<KeyValuePair<Tkey, Tvalue>> GetEnumerator()
-        {
-            foreach (var item in _innerCache)
-            {
-                yield return item;
-            }
-        }
-
         IEnumerator IEnumerable.GetEnumerator()
         {
             return _innerCache.GetEnumerator();
         }
-
         private class LruTimeoutJob : TimeoutJob
         {
-            public LruTimeoutJob(ConcurrentDictionary<Tkey, byte> precache, int interval) : base(DateTime.Now.AddMilliseconds(interval))
+            public LruTimeoutJob(ConcurrentDictionary<string, byte> precache, int interval) : base(DateTime.Now.AddMilliseconds(interval))
             {
                 _precache = precache;
                 _checkInterval = interval;
             }
             private int _checkInterval;
 
-            private ConcurrentDictionary<Tkey, byte> _precache;
+            private ConcurrentDictionary<string, byte> _precache;
 
             /// <summary>
             /// need to think about  how  kill this checking thread;
@@ -211,7 +198,7 @@ namespace Jasmine.Cache
         }
         private class Node
         {
-            public Tkey Key { get; set; }
+            public string Key { get; set; }
             public Node Previous { get; set; }
             public Node Next { get; set; }
         }

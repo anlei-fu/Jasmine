@@ -12,7 +12,7 @@ namespace Jasmine.Restful
         {
         }
         private ILog _logger=LogManager.GetLogger(typeof(RestfulDispatcher));
-        public IStaticFileProvider FileProvider { get; set; } = new JasmineStaticFileProvider();
+      
     
         public override async Task DispatchAsync(string path, HttpFilterContext context)
         {
@@ -72,7 +72,7 @@ namespace Jasmine.Restful
              */ 
             else if(RestfulApplicationGlobalConfig.StaticFileEnabled)
             {
-                var stream = await FileProvider.GetStreamAsync(RestfulApplicationGlobalConfig.VirtueRootPath + path);
+                var stream = await RestfulApplicationBaseComponent.StaticFileProvider.GetStreamAsync(RestfulApplicationGlobalConfig.VirtueRootPath + path);
 
                 /*
                  *  file not exists

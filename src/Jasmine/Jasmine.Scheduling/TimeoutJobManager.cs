@@ -131,9 +131,9 @@ namespace Jasmine.Scheduling
                 if (min == null)
                     return DEFAULT_WAKEUP_TIMEOUT;
 
-                var timeSpan =min.Data.ScheduledExcutingTime<DateTime.Now?0: (min.Data.ScheduledExcutingTime - DateTime.Now).TotalMilliseconds;
+                var tiemout =min.Data.ScheduledExcutingTime<DateTime.Now?0: (min.Data.ScheduledExcutingTime - DateTime.Now).TotalMilliseconds;
 
-                return timeSpan>DEFAULT_WAKEUP_TIMEOUT?DEFAULT_WAKEUP_TIMEOUT:(int)timeSpan;
+                return tiemout>DEFAULT_WAKEUP_TIMEOUT?DEFAULT_WAKEUP_TIMEOUT:(int)tiemout;
             }
         }
 

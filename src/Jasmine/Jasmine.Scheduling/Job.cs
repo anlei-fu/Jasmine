@@ -6,8 +6,7 @@ namespace Jasmine.Scheduling
     public abstract class Job 
     {
         private static int _id = 0;
-        private static long newId => Interlocked.Increment(ref _id);
-        public long Id { get; } = newId;
+        public long Id { get; } = Interlocked.Increment(ref _id);
 
         public JobState State { get; internal set; }
         public DateTime ScheduledTime { get; internal set; }

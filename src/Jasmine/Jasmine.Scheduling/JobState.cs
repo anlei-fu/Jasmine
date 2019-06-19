@@ -5,9 +5,9 @@
         /// <summary>
         /// 尚未被计划
         /// </summary>
-        NotScheduled,
+        UnScheduled,
         /// <summary>
-        /// 已安排计划
+        /// 已计划
         /// </summary>
         Scheduled,
         /// <summary>

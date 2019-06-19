@@ -3,6 +3,7 @@ using System;
 using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Jasmine.Cache
 {
@@ -28,6 +29,10 @@ namespace Jasmine.Cache
 
 
         public int Count => _innerCache.Count;
+
+        public IList<Tkey> Keys => _innerCache.Keys.ToList();
+
+        public IList<Tvalue> Values => _innerCache.Values.ToList();
 
         public bool AdjustTimeout(Tkey key,  long timeout)
         {

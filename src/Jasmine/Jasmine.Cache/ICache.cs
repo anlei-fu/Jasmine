@@ -7,6 +7,9 @@ namespace Jasmine.Cache
         Tvalue GetValue(TKey key);
         bool ConatinsKey(TKey key);
         void Delete(TKey key);
+
+        IList<TKey> Keys { get; }
+        IList<Tvalue> Values { get; }
       
     }
 }

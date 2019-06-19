@@ -12,14 +12,14 @@ namespace Jasmine.Scheduling
         public DateTime ScheduledExcutingTime { get;internal set; }
      
         public new JasmineTimeoutScheduler Scheduler { get; internal set; }
-        public void AdjustTimeout(long millionSeconds)
+        public void AdjustTimeout(long timeout)
         {
             if (State!=JobState.Scheduled)
             {
                 return;
             }
 
-           Scheduler.AdjustTimeout(Id, millionSeconds);
+           Scheduler.AdjustTimeout(Id, timeout);
         }
 
         public override abstract void Excute();

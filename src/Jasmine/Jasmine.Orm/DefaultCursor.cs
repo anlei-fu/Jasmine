@@ -211,7 +211,7 @@ namespace Jasmine.Orm.Implements
         }
 
         /// <summary>
-        ///  spend  much time  when  cast   List[dynamic] to List[T]
+        ///  spend  much time  when  cast   List[dynamic] to List[T],so  use verbose code to instead call this method
         /// </summary>
         /// <param name="type"></param>
         /// <param name="doAssociateQuery"></param>
@@ -224,7 +224,7 @@ namespace Jasmine.Orm.Implements
 
                 var resolveItems = createResolveItems(_context, table);
 
-                var instance = resolveOneRowInternal(resolveItems, table);
+                var instance = resolveOneRow(resolveItems, table);
 
                 if (doAssociateQuery)
                 {
@@ -247,7 +247,7 @@ namespace Jasmine.Orm.Implements
 
                 var resolveItems = createResolveItems(_context, table);
 
-                var instance = resolveOneRowInternal(resolveItems, table);
+                var instance = resolveOneRow(resolveItems, table);
 
                 if (doAssociateQuery)
                 {
@@ -276,7 +276,7 @@ namespace Jasmine.Orm.Implements
             {
                 if (_context.Reader.Read())
                 {
-                    var instance = resolveOneRowInternal(resolveItems, table);
+                    var instance = resolveOneRow(resolveItems, table);
 
                     if (doAssociateQuery)
                     {
@@ -425,8 +425,13 @@ namespace Jasmine.Orm.Implements
 
             return ls;
         }
-
-        private dynamic resolveOneRowInternal(List<ResolveItem> resolveItems, TableMetaData table)
+        /// <summary>
+        /// can not be inline ,call this method ,if loop count is big ,will get the speed slower
+        /// </summary>
+        /// <param name="resolveItems"></param>
+        /// <param name="table"></param>
+        /// <returns></returns>
+        private dynamic resolveOneRow(List<ResolveItem> resolveItems, TableMetaData table)
         {
 
             var instanceMap = new Dictionary<string, object>();

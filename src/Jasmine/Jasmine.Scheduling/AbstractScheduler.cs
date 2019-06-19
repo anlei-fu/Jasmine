@@ -13,7 +13,7 @@ namespace Jasmine.Scheduling
         public AbstractScheduler(IJobManager<T> jobmanager, int maxConcurrency =0)
         {
             MaxConcurrency = maxConcurrency==0?DEFAULT_CONCURRENCY:maxConcurrency;
-            _concurrencyLock = new SemaphoreSlim(MaxConcurrency);
+            _concurrencyControlLock = new SemaphoreSlim(MaxConcurrency);
             _jobManager = jobmanager;
 
         }
@@ -21,7 +21,7 @@ namespace Jasmine.Scheduling
 
         private static readonly int DEFAULT_CONCURRENCY = Environment.ProcessorCount * 2;
 
-        private SemaphoreSlim _concurrencyLock;
+        private SemaphoreSlim _concurrencyControlLock;
         private readonly object _locker = new object();
         private int _jobExcuted;
         private int _jobScheduled;
@@ -65,7 +65,7 @@ namespace Jasmine.Scheduling
             }
         }
 
-        public bool Stop(bool waitForAllJobComplete)
+        public bool Stop(bool waitForAllJobComplete=false)
         {
             lock (_locker)
             {
@@ -183,16 +183,18 @@ namespace Jasmine.Scheduling
                     {
                         _isSleeping = true;
 
-                        Monitor.Wait(_locker, GetNextJobExcutingTimeout());//sleep some time, the thread will keep running when wait timeout or new job scheduled
+                        Monitor.Wait(_locker, GetNextJobExcutingTimeout());//block some time, the thread will keep running when wait timeout or new job scheduled
                     }
                 }
                 else
                 {
-                    //control max cocurrency
-                    _concurrencyLock.Wait();
+                   // need to design a thread pool or use default task scheduler's pool? when it blocked may cause default task sheduler available threads  not enough
 
                     Task.Run(() =>
                     {
+                        //control max cocurrency
+                        _concurrencyControlLock.Wait();
+
                         try
                         {
                             Interlocked.Decrement(ref _jobUnExcute);
@@ -228,7 +230,7 @@ namespace Jasmine.Scheduling
 
                             Interlocked.Increment(ref _jobExcuted);
 
-                            _concurrencyLock.Release();
+                            _concurrencyControlLock.Release();
                         }
 
                     });
