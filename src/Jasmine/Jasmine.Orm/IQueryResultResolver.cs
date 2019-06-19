@@ -11,5 +11,7 @@ namespace Jasmine.Orm
         /// <param name="type"></param>
         /// <returns></returns>
         IEnumerable<T> Resolve<T>(QueryResultContext context);
+
+        ICursor GetCursor(QueryResultContext context);
     }
 }

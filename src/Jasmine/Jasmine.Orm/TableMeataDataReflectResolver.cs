@@ -158,7 +158,7 @@ namespace Jasmine.Orm
                 // config default sqltype ,if sqltype not be set
                 if (column.SqlType == null)
                 {
-                    column.SqlType = DefaultDataTypeMapper.Instace.GetSqlType(item.PropertyType, table.DataSource);
+                    column.SqlType = SqlServerDataTypeMapper.Instace.GetSqlType(item.PropertyType, table.DataSource);
                 }
 
                 // default column name is property name

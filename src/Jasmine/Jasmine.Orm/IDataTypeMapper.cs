@@ -19,5 +19,8 @@ namespace Jasmine.Orm
         /// <returns></returns>
         Type GetCSharpType(string sqlType, DataSource dataSource);
 
+        string ToSqlString(Type type,object obj);
+        object DoExplictConvert(Type destination, object source);
+
     }
 }

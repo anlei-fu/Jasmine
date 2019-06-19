@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
 using System.Threading.Tasks;
@@ -13,6 +14,15 @@ namespace Jasmine.Orm
     public interface ISqlExcuter
     {
         #region Query....................
+
+        IMutipleResultReader MutipleQuery(string sql);
+
+        Task<IMutipleResultReader> MutipleQueryAsync(string sql);
+
+        IMutipleResultReader MutipleQuery(SqlTemplate template, object parameter);
+
+        Task<IMutipleResultReader> MutipleQueryAsync(SqlTemplate template, object parameter);
+        
         /*
          * raw sql 
          */
@@ -215,8 +225,9 @@ namespace Jasmine.Orm
 
 
         /*
-           * raw sql
-           */
+         * raw sql
+         */
+        ICursor QueryCursor(string sql);
         ICursor QueryCursor<T>(string sql);
         ICursor QueryCursor<T>(string template, object obj);
         ICursor QueryCursor<T>(SqlTemplate template, object obj);
@@ -375,8 +386,8 @@ namespace Jasmine.Orm
         /*
          *  create
          */ 
-        int Create<T>();
-        int CreateWith<T>(string name);
+        int Create<T>(DbTransaction transaction = null);
+        int CreateWith<T>(string name, DbTransaction transaction = null);
 
         /*
          * delete 
@@ -387,8 +398,8 @@ namespace Jasmine.Orm
         /*
          *  drop
          */ 
-        int Drop(string name);
-        int Drop<T>();
+        int Drop(string name, DbTransaction transaction = null);
+        int Drop<T>(DbTransaction transaction = null);
 
 
         /*
@@ -404,10 +415,10 @@ namespace Jasmine.Orm
         /*
          *  insert single row
          */ 
-        int Insert<T>(object data);
-        int InsertWith<T>(string table, object data);
-        int InsertPartial<T>( object data,params string[] columns);
-        int InsertPartialWith<T>(string table,  object data,params string[] columns);
+        int Insert<T>(object data,DbTransaction transaction = null);
+        int InsertWith<T>(string table, object data, DbTransaction transaction = null);
+        int InsertPartial<T>( object data, DbTransaction transaction = null,params string[] columns);
+        int InsertPartialWith<T>(string table,  object data, DbTransaction transaction = null,params string[] columns);
 
 
         /*
@@ -422,10 +433,10 @@ namespace Jasmine.Orm
          *  
          *  sql generated : update table set name='jasmine', food_name='ss'
          */
-        int Update<T>(object parameter);
-        int UpdateWith<T>(string table, object parameter);
-        int UpdateConditional<T>(string condition, object parameter);
-        int UpdateConditionalWidth<T>(string table, string condition, object parameter);
+        int Update<T>(object parameter,DbTransaction transaction=null);
+        int UpdateWith<T>(string table, object parameter, DbTransaction transaction = null);
+        int UpdateConditional<T>(string condition, object parameter, DbTransaction transaction = null);
+        int UpdateConditionalWidth<T>(string table, string condition, object parameter, DbTransaction transaction = null);
 
 
         /*
@@ -440,8 +451,8 @@ namespace Jasmine.Orm
         /*
          *  create
          */
-        Task<int> CreateAsync<T>();
-        Task<int> CreateWithAsync<T>(string name);
+        Task<int> CreateAsync<T>(DbTransaction transaction = null);
+        Task<int> CreateWithAsync<T>(string name, DbTransaction transaction = null);
 
         /*
          * delete 
@@ -452,8 +463,8 @@ namespace Jasmine.Orm
         /*
          *  drop
          */
-        Task<int> DropAsync(string name);
-        Task<int> DropAsync<T>();
+        Task<int> DropAsync(string name, DbTransaction transaction = null);
+        Task<int> DropAsync<T>(DbTransaction transaction = null);
 
 
         /*
@@ -469,19 +480,19 @@ namespace Jasmine.Orm
         /*
          *  insert single row
          */
-        Task<int> InsertAsync<T>(object data);
-        Task<int> InsertWithAsync<T>(string table, object data);
-        Task<int> InsertPartialAsync<T>( object data,params string[] columns );
-        Task<int> InsertPartialWithAsync<T>(string table,  object data, params string[] columns);
+        Task<int> InsertAsync<T>(object data, DbTransaction transaction = null);
+        Task<int> InsertWithAsync<T>(string table, object data, DbTransaction transaction = null);
+        Task<int> InsertPartialAsync<T>( object data, DbTransaction transaction ,params string[] columns );
+        Task<int> InsertPartialWithAsync<T>(string table,  object data, DbTransaction transaction ,params string[] columns);
 
 
         /*
          *  update
          */
-        Task<int> UpdateAsync<T>(object parameter);
-        Task<int> UpdateWithAsync<T>(string table, object parameter);
-        Task<int> UpdateConditionalAsync<T>(string condition, object parameter);
-        Task<int> UpdateConditionalWidthAsync<T>(string table, string condition, object parameter);
+        Task<int> UpdateAsync<T>(object parameter, DbTransaction transaction = null);
+        Task<int> UpdateWithAsync<T>(string table, object parameter, DbTransaction transaction = null);
+        Task<int> UpdateConditionalAsync<T>(string condition, object parameter, DbTransaction transaction = null);
+        Task<int> UpdateConditionalWidthAsync<T>(string table, string condition, object parameter, DbTransaction transaction = null);
 
 
     }

@@ -7,15 +7,19 @@ namespace Jasmine.Orm
 {
     public class QueryResultContext
     {
-        public QueryResultContext(DbDataReader reader)
+        public QueryResultContext(ISqlExcuter excutor,DbDataReader reader,DbConnection connection, IDbConnectionProvider provider)
         {
             Reader = reader;
             ResultTable = QueryResultTableMetaData.Create(reader);
+            ConnectionProvider = provider;
+            Connection = connection;
+            Excutor = excutor;
         }
-
+        public DbConnection Connection { get;  }
+        public IDbConnectionProvider ConnectionProvider { get; }
         public DbDataReader Reader { get; }
         public QueryResultTableMetaData ResultTable { get; }
-
+        public ISqlExcuter Excutor { get; }
     }
 
 

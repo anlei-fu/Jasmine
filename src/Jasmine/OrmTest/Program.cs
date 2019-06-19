@@ -78,7 +78,7 @@ namespace OrmTest
 
             excutor.Create<Animal>();
 
-            int t =1000;
+            int t =10000;
 
 
             Console.WriteLine($"test sqlexcutor and dapper speed,data size is {t}");
@@ -105,8 +105,8 @@ namespace OrmTest
 
             startWatch();
            
-            foreach (var item in ls)
-                connetion.Execute("insert into animal(name,age,canfly) values (@Name,@Age,@CanFly)", item);
+            //foreach (var item in ls)
+            //    connetion.Execute("insert into animal(name,age,canfly) values (@Name,@Age,@CanFly)", item);
 
             PrintDapper();
            
@@ -137,8 +137,8 @@ namespace OrmTest
 
             startWatch();
 
-            foreach (var item in ls)
-                connetion.Execute("insert into animal(name,age) values (@Name,@Age)", item);
+            //foreach (var item in ls)
+            //    connetion.Execute("insert into animal(name,age) values (@Name,@Age)", item);
 
             PrintDapper();
             
@@ -147,8 +147,8 @@ namespace OrmTest
 
             startWatch();
 
-            foreach (var item in ls)
-                excutor.InsertPartial<Animal>(item, "Name", "Age");
+            //foreach (var item in ls)
+            //    excutor.InsertPartial<Animal>(item,null, "Name", "Age");
 
             PrintExcutor();
             End();

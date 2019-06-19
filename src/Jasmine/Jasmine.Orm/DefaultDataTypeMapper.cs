@@ -1,67 +1,11 @@
-﻿using System;
+﻿using Jasmine.Orm.Implements;
+using System;
 using System.Collections.Generic;
 
 namespace Jasmine.Orm
 {
-    public class DefaultDataTypeMapper : IDataTypeMapper
+    public class MySqlDataTypeMapper : IDataTypeMapper
     {
-        private static readonly Dictionary<string, Type> _sqlServerSc = new Dictionary<string, Type>()
-        {
-          {"tinyint",typeof(byte) },
-          {"samllint",typeof(short) },
-          {"int",typeof(int) },
-          {"bigint",typeof(long) },
-          {"bit",typeof(bool) },
-          {"numeric",typeof(float) },
-          {"float",typeof(double) },
-          {"decimal",typeof(decimal) },
-          {"money",typeof(double) },
-          {"datetime",typeof(DateTime) },
-          {"smalldatetime",typeof(TimeSpan) },
-          {"image",typeof(byte[]) },
-          {"char",typeof(string) },
-          {"nchar",typeof(string) },
-          {"vachar",typeof(string) },
-          {"text",typeof(string) },
-          {"ntext",typeof(string) },
-
-        };
-        private static readonly Dictionary<Type, string> _sqlServerCs = new Dictionary<Type, string>()
-        {
-          {typeof(sbyte),"tinyint" },
-          {typeof(sbyte?),"tinyint" },
-          {typeof(byte),"tinyint" },
-          {typeof(byte?),"tinyint" },
-          {typeof(ushort) ,"samllint"},
-          {typeof(ushort?) ,"samllint"},
-          {typeof(short) ,"samllint"},
-          {typeof(short?) ,"samllint"},
-          {typeof(uint) ,"int"},
-          {typeof(uint?) ,"int"},
-          {typeof(int) ,"int"},
-          {typeof(int?) ,"int"},
-          {typeof(long),"bigint"},
-          {typeof(long?),"bigint"},
-          {typeof(bool) ,"bit"},
-          {typeof(bool?) ,"bit"},
-          {typeof(float),"numeric"},
-          {typeof(float?),"numeric"},
-          {typeof(double),"float" },
-          {typeof(double?),"float" },
-          {typeof(decimal),"decimal"},
-          {typeof(decimal?),"decimal"},
-          {typeof(DateTime),"datetime" },
-          {typeof(DateTime?),"datetime" },
-          {typeof(DateTimeOffset),"datetime" },
-          {typeof(DateTimeOffset?),"datetime" },
-          {typeof(TimeSpan),"smalldatetime" },
-          {typeof(TimeSpan?),"smalldatetime" },
-          {typeof(byte[]) ,"image"},
-          {typeof(string),"text" },
-
-
-        };
-
         private static readonly Dictionary<string, Type> _mysqlSc = new Dictionary<string, Type>()
         {
           {"tinyint",typeof(byte) },
@@ -123,7 +67,29 @@ namespace Jasmine.Orm
           {typeof(string),"text" },
 
         };
+        public object DoExplictConvert(Type destination, object source)
+        {
+            throw new NotImplementedException();
+        }
 
+        public Type GetCSharpType(string sqlType, DataSource dataSource)
+        {
+            throw new NotImplementedException();
+        }
+
+        public string GetSqlType(Type type, DataSource dataSource)
+        {
+            throw new NotImplementedException();
+        }
+
+        public string ToSqlString(Type type, object obj)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    public class OracleDataTypeMapper : IDataTypeMapper
+    {
         private static readonly Dictionary<string, Type> _oracleqlSc = new Dictionary<string, Type>()
         {    
             //CHAR(size)：固定长度字符串，最大长度2000 bytes
@@ -162,24 +128,24 @@ namespace Jasmine.Orm
           {typeof(sbyte?),"number(1)" },
           {typeof(byte),"number(1)" },
           {typeof(byte?),"number(1)" },
-          {typeof(ushort) ,"number(2)"},
-          {typeof(ushort?) ,"number(2)"},
-          {typeof(short) ,"number(2)"},
-          {typeof(short?) ,"number()"},
-          {typeof(uint) ,"number()"},
-          {typeof(uint?) ,"number()"},
-          {typeof(int) ,"number()"},
-          {typeof(int?) ,"number()"},
+          {typeof(ushort) ,"number(5)"},
+          {typeof(ushort?) ,"number(5)"},
+          {typeof(short) ,"number(5)"},
+          {typeof(short?) ,"number(5)"},
+          {typeof(uint) ,"number(10)"},
+          {typeof(uint?) ,"number(10)"},
+          {typeof(int) ,"number(10)"},
+          {typeof(int?) ,"number(10)"},
           {typeof(long),"number()"},
           {typeof(long?),"number()"},
           {typeof(bool) ,"number(1)"},
           {typeof(bool?) ,"number(1)"},
-          {typeof(float),"number()"},
-          {typeof(float?),"number()"},
-          {typeof(double),"number()" },
-          {typeof(double?),"number()" },
-          {typeof(decimal),"number()"},
-          {typeof(decimal?),"number()"},
+          {typeof(float),"number(7,3)"},
+          {typeof(float?),"number(7,3)"},
+          {typeof(double),"number(15,5)" },
+          {typeof(double?),"number(15,5)" },
+          {typeof(decimal),"number"},
+          {typeof(decimal?),"number"},
           {typeof(DateTime),"timestamp" },
           {typeof(DateTime?),"timestamp" },
           {typeof(DateTimeOffset),"timestamp" },
@@ -187,16 +153,31 @@ namespace Jasmine.Orm
           {typeof(TimeSpan),"tiemstamp" },
           {typeof(TimeSpan?),"timestamp" },
           {typeof(string),"text" },
+          {typeof(byte[]),"bfile" }
         };
-
-        private static readonly Dictionary<Type, string> _sqlLiteqlSc = new Dictionary<Type, string>()
+        public object DoExplictConvert(Type destination, object source)
         {
+            throw new NotImplementedException();
+        }
 
-        };
-        private static readonly Dictionary<Type, string> _sqlLiteCs = new Dictionary<Type, string>()
+        public Type GetCSharpType(string sqlType, DataSource dataSource)
         {
+            throw new NotImplementedException();
+        }
 
-        };
+        public string GetSqlType(Type type, DataSource dataSource)
+        {
+            throw new NotImplementedException();
+        }
+
+        public string ToSqlString(Type type, object obj)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    public class Db2DataTypeMapper : IDataTypeMapper
+    {
         private static readonly Dictionary<string, Type> _db2Sc = new Dictionary<string, Type>()
         {
             //n bytes定长字符串. n 大于0 不大于255. 默认 1.
@@ -270,7 +251,60 @@ namespace Jasmine.Orm
           {typeof(TimeSpan?),"time" },
           {typeof(string),"text" },
         };
+        public object DoExplictConvert(Type destination, object source)
+        {
+            throw new NotImplementedException();
+        }
 
+        public Type GetCSharpType(string sqlType, DataSource dataSource)
+        {
+            throw new NotImplementedException();
+        }
+
+        public string GetSqlType(Type type, DataSource dataSource)
+        {
+            throw new NotImplementedException();
+        }
+
+        public string ToSqlString(Type type, object obj)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    public class SqliteDataTypeMapper : IDataTypeMapper
+    {
+        private static readonly Dictionary<Type, string> _sqlLiteqlSc = new Dictionary<Type, string>()
+        {
+
+        };
+        private static readonly Dictionary<Type, string> _sqlLiteCs = new Dictionary<Type, string>()
+        {
+
+        };
+        public object DoExplictConvert(Type destination, object source)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Type GetCSharpType(string sqlType, DataSource dataSource)
+        {
+            throw new NotImplementedException();
+        }
+
+        public string GetSqlType(Type type, DataSource dataSource)
+        {
+            throw new NotImplementedException();
+        }
+
+        public string ToSqlString(Type type, object obj)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    public class PostgreDataTypeMapper : IDataTypeMapper
+    {
         private static readonly Dictionary<string, Type> _postgre2Sc = new Dictionary<string, Type>()
         {
             //有符号 8 字节整数
@@ -317,14 +351,129 @@ namespace Jasmine.Orm
             { "timetz",typeof(DateTimeOffset)},
             //通用唯一标识符
             {"uuid",typeof(Guid) },
-           
+
         };
         private static readonly Dictionary<Type, string> _postgre2Cs = new Dictionary<Type, string>()
         {
-          
+          {typeof(sbyte),"int2" },
+          {typeof(sbyte?),"int2" },
+          {typeof(byte),"int2" },
+          {typeof(byte?),"int2" },
+          {typeof(ushort) ,"int2"},
+          {typeof(ushort?) ,"int2"},
+          {typeof(short) ,"int2"},
+          {typeof(short?) ,"int2"},
+          {typeof(uint) ,"int4"},
+          {typeof(uint?) ,"int4"},
+          {typeof(int) ,"int4"},
+          {typeof(int?) ,"int4"},
+          {typeof(long),"int8"},
+          {typeof(long?),"int8"},
+          {typeof(bool) ,"bool"},
+          {typeof(bool?) ,"bool"},
+          {typeof(float),"float4"},
+          {typeof(float?),"float4"},
+          {typeof(double),"float8" },
+          {typeof(double?),"float8" },
+          {typeof(decimal),"numeric"},
+          {typeof(decimal?),"numeric"},
+          {typeof(DateTime),"timestamp" },
+          {typeof(DateTime?),"timestamp" },
+          {typeof(DateTimeOffset),"timetz" },
+          {typeof(DateTimeOffset?),"timetz" },
+          {typeof(TimeSpan),"time" },
+          {typeof(TimeSpan?),"time" },
+          {typeof(byte[]) ,"bytea"},
+          {typeof(string),"text" },
+
+        };
+        public object DoExplictConvert(Type destination, object source)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Type GetCSharpType(string sqlType, DataSource dataSource)
+        {
+            throw new NotImplementedException();
+        }
+
+        public string GetSqlType(Type type, DataSource dataSource)
+        {
+            throw new NotImplementedException();
+        }
+
+        public string ToSqlString(Type type, object obj)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    public class SqlServerDataTypeMapper : IDataTypeMapper
+    {
+        private static readonly Dictionary<string, Type> _sqlServerSc = new Dictionary<string, Type>()
+        {
+          {"tinyint",typeof(byte) },
+          {"samllint",typeof(short) },
+          {"int",typeof(int) },
+          {"bigint",typeof(long) },
+          {"bit",typeof(bool) },
+          {"numeric",typeof(float) },
+          {"float",typeof(double) },
+          {"decimal",typeof(decimal) },
+          {"money",typeof(double) },
+          {"datetime",typeof(DateTime) },
+          {"smalldatetime",typeof(TimeSpan) },
+          {"image",typeof(byte[]) },
+          {"char",typeof(string) },
+          {"nchar",typeof(string) },
+          {"vachar",typeof(string) },
+          {"text",typeof(string) },
+          {"ntext",typeof(string) },
+
+        };
+        private static readonly Dictionary<Type, string> _sqlServerCs = new Dictionary<Type, string>()
+        {
+          {typeof(sbyte),"tinyint" },
+          {typeof(sbyte?),"tinyint" },
+          {typeof(byte),"tinyint" },
+          {typeof(byte?),"tinyint" },
+          {typeof(ushort) ,"samllint"},
+          {typeof(ushort?) ,"samllint"},
+          {typeof(short) ,"samllint"},
+          {typeof(short?) ,"samllint"},
+          {typeof(uint) ,"int"},
+          {typeof(uint?) ,"int"},
+          {typeof(int) ,"int"},
+          {typeof(int?) ,"int"},
+          {typeof(long),"bigint"},
+          {typeof(long?),"bigint"},
+          {typeof(bool) ,"bit"},
+          {typeof(bool?) ,"bit"},
+          {typeof(float),"numeric"},
+          {typeof(float?),"numeric"},
+          {typeof(double),"float" },
+          {typeof(double?),"float" },
+          {typeof(decimal),"decimal"},
+          {typeof(decimal?),"decimal"},
+          {typeof(DateTime),"datetime" },
+          {typeof(DateTime?),"datetime" },
+          {typeof(DateTimeOffset),"datetime" },
+          {typeof(DateTimeOffset?),"datetime" },
+          {typeof(TimeSpan),"smalldatetime" },
+          {typeof(TimeSpan?),"smalldatetime" },
+          {typeof(byte[]) ,"image"},
+          {typeof(string),"text" },
+
+
         };
 
-        public static readonly IDataTypeMapper Instace = new DefaultDataTypeMapper();
+       
+
+        public static readonly IDataTypeMapper Instace = new SqlServerDataTypeMapper();
+
+
+       
+
         public Type GetCSharpType(string sqlType, DataSource dataSource)
         {
             if (sqlType == null)
@@ -337,61 +486,26 @@ namespace Jasmine.Orm
             if (index != -1)
                 sqlType = sqlType.Substring(0, index);
 
-            switch (dataSource)
-            {
-                case DataSource.SqlServer:
+           
 
-                    return _sqlServerSc.TryGetValue(sqlType,out var sqlServerV)?sqlServerV:null;
-
-                case DataSource.Oracle:
-                    break;
-                case DataSource.MySql:
-
-                    return _mysqlSc.TryGetValue(sqlType, out var mysqlV) ? mysqlV : null;
-
-                case DataSource.Db2:
-                    break;
-                case DataSource.Sqlite:
-                    break;
-                case DataSource.Access:
-                    break;
-                default:
-                    break;
-            }
-
-            return null;
+            return _sqlServerSc[sqlType];
         }
 
         public string GetSqlType(Type type, DataSource dataSource)
         {
-            switch (dataSource)
-            {
-                case DataSource.SqlServer:
+            
 
-                    return _sqlServerCs.TryGetValue(type, out var sqlServerV) ? sqlServerV : null;
+            return _sqlServerCs[type];
+        }
 
-                case DataSource.Oracle:
+        public string ToSqlString(Type type, object obj)
+        {
+            return DefaultBaseTypeConvertor.Instance.ConvertToSqlString(type, obj);
+        }
 
-                    break;
-
-                case DataSource.MySql:
-
-                    return _mysqlCs.TryGetValue(type, out var mysqlV) ? mysqlV : null;
-
-                case DataSource.Db2:
-                    break;
-
-                case DataSource.Sqlite:
-                    break;
-
-                case DataSource.Access:
-                    break;
-
-                default:
-                    break;
-            }
-
-            return null;
+        public object DoExplictConvert(Type destination, object source)
+        {
+            return DefaultBaseTypeConvertor.Instance.FromSqlFiledValue(source, destination);
         }
     }
 }
