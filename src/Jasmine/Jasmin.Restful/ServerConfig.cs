@@ -22,18 +22,8 @@ namespace Jasmine.Restful
         public int? MaxRequestHeaderCount { get; set; }
         public long? MaxRequestBodySize { get; set; }
         public TimeSpan? RequestHeadersTimeout { get; set; }
-        internal SslConfig SslOption { get; }
-
+        public SslConfig SslOption { get; }
         public bool UseSsl { get; set; }
-
-        public void ConfigSsl(Action<SslConfig> config)
-        {
-            UseSsl = true;
-
-            config(SslOption);
-        }
-
-       
 
     }
     public class SslConfig

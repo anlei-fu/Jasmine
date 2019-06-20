@@ -23,8 +23,9 @@ namespace Jasmine.Restful
             {
                 if (_running)
                     return false;
-            }
 
+                _running = true;
+            }
 
             _server = WebHost.CreateDefaultBuilder().Build();
 
@@ -39,6 +40,8 @@ namespace Jasmine.Restful
             {
                 if (_running)
                     return false;
+
+                _running = false;
             }
 
             await _server.StopAsync();

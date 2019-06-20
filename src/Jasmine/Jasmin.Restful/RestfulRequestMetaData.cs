@@ -22,12 +22,12 @@ namespace Jasmine.Restful
         public RestfulRequestParameterMetaData[] Parameters { get; internal set; }
 
         public string ExampleParameter { get; set; }
-        public IList<Type> BeforeFilters { get; } = new List<Type>();
+        public List<Type> BeforeFilters { get; } = new List<Type>();
 
-        public IList<Type> AfterFilters { get; } = new List<Type>();
+        public List<Type> AfterFilters { get; } = new List<Type>();
 
-        public IList<Type> AroundFilters { get; } = new List<Type>();
+        public List<Type> AroundFilters { get; } = new List<Type>();
 
-        public IList<Type> ErrorFilters { get; } = new List<Type>();
+        public List<Type> ErrorFilters { get; } = new List<Type>();
     }
 }

@@ -1,7 +1,7 @@
-﻿using Jasmine.Common;
-using Jasmine.Configuration;
+﻿using Jasmine.Configuration;
 using Jasmine.Ioc;
 using System;
+using System.IO;
 
 namespace Jasmine.Restful
 {
@@ -19,6 +19,8 @@ namespace Jasmine.Restful
    
         public RestfulApplicationBuilder ConfigServer(Action<ServerConfig> config)
         {
+            config(RestfulApplicationGlobalConfig.ServerConfig);
+
             return this;
         }
         public RestfulApplicationBuilder GenerateTestFile()
@@ -35,12 +37,14 @@ namespace Jasmine.Restful
 
         public RestfulApplicationBuilder SetDebugMode()
         {
+            RestfulApplicationGlobalConfig.DebugMode = true;
             return this;
         }
 
         public RestfulApplicationBuilder GenerateDescription()
         {
             RestfulApplicationGlobalConfig.GenerateTestFile = true;
+
             return this;
         }
         /// <summary>
@@ -51,30 +55,33 @@ namespace Jasmine.Restful
         public RestfulApplicationBuilder DisableDashBoard()
         {
            RestfulApplicationGlobalConfig.UseDashBorad=false;
+
             return this;
         }
 
         public RestfulApplicationBuilder DisnableSystemHttpApi()
         {
+            RestfulApplicationGlobalConfig.EnableSystemApi = false;
+
             return this;
         }
        
         /// <summary>
-        /// config restful service <see cref="RestfulProcessorManager"/>
+        /// config restful service <see cref="RestfulServiceManager"/>
         /// </summary>
         /// <param name="config"></param>
         /// <returns></returns>
-        public RestfulApplicationBuilder ConfigRestfulService(Action<RestfulProcessorManager> config)
+        public RestfulApplicationBuilder ConfigRestfulService(Action<RestfulServiceManager> config)
         {
             config(RestfulApplicationGlobalConfig.ProcessorManager);
 
             return this;
         }
       
-        public RestfulApplicationBuilder UseStaticFile(string virtueRootPath,long maxMemoryUsage)
+        public RestfulApplicationBuilder UseStaticFile(long maxMemoryUsage,string virtueRootPath=null)
         {
-            RestfulApplicationGlobalConfig.VirtueRootPath = virtueRootPath;
             RestfulApplicationGlobalConfig.StaticFileEnabled = true;
+            RestfulApplicationGlobalConfig.VirtueRootPath = virtueRootPath??Directory.GetCurrentDirectory();
             RestfulApplicationGlobalConfig.MaxFileCacheMeomoryUsage = maxMemoryUsage;
 
             return this;
@@ -96,11 +103,9 @@ namespace Jasmine.Restful
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <returns></returns>
-        public RestfulApplicationBuilder UseDefaultErrorFileter<T>() where T:IFilter<HttpFilterContext>
+        public RestfulApplicationBuilder ConfigGlobalInterceptor(Action<GloabalIntercepterConfig> config) 
         {
-            RestfulApplicationGlobalConfig.UseDefaultErrorFilter = true;
-
-            RestfulApplicationGlobalConfig.DefaultErrorFilter = typeof(T);
+            config(RestfulApplicationGlobalConfig.GlobalIntercepterConfig);
 
             return this;
         }

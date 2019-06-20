@@ -6,8 +6,8 @@ namespace Jasmine.Restful.Attributes
     {
        public PathVariableAttribute(string name)
         {
-            Name = name;
+            VaribleName = name;
         }
-        public string Name { get; }
+        public string VaribleName { get; }
     }
 }

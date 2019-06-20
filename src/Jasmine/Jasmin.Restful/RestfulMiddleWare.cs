@@ -6,15 +6,15 @@ using System.Threading.Tasks;
 
 namespace Jasmine.Restful.Implement
 {
-    public class JasmineResfulMiddleware : IMiddleware, INameFearture
+    public class ResfulMiddleware : IMiddleware, INameFearture
     {
-        public JasmineResfulMiddleware()
+        public ResfulMiddleware()
         {
             _pool = new HttpFilterContextPool(_dispatcher, 1000);
         }
-        private IDispatcher<HttpFilterContext> _dispatcher=new RestfulDispatcher("restful-dispatcher",RestfulApplicationGlobalConfig.ProcessorManager);
+        private IDispatcher<HttpFilterContext> _dispatcher=new RestfulDispatcher("restful-dispatcher",RestfulApplicationBaseComponents.RequestfulServiceManager);
 
-        private ILog _logger=LogManager.GetLogger(typeof(JasmineResfulMiddleware));
+        private ILog _logger=LogManager.GetLogger(typeof(ResfulMiddleware));
 
         private IPool<HttpFilterContext> _pool;
 

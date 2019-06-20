@@ -114,14 +114,14 @@ namespace Jasmine.Cache
                 // try load value
                 var result =  await _loader.LoadAsync(key);
 
+                // load failed
+                if (result == null)
+                {
+                    return null;
+                }
+
                 lock (_locker)
                 {
-                    // load failed
-                    if (result == null)
-                    {
-                        return null;
-                    }
-
                     _precache.TryAdd(key, 0);
 
                     _precache[key]++;

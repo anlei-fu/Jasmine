@@ -5,7 +5,6 @@ using System.Threading;
 namespace Jasmine.Common
 {
     public class Metric : IMetric
-         
     {
         
         private int _total;
@@ -30,6 +29,7 @@ namespace Jasmine.Common
         public int Count => _total;
 
         public string LastCaculateTime { get; private set; }
+        public string StartTime { get; } = DateTime.Now.ToString();
 
         public int Median { get; set; }
 
@@ -49,15 +49,17 @@ namespace Jasmine.Common
 
                 if (item.Elapsed < Fastest)
                     Fastest = (int)item.Elapsed;
-
-
                 
             }
 
             Items.Add(item);
 
             if (Items.Count > 100)
+            {
                 Caculate();
+
+                LastCaculateTime = DateTime.Now.ToString();
+            }
 
         }
 

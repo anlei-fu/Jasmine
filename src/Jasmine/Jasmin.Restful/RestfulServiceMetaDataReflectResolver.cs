@@ -15,7 +15,7 @@ namespace Jasmine.Restful
 
         }
 
-        public static readonly IMetaDataReflectResolver<RestfulServiceMetaData> Instance = new RestfulServiceMetaDataReflectResolver();
+        internal static readonly IMetaDataReflectResolver<RestfulServiceMetaData> Instance = new RestfulServiceMetaDataReflectResolver();
 
         private ITypeCache _typeCache => JasmineReflectionCache.Instance;
         public RestfulServiceMetaData Resolve(Type type)
@@ -300,7 +300,7 @@ namespace Jasmine.Restful
                     }
                     else if (attrType == typeof(PathVariableAttribute))
                     {
-                        parameterMetaData.PathVariableKey = ((PathVariableAttribute)attr[0]).Name;
+                        parameterMetaData.PathVariableKey = ((PathVariableAttribute)attr[0]).VaribleName;
 
                         parameterFromSetted = true;
                     }

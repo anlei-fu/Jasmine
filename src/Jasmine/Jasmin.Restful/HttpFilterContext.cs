@@ -28,5 +28,12 @@ namespace Jasmine.Restful
         {
             HttpContext = null;
         }
+
+        public void AppendCrossDoemian()
+        {
+
+        }
+
+      
     }
 }

@@ -1,10 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Jasmine.Restful.Attributes
 {
-  public  class CookieAttribute:Attribute
+    [AttributeUsage(AttributeTargets.Parameter, AllowMultiple = false)]
+    public  class FromCookieAttribute:Attribute
     {
     }
 }

@@ -11,73 +11,79 @@ namespace Jasmine.Restful
         public RestfulDispatcher(string name, IRequestProcessorManager<HttpFilterContext> processorManager) : base(name, processorManager)
         {
         }
-        private ILog _logger=LogManager.GetLogger(typeof(RestfulDispatcher));
-      
-    
+        private ILog _logger = LogManager.GetLogger(typeof(RestfulDispatcher));
+
+
         public override async Task DispatchAsync(string path, HttpFilterContext context)
         {
             /*
              *  is restful api
-             */ 
+             */
             if (_processorManager.ContainsProcessor(path))
             {
-                var processor = _processorManager.GetProcessor(path);
-
+                var processor = (RestfulRequestProcessor)_processorManager.GetProcessor(path);
                 /*
-                 * api available
-                 */
-                if (processor.Available)
-                {
-                    try
-                    {
-                        await processor.FiltsAsysnc(context);
-
-                        //handle processor output
-
-                        if (RestfulApplicationGlobalConfig.EnableCrossDomain)
-                            context.HttpContext.Response.Headers.Add("Access-Control-Allow-Origin", "*");
-
-                        context.HttpContext.Response.Headers.Add("Access-Control-Allow-Origin", "*");
-
-                        if (context.ReturnValue != null)
-                        {
-                            var buffer = JsonSerializer.Instance.SerializeToBytes(context.ReturnValue);
-
-                            await context.HttpContext.Response.Body.WriteAsync(buffer, 0, buffer.Length);
-                        }
-
-                    }
-                    catch (Exception ex)
-                    {
-                        _logger.Error(ex);
-
-                        if (!context.HttpContext.Response.HasStarted)
-                            context.HttpContext.Response.StatusCode = HttpStatusCodes.SERVER_ERROR;
-                    }
-                }
-                /*
-                 *  has alternative service
+                 * is method  match
                  */ 
-                else if(processor.HasAlternativeService)
+                if (processor.HttpMethod == context.HttpContext.Request.Method.ToLower())
                 {
-                    await DispatchAsync(processor.AlternativeServicePath, context);
+                    /*
+                     * is api available
+                     */
+                    if (processor.Available)
+                    {
+                        try
+                        {
+                            await processor.FiltsAsysnc(context);
+
+                            //handle processor output
+
+                            if (RestfulApplicationGlobalConfig.EnableCrossDomain)
+                                context.HttpContext.Response.Headers.Add("Access-Control-Allow-Origin", "*");
+
+                            context.HttpContext.Response.Headers.Add("Content-Type", "text/html");
+
+                            if (context.ReturnValue != null)
+                            {
+                                var buffer = JsonSerializer.Instance.SerializeToBytes(context.ReturnValue);
+
+                                await context.HttpContext.Response.Body.WriteAsync(buffer, 0, buffer.Length);
+                            }
+
+                        }
+                        catch (Exception ex)
+                        {
+                            _logger.Error(ex);
+
+                            if (!context.HttpContext.Response.HasStarted)
+                                context.HttpContext.Response.StatusCode = HttpStatusCodes.SERVER_ERROR;
+                        }
+                    }
+                    else if (processor.HasAlternativeService)
+                    {
+                        await DispatchAsync(processor.AlternativeServicePath, context);
+                    }
+                    else
+                    {
+                        context.HttpContext.Response.StatusCode = HttpStatusCodes.SERVER_NOT_AVAILABLE;
+                    }
                 }
                 else
                 {
-                    context.HttpContext.Response.StatusCode = HttpStatusCodes.SERVER_NOT_AVAILABLE;
+                    context.HttpContext.Response.StatusCode = HttpStatusCodes.INCORRECT_HTTP_METHOD;
                 }
             }
             /*
              *  static file enabled 
-             */ 
-            else if(RestfulApplicationGlobalConfig.StaticFileEnabled)
+             */
+            else if (RestfulApplicationGlobalConfig.StaticFileEnabled)
             {
-                var stream = await RestfulApplicationBaseComponent.StaticFileProvider.GetStreamAsync(RestfulApplicationGlobalConfig.VirtueRootPath + path);
+                var stream = await RestfulApplicationBaseComponents.StaticFileProvider.GetStreamAsync(RestfulApplicationGlobalConfig.VirtueRootPath + path);
 
                 /*
                  *  file not exists
-                 */ 
-                if(stream==null)
+                 */
+                if (stream == null)
                 {
                     context.HttpContext.Response.StatusCode = HttpStatusCodes.NOT_FOUND;
                 }
@@ -85,7 +91,7 @@ namespace Jasmine.Restful
                 {
                     var index = path.LastIndexOf(".");
 
-                    var ext =  index!=-1? path.Substring(index, path.Length - index):
+                    var ext = index != -1 ? path.Substring(index, path.Length - index) :
                                            ".html";
 
                     context.HttpContext.Response.StatusCode = HttpStatusCodes.SUCESSED;
@@ -95,7 +101,7 @@ namespace Jasmine.Restful
                     await stream.CopyToAsync(context.HttpContext.Response.Body);
 
                     stream.Close();
-                    
+
                 }
             }
             else

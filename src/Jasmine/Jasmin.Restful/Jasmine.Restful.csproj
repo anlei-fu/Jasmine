@@ -6,8 +6,11 @@
 
   <ItemGroup>
     <Compile Remove="Css\**" />
+    <Compile Remove="DashBoard\**" />
     <EmbeddedResource Remove="Css\**" />
+    <EmbeddedResource Remove="DashBoard\**" />
     <None Remove="Css\**" />
+    <None Remove="DashBoard\**" />
   </ItemGroup>
 
   <ItemGroup>
@@ -22,10 +25,6 @@
     <ProjectReference Include="..\Jasmine.Common\Jasmine.Commom.csproj" />
     <ProjectReference Include="..\Jasmine.Ioc\Jasmine.Ioc.csproj" />
     <ProjectReference Include="..\Jasmine.Serialization\Jasmine.Serialization.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="DashBoard\" />
   </ItemGroup>
 
 </Project>

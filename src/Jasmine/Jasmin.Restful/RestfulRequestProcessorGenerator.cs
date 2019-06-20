@@ -2,10 +2,11 @@
 using Jasmine.Ioc;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Jasmine.Restful
 {
-    public class RestfulRequestProcessorGenerator : IRequestProcessorGenerator<HttpFilterContext, RestfulServiceMetaData>
+    internal class RestfulRequestProcessorGenerator : IRequestProcessorGenerator<HttpFilterContext, RestfulServiceMetaData>
     {
 
         private RestfulRequestProcessorGenerator()
@@ -20,7 +21,7 @@ namespace Jasmine.Restful
 
         public static readonly IRequestProcessorGenerator<HttpFilterContext, RestfulServiceMetaData> Instance = new RestfulRequestProcessorGenerator();
 
-        private IList<IFilter<HttpFilterContext>> buildFilters(IList<Type> filterTypes)
+        private IList<IFilter<HttpFilterContext>> buildFilters(IEnumerable<Type> filterTypes)
         {
             var ls = new List<IFilter<HttpFilterContext>>();
 
@@ -74,12 +75,12 @@ namespace Jasmine.Restful
                 processor.Pipeline = new RestfulFilterPipeline();
                 processor.ErrorPileline = new RestfulFilterPipeline();
 
-                foreach (var before in buildFilters(item.Value.BeforeFilters))
+                foreach (var before in buildFilters(RestfulApplicationGlobalConfig.GlobalIntercepterConfig.GetBeforeFilters().Union(item.Value.BeforeFilters)))
                 {
                     processor.Pipeline.AddLast(before);
                 }
 
-                foreach (var around in buildFilters(item.Value.AroundFilters))
+                foreach (var around in buildFilters(RestfulApplicationGlobalConfig.GlobalIntercepterConfig.GetAroundFilters().Union(item.Value.AroundFilters)))
                 {
                     processor.Pipeline.AddLast(around);
                 }
@@ -88,12 +89,12 @@ namespace Jasmine.Restful
 
                 processor.Pipeline.AddLast(proxy);
 
-                foreach (var around in buildFilters(item.Value.AroundFilters))
+                foreach (var around in buildFilters(RestfulApplicationGlobalConfig.GlobalIntercepterConfig.GetAroundFilters().Union(item.Value.AroundFilters)))
                 {
                     processor.Pipeline.AddLast(around);
                 }
 
-                foreach (var after in buildFilters(item.Value.AfterFilters))
+                foreach (var after in buildFilters(RestfulApplicationGlobalConfig.GlobalIntercepterConfig.GetAfterFilters().Union(item.Value.AfterFilters)))
                 {
                     processor.Pipeline.AddLast(after);
                 }
@@ -102,6 +103,16 @@ namespace Jasmine.Restful
                 foreach (var error in buildFilters(item.Value.ErrorFilters))
                 {
                     processor.ErrorPileline.AddLast(error);
+                }
+
+                var errorFilter = RestfulApplicationGlobalConfig.GlobalIntercepterConfig.GetErrorFilter();
+
+                if(errorFilter!=null)
+                {
+                    foreach (var error in buildFilter(errorFilter))
+                    {
+                        processor.ErrorPileline.AddLast(error);
+                    }
                 }
 
                 processor.Description = item.Value.Description;

@@ -1,4 +1,5 @@
 ﻿using Jasmine.Common;
+using System;
 
 namespace Jasmine.Restful
 {
@@ -10,5 +11,10 @@ namespace Jasmine.Restful
         }
 
         public static readonly RestfulFilterMetaDataManager Instance = new RestfulFilterMetaDataManager();
+
+        public void Add(Type type)
+        {
+
+        }
     }
 }

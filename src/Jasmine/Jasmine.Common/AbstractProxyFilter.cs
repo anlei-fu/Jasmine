@@ -35,7 +35,7 @@ namespace Jasmine.Common
         }
 
         /// <summary>
-        ///  leave a intercept interface to do something after method susccessfully invoked
+        ///  left a intercept interface to do something after method susccessfully invoked
         /// </summary>
         /// <param name="context"></param>
         /// <param name="_return"> invoke result</param>

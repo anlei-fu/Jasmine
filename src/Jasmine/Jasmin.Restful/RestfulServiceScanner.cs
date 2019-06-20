@@ -8,7 +8,7 @@ using System.Reflection;
 
 namespace Jasmine.Restful
 {
-    public  class RestfulServiceScanner
+    internal  class RestfulServiceScanner
     {
         private RestfulServiceScanner()
         {
@@ -16,11 +16,11 @@ namespace Jasmine.Restful
         }
         public static readonly RestfulServiceScanner Instance = new RestfulServiceScanner();
 
-        public IRequestProcessor<HttpFilterContext>[] ScanFolder(string directory)
+        public RestfulServiceMetaData[] ScanFolder(string directory)
         {
             requireDirectoryExists(directory);
 
-            var ls = new List<IRequestProcessor<HttpFilterContext>>();
+            var ls = new List<RestfulServiceMetaData>();
 
             foreach (var item in Directory.GetFiles(directory))
             {
@@ -42,7 +42,7 @@ namespace Jasmine.Restful
             return ls.ToArray();
 
         }
-        public IRequestProcessor<HttpFilterContext>[] Scan(string path)
+        public RestfulServiceMetaData[] Scan(string path)
         {
             requireFileExists(path);
 
@@ -53,47 +53,34 @@ namespace Jasmine.Restful
             catch 
             {
                 //ignore
-                return Array.Empty<IRequestProcessor<HttpFilterContext>>();
+                return Array.Empty<RestfulServiceMetaData>();
             }
            
         }
-        public IRequestProcessor<HttpFilterContext>[] Scan(string path,string nameSpace)
+        public RestfulServiceMetaData[] Scan(string path,string nameSpace)
         {
             return Scan(Assembly.Load(path),nameSpace);
         }
-        public IRequestProcessor<HttpFilterContext>[] Scan(Assembly assembly)
+        public RestfulServiceMetaData[] Scan(Assembly assembly)
         {
-            var ls = new List<IRequestProcessor<HttpFilterContext>>();
-
-            foreach (var item in assembly.GetTypes())
-            {
-                if(JasmineReflectionCache.Instance.GetItem(item).Attributes.Contains(typeof(RestfulAttribute)))
-                {
-                    var metaData = RestfulServiceMetaDataReflectResolver.Instance.Resolve(item);
-
-                    var processors = RestfulRequestProcessorGenerator.Instance.Generate(metaData);
-
-                    ls.AddRange(processors);
-                }
-
-            }
-
-            return ls.ToArray();
+            return Scan(assembly);
         }
-        public IRequestProcessor<HttpFilterContext>[] Scan(Assembly assembly,string nameSpace)
+        public RestfulServiceMetaData[] Scan(Assembly assembly,string nameSpace=null)
         {
-            var ls = new List<IRequestProcessor<HttpFilterContext>>();
+            var ls = new List<RestfulServiceMetaData>();
 
             foreach (var item in assembly.GetTypes())
             {
+                var matcheNameSpace = nameSpace != null;
                 
-                if (JasmineReflectionCache.Instance.GetItem(item).Attributes.Contains(typeof(RestfulAttribute))&&item.FullName.StartsWith(nameSpace))
+                if (JasmineReflectionCache.Instance.GetItem(item).Attributes.Contains(typeof(RestfulAttribute)))
                 {
+                    if (matcheNameSpace && !item.FullName.StartsWith(nameSpace))
+                        continue;
+
                     var metaData = RestfulServiceMetaDataReflectResolver.Instance.Resolve(item);
 
-                    var processors = RestfulRequestProcessorGenerator.Instance.Generate(metaData);
-
-                    ls.AddRange(processors);
+                    ls.Add(metaData);
                 }
 
             }

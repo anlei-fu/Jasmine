@@ -40,7 +40,7 @@ namespace Jasmine.Restful.DefaultFilters
         }
         [Description("get service trace log at latest")]
         [Path("/api/gettrace")]
-        public List<RestfulTraceItem> GetTrace([Description("trace you want to get by path ")]string path)
+        public List<RestfulTraceItem> GetTrace([Description("the trace log you want to get by path ")]string path)
         {
             return _traces.TryGetValue(path, out var traces) ? traces.Values.ToList():null;
         }
