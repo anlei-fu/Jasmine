@@ -20,9 +20,14 @@ namespace Jasmine.Orm
         }
         public override void Recycle(DbConnection item)
         {
-            item.Close();
 
-            base.Recycle(item);
+            if (item.State == System.Data.ConnectionState.Open)
+            {
+                item.Close();
+            }
+
+            if (item.State == System.Data.ConnectionState.Closed)
+                base.Recycle(item);
         }
     }
 

@@ -1,6 +1,6 @@
 ﻿using Jasmine.Common;
+using Jasmine.Extensions;
 using Jasmine.Orm.Exceptions;
-using Jasmine.Orm.Implements;
 using Jasmine.Reflection;
 using System;
 using System.Collections;
@@ -8,15 +8,59 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Text;
 using System.Xml;
-using Jasmine.Extensions;
 
 namespace Jasmine.Orm
 {
     public class SqlTemplate : INameFearture
     {
+        private string _rawString;
+        /// <summary>
+        /// give a to visit it
+        /// </summary>
         public string Name { get; set; }
+        /// <summary>
+        /// 
+        /// </summary>
         public SqlTemplateSegment[] Segments { get; set; }
-       
+        /// <summary>
+        /// convert raw  template string to <see cref="SqlTemplate"/>
+        /// varible name start with @ and end with ' ', can composed  by all charactors excepts format  char ' ' '\t' '\r' '\n'
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        public static SqlTemplate Parse(string input)
+        {
+            return SqlTemplateParser.Parse(input);
+        }
+        /// <summary>
+        /// convert sql template to string by given parameter
+        /// e.g
+        /// template:
+        /// insert into animal (name,maxage) values (@name,@maxage)
+        /// 
+        /// paramter:
+        /// new {name="dog",maxage=10}
+        /// 
+        /// output:
+        /// insert into animal (name,maxage) values ('dag',10)
+        ///
+        /// warn:
+        /// the parameter's property name must equel to varibale name ,case sensitive
+        /// 
+        /// varible after keyword 'in' , require parameter instance can cast to IEnumerable and element type  is primitive type
+        /// 
+        /// complex parameter like @student.name.lastname is surpported
+        /// parameter should be like new {student=new {name=new {lastname="fu"} }}
+        /// 
+        /// 
+        /// </summary>
+        /// <param name="parameterInstance"></param>
+        /// <returns></returns>
+        public string Render(object parameterInstance)
+        {
+            return SqltemplateRender.Instance.Render(this, parameterInstance);
+        }
+
         public string[] GetVaribleNames()
         {
             var result = new List<string>();
@@ -29,7 +73,7 @@ namespace Jasmine.Orm
 
             return result.ToArray();
         }
-        private string _rawString;
+
         public string RawString
         {
             get
@@ -56,6 +100,164 @@ namespace Jasmine.Orm
                 _rawString = value;
             }
         }
+        /// <summary>
+        /// still needs optimice
+        /// </summary>
+        private class SqltemplateRender
+        {
+            private SqltemplateRender()
+            {
+
+            }
+
+            public static readonly SqltemplateRender Instance = new SqltemplateRender();
+
+            public string Render(SqlTemplate template, object parameters)
+            {
+                var builder = new StringBuilder();
+
+                foreach (var item in template.Segments)
+                {
+                    if (item.IsVarible)
+                    {
+                        builder.Append(getParameterStringValue(item.Value, parameters, item.FollowIn));
+                    }
+                    else
+                    {
+                        builder.Append(item.Value);
+                    }
+                }
+
+                return builder.ToString();
+            }
+
+
+            private string getParameterStringValue(string name, object obj, bool afterIn = false)
+            {
+                var temp = obj;
+
+                foreach (var item in name.Splite1("."))
+                {
+                    var property = JasmineReflectionCache.Instance.GetItem(obj.GetType()).Properties.GetItemByName(item);
+
+                    if (property == null)
+                        throw new ParameterNotFoundException($"parameter @{name} can not be found by given isntance {obj} ");
+
+                    temp = property.GetValue(temp);
+
+                }
+
+                if (afterIn)
+                {
+                    var type = temp.GetType();
+
+                    if (type.CanConvertTo(typeof(IEnumerable)) && type.GetElementType().IsBaseType())
+                    {
+                        var elementType = type.GetElementType();
+
+                        var builder = new StringBuilder();
+
+                        builder.Append("(");
+
+                        foreach (var item in (IEnumerable)temp)
+                        {
+                            builder.Append(DefaultBaseTypeConvertor.Instance.ConvertToSqlString(elementType, item))
+                                   .Append(",");
+                        }
+
+                        builder.RemoveLastComa();
+                        builder.Append(")");
+
+                        return builder.ToString();
+
+                    }
+                    else
+                    {
+                        throw new Exception("parameter after keyword 'in' , must implement IEnumerable and element type is basetype ");
+                    }
+                }
+
+                return DefaultBaseTypeConvertor.Instance.ConvertToSqlString(temp.GetType(), temp);
+
+            }
+
+        }
+        private class SqlTemplateParser
+        {
+            public static SqlTemplate Parse(string input)
+            {
+                if (input == null)
+                    throw new ArgumentNullException(nameof(input));
+
+                var reader = new CharSequenceReader(input);
+
+                bool parsingParameter = false;
+
+                var template = new SqlTemplate();
+
+                template.RawString = input;
+
+                var ls = new List<SqlTemplateSegment>();
+
+                var segmentBuilder = new StringBuilder();
+
+                while (reader.HasNext())
+                {
+                    reader.Next();
+
+                    if (reader.Current() == '@' && !parsingParameter)
+                    {
+                        if (segmentBuilder.Length != 0)
+                        {
+                            ls.Add(new SqlTemplateSegment(segmentBuilder.ToString(), false));
+
+                            segmentBuilder.Clear();
+                        }
+
+                        parsingParameter = true;
+                    }
+                    else if (parsingParameter && (reader.Current() == ' ' || reader.Current() == '\r' || reader.Current() == '\n' || reader.Current() == '\t'))
+                    {
+                        bool followIn = ls.Count == 0 ? false :
+                                                  ls[ls.Count - 1].Value.ToLower().Trim().EndsWith(" in") ? true :
+                                                                                                            false;
+
+                        ls.Add(new SqlTemplateSegment(segmentBuilder.ToString(), true, followIn));
+
+                        segmentBuilder.Clear();
+
+                        parsingParameter = false;
+                    }
+                    else
+                    {
+                        segmentBuilder.Append(reader.Current());
+                    }
+
+                }
+
+                if (segmentBuilder.Length != 0)
+                {
+                    if (parsingParameter)
+                    {
+                        bool followIn = ls.Count == 0 ? false :
+                                                  ls[ls.Count - 1].Value.ToLower().Trim().EndsWith(" in") ? true :
+                                                                                                            false;
+
+                        ls.Add(new SqlTemplateSegment(segmentBuilder.ToString(), true, followIn));
+                    }
+                    else
+                    {
+                        ls.Add(new SqlTemplateSegment(segmentBuilder.ToString(), false));
+                    }
+                }
+
+                template.Segments = ls.ToArray();
+
+                return template;
+
+            }
+        }
+
     }
 
     public class SqlTemplateMaker
@@ -69,7 +271,7 @@ namespace Jasmine.Orm
             ls.Add(new SqlTemplateSegment(left, false));
             ls.AddRange(right.Segments);
 
-           return new SqlTemplate()
+            return new SqlTemplate()
             {
                 Segments = ls.ToArray()
             };
@@ -83,7 +285,7 @@ namespace Jasmine.Orm
 
             foreach (var item in columns)
             {
-                builder.Append(item.Replace(".","_")).Append(",");
+                builder.Append(item.Replace(".", "_")).Append(",");
             }
 
             builder.RemoveLastComa();
@@ -93,7 +295,7 @@ namespace Jasmine.Orm
             return builder.ToString();
 
         }
-        public static SqlTemplate MakeInsertRight( params string[] columns)
+        public static SqlTemplate MakeInsertRight(params string[] columns)
         {
             var ls = new List<SqlTemplateSegment>();
 
@@ -122,82 +324,18 @@ namespace Jasmine.Orm
     }
     public struct SqlTemplateSegment
     {
-        public SqlTemplateSegment(string value, bool isVarible)
+        public SqlTemplateSegment(string value, bool isVarible, bool followIn = false)
         {
             Value = value;
             IsVarible = isVarible;
+            FollowIn = followIn;
         }
+        public bool FollowIn { get; }
         public string Value { get; }
         public bool IsVarible { get; }
     }
 
-    public class SqlTemplateParser
-    {
-        public static SqlTemplate Parse(string input)
-        {
-            if (input == null)
-                throw new ArgumentNullException(nameof(input));
 
-            var reader = new CharSequenceReader(input);
-
-            bool parsingParameter = false;
-
-            var template = new SqlTemplate();
-
-            template.RawString = input;
-
-            var ls = new List<SqlTemplateSegment>();
-
-            var segmentBuilder = new StringBuilder();
-
-            while (reader.HasNext())
-            {
-                reader.Next();
-
-                if (reader.Current() == '@' && !parsingParameter)
-                {
-                    if (segmentBuilder.Length != 0)
-                    {
-                        ls.Add(new SqlTemplateSegment(segmentBuilder.ToString(), false));
-
-                        segmentBuilder.Clear();
-                    }
-
-                    parsingParameter = true;
-                }
-                else if (parsingParameter && (reader.Current() == ' ' || reader.Current() == '\r' || reader.Current() == '\n'))
-                {
-                    ls.Add(new SqlTemplateSegment(segmentBuilder.ToString(), true));
-
-                    segmentBuilder.Clear();
-
-                    parsingParameter = false;
-                }
-                else
-                {
-                    segmentBuilder.Append(reader.Current());
-                }
-
-            }
-
-            if (segmentBuilder.Length != 0)
-            {
-                if (parsingParameter)
-                {
-                    ls.Add(new SqlTemplateSegment(segmentBuilder.ToString(), true));
-                }
-                else
-                {
-                    ls.Add(new SqlTemplateSegment(segmentBuilder.ToString(), false));
-                }
-            }
-
-            template.Segments = ls.ToArray();
-
-            return template;
-
-        }
-    }
 
     public class SqlTemplateProvider : IReadOnlyCollection<SqlTemplate>
     {
@@ -240,7 +378,7 @@ namespace Jasmine.Orm
                         throw new RequiredAttributeNotFoundException($"required attribute {NAME} of {TEMPLATE} tag not found!");
                     }
 
-                    var template = SqlTemplateParser.Parse(templateNode.InnerText);
+                    var template = SqlTemplate.Parse(templateNode.InnerText);
 
                     template.Name = name + "." + tptName;
 
@@ -265,7 +403,7 @@ namespace Jasmine.Orm
 
         public void Add(string name, string templateStr)
         {
-            var template = SqlTemplateParser.Parse(templateStr);
+            var template = SqlTemplate.Parse(templateStr);
 
             template.Name = name;
 
@@ -292,57 +430,5 @@ namespace Jasmine.Orm
             return _map.Values.GetEnumerator();
         }
     }
-    /// <summary>
-    /// still needs optimice
-    /// </summary>
-    public class SqltemplateConverter
-    {
-        private SqltemplateConverter()
-        {
-
-        }
-
-        public static readonly SqltemplateConverter Instance = new SqltemplateConverter();
-
-
-        public string Convert(SqlTemplate template, object parameters)
-        {
-            var builder = new StringBuilder();
-
-            foreach (var item in template.Segments)
-            {
-                if (item.IsVarible)
-                {
-                    builder.Append(getParameterStringValue(item.Value, parameters));
-                }
-                else
-                {
-                    builder.Append(item.Value);
-                }
-            }
-
-            return builder.ToString();
-        }
-
-
-        private string getParameterStringValue(string name, object obj)
-        {
-            var temp = obj;
-
-            foreach (var item in name.Splite1("."))
-            {
-                var property = JasmineReflectionCache.Instance.GetItem(obj.GetType()).Properties.GetItemByName(item);
-
-                if (property == null)
-                    throw new ParameterNotFoundException($"parameter @{name} can not be found by given isntance {obj} ");
-
-                temp = property.GetValue(temp);
-
-            }
-
-            return DefaultBaseTypeConvertor.Instance.ConvertToSqlString(temp.GetType(), temp);
-
-        }
-
-    }
+  
 }

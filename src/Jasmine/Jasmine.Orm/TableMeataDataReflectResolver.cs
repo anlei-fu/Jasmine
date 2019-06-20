@@ -62,7 +62,7 @@ namespace Jasmine.Orm
 
             // set default query result resolver
             if (table.Resolver == null)
-                table.Resolver = Implements.DefaultQueryResultResolver.Instance;
+                table.Resolver = DefaultQueryResultResolver.Instance;
 
 
             foreach (var item in JasmineReflectionCache.Instance.GetItem(type).Properties)
@@ -326,7 +326,7 @@ namespace Jasmine.Orm
 
             associateTable.PropertyName = property.Name;
 
-            associateTable.ConditionTemplate = SqlTemplateParser.Parse(condition);
+            associateTable.ConditionTemplate = SqlTemplate.Parse(condition);
 
             associateTable.Setter = property.Setter;
             associateTable .Getter = property.Getter;

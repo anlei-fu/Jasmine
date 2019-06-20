@@ -67,24 +67,33 @@ namespace Jasmine.Orm
           {typeof(string),"text" },
 
         };
-        public object DoExplictConvert(Type destination, object source)
+        public object FromSqlFiledValue(Type destination, object source)
         {
-            throw new NotImplementedException();
+            return SqlServerDataTypeMapper.Instace.FromSqlFiledValue(destination, source);
         }
-
         public Type GetCSharpType(string sqlType, DataSource dataSource)
         {
-            throw new NotImplementedException();
+            if (sqlType == null)
+                throw new ArgumentNullException(nameof(sqlType));
+
+            sqlType = sqlType.Trim();
+
+            var index = sqlType.IndexOf("(");
+
+            if (index != -1)
+                sqlType = sqlType.Substring(0, index);
+
+            return _mysqlSc[sqlType];
         }
 
         public string GetSqlType(Type type, DataSource dataSource)
         {
-            throw new NotImplementedException();
+            return _mysqlCs[type];
         }
 
         public string ToSqlString(Type type, object obj)
         {
-            throw new NotImplementedException();
+            return SqlServerDataTypeMapper.Instace.ToSqlString(type, obj);
         }
     }
 
@@ -155,7 +164,7 @@ namespace Jasmine.Orm
           {typeof(string),"text" },
           {typeof(byte[]),"bfile" }
         };
-        public object DoExplictConvert(Type destination, object source)
+        public object FromSqlFiledValue(Type destination, object source)
         {
             throw new NotImplementedException();
         }
@@ -251,7 +260,7 @@ namespace Jasmine.Orm
           {typeof(TimeSpan?),"time" },
           {typeof(string),"text" },
         };
-        public object DoExplictConvert(Type destination, object source)
+        public object FromSqlFiledValue(Type destination, object source)
         {
             throw new NotImplementedException();
         }
@@ -282,7 +291,7 @@ namespace Jasmine.Orm
         {
 
         };
-        public object DoExplictConvert(Type destination, object source)
+        public object FromSqlFiledValue(Type destination, object source)
         {
             throw new NotImplementedException();
         }
@@ -305,7 +314,7 @@ namespace Jasmine.Orm
 
     public class PostgreDataTypeMapper : IDataTypeMapper
     {
-        private static readonly Dictionary<string, Type> _postgre2Sc = new Dictionary<string, Type>()
+        private static readonly Dictionary<string, Type> _postgreSc = new Dictionary<string, Type>()
         {
             //有符号 8 字节整数
             {"bigint",typeof(long)},
@@ -353,7 +362,7 @@ namespace Jasmine.Orm
             {"uuid",typeof(Guid) },
 
         };
-        private static readonly Dictionary<Type, string> _postgre2Cs = new Dictionary<Type, string>()
+        private static readonly Dictionary<Type, string> _postgreCs = new Dictionary<Type, string>()
         {
           {typeof(sbyte),"int2" },
           {typeof(sbyte?),"int2" },
@@ -387,24 +396,34 @@ namespace Jasmine.Orm
           {typeof(string),"text" },
 
         };
-        public object DoExplictConvert(Type destination, object source)
+        public object FromSqlFiledValue(Type destination, object source)
         {
-            throw new NotImplementedException();
+            return SqlServerDataTypeMapper.Instace.FromSqlFiledValue(destination, source);
         }
 
         public Type GetCSharpType(string sqlType, DataSource dataSource)
         {
-            throw new NotImplementedException();
+            if (sqlType == null)
+                throw new ArgumentNullException(nameof(sqlType));
+
+            sqlType = sqlType.Trim();
+
+            var index = sqlType.IndexOf("(");
+
+            if (index != -1)
+                sqlType = sqlType.Substring(0, index);
+
+            return _postgreSc[sqlType];
         }
 
         public string GetSqlType(Type type, DataSource dataSource)
         {
-            throw new NotImplementedException();
+            return _postgreCs[type];
         }
 
         public string ToSqlString(Type type, object obj)
         {
-            throw new NotImplementedException();
+            return SqlServerDataTypeMapper.Instace.ToSqlString(type, obj);
         }
     }
 
@@ -467,12 +486,7 @@ namespace Jasmine.Orm
 
         };
 
-       
-
         public static readonly IDataTypeMapper Instace = new SqlServerDataTypeMapper();
-
-
-       
 
         public Type GetCSharpType(string sqlType, DataSource dataSource)
         {
@@ -493,8 +507,6 @@ namespace Jasmine.Orm
 
         public string GetSqlType(Type type, DataSource dataSource)
         {
-            
-
             return _sqlServerCs[type];
         }
 
@@ -503,7 +515,7 @@ namespace Jasmine.Orm
             return DefaultBaseTypeConvertor.Instance.ConvertToSqlString(type, obj);
         }
 
-        public object DoExplictConvert(Type destination, object source)
+        public object FromSqlFiledValue(Type destination, object source)
         {
             return DefaultBaseTypeConvertor.Instance.FromSqlFiledValue(source, destination);
         }

@@ -84,7 +84,7 @@ namespace Jasmine.Ioc
                         if (typeimpl == null)
                             throw new TypeNotFoundException($"{impl} is not found!");
 
-                        if (typeimpl.IsInterfaceOrAbstractClass() || typeimpl.IsDerivedFrom(type))//
+                        if (typeimpl.IsInterfaceOrAbstractClass() || typeimpl.CanConvertTo(type))//
                             throw new NotImplementedException($"{typeimpl} is abstract or not implement {type}");
 
                         _manager.SetImplementationMapping(type, typeimpl);
@@ -164,7 +164,7 @@ namespace Jasmine.Ioc
                                 if (paraType == null || paraTypImpl == null)
                                     throw new RequirdAttributeNotFoundException("parameter type or implement type must be instruct");
 
-                                if (paraType != null && IMPL != null && !paraTypImpl.IsDerivedFrom(paraType))
+                                if (paraType != null && IMPL != null && !paraTypImpl.CanConvertTo(paraType))
                                     throw new NotImplementedException($"{paraTypImpl}  not implement {paraType}");
 
 
@@ -213,9 +213,9 @@ namespace Jasmine.Ioc
 
                                     foreach (var para in candidate.Parameters)
                                     {
-                                        if (para.HasImplemnt && para.Impl.IsDerivedFrom(parameters[i].ParameterType))
+                                        if (para.HasImplemnt && para.Impl.CanConvertTo(parameters[i].ParameterType))
                                             match = true;
-                                        else if (para.Type.IsDerivedFrom(parameters[i].ParameterType))
+                                        else if (para.Type.CanConvertTo(parameters[i].ParameterType))
                                             match = true;
                                         else
                                         {

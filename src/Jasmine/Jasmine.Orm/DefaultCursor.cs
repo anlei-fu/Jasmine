@@ -14,19 +14,16 @@ namespace Jasmine.Orm.Implements
         internal DefaultCursor(QueryResultContext context)
         {
             _context = context;
-            
-
         }
 
         private readonly object _locker = new object();
-
-        private ISqlExcuter _excutor => _context.Excutor;
-        private DbConnection _connection => _context.Connection;
-        private QueryResultContext _context;
-        private IDbConnectionProvider _provider => _context.ConnectionProvider;
+    
+     
         private ITableMetaDataProvider _tableProvider => DefaultTableMetaDataProvider.Instance;
         private ITypeCache _reflectionProvider => JasmineReflectionCache.Instance;
         private ISqlTypeConvertor _baseTypeConvertor => DefaultBaseTypeConvertor.Instance;
+
+        private QueryResultContext _context;
 
         public bool Closed { get; private set; }
 
@@ -38,14 +35,18 @@ namespace Jasmine.Orm.Implements
                 {
                     Closed = true;
                     _context.Reader.Close();
-                    _provider.Recycle(_connection);
+                    _context.ConnectionProvider.Recycle(_context.Connection);
                 }
             }
         }
-
-        public T ReadOne<T>(bool withAssociate = false)
+        public void Dispose()
         {
-            return ReadOne(typeof(T), withAssociate);
+            Close();
+        }
+
+        public T ReadOne<T>(bool doAssociateQuery = false)
+        {
+            return ReadOne(typeof(T), doAssociateQuery);
         }
 
         public async Task<T> ReadOneAsync<T>(bool doAssociateQuery = false)
@@ -74,7 +75,7 @@ namespace Jasmine.Orm.Implements
                 foreach (var item in resolveItems)
                 {
                     if (!instanceMap.ContainsKey(item.Parent))
-                        createParentInstance(item.Parent, instanceMap);
+                        createInstanceChain(item.Parent, instanceMap);
 
                     var result = _context.Reader.IsDBNull(item.ColumnIndex);
 
@@ -102,7 +103,7 @@ namespace Jasmine.Orm.Implements
 
             var t = 0;
 
-            while (t++<count&&await _context.Reader.ReadAsync())
+            while (t++ < count && await _context.Reader.ReadAsync())
             {
                 var instanceMap = new Dictionary<string, object>();
 
@@ -113,7 +114,7 @@ namespace Jasmine.Orm.Implements
                 foreach (var item in resolveItems)
                 {
                     if (!instanceMap.ContainsKey(item.Parent))
-                        createParentInstance(item.Parent, instanceMap);
+                        createInstanceChain(item.Parent, instanceMap);
 
                     var result = _context.Reader.IsDBNull(item.ColumnIndex);
 
@@ -150,7 +151,7 @@ namespace Jasmine.Orm.Implements
                 foreach (var item in resolveItems)
                 {
                     if (!instanceMap.ContainsKey(item.Parent))
-                        createParentInstance(item.Parent, instanceMap);
+                        createInstanceChain(item.Parent, instanceMap);
 
                     var result = _context.Reader.IsDBNull(item.ColumnIndex);
 
@@ -187,7 +188,7 @@ namespace Jasmine.Orm.Implements
                 foreach (var item in resolveItems)
                 {
                     if (!instanceMap.ContainsKey(item.Parent))
-                        createParentInstance(item.Parent, instanceMap);
+                        createInstanceChain(item.Parent, instanceMap);
 
                     var result = _context.Reader.IsDBNull(item.ColumnIndex);
 
@@ -205,13 +206,10 @@ namespace Jasmine.Orm.Implements
             return ls;
         }
 
-        public void Dispose()
-        {
-            Close();
-        }
+       
 
         /// <summary>
-        ///  spend  much time  when  cast   List[dynamic] to List[T],so  use verbose code to instead call this method
+        ///  spend  much time  when  cast   List[dynamic] to List[T]
         /// </summary>
         /// <param name="type"></param>
         /// <param name="doAssociateQuery"></param>
@@ -313,7 +311,7 @@ namespace Jasmine.Orm.Implements
                     foreach (var item in resolveItems)
                     {
                         if (!instanceMap.ContainsKey(item.Parent))
-                            createParentInstance(item.Parent, instanceMap);
+                            createInstanceChain(item.Parent, instanceMap);
 
                         var result = _context.Reader.IsDBNull(item.ColumnIndex);
 
@@ -359,7 +357,7 @@ namespace Jasmine.Orm.Implements
                 foreach (var item in resolveItems)
                 {
                     if (!instanceMap.ContainsKey(item.Parent))
-                        createParentInstance(item.Parent, instanceMap);
+                        createInstanceChain(item.Parent, instanceMap);
 
                     var result = _context.Reader.IsDBNull(item.ColumnIndex);
 
@@ -403,7 +401,7 @@ namespace Jasmine.Orm.Implements
                 foreach (var item in resolveItems)
                 {
                     if (!instanceMap.ContainsKey(item.Parent))
-                        createParentInstance(item.Parent, instanceMap);
+                        createInstanceChain(item.Parent, instanceMap);
 
                     var result = _context.Reader.IsDBNull(item.ColumnIndex);
 
@@ -425,12 +423,7 @@ namespace Jasmine.Orm.Implements
 
             return ls;
         }
-        /// <summary>
-        /// can not be inline ,call this method ,if loop count is big ,will get the speed slower
-        /// </summary>
-        /// <param name="resolveItems"></param>
-        /// <param name="table"></param>
-        /// <returns></returns>
+
         private dynamic resolveOneRow(List<ResolveItem> resolveItems, TableMetaData table)
         {
 
@@ -443,7 +436,7 @@ namespace Jasmine.Orm.Implements
             foreach (var item in resolveItems)
             {
                 if (!instanceMap.ContainsKey(item.Parent))
-                    createParentInstance(item.Parent, instanceMap);
+                    createInstanceChain(item.Parent, instanceMap);
 
                 var result = _context.Reader.IsDBNull(item.ColumnIndex);
 
@@ -458,7 +451,7 @@ namespace Jasmine.Orm.Implements
             return instance;
         }
 
-        private void createParentInstance(string parent, Dictionary<string, object> map)
+        private void createInstanceChain(string parent, Dictionary<string, object> map)
         {
             var segs = parent.Splite1("_");
 
@@ -612,7 +605,6 @@ namespace Jasmine.Orm.Implements
         private ResolveItem resolveJoinColumn(QuryResultColumnInfo column, TableMetaData table, string[] segs, string prefix)
         {
 
-
             if (segs.Length == 1)
             {
                 if (table.Columns.ContainsKey(segs[0]))
@@ -649,9 +641,7 @@ namespace Jasmine.Orm.Implements
 
         }
 
-
-
-        internal class ResolveItem
+        private class ResolveItem
         {
             public string Parent { get; set; }
             public Action<object, object> Setter { get; set; }

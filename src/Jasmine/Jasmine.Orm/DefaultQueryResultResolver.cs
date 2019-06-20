@@ -1,11 +1,9 @@
-﻿using Jasmine.Extensions;
-using Jasmine.Orm.Exceptions;
-using Jasmine.Orm.Interfaces;
+﻿using Jasmine.Orm.Interfaces;
 using Jasmine.Reflection;
 using System;
 using System.Collections.Generic;
 
-namespace Jasmine.Orm.Implements
+namespace Jasmine.Orm
 {
     public class DefaultQueryResultResolver : IQueryResultResolver
     {

@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 
-namespace Jasmine.Orm.Implements
+namespace Jasmine.Orm
 {
     public class DefaultQueryResultResolverProvider : IQueryResultResolverProvider, IReadOnlyCollection<KeyValuePair<Type, IQueryResultResolver>>
     {

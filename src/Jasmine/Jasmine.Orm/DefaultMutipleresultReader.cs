@@ -1,5 +1,4 @@
-﻿using Jasmine.Orm.Implements;
-using System.Data.Common;
+﻿using System.Data.Common;
 using System.Threading.Tasks;
 
 namespace Jasmine.Orm
@@ -12,6 +11,7 @@ namespace Jasmine.Orm
             _reader = reader;
             _connection = connection;
             _provider = provider;
+            _excutor = excutor;
         }
         private IDbConnectionProvider _provider;
         private DbConnection _connection;

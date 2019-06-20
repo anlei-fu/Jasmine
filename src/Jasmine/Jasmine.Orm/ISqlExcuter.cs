@@ -435,8 +435,8 @@ namespace Jasmine.Orm
          */
         int Update<T>(object parameter,DbTransaction transaction=null);
         int UpdateWith<T>(string table, object parameter, DbTransaction transaction = null);
-        int UpdateConditional<T>(string condition, object parameter, DbTransaction transaction = null);
-        int UpdateConditionalWidth<T>(string table, string condition, object parameter, DbTransaction transaction = null);
+        int UpdateConditional<T>(object parameter, string condition, object conditionParameter=null, DbTransaction transaction = null);
+        int UpdateConditionalWidth<T>(string table, object parameter, string condition,object conditionParameter=null, DbTransaction transaction = null);
 
 
         /*
@@ -491,8 +491,8 @@ namespace Jasmine.Orm
          */
         Task<int> UpdateAsync<T>(object parameter, DbTransaction transaction = null);
         Task<int> UpdateWithAsync<T>(string table, object parameter, DbTransaction transaction = null);
-        Task<int> UpdateConditionalAsync<T>(string condition, object parameter, DbTransaction transaction = null);
-        Task<int> UpdateConditionalWidthAsync<T>(string table, string condition, object parameter, DbTransaction transaction = null);
+        Task<int> UpdateConditionalAsync<T>(object parameter, string condition,object conditionParameter=null, DbTransaction transaction = null);
+        Task<int> UpdateConditionalWidthAsync<T>(string table,  object parameter, string condition,object conditionParameter=null, DbTransaction transaction = null);
 
 
     }

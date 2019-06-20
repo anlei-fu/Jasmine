@@ -22,7 +22,7 @@ namespace Jasmine.Ioc
             if (impl.IsInterfaceOrAbstractClass())
                 throw new NotImplementedException();
 
-            if(!impl.IsDerivedFrom(abs))
+            if(!impl.CanConvertTo(abs))
                 throw new NotImplementedException();
 
             if (!_implMappings.ContainsKey(abs))

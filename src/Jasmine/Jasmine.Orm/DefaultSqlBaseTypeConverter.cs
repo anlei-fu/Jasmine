@@ -6,7 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Jasmine.Orm.Implements
+namespace Jasmine.Orm
 {
     public class DefaultBaseTypeConvertor : ISqlTypeConvertor
     {

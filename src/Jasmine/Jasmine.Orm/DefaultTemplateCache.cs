@@ -251,7 +251,7 @@ namespace Jasmine.Orm
             lock (_locker)
             {
                 if (_stringCache[2] == null)
-                    _stringCache[2] = $"{DELETE} {FROM} {_tableName} @condition";
+                    _stringCache[2] = $"{DELETE} {FROM} {_tableName} where @condition";
             }
 
             return _stringCache[2].Replace("@condition", condition);
@@ -618,7 +618,7 @@ namespace Jasmine.Orm
             lock (_locker)
             {
                 if (_stringCache[12] == null)
-                    _stringCache[12] = $"{SELECT} * {FROM} {_tableName} {getLeftJoin(_tableName)} {WHERE} @condition {ORDERBY} @orderBy {ASC} ";
+                    _stringCache[12] = $"{SELECT} * {FROM} {_tableName} {WHERE} @condition {getLeftJoin(_tableName)}  {ORDERBY} @orderBy {ASC} ";
             }
 
             return _stringCache[12].Replace("@condition", condition)
@@ -633,7 +633,7 @@ namespace Jasmine.Orm
             lock (_locker)
             {
                 if (_stringCache[13] == null)
-                    _stringCache[13] = $"{SELECT} * {FROM} @table {getLeftJoin("@table")} {WHERE} @condition {ORDERBY} @orderBy {ASC} ";
+                    _stringCache[13] = $"{SELECT} * {FROM} @table {WHERE} @condition {getLeftJoin("@table")}  {ORDERBY} @orderBy {ASC} ";
             }
 
             return _stringCache[13].Replace("@condition", condition)
@@ -649,7 +649,7 @@ namespace Jasmine.Orm
             lock (_locker)
             {
                 if (_stringCache[14] == null)
-                    _stringCache[14] = $"{SELECT} * {FROM} {_tableProvider.GetTable(_type).Name} {getLeftJoin(_tableName)} {WHERE} @condition {ORDERBY} @orderBy {DESC} ";
+                    _stringCache[14] = $"{SELECT} * {FROM} {_tableProvider.GetTable(_type).Name} {WHERE} @condition {getLeftJoin(_tableName)}  {ORDERBY} @orderBy {DESC} ";
             }
 
             return _stringCache[14].Replace("@condition", condition)
@@ -664,7 +664,7 @@ namespace Jasmine.Orm
             lock (_locker)
             {
                 if (_stringCache[15] == null)
-                    _stringCache[15] = $"{SELECT} * {FROM} @table {getLeftJoin("@table")}  {WHERE} @condition {ORDERBY} @orderBy {DESC} ";
+                    _stringCache[15] = $"{SELECT} * {FROM} @table  {WHERE} @condition {getLeftJoin("@table")}  {ORDERBY} @orderBy {DESC} ";
             }
 
             return _stringCache[15].Replace("@condition", condition)
@@ -680,7 +680,7 @@ namespace Jasmine.Orm
             lock (_locker)
             {
                 if (_stringCache[16] == null)
-                    _stringCache[16] = $"{SELECT} * {FROM} @table {getLeftJoin("@table")} {WHERE} @condition  ";
+                    _stringCache[16] = $"{SELECT} * {FROM} @table {WHERE} @condition  {getLeftJoin("@table")}  ";
             }
 
             return _stringCache[16].Replace("@condition", condition)
@@ -724,7 +724,7 @@ namespace Jasmine.Orm
             lock (_locker)
             {
                 if (_stringCache[19] == null)
-                    _stringCache[19] = $"{SELECT} * {FROM} {_tableName} {ORDERBY} {getLeftJoin(_tableName)} @orderBy {DESC}  ";
+                    _stringCache[19] = $"{SELECT} * {FROM} {_tableName}  {getLeftJoin(_tableName)} {ORDERBY} @orderBy {DESC}  ";
             }
 
             return _stringCache[19].Replace("@orderBy", orderBy);
@@ -849,7 +849,7 @@ namespace Jasmine.Orm
             lock (_locker)
             {
                 if (_stringCache[22] == null)
-                    _stringCache[22] = $"{SELECT} @body {FROM} {_tableName} {getLeftJoin(_tableName)} {WHERE} @condition  ";
+                    _stringCache[22] = $"{SELECT} @body {FROM} {_tableName} {WHERE} @condition {getLeftJoin(_tableName)}   ";
             }
 
             return _stringCache[22].Replace("@body", generateColumnsString(columns))
@@ -864,7 +864,7 @@ namespace Jasmine.Orm
             lock (_locker)
             {
                 if (_stringCache[23] == null)
-                    _stringCache[23] = $"{SELECT} @body {FROM} {_tableName} {getLeftJoin(_tableName)} {ORDERBY} @orderBy {ASC}  {WHERE} @condition  ";
+                    _stringCache[23] = $"{SELECT} @body {FROM} {_tableName}  {WHERE} @condition   {getLeftJoin(_tableName)}  {ORDERBY} @orderBy {ASC} ";
             }
 
             return _stringCache[23].Replace("@body", generateColumnsString(columns))
@@ -880,7 +880,7 @@ namespace Jasmine.Orm
             lock (_locker)
             {
                 if (_stringCache[24] == null)
-                    _stringCache[24] = $"{SELECT} @body {FROM} @table {getLeftJoin("@table")} {ORDERBY} @orderBy {ASC}  {WHERE} @condition  ";
+                    _stringCache[24] = $"{SELECT} @body {FROM} @table {WHERE} @condition  {getLeftJoin("@table")} {ORDERBY} @orderBy {ASC}   ";
             }
 
             return _stringCache[24].Replace("@body", generateColumnsString(columns))
@@ -897,7 +897,7 @@ namespace Jasmine.Orm
             lock (_locker)
             {
                 if (_stringCache[25] == null)
-                    _stringCache[25] = $"{SELECT} @body {FROM} {_tableName} {getLeftJoin(_tableName)} {ORDERBY} @orderBy {DESC}  {WHERE} @condition  ";
+                    _stringCache[25] = $"{SELECT} @body {FROM} {_tableName} {WHERE} @condition  {getLeftJoin(_tableName)} {ORDERBY} @orderBy {DESC}   ";
             }
 
             return _stringCache[25].Replace("@body", generateColumnsString(columns))
@@ -913,7 +913,7 @@ namespace Jasmine.Orm
             lock (_locker)
             {
                 if (_stringCache[26] == null)
-                    _stringCache[26] = $"{SELECT} @body {FROM} @table {getLeftJoin("@table")} {ORDERBY} @orderBy {DESC}  {WHERE} @condition  ";
+                    _stringCache[26] = $"{SELECT} @body {FROM} @table {WHERE} @condition  {getLeftJoin("@table")} {ORDERBY} @orderBy {DESC}   ";
             }
 
             return _stringCache[26].Replace("@body", generateColumnsString(columns))
@@ -929,7 +929,7 @@ namespace Jasmine.Orm
             lock (_locker)
             {
                 if (_stringCache[27] == null)
-                    _stringCache[27] = $"{SELECT} @body {FROM} @table {getLeftJoin("@table")} {ORDERBY}  {WHERE} @condition  ";
+                    _stringCache[27] = $"{SELECT} @body {FROM} @table  {WHERE} @condition {getLeftJoin("@table")} {ORDERBY}   ";
             }
 
             return _stringCache[27].Replace("@body", generateColumnsString(columns))
@@ -1059,7 +1059,7 @@ namespace Jasmine.Orm
             {
                 if (_stringCache[34] == null)
                 {
-                    _stringCache[34] = $"{SELECT} * {FROM} {_tableName} {getLeftJoin(_tableName)} {WHERE} @condition  ";
+                    _stringCache[34] = $"{SELECT} * {FROM} {_tableName} {WHERE} @condition {getLeftJoin(_tableName)}   ";
 
                     _stringCache[34] = markTop(_stringCache[34], _table.DataSource);
                 }
@@ -1078,7 +1078,7 @@ namespace Jasmine.Orm
             {
                 if (_stringCache[35] == null)
                 {
-                    _stringCache[35] = $"{SELECT} * {FROM} {_tableName} {getLeftJoin(_tableName)} {WHERE} @condition {ORDERBY} @orderBy {ASC} ";
+                    _stringCache[35] = $"{SELECT} * {FROM} {_tableName} {WHERE} @condition {getLeftJoin(_tableName)}  {ORDERBY} @orderBy {ASC} ";
 
                     _stringCache[35] = markTop(_stringCache[35], _table.DataSource);
                 }
@@ -1098,7 +1098,7 @@ namespace Jasmine.Orm
             {
                 if (_stringCache[36] == null)
                 {
-                    _stringCache[36] = $"{SELECT} * {FROM} {_tableName} {getLeftJoin("@table")} {WHERE} @condition {ORDERBY} @orderBy {ASC} ";
+                    _stringCache[36] = $"{SELECT} * {FROM} {_tableName} {WHERE} @condition {getLeftJoin("@table")}  {ORDERBY} @orderBy {ASC} ";
 
                     _stringCache[36] = markTop(_stringCache[36], _table.DataSource);
                 }
@@ -1119,7 +1119,7 @@ namespace Jasmine.Orm
             {
                 if (_stringCache[37] == null)
                 {
-                    _stringCache[37] = $"{SELECT} * {FROM} {_tableName} {getLeftJoin(_tableName)} {WHERE} @condition {ORDERBY} @orderBy {DESC} ";
+                    _stringCache[37] = $"{SELECT} * {FROM} {_tableName} {WHERE} @condition {getLeftJoin(_tableName)}  {ORDERBY} @orderBy {DESC} ";
 
                     _stringCache[37] = markTop(_stringCache[37], _table.DataSource);
                 }
@@ -1139,7 +1139,7 @@ namespace Jasmine.Orm
             {
                 if (_stringCache[38] == null)
                 {
-                    _stringCache[38] = $"{SELECT} * {FROM} {_tableName} {getLeftJoin("@table")} {WHERE} @condition {ORDERBY} @orderBy {DESC} ";
+                    _stringCache[38] = $"{SELECT} * {FROM} {_tableName} {WHERE} @condition {getLeftJoin("@table")}  {ORDERBY} @orderBy {DESC} ";
 
                     _stringCache[38] = markTop(_stringCache[38], _table.DataSource);
                 }
@@ -1160,7 +1160,7 @@ namespace Jasmine.Orm
             {
                 if (_stringCache[39] == null)
                 {
-                    _stringCache[39] = $"{SELECT} * {FROM} @table {getLeftJoin("@table")} {WHERE} @condition  ";
+                    _stringCache[39] = $"{SELECT} * {FROM} @table {WHERE} @condition  {getLeftJoin("@table")}  ";
 
                     _stringCache[39] = markTop(_stringCache[39], _table.DataSource);
                 }
@@ -1318,7 +1318,7 @@ namespace Jasmine.Orm
             {
                 if (_stringCache[47] == null)
                 {
-                    _stringCache[47] = $"{SELECT} @body {FROM} {_tableName} {getLeftJoin(_tableName)} {WHERE} @condition  ";
+                    _stringCache[47] = $"{SELECT} @body {FROM} {_tableName} {WHERE} @condition {getLeftJoin(_tableName)}   ";
 
                     _stringCache[47] = markTop(_stringCache[47], _table.DataSource);
                 }
@@ -1338,7 +1338,7 @@ namespace Jasmine.Orm
             {
                 if (_stringCache[48] == null)
                 {
-                    _stringCache[48] = $"{SELECT} @body {FROM} {_tableName} {getLeftJoin(_tableName)} {WHERE} @condition {ORDERBY} @orderBy {ASC} ";
+                    _stringCache[48] = $"{SELECT} @body {FROM} {_tableName} {WHERE} @condition {getLeftJoin(_tableName)}  {ORDERBY} @orderBy {ASC} ";
 
                     _stringCache[48] = markTop(_stringCache[47], _table.DataSource);
                 }
@@ -1359,7 +1359,7 @@ namespace Jasmine.Orm
             {
                 if (_stringCache[49] == null)
                 {
-                    _stringCache[49] = $"{SELECT} @body {FROM} @table {getLeftJoin("@table")} {WHERE} @condition {ORDERBY} @orderBy {ASC} ";
+                    _stringCache[49] = $"{SELECT} @body {FROM} @table {WHERE} @condition {getLeftJoin("@table")}  {ORDERBY} @orderBy {ASC} ";
 
                     _stringCache[49] = markTop(_stringCache[49], _table.DataSource);
                 }
@@ -1380,7 +1380,7 @@ namespace Jasmine.Orm
             {
                 if (_stringCache[50] == null)
                 {
-                    _stringCache[50] = $"{SELECT} @body {FROM} {_tableName} {getLeftJoin(_tableName)} {WHERE} @condition {ORDERBY} @orderBy {DESC} ";
+                    _stringCache[50] = $"{SELECT} @body {FROM} {_tableName} {WHERE} @condition {getLeftJoin(_tableName)}  {ORDERBY} @orderBy {DESC} ";
 
                     _stringCache[50] = markTop(_stringCache[50], _table.DataSource);
                 }
@@ -1401,7 +1401,7 @@ namespace Jasmine.Orm
             {
                 if (_stringCache[51] == null)
                 {
-                    _stringCache[51] = $"{SELECT} @body {FROM} @table {getLeftJoin("@table")} {WHERE} @condition {ORDERBY} @orderBy {DESC} ";
+                    _stringCache[51] = $"{SELECT} @body {FROM} @table {WHERE} @condition {getLeftJoin("@table")}  {ORDERBY} @orderBy {DESC} ";
 
                     _stringCache[51] = markTop(_stringCache[51], _table.DataSource);
                 }
@@ -1423,7 +1423,7 @@ namespace Jasmine.Orm
             {
                 if (_stringCache[52] == null)
                 {
-                    _stringCache[52] = $"{SELECT} @body {FROM} @table {getLeftJoin("@table")} {WHERE} @condition  ";
+                    _stringCache[52] = $"{SELECT} @body {FROM} @table {WHERE} @condition   {getLeftJoin("@table")} ";
 
                     _stringCache[52] = markTop(_stringCache[52], _table.DataSource);
                 }
@@ -1444,7 +1444,7 @@ namespace Jasmine.Orm
             {
                 if (_stringCache[53] == null)
                 {
-                    _stringCache[53] = $"{SELECT} @body {FROM} {_tableName} {getLeftJoin(_tableName)} {WHERE} @condition {ORDERBY} @orderBy Desc  ";
+                    _stringCache[53] = $"{SELECT} @body {FROM} {_tableName} {WHERE} @condition {getLeftJoin(_tableName)}  {ORDERBY} @orderBy Desc  ";
 
                     _stringCache[53] = markTop(_stringCache[53], _table.DataSource);
                 }
@@ -1464,7 +1464,7 @@ namespace Jasmine.Orm
             {
                 if (_stringCache[54] == null)
                 {
-                    _stringCache[54] = $"{SELECT} @body {FROM} @table {getLeftJoin("@table")} {WHERE} @condition {ORDERBY} @orderBy Desc  ";
+                    _stringCache[54] = $"{SELECT} @body {FROM} @table {WHERE} @condition {getLeftJoin("@table")}  {ORDERBY} @orderBy Desc  ";
 
                     _stringCache[54] = markTop(_stringCache[54], _table.DataSource);
                 }

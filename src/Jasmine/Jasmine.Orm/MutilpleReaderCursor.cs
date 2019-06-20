@@ -10,7 +10,7 @@ namespace Jasmine.Orm
 
         public override void Close()
         {
-            // do noting
+            // do nothing
         }
     }
 }

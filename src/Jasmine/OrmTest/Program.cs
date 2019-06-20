@@ -74,28 +74,28 @@ namespace OrmTest
 
             var excutor = new JasmineSqlExcutor(provider);
 
-            excutor.Excute("delete from animal ");
+            excutor.DeleteAll<Animal>();
 
             excutor.Create<Animal>();
 
-            int t =10000;
+            int dataSize =1000;
 
 
-            Console.WriteLine($"test sqlexcutor and dapper speed,data size is {t}");
+            Console.WriteLine($"test sqlexcutor and dapper speed,data size is {dataSize} row");
 
 
             var connetion = provider.Rent();
 
             //data
-            var ls = new List<Animal>();
+            var datas = new List<Animal>();
 
-            for (int i = 0; i < t; i++)
+            for (int i = 0; i < dataSize; i++)
             {
                 var animal = new Animal();
 
                 animal.Name = i.ToString();
 
-                ls.Add(animal);
+                datas.Add(animal);
             }
 
 
@@ -104,9 +104,9 @@ namespace OrmTest
             Start("single row insert");
 
             startWatch();
-           
-            //foreach (var item in ls)
-            //    connetion.Execute("insert into animal(name,age,canfly) values (@Name,@Age,@CanFly)", item);
+
+            foreach (var item in datas)
+                connetion.Execute("insert into animal(name,age,canfly) values (@Name,@Age,@CanFly)", item);
 
             PrintDapper();
            
@@ -115,7 +115,7 @@ namespace OrmTest
 
             startWatch();
 
-            foreach (var item in ls)
+            foreach (var item in datas)
                 excutor.Insert<Animal>(item);
 
             PrintExcutor();
@@ -137,8 +137,8 @@ namespace OrmTest
 
             startWatch();
 
-            //foreach (var item in ls)
-            //    connetion.Execute("insert into animal(name,age) values (@Name,@Age)", item);
+            foreach (var item in datas)
+                connetion.Execute("insert into animal(name,age) values (@Name,@Age)", item);
 
             PrintDapper();
             
@@ -147,8 +147,8 @@ namespace OrmTest
 
             startWatch();
 
-            //foreach (var item in ls)
-            //    excutor.InsertPartial<Animal>(item,null, "Name", "Age");
+            foreach (var item in datas)
+                excutor.InsertPartial<Animal>(item, null, "Name", "Age");
 
             PrintExcutor();
             End();
@@ -175,12 +175,12 @@ namespace OrmTest
 
             Start("batch insert");
             startWatch();
-            connetion.Execute("insert into animal(name,age,canfly) values(@Name,@Age,@CanFly)", ls);
+            connetion.Execute("insert into animal(name,age,canfly) values(@Name,@Age,@CanFly)", datas);
             PrintDapper();
             excutor.Excute("delete from animal ");
 
             startWatch();
-            excutor.BatchInsert<Animal>(ls);
+            excutor.BatchInsert<Animal>(datas);
             PrintExcutor();
             End();
 
@@ -191,13 +191,13 @@ namespace OrmTest
 
             Start("test batch insert partial....");
             startWatch();
-            connetion.Execute("insert into animal(name,age) values(@Name,@Age)", ls);
+            connetion.Execute("insert into animal(name,age) values(@Name,@Age)", datas);
             PrintDapper();
 
             excutor.Excute("delete from animal ");
 
             startWatch();
-            excutor.BatchInsertPartial<Animal>(new string[] {"Name","Age" },ls);
+            excutor.BatchInsertPartial<Animal>(new string[] {"Name","Age" },datas);
             PrintExcutor();
             End();
 
@@ -205,6 +205,85 @@ namespace OrmTest
             {
                 Console.WriteLine(item.Name);
             }
+
+
+            Start("test delete");
+
+            startWatch();
+
+            connetion.Execute("delete from  animal where name in @ids", new { ids = new string[] { "2", "3", "4" } });
+            PrintDapper();
+
+            startWatch();
+            excutor.Delete<Animal>("name in @ids", new { ids = new string[] { "4", "5", "6" } });
+
+            PrintExcutor();
+
+            End();
+
+
+            Start("test delete2 ,test cache is useless? ");
+
+            startWatch();
+
+            connetion.Execute("delete from  animal where name in @ids", new { ids = new string[] { "2", "3", "4" } });
+            PrintDapper();
+
+            startWatch();
+            excutor.Delete<Animal>("name in @ids", new { ids = new string[] { "4", "5", "6" } });
+
+            PrintExcutor();
+
+            End();
+
+
+            Start("test query conditional");
+
+            startWatch();
+
+            connetion.Query<Animal>("select * from animal where name=@name", new { name = "99" });
+
+            PrintDapper();
+
+            startWatch();
+
+            excutor.QueryConditional<Animal>("name=@name", new { name = "99" });
+
+            PrintExcutor();
+
+
+
+            Start("test select top ");
+
+            startWatch();
+
+          
+            excutor.QueryTop<Animal>(20);
+
+            PrintExcutor();
+
+            End();
+
+
+            Start("test select order by ");
+
+            startWatch();
+
+
+            var results= excutor.QueryPartialConditionalOrderByAsc<Animal>("age>10",null,"name","name");
+
+            PrintExcutor();
+
+            foreach (var item in results)
+            {
+                Console.WriteLine(item.Name);
+            }
+
+          
+            End();
+
+
+
 
 
             Console.Read();

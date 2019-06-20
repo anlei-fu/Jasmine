@@ -3,7 +3,6 @@ using Jasmine.Orm.Implements;
 using Jasmine.Reflection;
 using System;
 using System.Collections.Generic;
-using System.Data;
 using System.Data.Common;
 using System.Text;
 using System.Threading.Tasks;
@@ -16,12 +15,12 @@ namespace Jasmine.Orm
         {
             _connectionProvider = provider;
         }
-
         private ITableTemplateCacheProvider _templateProvider =>DefaultTableTemplateCacheProvider.Instance;
-        private SqltemplateConverter _templateConverter => SqltemplateConverter.Instance;
+        private ITableMetaDataProvider _tableMetaDataProvider => DefaultTableMetaDataProvider.Instance;
 
         private IDbConnectionProvider _connectionProvider;
-        private ITableMetaDataProvider _metaDataProvider => DefaultTableMetaDataProvider.Instance;
+
+
         #region Batch insert.........................
         /// <summary>
         /// do batch insert
@@ -32,7 +31,7 @@ namespace Jasmine.Orm
         /// <returns></returns>
         public int BatchInsert<T>(IEnumerable<object> datas, DbTransaction transaction=null)
         {
-            var table = _metaDataProvider.GetTable(typeof(T));
+            var table = _tableMetaDataProvider.GetTable(typeof(T));
             //if has join table can just insert one by one
             if(table.HasJoinTable)
             {
@@ -42,7 +41,7 @@ namespace Jasmine.Orm
 
                 foreach (var item in datas)
                 {
-                    builder.Append(_templateConverter.Convert(template, item))
+                    builder.Append(template.Render(item))
                            .Append("\r\n");
                 }
 
@@ -59,7 +58,15 @@ namespace Jasmine.Orm
                     case DataSource.Sqlite:
                     case DataSource.Postgre:
                     case DataSource.Access:
-                        return Excute(getBatchInsertNormalSql<T>(datas,table.GetAllColumnName()), transaction);
+
+                        var t = 0;
+
+                        foreach (var item in getBatchInsertNormalSql<T>(datas, table.GetAllColumnName()))
+                        {
+                          t+=  Excute(item, transaction);
+                        }
+
+                        return t;
                     case DataSource.Oracle:
                         break;
                     case DataSource.SyBase:
@@ -74,10 +81,11 @@ namespace Jasmine.Orm
 
        
       
-        public Task<int> BatchInsertAsync<T>(IEnumerable<object> datas, DbTransaction transaction=null)
+        public async Task<int> BatchInsertAsync<T>(IEnumerable<object> datas, DbTransaction transaction=null)
         {
-            var table = _metaDataProvider.GetTable(typeof(T));
-            //if has join table can just insert one by one
+            var table = _tableMetaDataProvider.GetTable(typeof(T));
+     
+            //if has join table can just insert one by one, need get a method to optimize
             if (table.HasJoinTable)
             {
                 var template = _templateProvider.GetCache<T>().GetInsert();
@@ -86,180 +94,7 @@ namespace Jasmine.Orm
 
                 foreach (var item in datas)
                 {
-                    builder.Append(_templateConverter.Convert(template, item))
-                           .Append("\r\n");
-                }
-
-                return ExcuteAsync(builder.ToString(), transaction);
-
-            }
-            else
-            {
-                switch (_connectionProvider.DataSource)
-                {
-                    case DataSource.SqlServer:
-                    case DataSource.MySql:
-                    case DataSource.Db2:
-                    case DataSource.Sqlite:
-                    case DataSource.Postgre:
-                    case DataSource.Access:
-                        return ExcuteAsync(getBatchInsertNormalSql<T>(datas, table.GetAllColumnName()), transaction);
-                    case DataSource.Oracle:
-                        break;
-                    case DataSource.SyBase:
-                        break;
-                    default:
-                        break;
-                }
-            }
-
-            throw new NotImplementedException();
-        }
-
-        public int BatchInsertPartial<T>(string[] columns, IEnumerable<object> data, DbTransaction transaction=null)
-        {
-            switch (_connectionProvider.DataSource)
-            {
-                case DataSource.SqlServer:
-                case DataSource.MySql:
-                case DataSource.Db2:
-                case DataSource.Sqlite:
-                case DataSource.Postgre:
-                case DataSource.Access:
-                    return Excute(getBatchInsertNormalSql<T>(data, columns), transaction);
-
-                case DataSource.Oracle:
-                    break;
-                case DataSource.SyBase:
-                    break;
-                default:
-                    break;
-            }
-
-            return 0;
-        }
-    
-        public Task<int> BatchInsertPartialAsync<T>( IEnumerable<object> data, DbTransaction transaction, params string[] columns)
-        {
-            switch (_connectionProvider.DataSource)
-            {
-                case DataSource.SqlServer:
-                case DataSource.MySql:
-                case DataSource.Db2:
-                case DataSource.Sqlite:
-                case DataSource.Postgre:
-                case DataSource.Access:
-                    return ExcuteAsync(getBatchInsertNormalSql<T>(data, columns), transaction);
-                case DataSource.Oracle:
-                    break;
-                case DataSource.SyBase:
-                    break;
-                default:
-                    break;
-            }
-
-            return null;
-        }
-
-        public int BatchInsertPartialWith<T>(string table, string[] columns, IEnumerable<object> datas, DbTransaction transaction=null)
-        {
-            switch (_connectionProvider.DataSource)
-            {
-                case DataSource.SqlServer:
-                case DataSource.MySql:
-                case DataSource.Db2:
-                case DataSource.Sqlite:
-                case DataSource.Postgre:
-                case DataSource.Access:
-                    return Excute(getBatchInsertNormalSql(table,datas, columns), transaction);
-                case DataSource.Oracle:
-                    break;
-                case DataSource.SyBase:
-                    break;
-                default:
-                    break;
-            }
-
-            return 0;
-        }
-
-        public Task<int> BatchInsertPartialWithAsync<T>(string table,  IEnumerable<object> datas, DbTransaction transaction=null , params string[] columns)
-        {
-            switch (_connectionProvider.DataSource)
-            {
-                case DataSource.SqlServer:
-                case DataSource.MySql:
-                case DataSource.Db2:
-                case DataSource.Sqlite:
-                case DataSource.Postgre:
-                case DataSource.Access:
-                    return ExcuteAsync(getBatchInsertNormalSql(table, datas, columns), transaction);
-                case DataSource.Oracle:
-                    break;
-                case DataSource.SyBase:
-                    break;
-                default:
-                    break;
-            }
-
-            return Task.FromResult<int>(0);
-        }
-
-        public int BatchInsertWith<T>(string tableName, IEnumerable<object> datas, DbTransaction transaction=null)
-        {
-            var table = _metaDataProvider.GetTable(typeof(T));
-            //if has join table can just insert one by one
-            if (table.HasJoinTable)
-            {
-                var template = _templateProvider.GetCache<T>().GetInsertWith(tableName);
-
-                var builder = new StringBuilder();
-
-                foreach (var item in datas)
-                {
-                    builder.Append(_templateConverter.Convert(template, item))
-                           .Append("\r\n");
-                }
-
-                return Excute(builder.ToString(), transaction);
-
-            }
-            else
-            {
-                switch (_connectionProvider.DataSource)
-                {
-                    case DataSource.SqlServer:
-                    case DataSource.MySql:
-                    case DataSource.Db2:
-                    case DataSource.Sqlite:
-                    case DataSource.Postgre:
-                    case DataSource.Access:
-                        return Excute(getBatchInsertNormalSql(tableName,datas, table.GetAllColumnName()), transaction);
-                    case DataSource.Oracle:
-                        break;
-                    case DataSource.SyBase:
-                        break;
-                    default:
-                        break;
-                }
-            }
-
-            throw new NotImplementedException();
-        }
-
-        public async Task<int> BatchInsertWithAsync<T>(string tableName, IEnumerable<object> datas, DbTransaction transaction=null)
-        {
-            var table = _metaDataProvider.GetTable(typeof(T));
-            //if has join table can just insert one by one
-            if (table.HasJoinTable)
-            {
-                var template = _templateProvider.GetCache<T>().GetInsertWith(tableName);
-
-                var builder = new StringBuilder();
-
-                foreach (var item in datas)
-                {
-                    builder.Append(_templateConverter.Convert(template, item))
+                    builder.Append(template.Render(item))
                            .Append("\r\n");
                 }
 
@@ -278,6 +113,229 @@ namespace Jasmine.Orm
                     case DataSource.Access:
 
                         var t = 0;
+                        foreach (var item in getBatchInsertNormalSql<T>(datas, table.GetAllColumnName()))
+                        {
+                            t += await ExcuteAsync(item, transaction);
+                        }
+
+                        return t;
+
+                    case DataSource.Oracle:
+                        break;
+                    case DataSource.SyBase:
+                        break;
+                    default:
+                        break;
+                }
+            }
+
+            throw new NotImplementedException();
+        }
+
+        public int BatchInsertPartial<T>(string[] columns, IEnumerable<object> datas, DbTransaction transaction=null)
+        {
+            switch (_connectionProvider.DataSource)
+            {
+                case DataSource.SqlServer:
+                case DataSource.MySql:
+                case DataSource.Db2:
+                case DataSource.Sqlite:
+                case DataSource.Postgre:
+                case DataSource.Access:
+
+                    var t = 0;
+
+                    foreach (var item in getBatchInsertNormalSql<T>(datas, columns))
+                    {
+                        t +=  Excute(item, transaction);
+                    }
+
+                    return t;
+
+
+                case DataSource.Oracle:
+                    break;
+                case DataSource.SyBase:
+                    break;
+                default:
+                    break;
+            }
+
+            return 0;
+        }
+    
+        public async Task<int> BatchInsertPartialAsync<T>( IEnumerable<object> datas, DbTransaction transaction, params string[] columns)
+        {
+            switch (_connectionProvider.DataSource)
+            {
+                case DataSource.SqlServer:
+                case DataSource.MySql:
+                case DataSource.Db2:
+                case DataSource.Sqlite:
+                case DataSource.Postgre:
+                case DataSource.Access:
+
+                    var t = 0;
+
+                    foreach (var item in getBatchInsertNormalSql<T>(datas, columns))
+                    {
+                        t += await ExcuteAsync(item, transaction);
+                    }
+
+                    return t;
+
+                case DataSource.Oracle:
+                    break;
+                case DataSource.SyBase:
+                    break;
+                default:
+                    break;
+            }
+
+            return  0;
+        }
+
+        public int BatchInsertPartialWith<T>(string table, string[] columns, IEnumerable<object> datas, DbTransaction transaction=null)
+        {
+            switch (_connectionProvider.DataSource)
+            {
+                case DataSource.SqlServer:
+                case DataSource.MySql:
+                case DataSource.Db2:
+                case DataSource.Sqlite:
+                case DataSource.Postgre:
+                case DataSource.Access:
+
+                    var t = 0;
+
+                    foreach (var item in getBatchInsertNormalSql(table, datas, columns))
+                    {
+                        t+= Excute(item, transaction);
+                    }
+
+                    return t;
+                case DataSource.Oracle:
+                    break;
+                case DataSource.SyBase:
+                    break;
+                default:
+                    break;
+            }
+
+            return 0;
+        }
+
+        public async Task<int> BatchInsertPartialWithAsync<T>(string table,  IEnumerable<object> datas, DbTransaction transaction=null , params string[] columns)
+        {
+            switch (_connectionProvider.DataSource)
+            {
+                case DataSource.SqlServer:
+                case DataSource.MySql:
+                case DataSource.Db2:
+                case DataSource.Sqlite:
+                case DataSource.Postgre:
+                case DataSource.Access:
+                    var t = 0;
+
+                    foreach (var item in getBatchInsertNormalSql(table, datas, columns))
+                    {
+                        t += await ExcuteAsync(item, transaction);
+                    }
+
+                    return t;
+                case DataSource.Oracle:
+                    break;
+                case DataSource.SyBase:
+                    break;
+                default:
+                    break;
+            }
+
+            return 0;
+        }
+
+        public int BatchInsertWith<T>(string tableName, IEnumerable<object> datas, DbTransaction transaction=null)
+        {
+            var table = _tableMetaDataProvider.GetTable(typeof(T));
+            //if has join table can just insert one by one
+            if (table.HasJoinTable)
+            {
+                var template = _templateProvider.GetCache<T>().GetInsertWith(tableName);
+
+                var builder = new StringBuilder();
+
+                foreach (var item in datas)
+                {
+                    builder.Append(template.Render(item))
+                           .Append("\r\n");
+                }
+
+                return Excute(builder.ToString(), transaction);
+
+            }
+            else
+            {
+                switch (_connectionProvider.DataSource)
+                {
+                    case DataSource.SqlServer:
+                    case DataSource.MySql:
+                    case DataSource.Db2:
+                    case DataSource.Sqlite:
+                    case DataSource.Postgre:
+                    case DataSource.Access:
+
+                        var t = 0;
+
+                        foreach (var item in getBatchInsertNormalSql(tableName, datas, table.GetAllColumnName()))
+                        {
+                            t += Excute(item, transaction);
+                        }
+
+                        return t;
+                    case DataSource.Oracle:
+                        break;
+                    case DataSource.SyBase:
+                        break;
+                    default:
+                        break;
+                }
+            }
+
+            throw new NotImplementedException();
+        }
+
+        public async Task<int> BatchInsertWithAsync<T>(string tableName, IEnumerable<object> datas, DbTransaction transaction=null)
+        {
+            var table = _tableMetaDataProvider.GetTable(typeof(T));
+            //if has join table can just insert one by one
+            if (table.HasJoinTable)
+            {
+                var template = _templateProvider.GetCache<T>().GetInsertWith(tableName);
+
+                var builder = new StringBuilder();
+
+                foreach (var item in datas)
+                {
+                    builder.Append(template.Render(item))
+                           .Append("\r\n");
+                }
+
+                return await ExcuteAsync(builder.ToString(), transaction);
+
+            }
+            else
+            {
+                switch (_connectionProvider.DataSource)
+                {
+                    case DataSource.SqlServer:
+                    case DataSource.MySql:
+                    case DataSource.Db2:
+                    case DataSource.Sqlite:
+                    case DataSource.Postgre:
+                    case DataSource.Access:
+
+                        var t = 0;
+
                         foreach (var item in getBatchInsertNormalSql(tableName, datas, table.GetAllColumnName()))
                         {
                           t += await  ExcuteAsync(item, transaction);
@@ -299,7 +357,7 @@ namespace Jasmine.Orm
 
         private List<string> getBatchInsertNormalSql<T>(IEnumerable<object> datas, params string[] columns)
         {
-            var table = _metaDataProvider.GetTable(typeof(T));
+            var table = _tableMetaDataProvider.GetTable(typeof(T));
 
             return getBatchInsertNormalSql(table.Name, datas, columns);
 
@@ -320,8 +378,6 @@ namespace Jasmine.Orm
 
             var builder = new StringBuilder();
 
-            
-
             var t = 0;
 
             foreach (var item in datas)
@@ -330,16 +386,18 @@ namespace Jasmine.Orm
                 {
                     builder.Append(left);
                 }
-                builder.Append(_templateConverter.Convert(right, item));
+
+                builder.Append(right.Render(item));
 
                 builder.Append(",");
 
                 if(t>1000)
                 {
                     ls.Add(builder.RemoveLastComa().ToString());
-
+                    t = 0;
                     builder.Clear();
                 }
+                t++;
             }
 
             if (builder.Length != 0)
@@ -356,7 +414,9 @@ namespace Jasmine.Orm
         }
         #endregion
 
-        #region Create .....................
+
+
+        #region Create ...................................
         public int Create<T>(DbTransaction transantion = null)
         {
             return Excute(_templateProvider.GetCache<T>().GetCreate());
@@ -378,18 +438,20 @@ namespace Jasmine.Orm
         }
         #endregion
 
-        #region Delete ...............
+
+
+        #region Delete ................................
 
         public int DeleteAll<T>(DbTransaction transaction=null)
         {
-            var table = _metaDataProvider.GetTable(typeof(T));
+            var table = _tableMetaDataProvider.GetTable(typeof(T));
 
             return Excute($"Delete From {table.Name} ",transaction);
 
         } 
         public Task<int> DeleteAllAsync<T>(DbTransaction transaction=null)
         {
-            var table = _metaDataProvider.GetTable(typeof(T));
+            var table = _tableMetaDataProvider.GetTable(typeof(T));
 
             return ExcuteAsync($"Delete From {table.Name} ",transaction);
         }
@@ -410,6 +472,9 @@ namespace Jasmine.Orm
 
         public int Delete<T>(string condition,object parameter, DbTransaction transaction=null)
         {
+
+            condition =SqlTemplate.Parse(condition).Render(parameter);
+
             return Excute(_templateProvider.GetCache<T>().GetDelete(condition), transaction);
         }
 
@@ -420,11 +485,13 @@ namespace Jasmine.Orm
 
         public Task<int> DeleteAsync<T>(string condition, object parameter,DbTransaction transaction=null)
         {
-            return ExcuteAsync($" Delete From {_metaDataProvider.GetTable(typeof(T)).Name} Where {condition}", transaction);
+            return ExcuteAsync($" Delete From {_tableMetaDataProvider.GetTable(typeof(T)).Name} Where {condition}", transaction);
         }
         #endregion
 
-        #region Drop................
+
+
+        #region Drop..........................................
         public int Drop(string name, DbTransaction transaction = null)
         {
             return Excute($" Drop Table {name}",transaction);
@@ -432,7 +499,7 @@ namespace Jasmine.Orm
 
         public int Drop<T>(DbTransaction transaction = null)
         {
-            return Excute($" Drop Table {_metaDataProvider.GetTable(typeof(T)).Name}",transaction);
+            return Excute($" Drop Table {_tableMetaDataProvider.GetTable(typeof(T)).Name}",transaction);
         }
 
         public Task<int> DropAsync(string name, DbTransaction transaction = null)
@@ -446,17 +513,19 @@ namespace Jasmine.Orm
         }
         #endregion
 
-        #region Excute.................
+
+
+        #region Excute..........................................
         public int Excute(string template, object obj, DbTransaction transaction = null)
         {
-            var tpt = SqlTemplateParser.Parse(template);
+            var sql = SqlTemplate.Parse(template).Render(obj);
 
-            return Excute(tpt, obj, transaction);
+            return Excute(sql,transaction);
         }
 
         public int Excute(SqlTemplate template, object obj, DbTransaction transaction = null)
         {
-            return Excute(_templateConverter.Convert(template, obj), transaction);
+            return Excute(template.Render(obj), transaction);
         }
         public int Excute(string sql, DbTransaction transaction=null)
         {
@@ -489,9 +558,9 @@ namespace Jasmine.Orm
 
         public Task<int> ExcuteAsync(string template, object obj, DbTransaction transaction = null)
         {
-            var tpt = SqlTemplateParser.Parse(template);
+            var sql = SqlTemplate.Parse(template).Render(obj);
 
-            return ExcuteAsync(tpt, obj, transaction);
+            return ExcuteAsync(sql,transaction);
         }
 
         public Task<int> ExcuteAsync(SqlTemplate template, object obj, DbTransaction transaction = null)
@@ -531,10 +600,11 @@ namespace Jasmine.Orm
         #endregion
 
 
-        #region Insert
+
+        #region Insert....................................................
         public int Insert<T>(object data, DbTransaction transaction = null)
         {
-            return Excute(_templateProvider.GetCache<T>().GetInsert(), data,transaction);
+            return Excute(_templateProvider.GetCache<T>().GetInsert().Render(data),transaction);
         }
 
 
@@ -545,55 +615,62 @@ namespace Jasmine.Orm
 
         public int InsertPartial<T>( object data, DbTransaction transaction , params string[] columns)
         {
-            var tpt = SqlTemplateMaker.MakeInsert(_metaDataProvider.GetTable(typeof(T)).Name, columns);
+            var sql = SqlTemplateMaker.MakeInsert(_tableMetaDataProvider.GetTable(typeof(T)).Name, columns).Render(data);
 
-            return Excute(tpt,data,transaction);
+            return Excute(sql,transaction);
         }
 
         public Task<int> InsertPartialAsync<T>( object data, DbTransaction transaction , params string[] columns)
         {
-            var tpt = SqlTemplateMaker.MakeInsert(_metaDataProvider.GetTable(typeof(T)).Name, columns);
+            var sql = SqlTemplateMaker.MakeInsert(_tableMetaDataProvider.GetTable(typeof(T)).Name, columns).Render(data);
 
-            return ExcuteAsync(tpt, data,transaction);
+            return ExcuteAsync(sql,transaction);
         }
 
         public int InsertPartialWith<T>(string table, object data, DbTransaction transaction , params string[] columns)
         {
-            var tpt = SqlTemplateMaker.MakeInsert(table, columns);
+            var sql = SqlTemplateMaker.MakeInsert(table, columns).Render(data);
 
-            return Excute(tpt, data,transaction);
+            return Excute(sql,transaction);
         }
 
         public Task<int> InsertPartialWithAsync<T>(string table, object data, DbTransaction transaction , params string[] columns)
         {
-            var tpt = SqlTemplateMaker.MakeInsert(table, columns);
+            var sql = SqlTemplateMaker.MakeInsert(table, columns).Render(data);
 
-            return ExcuteAsync(tpt, data,transaction);
+            return ExcuteAsync(sql,transaction);
         }
 
         public int InsertWith<T>(string table, object data, DbTransaction transaction = null)
         {
-            return Excute(_templateProvider.GetCache<T>().GetInsertWith(table), data,transaction);
+            var sql = _templateProvider.GetCache<T>().GetInsertWith(table).Render(data);
+
+            return Excute(sql,transaction);
         }
 
         public Task<int> InsertWithAsync<T>(string table, object data, DbTransaction transaction = null)
         {
-            return ExcuteAsync(_templateProvider.GetCache<T>().GetInsertWith(table), data,transaction);
+            var sql = _templateProvider.GetCache<T>().GetInsertWith(table).Render(data);
+
+            return ExcuteAsync(sql,data,transaction);
         }
         #endregion
+
+
+
         #region Query Full Columns .......................
       
 
         public IEnumerable<T> Query<T>(string template, object obj)
         {
-            var tpt = SqlTemplateParser.Parse(template);
+            var sql = SqlTemplate.Parse(template).Render(obj);
 
-            return Query<T>(tpt, obj);
+            return Query<T>(sql);
         }
 
         public IEnumerable<T> Query<T>(SqlTemplate template, object obj)
         {
-            return Query<T>(_templateConverter.Convert(template, obj));
+            return Query<T>(template.Render(obj));
         }
 
       
@@ -604,40 +681,48 @@ namespace Jasmine.Orm
 
      
 
-        public Task<IEnumerable<T>> QueryAsync<T>(string template, object obj)
+        public Task<IEnumerable<T>> QueryAsync<T>(string template, object obj=null)
         {
-            var tpt = SqlTemplateParser.Parse(template);
+            var sql = SqlTemplate.Parse(template).Render(obj);
 
-            return QueryAsync<T>(tpt, obj);
+            return QueryAsync<T>(sql);
         }
 
         public Task<IEnumerable<T>> QueryAsync<T>(SqlTemplate template, object obj)
         {
-            return QueryAsync<T>(_templateConverter.Convert(template, obj));
+            return QueryAsync<T>(template.Render(obj));
         }
 
         public Task<IEnumerable<T>> QueryAsync<T>()
         {
-            return QueryAsync<T>(_templateProvider.GetCache<T>().GetQuery());
+            var sql = _templateProvider.GetCache<T>().GetQuery();
+
+            return QueryAsync<T>(sql);
         }
         #endregion
 
-        public IEnumerable<T> QueryConditional<T>(string condition,object parameter)
+
+
+        #region Query ....................................................
+        public IEnumerable<T> QueryConditional<T>(string condition,object parameter=null)
         {
+            
+            condition =SqlTemplate.Parse(condition).Render(parameter);
+
             return Query<T>(_templateProvider.GetCache<T>().GetQueryConditional(condition));
         }
 
-        public Task<IEnumerable<T>> QueryConditionalAsync<T>(string condition,object parameter)
+        public Task<IEnumerable<T>> QueryConditionalAsync<T>(string condition,object parameter=null)
         {
             return QueryAsync<T>(_templateProvider.GetCache<T>().GetQueryConditional(condition));
         }
 
-        public ICursor QueryConditionalCursor<T>(string condition,object parameter)
+        public ICursor QueryConditionalCursor<T>(string condition,object parameter=null)
         {
             return QueryCursor<T>(_templateProvider.GetCache<T>().GetQueryConditional(condition));
         }
 
-        public Task<ICursor> QueryConditionalCursorAsync<T>(string condition,object parameter)
+        public Task<ICursor> QueryConditionalCursorAsync<T>(string condition,object parameter=null)
         {
             return QueryCursorAsync<T>(_templateProvider.GetCache<T>().GetQueryConditional(condition));
         }
@@ -702,38 +787,33 @@ namespace Jasmine.Orm
             throw new NotImplementedException();
         }
 
-     
-
-        public ICursor QueryCursor<T>(string template, object obj)
+        public ICursor QueryCursor<T>(string template, object obj=null)
         {
-            var tpt = SqlTemplateParser.Parse(template);
+            var sql = SqlTemplate.Parse(template).Render(obj);
 
-            return QueryCursor<T>(tpt, obj);
+            return QueryCursor<T>(sql);
 
         }
 
         public ICursor QueryCursor<T>(SqlTemplate template, object obj)
         {
-            return QueryCursor<T>(_templateConverter.Convert(template, obj));
+            return QueryCursor<T>(template.Render(obj));
         }
 
         public ICursor QueryCursor<T>()
         {
             return QueryCursor<T>(_templateProvider.GetCache<T>().GetQuery());
         }
-
-     
-
-        public Task<ICursor> QueryCursorAsync<T>(string template, object obj)
+        public Task<ICursor> QueryCursorAsync<T>(string template, object obj=null)
         {
-            var tpt = SqlTemplateParser.Parse(template);
+            var sql = SqlTemplate.Parse(template).Render(obj);
 
-            return QueryCursorAsync<T>(tpt, obj);
+            return QueryCursorAsync<T>(sql);
         }
 
-        public Task<ICursor> QueryCursorAsync<T>(SqlTemplate template, object obj)
+        public Task<ICursor> QueryCursorAsync<T>(SqlTemplate template, object obj=null)
         {
-            return QueryCursorAsync<T>(_templateConverter.Convert(template, obj));
+            return QueryCursorAsync<T>(template.Render(obj));
         }
 
         public Task<ICursor> QueryCursorAsync<T>()
@@ -1071,22 +1151,22 @@ namespace Jasmine.Orm
             return QueryAsync<T>(_templateProvider.GetCache<T>().GetQueryTop(count));
         }
 
-        public IEnumerable<T> QueryTopConditional<T>(int count, string condition, object parameter)
+        public IEnumerable<T> QueryTopConditional<T>(int count, string condition, object parameter=null)
         {
             return Query<T>(_templateProvider.GetCache<T>().GetQueryTopConditional(count,condition));
         }
 
-        public Task<IEnumerable<T>> QueryTopConditionalAsync<T>(int count, string condition, object parameter)
+        public Task<IEnumerable<T>> QueryTopConditionalAsync<T>(int count, string condition, object parameter=null)
         {
             return QueryAsync<T>(_templateProvider.GetCache<T>().GetQueryTopConditional(count, condition));
         }
 
-        public ICursor QueryTopConditionalCursor<T>(int count, string condition,object parameter)
+        public ICursor QueryTopConditionalCursor<T>(int count, string condition,object parameter=null)
         {
             return QueryCursor<T>(_templateProvider.GetCache<T>().GetQueryTopConditional(count, condition));
         }
 
-        public Task<ICursor> QueryTopConditionalCursorAsync<T>(int count, string condition, object parameter)
+        public Task<ICursor> QueryTopConditionalCursorAsync<T>(int count, string condition, object parameter=null)
         {
             return QueryCursorAsync<T>(_templateProvider.GetCache<T>().GetQueryTopConditional(count, condition));
         }
@@ -1171,22 +1251,22 @@ namespace Jasmine.Orm
             return QueryCursorAsync<T>(_templateProvider.GetCache<T>().GetQueryTopConditionalOrderByDescWith(table, count, orderBy, condition));
         }
 
-        public IEnumerable<T> QueryTopConditionalWith<T>(string table, int count, string condition,object parameter )
+        public IEnumerable<T> QueryTopConditionalWith<T>(string table, int count, string condition,object parameter=null)
         {
             return Query<T>(_templateProvider.GetCache<T>().GetQueryTopConditionalWith(table, count,condition));
         }
 
-        public Task<IEnumerable<T>> QueryTopConditionalWithAsync<T>(string table, int count, string condition, object parameter)
+        public Task<IEnumerable<T>> QueryTopConditionalWithAsync<T>(string table, int count, string condition, object parameter=null)
         {
             return QueryAsync<T>(_templateProvider.GetCache<T>().GetQueryTopConditionalWith(table, count, condition));
         }
 
-        public ICursor QueryTopConditionalWithCursor<T>(string table, int count, string condition, object parameter)
+        public ICursor QueryTopConditionalWithCursor<T>(string table, int count, string condition, object parameter=null)
         {
             return QueryCursor<T>(_templateProvider.GetCache<T>().GetQueryTopConditionalWith(table, count, condition));
         }
 
-        public Task<ICursor> QueryTopConditionalWithCursorAsync<T>(string table, int count, string condition,object parameter)
+        public Task<ICursor> QueryTopConditionalWithCursorAsync<T>(string table, int count, string condition,object parameter=null)
         {
             return QueryCursorAsync<T>(_templateProvider.GetCache<T>().GetQueryTopConditionalWith(table, count, condition));
         }
@@ -1653,6 +1733,7 @@ namespace Jasmine.Orm
                 _connectionProvider.Recycle(connection);
             }
         }
+
         public async Task<IEnumerable<T>> QueryAsync<T>(string sql)
         {
             var connection = _connectionProvider.Rent();
@@ -1692,53 +1773,42 @@ namespace Jasmine.Orm
                 _connectionProvider.Recycle(connection);
             }
         }
+
+        #endregion
+
+
+
+
+        #region Update ..................
+
         public int Update<T>(object parameter,DbTransaction transaction=null)
         {
-            return Excute(buildUpdate<T>(_metaDataProvider.GetTable(typeof(T)).Name,parameter),transaction);
+            return Excute(buildUpdate<T>(_tableMetaDataProvider.GetTable(typeof(T)).Name,parameter),transaction);
        }
-
-        private string buildUpdate<T>(string table,object parameter,string condition=null)
-        {
-            var builder = new StringBuilder();
-
-            builder.Append($"Update Table {table}");
-
-            foreach (var item in JasmineReflectionCache.Instance.GetItem(typeof(T)).Properties)
-            {
-             //   builder.Append($"{item.Name}={DefaultBaseTypeConvertor.Instance.ConvertToSqlString(item.PropertyType, item.Getter.Invoke(parameter))},");
-            }
-
-            builder.RemoveLastComa();
-
-            if(condition!=null)
-                 builder.Append($"Where {condition}");
-
-            return builder.ToString();
-        }
-
+ 
         public Task<int> UpdateAsync<T>(object parameter,DbTransaction transaction=null)
         {
-            return ExcuteAsync(buildUpdate<T>(_metaDataProvider.GetTable(typeof(T)).Name, parameter),transaction);
+            return ExcuteAsync(buildUpdate<T>(_tableMetaDataProvider.GetTable(typeof(T)).Name, parameter),transaction);
         }
 
-        public int UpdateConditional<T>(string condition, object parameter,DbTransaction transaction=null)
+        public int UpdateConditional<T>( object parameter,string condition,object confitionParameter=null, DbTransaction transaction=null)
         {
-            return Excute(buildUpdate<T>(_metaDataProvider.GetTable(typeof(T)).Name, parameter, condition),transaction);
+            return Excute(buildUpdate<T>(_tableMetaDataProvider.GetTable(typeof(T)).Name, parameter, SqlTemplate.Parse(condition).Render(confitionParameter)),transaction);
         }
 
-        public Task<int> UpdateConditionalAsync<T>(string condition, object parameter,DbTransaction transaction=null)
+        public Task<int> UpdateConditionalAsync<T>( object parameter,string condition,object conditionParameter=null,DbTransaction transaction=null)
         {
-            return ExcuteAsync(buildUpdate<T>(_metaDataProvider.GetTable(typeof(T)).Name, parameter, condition),transaction);
+            return ExcuteAsync(buildUpdate<T>(_tableMetaDataProvider.GetTable(typeof(T)).Name, parameter, SqlTemplate.Parse(condition).Render(conditionParameter)),transaction);
         }
 
-        public int UpdateConditionalWidth<T>(string table, string condition, object parameter,DbTransaction transaction=null)
+        public int UpdateConditionalWidth<T>(string table,  object parameter, string condition,object conditionParameter=null, DbTransaction transaction=null)
         {
-            return Excute(buildUpdate<T>(table, parameter, condition),transaction);
+            return Excute(buildUpdate<T>(table, parameter, SqlTemplate.Parse(condition).Render(conditionParameter)),transaction);
         }
 
-        public Task<int> UpdateConditionalWidthAsync<T>(string table, string condition, object parameter, DbTransaction transantion = null)
+        public Task<int> UpdateConditionalWidthAsync<T>(string table,  object parameter, string condition,object conditionParameter=null, DbTransaction transantion = null)
         {
-            return ExcuteAsync(buildUpdate<T>(table, parameter, condition),transantion);
+            return ExcuteAsync(buildUpdate<T>(table, parameter, SqlTemplate.Parse(condition).Render(conditionParameter)),transantion);
         }
 
         public int UpdateWith<T>(string table, object parameter,DbTransaction transaction=null)
@@ -1751,6 +1821,31 @@ namespace Jasmine.Orm
             return ExcuteAsync(buildUpdate<T>(table, parameter),transantion);
         }
 
+        private string buildUpdate<T>(string table, object parameter, string condition = null)
+        {
+            var builder = new StringBuilder();
+
+            builder.Append($"Update Table {table}");
+
+            foreach (var item in JasmineReflectionCache.Instance.GetItem(typeof(T)).Properties)
+            {
+                //   builder.Append($"{item.Name}={DefaultBaseTypeConvertor.Instance.ConvertToSqlString(item.PropertyType, item.Getter.Invoke(parameter))},");
+            }
+
+            builder.RemoveLastComa();
+
+            if (condition != null)
+                builder.Append($"Where {condition}");
+
+            return builder.ToString();
+        }
+
+        #endregion
+
+
+
+
+        #region Procedure ..................................
         public int CallProcedure(string name, object parameter)
         {
             throw new NotImplementedException();
@@ -1790,6 +1885,7 @@ namespace Jasmine.Orm
         {
             throw new NotImplementedException();
         }
+        #endregion
 
         public ICursor QueryCursor( string sql)
         {

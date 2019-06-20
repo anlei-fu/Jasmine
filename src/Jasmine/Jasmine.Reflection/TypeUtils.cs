@@ -7,9 +7,11 @@ namespace Jasmine.Reflection
 {
     public static  class TypeUtils
     {
-        public static bool IsDerivedFrom(this Type type,Type _base)
+        public static bool CanConvertTo(this Type type,Type _base)
         {
-            return true;
+
+            return _base.IsInterface ? type.GetInterfaces().Contains(_base) :
+                                     _base.IsAssignableFrom(type);
         }
 
         public static bool TryGetType(string name,out Type type)
@@ -85,7 +87,7 @@ namespace Jasmine.Reflection
                 if (types2[i] == null)
                     continue;
 
-                if (!types2[i].IsDerivedFrom(types1[i]))
+                if (!types2[i].CanConvertTo(types1[i]))
                     return false;
             }
 

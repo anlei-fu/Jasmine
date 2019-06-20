@@ -126,7 +126,7 @@ namespace Jasmine.Ioc
 
         private void addInstance(Type serviceType, object instance, ServiceScope scope)
         {
-            if (!instance.GetType().IsDerivedFrom(serviceType))
+            if (!instance.GetType().CanConvertTo(serviceType))
                 throw new NotImplementedException();
 
             if (!_metaDataManager.TryGetValue(serviceType, out var value))
