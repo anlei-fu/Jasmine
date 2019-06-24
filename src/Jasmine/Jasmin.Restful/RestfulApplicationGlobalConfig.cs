@@ -1,23 +1,24 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 
 namespace Jasmine.Restful
 {
     internal   class RestfulApplicationGlobalConfig
     {
-        public static bool DebugMode { get; set; }
-        public static bool GenerateTestFile { get; set; }
-        public static bool GenerateDescriptionFile { get; set; }
-        public static bool AxiosFile { get; set; }
-        public static bool GenareteClientCode { get; set; }
-        public static bool UseDashBorad { get; set; }
-        public static bool StaticFileEnabled { get; set; }
-        public static string VirtueRootPath { get; set; }
-        public static long MaxFileCacheMeomoryUsage { get; set; }
-        public static bool EnableSystemApi { get; set; }
-        public static ServerConfig ServerConfig { get; }
-        public static bool EnableCrossDomain { get; set;}
-        internal static GloabalIntercepterConfig GlobalIntercepterConfig { get; }
+        public static bool DebugMode { get; set; } = false;
+        public static bool GenerateTestFile { get; set; } = false;
+        public static bool GenerateDescriptionFile { get; set; } = false;
+        public static bool AxiosFile { get; set; } = false;
+        public static bool GenareteClientCode { get; set; } = false;
+        public static bool UseDashBorad { get; set; } = true;
+        public static bool StaticFileEnabled { get; set; } = true;
+        public static string VirtueRootPath { get; set; } = Directory.GetCurrentDirectory();
+        public static long MaxFileCacheMeomoryUsage { get; set; } = 1024L * 1024 * 1024 * 2;
+        public static bool EnableSystemApi { get; set; } = true;
+        public static ServerConfig ServerConfig { get; } = new ServerConfig();
+        public static bool EnableCrossDomain { get; set; } = false;
+        internal static GloabalIntercepterConfig GlobalIntercepterConfig { get; } = new GloabalIntercepterConfig();
        
     }
 

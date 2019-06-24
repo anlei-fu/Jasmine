@@ -11,27 +11,19 @@ namespace restfulAppTest
 {
     class Program
     {
-        static void Main(string[] args)
+       static  void Main(string[] args)
         {
             var builder = new RestfulApplicationBuilder();
 
-            builder.ConfigConfigProvider("test.config");
-
-            builder.Scan(Assembly.GetExecutingAssembly());
-
-            builder.ConfigDispatcher(dispacther =>
-            {
-                dispacther.UseStaticFile = true;
-                dispacther.VirtuePathRoot = Directory.GetCurrentDirectory() + "/www";
-            });
+          
            
-            builder.Build().StartAsync();
+          builder.Build().StartAsync();
 
             Console.Read();
         }
 
         [Restful]
-        [HttpMethod("get")]
+       
         [Path("/test")]
         public class Test
         {

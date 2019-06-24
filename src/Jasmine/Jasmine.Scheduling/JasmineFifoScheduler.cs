@@ -3,7 +3,7 @@
     public class JasmineFifoScheduler<T> : AbstractScheduler<T>
          where T : Job
     {
-        public JasmineFifoScheduler(FifoJobManager jobmanager, int maxConcurrency = 0) : base(jobmanager, maxConcurrency)
+        public JasmineFifoScheduler(FifoJobManager<T> jobmanager, int maxConcurrency = 0) : base(jobmanager, maxConcurrency)
         {
         }
 

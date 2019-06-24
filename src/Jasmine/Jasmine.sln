@@ -73,6 +73,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Jasmine.Orm", "Jasmine.Orm\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Jasmine.DataStructure", "Jasmin.DataStructure\Jasmine.DataStructure.csproj", "{8FCE681F-831B-471F-9853-5F0FA194CCEF}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsoleApp1", "ConsoleApp1\ConsoleApp1.csproj", "{B27F7373-5B5C-420A-AF73-D97C46D906DE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -215,6 +217,10 @@ Global
 		{8FCE681F-831B-471F-9853-5F0FA194CCEF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8FCE681F-831B-471F-9853-5F0FA194CCEF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8FCE681F-831B-471F-9853-5F0FA194CCEF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B27F7373-5B5C-420A-AF73-D97C46D906DE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B27F7373-5B5C-420A-AF73-D97C46D906DE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B27F7373-5B5C-420A-AF73-D97C46D906DE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B27F7373-5B5C-420A-AF73-D97C46D906DE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -234,6 +240,7 @@ Global
 		{2E2FC2C0-DC34-4CF5-A73E-5030A3F83309} = {A7BB9AAF-EF71-4F9C-8541-77B523D5DFBF}
 		{7B54EE51-111B-4085-BEBC-6DC597DEFA28} = {A7BB9AAF-EF71-4F9C-8541-77B523D5DFBF}
 		{B244E72B-00AD-4E13-AA0F-8FACC7699AEB} = {A7BB9AAF-EF71-4F9C-8541-77B523D5DFBF}
+		{B27F7373-5B5C-420A-AF73-D97C46D906DE} = {A7BB9AAF-EF71-4F9C-8541-77B523D5DFBF}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {A6D5FE91-3BE8-420B-A942-4CFE27F92901}

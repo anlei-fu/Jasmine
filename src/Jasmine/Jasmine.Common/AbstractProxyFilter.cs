@@ -7,10 +7,10 @@ namespace Jasmine.Common
     /// <summary>
     /// proxy a method invokation ,in a filter pipeline 
     /// </summary>
-    /// <typeparam name="T"> context type</typeparam>
-    public abstract class AbstractInvokationProxyFilter<T> : AbstractFilter<T>
+    /// <typeparam name="TContext"> context type</typeparam>
+    public abstract class AbstractInvokationProxyFilter<TContext> : AbstractFilter<TContext>
     {
-        public AbstractInvokationProxyFilter(Method method, IRequestParamteterResolver<T> resolver, object instance) 
+        public AbstractInvokationProxyFilter(Method method, IRequestParamteterResolver<TContext> resolver, object instance) 
         {
             _instance = instance ?? throw new ArgumentNullException(nameof(method));
             _method = method ?? throw new ArgumentException(nameof(resolver));
@@ -18,10 +18,10 @@ namespace Jasmine.Common
         }
         private object _instance;
         private Method _method;
-        private IRequestParamteterResolver<T> _resolver;
+        private IRequestParamteterResolver<TContext> _resolver;
 
 
-        public override Task FiltsAsync(T context)
+        public override Task FiltsAsync(TContext context)
         {
 
             var parameters =_method.HasParameter?_resolver.Resolve(context)
@@ -39,7 +39,7 @@ namespace Jasmine.Common
         /// </summary>
         /// <param name="context"></param>
         /// <param name="_return"> invoke result</param>
-        protected abstract void afterInvoke(T context, object _return);
+        protected abstract void afterInvoke(TContext context, object _return);
 
     }
 }

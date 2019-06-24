@@ -10,26 +10,27 @@ namespace Jasmine.Restful
         public int Backlog { get; set; } = 100;
         public bool NoDelay { get; set; } = true;
         public int MaxCurrency { get; set; } = 1000;
-        public TimeSpan? RequestTimeout { get; set; }
-        public TimeSpan? ResponseTimeout { get; set; }
-        public TimeSpan? KeepAliveTimeout { get; set; }
-        public ListenType? Type { get; }
-        public FileHandleType? HandleType { get; set; }
+        public TimeSpan RequestTimeout { get; set; } = new TimeSpan(10 * 60 * 1000);
+        public TimeSpan ResponseTimeout { get; set; } = new TimeSpan(10 * 60 * 1000);
+        public TimeSpan KeepAliveTimeout { get; set; } = new TimeSpan(10 * 60 * 1000);
+        public ListenType? Type { get; } = ListenType.IPEndPoint;
+        public FileHandleType? HandleType { get; set; } = FileHandleType.Auto;
         public string SocketPath { get; }
-        public ulong? FileHandle { get; }
-        public int? MaxRequestLineSize { get; set; }
-        public int? MaxRequestHeadersTotalSize { get; set; }
-        public int? MaxRequestHeaderCount { get; set; }
-        public long? MaxRequestBodySize { get; set; }
-        public TimeSpan? RequestHeadersTimeout { get; set; }
-        public SslConfig SslOption { get; }
-        public bool UseSsl { get; set; }
+        public ulong FileHandle { get; }
+        public int MaxRequestLineSize { get; set; } = 1024 * 1024 * 10;
+        public int MaxRequestHeadersTotalSize { get; set; } = 1024 * 1024 * 10;
+        public int MaxRequestHeaderCount { get; set; } = 10000;
+        public long MaxRequestBodySize { get; set; } = 1024 * 1024 * 5;
+        public TimeSpan RequestHeadersTimeout { get; set; } = new TimeSpan(10 * 60 * 1000);
+        public long MaxResponseBufferSize { get; set; } = 1024 * 1024 * 300;
+        public SslConfig SslOption { get; } = new SslConfig();
+        public bool UseSsl { get; set; } = false;
 
     }
     public class SslConfig
     {
-        public SslProtocols? SslProtocol { get; set; }
+        public SslProtocols SslProtocol { get; set; } = SslProtocols.Tls;
         public string X509Certificate2Path { get; set; }
-        public TimeSpan? HandshakeTimeout { get; set; }
+        public TimeSpan HandshakeTimeout { get; set; } =  new TimeSpan( 5 * 1000);
     }
 }

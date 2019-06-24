@@ -5,7 +5,7 @@ namespace Jasmine.Restful
 {
     public class ApiManagerFilter : AbstractFilter<HttpFilterContext>
     {
-        public ApiManagerFilter(string name) : base(name)
+        public ApiManagerFilter() 
         {
         }
 

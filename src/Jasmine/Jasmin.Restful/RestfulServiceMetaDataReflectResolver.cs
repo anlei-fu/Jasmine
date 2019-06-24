@@ -35,10 +35,7 @@ namespace Jasmine.Restful
                 {
                     metaData.Path = ((PathAttribute)item[0]).Path;
                 }
-                else if (attrType == typeof(HttpMethodAttribute))
-                {
-                    metaData.HttpMethod = ((HttpMethodAttribute)item[0]).Method;
-                }
+               
                 else if (attrType == typeof(GetAttribute))
                 {
                     metaData.HttpMethod = HttpMethods.GET;
@@ -197,10 +194,7 @@ namespace Jasmine.Restful
                 {
                     return null;
                 }
-                else if (attrType == typeof(HttpMethodAttribute))
-                {
-                    metaData.HttpMethod = ((HttpMethodAttribute)item[0]).Method;
-                }
+               
                 else if (attrType == typeof(BeforeInterceptorAttribute))
                 {
                     foreach (var before in item)

@@ -36,7 +36,7 @@ error happed!
 </body>
 </html>
 ";
-        public DefaultErrorFilter() : base("default-error-filter")
+        public DefaultErrorFilter() 
         {
         }
 

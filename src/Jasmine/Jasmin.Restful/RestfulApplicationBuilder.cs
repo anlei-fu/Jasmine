@@ -73,7 +73,7 @@ namespace Jasmine.Restful
         /// <returns></returns>
         public RestfulApplicationBuilder ConfigRestfulService(Action<RestfulServiceManager> config)
         {
-            config(RestfulApplicationGlobalConfig.ProcessorManager);
+            config(RestfulApplicationBaseComponents.RequestfulServiceManager);
 
             return this;
         }
@@ -128,11 +128,11 @@ namespace Jasmine.Restful
         /// <returns></returns>
         public RestfulApplication Build()
         {
-            return null;
+            return new RestfulApplication();
         }
         public RestfulApplicationBuilder LoadConfigFile(string xmlConfigFilePath)
         {
-            return null;
+            return this;
         }
     }
 }

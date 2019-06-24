@@ -12,7 +12,7 @@ namespace Jasmine.Restful.Implement
         {
             _pool = new HttpFilterContextPool(_dispatcher, 1000);
         }
-        private IDispatcher<HttpFilterContext> _dispatcher=new RestfulDispatcher("restful-dispatcher",RestfulApplicationBaseComponents.RequestfulServiceManager);
+        private IDispatcher<HttpFilterContext> _dispatcher=>RestfulApplicationBaseComponents.Dispatcher;
 
         private ILog _logger=LogManager.GetLogger(typeof(ResfulMiddleware));
 

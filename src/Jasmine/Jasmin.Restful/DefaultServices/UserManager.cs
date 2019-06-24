@@ -47,7 +47,7 @@ namespace Jasmine.Restful.DefaultFilters
 
 
 
-    [BeforeInterceptor("cookie-validate-filter")]
+    [BeforeInterceptor(typeof(SessionValidateFilter))]
     [Restful]
     [Path("/api/usermng")]
     public class XmlStoreUserManager:ILoginValidator,IUserManager

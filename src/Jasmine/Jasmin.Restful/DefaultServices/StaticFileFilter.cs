@@ -5,7 +5,7 @@ namespace Jasmine.Restful
 {
     public class StaticFileFilter : AbstractFilter<HttpFilterContext>
     {
-        public StaticFileFilter(string name) : base(name)
+        public StaticFileFilter()
         {
         }
         private IStaticFileProvider _fileProvider;
