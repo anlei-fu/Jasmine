@@ -1,6 +1,7 @@
-﻿using System;
+﻿using Jasmine.Reflection;
+using System;
 
-namespace Jasmine.Reflection
+namespace Jasmine.Common
 {
     public   class JasmineStringValueConvertor
     {
@@ -11,7 +12,10 @@ namespace Jasmine.Reflection
                     throw new NotSupportedException($"the {type} is not convertable in this convertor!");
         }
 
-
+        public static T GetValue<T>(string source)
+        {
+            return default(T);
+        }
        
         public static bool TryGetValue<T>(string source,out T value)
         {
