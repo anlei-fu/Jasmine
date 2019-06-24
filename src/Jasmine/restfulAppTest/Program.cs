@@ -17,7 +17,19 @@ namespace restfulAppTest
 
           
            
-          builder.Build().StartAsync();
+       var app= builder.ConfigServer(serverConfig=>
+          {
+              serverConfig.Port = 10336;
+          }).ConfigServiceProvider(serviceProvider=>
+          {
+              serviceProvider.AddSigleton(typeof(Test), new Test("robot-001"));
+          }).ConfigRestfulService(manager=>
+          {
+              manager.Scan(Assembly.GetExecutingAssembly());
+          }).Build();
+
+
+            app.StartAsync();
 
             Console.Read();
         }
@@ -44,6 +56,20 @@ namespace restfulAppTest
             public bool BigThan(int value)
             {
                 return value > 10;
+            }
+        }
+
+        [Restful]
+        public class Caculator
+        {
+            public int Add(int x,int y)
+            {
+                return x + y;
+            }
+            [Post]
+            public int Pow2(int x)
+            {
+                return x * x;
             }
         }
 

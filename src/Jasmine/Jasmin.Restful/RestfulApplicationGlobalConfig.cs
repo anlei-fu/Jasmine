@@ -12,7 +12,7 @@ namespace Jasmine.Restful
         public static bool AxiosFile { get; set; } = false;
         public static bool GenareteClientCode { get; set; } = false;
         public static bool UseDashBorad { get; set; } = true;
-        public static bool StaticFileEnabled { get; set; } = true;
+        public static bool StaticFileEnabled { get; set; } = false;
         public static string VirtueRootPath { get; set; } = Directory.GetCurrentDirectory();
         public static long MaxFileCacheMeomoryUsage { get; set; } = 1024L * 1024 * 1024 * 2;
         public static bool EnableSystemApi { get; set; } = true;

@@ -1,5 +1,4 @@
 ﻿using Jasmine.Common;
-using Jasmine.Restful.DefaultFilters;
 using System.Threading.Tasks;
 
 namespace Jasmine.Restful
@@ -15,7 +14,7 @@ namespace Jasmine.Restful
         {
             context.HttpContext.Request.Cookies.TryGetValue("session", out var session);
 
-            var user = _manager.GetSession(session);
+            var user = _manager.GetUserBySession(session);
 
             if (user!=null)
             {

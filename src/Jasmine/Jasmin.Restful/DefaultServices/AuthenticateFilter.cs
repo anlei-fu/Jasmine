@@ -6,12 +6,12 @@ namespace Jasmine.Restful.DefaultServices
 {
     public class AuthenticateFilter : AbstractFilter<HttpFilterContext>
     {
-        public AuthenticateFilter(AuntenticateLevel level) 
+        public AuthenticateFilter(AuthenticateLevel level) 
         {
             _level = level;
         }
 
-        private AuntenticateLevel _level;
+        private AuthenticateLevel _level;
         public override Task FiltsAsync(HttpFilterContext context)
         {
             bool pass = false;

@@ -1,15 +1,17 @@
 ﻿using Jasmine.Common;
 using Jasmine.Common.Attributes;
+using Jasmine.Extensions;
 using Jasmine.Ioc.Attributes;
 using Jasmine.Restful.Attributes;
 using System.Collections.Generic;
 using System.Linq;
+using System.Xml;
 
 namespace Jasmine.Restful.DefaultFilters
 {
     public class UserGroup
     {
-        public AuntenticateLevel Level { get; set; }
+        public AuthenticateLevel Level { get; set; }
       
         public string Name { get; set; }
         public IDictionary<string, User> Users = new ConcurrentDictionaryIDictonaryAdapter<string, User>();
@@ -23,7 +25,7 @@ namespace Jasmine.Restful.DefaultFilters
         public string Group { get; set; }
     }
 
-    public enum AuntenticateLevel
+    public enum AuthenticateLevel
     {
         User=0,
         Admin=1,
@@ -33,16 +35,18 @@ namespace Jasmine.Restful.DefaultFilters
     public interface IUserManager
     {
         bool CreateUser(string name, string password, string group);
-        bool CreateGroup(string name, AuntenticateLevel level);
+        bool CreateGroup(string name, AuthenticateLevel level);
         bool Validate(string name, string password);
-        AuntenticateLevel? GetUserLevel(string name);
-        AuntenticateLevel? GetGroupLevel(string name);
+        AuthenticateLevel? GetUserLevel(string name);
+        AuthenticateLevel? GetGroupLevel(string name);
         bool UserExists(string name);
         bool UpdatePassword(string name, string password);
         bool ChangeGroup(string user, string newGroup);
         bool RemoveUser(string user);
         bool RemoveGroup(string group);
         UserGroup[] GetAll();
+        User GetUser(string name);
+        UserGroup GetGroup(string name);
     }
 
 
@@ -54,8 +58,43 @@ namespace Jasmine.Restful.DefaultFilters
     {
         protected  IDictionary<string, UserGroup> _groups = new ConcurrentDictionaryIDictonaryAdapter<string, UserGroup>();
         protected IDictionary<string, User> _users = new ConcurrentDictionaryIDictonaryAdapter<string, User>();
+
+        /// <summary>
+        /// e.g just first tag has 
+        /// <user-config enable="false">
+        /// <group name="admins" level="admin">
+        /// <user name="jerry" password="123456"/>
+        /// <user name="tom" password="123456"/>
+        /// </group>
+        /// </user-config>
+        /// 
+        /// 
+        /// </summary>
+        /// <param name="path"></param>
+
         public virtual void Load([FromConfig("user.path")]string path)
         {
+            var xml = new XmlDocument();
+            xml.Load(path);
+
+            foreach (var config in xml.GetAll(x=>x.Name=="user-config"))
+            {
+
+                if (!JasmineStringValueConvertor.GetValue<bool>(config.GetAttribute("enable")))
+                    break;
+
+
+                foreach (var group in config.GetDirect(x=>x.Name=="group"))
+                {
+                    CreateGroup(group.GetAttribute("name"),JasmineStringValueConvertor.GetValue<aut>)
+                }
+
+
+                break;
+            }
+
+
+
 
         }
         public bool CreateUser(string name,string password,string group)
@@ -77,7 +116,7 @@ namespace Jasmine.Restful.DefaultFilters
             }
         }
 
-        public bool CreateGroup(string name,AuntenticateLevel level)
+        public bool CreateGroup(string name,AuthenticateLevel level)
         {
             if (_groups.ContainsKey(name))
                 return false;
@@ -98,15 +137,15 @@ namespace Jasmine.Restful.DefaultFilters
             return _users.TryGetValue(name, out var value) ? value.Password == password : false;
         }
 
-        public AuntenticateLevel? GetUserLevel(string name)
+        public AuthenticateLevel? GetUserLevel(string name)
         {
             return _users.TryGetValue(name, out var value) ? 
-                                                      _groups.TryGetValue(value.Group,out var group)?(AuntenticateLevel?)group.Level:null
+                                                      _groups.TryGetValue(value.Group,out var group)?(AuthenticateLevel?)group.Level:null
                                                                                                                                :null;
         }
-        public AuntenticateLevel? GetGroupLevel(string name)
+        public AuthenticateLevel? GetGroupLevel(string name)
         {
-            return _groups.TryGetValue(name, out var group) ? (AuntenticateLevel?)group.Level : null;
+            return _groups.TryGetValue(name, out var group) ? (AuthenticateLevel?)group.Level : null;
         }
         public bool GroupExists(string name)
         {
@@ -147,7 +186,7 @@ namespace Jasmine.Restful.DefaultFilters
                 return false;
             }
         }
-        public bool ChangeGroupLevel(string group, AuntenticateLevel newLevel)
+        public bool ChangeGroupLevel(string group, AuthenticateLevel newLevel)
         {
             if(_groups.TryGetValue(group,out var value))
             {
@@ -205,6 +244,16 @@ namespace Jasmine.Restful.DefaultFilters
         public UserGroup[] GetAll()
         {
             return _groups.Values.ToArray();
+        }
+
+        public User GetUser(string name)
+        {
+            return _users.TryGetValue(name, out var user) ? user : null;
+        }
+
+        public UserGroup GetGroup(string name)
+        {
+            return _groups.TryGetValue(name, out var group) ? group : null;
         }
     }
 }

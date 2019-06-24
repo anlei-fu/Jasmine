@@ -14,9 +14,9 @@ namespace Jasmine.Restful
 
         public RestfulApplicationBuilder()
         {
-          
+
         }
-   
+
         public RestfulApplicationBuilder ConfigServer(Action<ServerConfig> config)
         {
             config(RestfulApplicationGlobalConfig.ServerConfig);
@@ -54,7 +54,7 @@ namespace Jasmine.Restful
         /// <returns></returns>
         public RestfulApplicationBuilder DisableDashBoard()
         {
-           RestfulApplicationGlobalConfig.UseDashBorad=false;
+            RestfulApplicationGlobalConfig.UseDashBorad = false;
 
             return this;
         }
@@ -65,34 +65,34 @@ namespace Jasmine.Restful
 
             return this;
         }
-       
+
         /// <summary>
         /// config restful service <see cref="RestfulServiceManager"/>
         /// </summary>
         /// <param name="config"></param>
         /// <returns></returns>
-        public RestfulApplicationBuilder ConfigRestfulService(Action<RestfulServiceManager> config)
+        public RestfulApplicationBuilder ConfigRestfulService(Action<ResfulServiceMetaDataManager> config)
         {
-            config(RestfulApplicationBaseComponents.RequestfulServiceManager);
+            config(RestfulApplicationBaseComponents.RestfulServiceMetaDataManager);
 
             return this;
         }
-      
-        public RestfulApplicationBuilder UseStaticFile(long maxMemoryUsage,string virtueRootPath=null)
+
+        public RestfulApplicationBuilder UseStaticFile(long maxMemoryUsage, string virtueRootPath = null)
         {
             RestfulApplicationGlobalConfig.StaticFileEnabled = true;
-            RestfulApplicationGlobalConfig.VirtueRootPath = virtueRootPath??Directory.GetCurrentDirectory();
+            RestfulApplicationGlobalConfig.VirtueRootPath = virtueRootPath ?? Directory.GetCurrentDirectory();
             RestfulApplicationGlobalConfig.MaxFileCacheMeomoryUsage = maxMemoryUsage;
 
             return this;
         }
-  
+
         /// <summary>
         /// config global  configuration  povider <see cref="JasmineConfigurationProvider"/>
         /// </summary>
         /// <param name="config"></param>
         /// <returns></returns>
-        public RestfulApplicationBuilder ConfigXmlConfiguration(Action<JasmineConfigurationProvider>config)
+        public RestfulApplicationBuilder ConfigXmlConfiguration(Action<JasmineConfigurationProvider> config)
         {
             config(JasmineConfigurationProvider.Instance);
 
@@ -103,13 +103,13 @@ namespace Jasmine.Restful
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <returns></returns>
-        public RestfulApplicationBuilder ConfigGlobalInterceptor(Action<GloabalIntercepterConfig> config) 
+        public RestfulApplicationBuilder ConfigGlobalInterceptor(Action<GloabalIntercepterConfig> config)
         {
             config(RestfulApplicationGlobalConfig.GlobalIntercepterConfig);
 
             return this;
         }
-        
+
         /// <summary>
         /// config ioc service provider <see cref="IocServiceProvider"/>
         /// </summary>
@@ -128,6 +128,25 @@ namespace Jasmine.Restful
         /// <returns></returns>
         public RestfulApplication Build()
         {
+            if (RestfulApplicationGlobalConfig.UseDashBorad)
+            {
+                RestfulApplicationBaseComponents.RestfulServiceMetaDataManager.AddRestfulService(typeof(RestfulServiceManager));
+                RestfulApplicationBaseComponents.ServicePovider.AddSigleton(typeof(RestfulServiceManager), RestfulApplicationBaseComponents.RestfulServiceManager);
+            }
+
+
+            /* generate all service processor instance */
+            foreach (var item in RestfulApplicationBaseComponents.RestfulServiceMetaDataManager)
+            {
+                foreach (var restful in RestfulApplicationBaseComponents.ProcessorGenerator.Generate(item.Value))
+                {
+                    RestfulApplicationBaseComponents.RestfulServiceManager.AddProcessor(restful.Path, restful);
+                }
+
+            }
+
+
+
             return new RestfulApplication();
         }
         public RestfulApplicationBuilder LoadConfigFile(string xmlConfigFilePath)

@@ -15,6 +15,7 @@ namespace Jasmine.Reflection.Implements
                 _keyMap[info].Name = paraname;
                 _keyMap[info].ParameterType = info.ParameterType;
                 _keyMap[info].Index = info.Position;
+                _keyMap[info].ParameterInfo = info;
 
                 foreach (var item in info.GetCustomAttributes(true))
                     _keyMap[info].Attributes.Cache((Attribute)item);

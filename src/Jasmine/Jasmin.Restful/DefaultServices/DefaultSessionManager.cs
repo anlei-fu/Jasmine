@@ -22,7 +22,7 @@ namespace Jasmine.Restful.DefaultFilters
             return session;
         }
 
-        public User GetSession(string session)
+        public User GetUserBySession(string session)
         {
             return _sessions.ConatinsKey(session)?_sessions.GetValue(session):null;
         }

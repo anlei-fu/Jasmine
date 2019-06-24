@@ -63,7 +63,7 @@ namespace Jasmine.Restful
         }
         public RestfulServiceMetaData[] Scan(Assembly assembly)
         {
-            return Scan(assembly);
+            return Scan(assembly,null);
         }
         public RestfulServiceMetaData[] Scan(Assembly assembly,string nameSpace=null)
         {

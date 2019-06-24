@@ -82,7 +82,7 @@ namespace Jasmine.Common
         }
      
         [Description("获取某个服务的统计、检测、配置数据")]
-        public IRequestProcessor<T> GetProcessor([Description("服务组名")]string path)
+        public IRequestProcessor<T> GetProcessor([Description("服务地址")]string path)
         {
             return _pathMap.TryGetValue(path, out var value) ? value : null;
         }

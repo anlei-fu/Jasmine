@@ -3,6 +3,7 @@ using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
+using System;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 
@@ -14,6 +15,11 @@ namespace Jasmine.Restful
         {
            
         }
+
+        public event Action BeforeServerStart;
+        public event Action AfterServerStart;
+        public event Action BeforeServerStop;
+        public event Action AfterServerStop;
 
         private readonly object _locker = new object();
         private bool _running = false;
@@ -27,6 +33,8 @@ namespace Jasmine.Restful
             {
                 if (_running)
                     return false;
+
+                BeforeServerStart?.Invoke();
 
                 _running = true;
             }
@@ -58,6 +66,7 @@ namespace Jasmine.Restful
                                  kestrelOption.Limits.KeepAliveTimeout = RestfulApplicationGlobalConfig.ServerConfig.KeepAliveTimeout;
                                  kestrelOption.Limits.MaxConcurrentConnections = RestfulApplicationGlobalConfig.ServerConfig.MaxCurrency;
                                  kestrelOption.Limits.MaxRequestBodySize = RestfulApplicationGlobalConfig.ServerConfig.MaxRequestBodySize;
+                                 kestrelOption.Limits.MaxRequestBufferSize = RestfulApplicationGlobalConfig.ServerConfig.MaxRequestBufferSize;
                                  kestrelOption.Limits.MaxResponseBufferSize = RestfulApplicationGlobalConfig.ServerConfig.MaxResponseBufferSize;
                                  kestrelOption.Limits.MaxRequestLineSize = RestfulApplicationGlobalConfig.ServerConfig.MaxRequestLineSize;
                                  kestrelOption.Limits.MaxRequestHeadersTotalSize = RestfulApplicationGlobalConfig.ServerConfig.MaxRequestHeadersTotalSize;
@@ -78,6 +87,8 @@ namespace Jasmine.Restful
 
             await _server.RunAsync();
 
+            AfterServerStart();
+
             return true;
 
         }
@@ -88,10 +99,14 @@ namespace Jasmine.Restful
                 if (_running)
                     return false;
 
+                BeforeServerStop?.Invoke();
+
                 _running = false;
             }
 
             await _server.StopAsync();
+
+            AfterServerStop?.Invoke();
 
             return true;
         }

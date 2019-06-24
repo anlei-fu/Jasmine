@@ -6,7 +6,7 @@ namespace Jasmine.Restful
 {
     [Restful]
     [Path("/api")]
-    [BeforeInterceptor(typeof(SessionValidateFilter))]
+   // [BeforeInterceptor(typeof(SessionValidateFilter))]
     public class RestfulServiceManager : AbstractProcessorManager<HttpFilterContext>
     {
         private RestfulServiceManager()

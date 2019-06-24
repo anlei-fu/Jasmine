@@ -17,14 +17,16 @@ namespace Jasmine.Restful
         public FileHandleType? HandleType { get; set; } = FileHandleType.Auto;
         public string SocketPath { get; }
         public ulong FileHandle { get; }
-        public int MaxRequestLineSize { get; set; } = 1024 * 1024 * 10;
-        public int MaxRequestHeadersTotalSize { get; set; } = 1024 * 1024 * 10;
+        public int MaxRequestLineSize { get; set; } = 10000;
+        public int MaxRequestHeadersTotalSize { get; set; } = 1024 * 1024 ;
         public int MaxRequestHeaderCount { get; set; } = 10000;
-        public long MaxRequestBodySize { get; set; } = 1024 * 1024 * 5;
+        public long MaxRequestBodySize { get; set; } = 1024 * 1024 * 15;
         public TimeSpan RequestHeadersTimeout { get; set; } = new TimeSpan(10 * 60 * 1000);
         public long MaxResponseBufferSize { get; set; } = 1024 * 1024 * 300;
         public SslConfig SslOption { get; } = new SslConfig();
         public bool UseSsl { get; set; } = false;
+
+        public long MaxRequestBufferSize { get; set; } = 1024 * 1024 * 20;
 
     }
     public class SslConfig

@@ -5,9 +5,9 @@ namespace Jasmine.Common
 {
     public  class AopServiceMetaData:ServiceMetaDataBase
     {
-        public IList<Type> BeforeFilters { get; set; }
-        public IList<Type> AfterFilters { get; set; }
-        public IList<Type> AroundFilters { get; set; }
-        public IList<Type> ErrorFilters { get; set; }
+        public IList<Type> BeforeFilters { get; set; } = new List<Type>();
+        public IList<Type> AfterFilters { get; set; } = new List<Type>();
+        public IList<Type> AroundFilters { get; set; } = new List<Type>();
+        public IList<Type> ErrorFilters { get; set; } = new List<Type>();
     }
 }

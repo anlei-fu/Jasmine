@@ -59,21 +59,21 @@ namespace Jasmine.Restful
                 {
                     foreach (var after in item)
                     {
-                        metaData.BeforeFilters.Add(((AfterInterceptorAttribute)after).FilterType);
+                        metaData.AfterFilters.Add(((AfterInterceptorAttribute)after).FilterType);
                     }
                 }
                 else if (attrType == typeof(AroundInterceptorAttribute))
                 {
                     foreach (var around in item)
                     {
-                        metaData.BeforeFilters.Add(((AroundInterceptorAttribute)around).FilterType);
+                        metaData.AroundFilters.Add(((AroundInterceptorAttribute)around).FilterType);
                     }
                 }
                 else if (attrType == typeof(ErrorInterceptor))
                 {
                     foreach (var error in item)
                     {
-                        metaData.BeforeFilters.Add(((ErrorInterceptor)error).FilterType);
+                        metaData.ErrorFilters.Add(((ErrorInterceptor)error).FilterType);
                     }
                 }
                 else if (attrType == typeof(SerializationModeAtribute))

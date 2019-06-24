@@ -9,10 +9,10 @@ namespace Jasmine.Restful
     public class RestfulApplicationBaseComponents
     {
         public static IStaticFileProvider StaticFileProvider { get;internal set; }
-        public static RestfulServiceManager RequestfulServiceManager => RestfulServiceManager.Instance;
-        public static IDispatcher<HttpFilterContext> Dispatcher { get; internal set; }
+        public static RestfulServiceManager RestfulServiceManager => RestfulServiceManager.Instance;
+        public static IDispatcher<HttpFilterContext> Dispatcher { get; internal set; } = new RestfulDispatcher("restful-dispatcher", RestfulServiceManager);
         public static IMiddleware RestfulMiddleware { get; internal set; } = new ResfulMiddleware();
-        public static IServiceProvider ServicePovider => IocServiceProvider.Instance;
+        public static IocServiceProvider ServicePovider => IocServiceProvider.Instance;
         public static ResfulServiceMetaDataManager RestfulServiceMetaDataManager => ResfulServiceMetaDataManager.Instance;
         public static IRequestProcessorGenerator<HttpFilterContext, RestfulServiceMetaData> ProcessorGenerator => RestfulRequestProcessorGenerator.Instance;
         public static RestfulFilterMetaDataManager FilterMetaDataManager => RestfulFilterMetaDataManager.Instance;
