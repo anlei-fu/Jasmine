@@ -1,6 +1,7 @@
 ﻿using Jasmine.Common;
 using Jasmine.Reflection;
 using Jasmine.Serialization;
+using System;
 using System.Collections.Generic;
 
 namespace Jasmine.Rpc.Server
@@ -13,12 +14,12 @@ namespace Jasmine.Rpc.Server
         public string Path { get; set; }
         public RpcRequestParameterMetaData[] Parameters { get; internal set; }
 
-        public IList<string> BeforeFilters { get; } = new List<string>();
+        public List<Type> BeforeInterceptors { get; } = new List<Type>();
 
-        public IList<string> AfterFilters { get; } = new List<string>();
+        public List<Type> AfterInterceptors { get; } = new List<Type>();
 
-        public IList<string> AroundFilters { get; } = new List<string>();
+        public List<Type> AroundInterceptors { get; } = new List<Type>();
 
-        public IList<string> ErrorFilters { get; } = new List<string>();
+        public List<Type> ErrorInterceptors { get; } = new List<Type>();
     }
 }

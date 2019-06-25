@@ -1,11 +1,12 @@
 ﻿using Jasmine.Common;
+using Jasmine.Restful.DefaultFilters;
 using System.Threading.Tasks;
 
 namespace Jasmine.Restful
 {
     public class SessionValidateFilter : AbstractFilter<HttpFilterContext>
     {
-        public SessionValidateFilter(ISessionManager manager) 
+        public SessionValidateFilter(ISessionManager manager)
         {
             _manager = manager;
         }
@@ -14,9 +15,12 @@ namespace Jasmine.Restful
         {
             context.HttpContext.Request.Cookies.TryGetValue("session", out var session);
 
-            var user = _manager.GetUserBySession(session);
+            User user = null;
 
-            if (user!=null)
+            if (session != null)
+                user = _manager.GetUserBySession(session);
+
+            if (user != null)
             {
                 context.PipelineDatas.Add("level", user);
 
@@ -28,7 +32,7 @@ namespace Jasmine.Restful
 
                 return Task.CompletedTask;
             }
-            
+
         }
     }
 }

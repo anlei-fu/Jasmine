@@ -50,7 +50,7 @@ namespace Jasmine.Restful
                 foreach (var item in metaData.AroundFilters)
                     ls.AddRange(buildFilter(item));
 
-                ls.Add(_aopProvider.GetFilter<Type>());
+                ls.Add(_aopProvider.GetFilter(type));
 
                 foreach (var item in metaData.AroundFilters)
                     ls.AddRange(buildFilter(item));
@@ -75,12 +75,12 @@ namespace Jasmine.Restful
                 processor.Pipeline = new RestfulFilterPipeline();
                 processor.ErrorPileline = new RestfulFilterPipeline();
 
-                foreach (var before in buildFilters(RestfulApplicationGlobalConfig.GlobalIntercepterConfig.GetBeforeFilters().Union(item.Value.BeforeFilters)))
+                foreach (var before in buildFilters(RestfulApplicationGlobalConfig.GlobalIntercepterConfig.GetBeforeFilters().Union(item.Value.BeforeInterceptors).Union(metaData.BeforeInterceptors)))
                 {
                     processor.Pipeline.AddLast(before);
                 }
 
-                foreach (var around in buildFilters(RestfulApplicationGlobalConfig.GlobalIntercepterConfig.GetAroundFilters().Union(item.Value.AroundFilters)))
+                foreach (var around in buildFilters(RestfulApplicationGlobalConfig.GlobalIntercepterConfig.GetAroundFilters().Union(item.Value.AroundInterceptors).Union(metaData.AroundInterceptors)))
                 {
                     processor.Pipeline.AddLast(around);
                 }
@@ -89,18 +89,18 @@ namespace Jasmine.Restful
 
                 processor.Pipeline.AddLast(proxy);
 
-                foreach (var around in buildFilters(RestfulApplicationGlobalConfig.GlobalIntercepterConfig.GetAroundFilters().Union(item.Value.AroundFilters)))
+                foreach (var around in buildFilters(RestfulApplicationGlobalConfig.GlobalIntercepterConfig.GetAroundFilters().Union(item.Value.AroundInterceptors).Union(metaData.AroundInterceptors)))
                 {
                     processor.Pipeline.AddLast(around);
                 }
 
-                foreach (var after in buildFilters(RestfulApplicationGlobalConfig.GlobalIntercepterConfig.GetAfterFilters().Union(item.Value.AfterFilters)))
+                foreach (var after in buildFilters(RestfulApplicationGlobalConfig.GlobalIntercepterConfig.GetAfterFilters().Union(item.Value.AfterInterceptors).Union(metaData.AfterInterceptors)))
                 {
                     processor.Pipeline.AddLast(after);
                 }
 
 
-                foreach (var error in buildFilters(item.Value.ErrorFilters))
+                foreach (var error in buildFilters(item.Value.ErrorInterceptors.Union(metaData.ErrorInterceptors)))
                 {
                     processor.ErrorPileline.AddLast(error);
                 }

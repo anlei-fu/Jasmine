@@ -1,11 +1,14 @@
-﻿using System.Threading.Tasks;
-using Jasmine.Common;
+﻿using Jasmine.Common;
+using Jasmine.Common.Attributes;
 using Jasmine.Restful.DefaultFilters;
+using System.Threading.Tasks;
 
 namespace Jasmine.Restful.DefaultServices
 {
+    [BeforeInterceptor(typeof(SessionValidateFilter))]
     public class AuthenticateFilter : AbstractFilter<HttpFilterContext>
     {
+    
         public AuthenticateFilter(AuthenticateLevel level) 
         {
             _level = level;
@@ -18,7 +21,7 @@ namespace Jasmine.Restful.DefaultServices
 
             if(context.PipelineDatas.ContainsKey("level"))
             {
-                if ((int)context.PipelineDatas["level"] >= (int)_level)
+                if ((int)(AuthenticateLevel)context.PipelineDatas["level"] >= (int)_level)
                     pass = true;
             }
 

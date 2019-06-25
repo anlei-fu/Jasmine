@@ -2,7 +2,7 @@
 using Jasmine.Ioc.Attributes;
 using Jasmine.Restful;
 using Jasmine.Restful.Attributes;
-using Jasmine.Restful.Implement;
+using Jasmine.Restful.DefaultServices;
 using System;
 using System.IO;
 using System.Reflection;
@@ -32,10 +32,12 @@ namespace restfulAppTest
             app.StartAsync();
 
             Console.Read();
+
         }
 
         [Restful]
        
+        [BeforeInterceptor(typeof(AuthenticateFilter))]
         [Path("/test")]
         public class Test
         {
@@ -46,7 +48,7 @@ namespace restfulAppTest
             }
 
             private string _prefix;
-
+            [BeforeInterceptor(typeof(AuthenticateFilter))]
             [Path("/do")]
             public string Say(string what)
             {

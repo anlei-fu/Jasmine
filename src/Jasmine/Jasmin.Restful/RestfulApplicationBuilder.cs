@@ -1,5 +1,7 @@
 ﻿using Jasmine.Configuration;
 using Jasmine.Ioc;
+using Jasmine.Restful.DefaultFilters;
+using Jasmine.Restful.DefaultServices;
 using System;
 using System.IO;
 
@@ -128,10 +130,36 @@ namespace Jasmine.Restful
         /// <returns></returns>
         public RestfulApplication Build()
         {
-            if (RestfulApplicationGlobalConfig.UseDashBorad)
+            if(RestfulApplicationGlobalConfig.EnableSystemApi)
             {
                 RestfulApplicationBaseComponents.RestfulServiceMetaDataManager.AddRestfulService(typeof(RestfulServiceManager));
                 RestfulApplicationBaseComponents.ServicePovider.AddSigleton(typeof(RestfulServiceManager), RestfulApplicationBaseComponents.RestfulServiceManager);
+            }
+
+
+            if (RestfulApplicationGlobalConfig.UseDashBorad)
+            {
+
+                RestfulApplicationBaseComponents.RestfulServiceMetaDataManager.AddRestfulService(typeof(LoginService));
+                RestfulApplicationBaseComponents.RestfulServiceMetaDataManager.AddRestfulService(typeof(XmlStoreUserManager));
+
+                var userManager = new XmlStoreUserManager();
+
+
+
+                userManager.CreateGroup("admins", AuthenticateLevel.SupperAdmin);
+                userManager.CreateUser("fuanlei", "001", "admins");
+                var sessionManager = new DefaultSessionManager();
+
+                RestfulApplicationBaseComponents.ServicePovider.AddSigleton(typeof(XmlStoreUserManager), userManager);
+
+
+                RestfulApplicationBaseComponents.ServicePovider.AddSigleton(typeof(LoginAfterInterceptor), new LoginAfterInterceptor(sessionManager,userManager));
+
+                RestfulApplicationBaseComponents.ServicePovider.AddSigleton(typeof(SessionValidateFilter), new SessionValidateFilter(sessionManager));
+                RestfulApplicationBaseComponents.ServicePovider.AddSigleton(typeof(LoginService), new LoginService(userManager));
+                RestfulApplicationBaseComponents.ServicePovider.AddSigleton(typeof(AuthenticateFilter), new AuthenticateFilter(AuthenticateLevel.SupperAdmin));
+
             }
 
 

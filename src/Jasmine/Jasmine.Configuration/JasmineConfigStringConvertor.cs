@@ -1,4 +1,5 @@
-﻿using Jasmine.Reflection;
+﻿using Jasmine.Common;
+using Jasmine.Reflection;
 using System;
 
 namespace Jasmine.Configuration

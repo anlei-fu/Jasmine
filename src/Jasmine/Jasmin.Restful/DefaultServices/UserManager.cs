@@ -3,6 +3,7 @@ using Jasmine.Common.Attributes;
 using Jasmine.Extensions;
 using Jasmine.Ioc.Attributes;
 using Jasmine.Restful.Attributes;
+using Jasmine.Restful.DefaultServices;
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml;
@@ -22,7 +23,7 @@ namespace Jasmine.Restful.DefaultFilters
     {
         public string Name { get; set; }
         public string Password { get; set; }
-        public string Group { get; set; }
+        public UserGroup Group { get; set; }
     }
 
     public enum AuthenticateLevel
@@ -53,11 +54,12 @@ namespace Jasmine.Restful.DefaultFilters
 
     [BeforeInterceptor(typeof(SessionValidateFilter))]
     [Restful]
-    [Path("/api/usermng")]
+    [Path("/api/user")]
     public class XmlStoreUserManager:ILoginValidator,IUserManager
     {
         protected  IDictionary<string, UserGroup> _groups = new ConcurrentDictionaryIDictonaryAdapter<string, UserGroup>();
         protected IDictionary<string, User> _users = new ConcurrentDictionaryIDictonaryAdapter<string, User>();
+
 
         /// <summary>
         /// e.g just first tag has 
@@ -71,7 +73,7 @@ namespace Jasmine.Restful.DefaultFilters
         /// 
         /// </summary>
         /// <param name="path"></param>
-
+        [RestfulIgnore]
         public virtual void Load([FromConfig("user.path")]string path)
         {
             var xml = new XmlDocument();
@@ -86,7 +88,15 @@ namespace Jasmine.Restful.DefaultFilters
 
                 foreach (var group in config.GetDirect(x=>x.Name=="group"))
                 {
-                    CreateGroup(group.GetAttribute("name"),JasmineStringValueConvertor.GetValue<aut>)
+                    var groupName = group.GetAttribute("name");
+
+                    CreateGroup(groupName, JasmineStringValueConvertor.GetValue<AuthenticateLevel>(group.GetAttribute("level")));
+
+                    foreach (var user in group.GetDirect(x=>x.Name=="user"))
+                    {
+
+                        CreateUser(user.GetAttribute("name"), user.GetAttribute("password"), groupName);
+                    }
                 }
 
 
@@ -97,6 +107,7 @@ namespace Jasmine.Restful.DefaultFilters
 
 
         }
+        [BeforeInterceptor(typeof(SupperAdminAuthenticateFilter))]
         public bool CreateUser(string name,string password,string group)
         {
             if (!_groups.ContainsKey(group))
@@ -108,14 +119,16 @@ namespace Jasmine.Restful.DefaultFilters
             }
             else
             {
-                _groups[group].Users.Add(name, new User() { Name = name, Group = group, Password = password });
+                var user = new User() { Name = name, Group = _groups[group], Password = password };
 
+                _groups[group].Users.Add(name,user);
+                _users.Add(name, user);
                 makeSnapshot();
 
                 return true;
             }
         }
-
+        [BeforeInterceptor(typeof(SupperAdminAuthenticateFilter))]
         public bool CreateGroup(string name,AuthenticateLevel level)
         {
             if (_groups.ContainsKey(name))
@@ -131,18 +144,20 @@ namespace Jasmine.Restful.DefaultFilters
         {
             return _users.ContainsKey(name);
         }
-
+        [RestfulIgnore]
         public bool Validate(string name,string password)
         {
             return _users.TryGetValue(name, out var value) ? value.Password == password : false;
         }
+        [RestfulIgnore]
 
         public AuthenticateLevel? GetUserLevel(string name)
         {
-            return _users.TryGetValue(name, out var value) ? 
-                                                      _groups.TryGetValue(value.Group,out var group)?(AuthenticateLevel?)group.Level:null
-                                                                                                                               :null;
+            return _users.TryGetValue(name, out var value) ? (AuthenticateLevel?)value.Group.Level : null;
+                                                  
         }
+        [RestfulIgnore]
+
         public AuthenticateLevel? GetGroupLevel(string name)
         {
             return _groups.TryGetValue(name, out var group) ? (AuthenticateLevel?)group.Level : null;
@@ -151,7 +166,7 @@ namespace Jasmine.Restful.DefaultFilters
         {
             return _groups.ContainsKey(name);
         }
-
+     
         public bool UpdatePassword(string name,string password)
         {
              if(_users.TryGetValue(name,out var user))
@@ -167,13 +182,14 @@ namespace Jasmine.Restful.DefaultFilters
                 return false;
             }
         }
+        [BeforeInterceptor(typeof(SupperAdminAuthenticateFilter))]
         public bool ChangeGroup(string user,string newGroup)
         {
             if(_users.TryGetValue(user,out var usr)&&_groups.TryGetValue(newGroup,out var group))
             {
-                _groups[usr.Group].Users.Remove(user);
+                usr.Group.Users.Remove(user);
 
-                usr.Group = newGroup;
+                usr.Group = _groups[newGroup];
 
                 makeSnapshot();
 
@@ -186,6 +202,7 @@ namespace Jasmine.Restful.DefaultFilters
                 return false;
             }
         }
+        [BeforeInterceptor(typeof(SupperAdminAuthenticateFilter))]
         public bool ChangeGroupLevel(string group, AuthenticateLevel newLevel)
         {
             if(_groups.TryGetValue(group,out var value))
@@ -201,12 +218,12 @@ namespace Jasmine.Restful.DefaultFilters
                 return false;
             }
         }
-
+        [BeforeInterceptor(typeof(SupperAdminAuthenticateFilter))]
         public bool RemoveUser(string user)
         {
             if(_users.TryGetValue(user,out var value))
             {
-                _groups[value.Group].Users.Remove(user);
+                value.Group.Users.Remove(user);
                 _users.Remove(user);
 
                 makeSnapshot();
@@ -216,7 +233,7 @@ namespace Jasmine.Restful.DefaultFilters
 
             return false;
         }
-
+        [BeforeInterceptor(typeof(SupperAdminAuthenticateFilter))]
         public bool RemoveGroup(string group)
         {
             if(_groups.ContainsKey(group))

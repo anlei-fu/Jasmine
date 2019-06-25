@@ -7,7 +7,10 @@ Vue.use(Vuex)
 const state = {
     isSignIned: true,
     groups: {},
-    currentService: { name: 'fal' },
+    currentService: { 
+        name: 'fal',
+        description: 'this is a restful service'
+ },
     currentGroup: {},
     theme: '',
     languge: '',

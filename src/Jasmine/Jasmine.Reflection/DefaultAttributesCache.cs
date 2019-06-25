@@ -51,8 +51,15 @@ namespace Jasmine.Reflection.Implements
 
             var ls = new List<T>();
 
-            foreach (var item in GetAttribute(typeof(T)))
-                ls.Add((T)item);
+            var attrs = GetAttribute(typeof(T));
+
+            if (attrs != null)
+            {
+
+                foreach (var item in attrs)
+                    ls.Add((T)item);
+            }
+
 
             return ls.ToArray();
         }

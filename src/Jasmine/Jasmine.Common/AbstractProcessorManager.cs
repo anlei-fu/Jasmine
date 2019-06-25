@@ -36,6 +36,7 @@ namespace Jasmine.Common
                 throw new PathAlreadyExistsException();
             }
         }
+       
         [Description("获取全部服务数据")]
         public  IEnumerable< IServiceGroup> GetAllProcessor()
         {

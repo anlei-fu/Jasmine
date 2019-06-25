@@ -5,9 +5,9 @@ namespace Jasmine.Common
 {
     public  interface IAop
     {
-      List<Type> BeforeFilters { get;  }
-       List<Type> AfterFilters { get;  }
-        List<Type> AroundFilters { get;  }
-       List<Type> ErrorFilters { get;  }
+      List<Type> BeforeInterceptors { get;  }
+       List<Type> AfterInterceptors { get;  }
+        List<Type> AroundInterceptors { get;  }
+       List<Type> ErrorInterceptors { get;  }
     }
 }

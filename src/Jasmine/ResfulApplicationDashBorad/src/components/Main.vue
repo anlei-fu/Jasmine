@@ -28,7 +28,7 @@
   margin-top: 10px;
   font-size: 1.15em;
 }
-.drowdowm-a{
+.drowdowm-a {
   text-decoration: none;
   font-size: 12px;
   margin-left: 10px;
@@ -41,13 +41,13 @@
       <!-- top header -->
       <Header>
         <div class="layout-logo"></div>
-        
+
         <div class="layout-nav">
           <Dropdown>
             <a href="javascript:void(0)">
               <Icon type="ios-arrow-down"></Icon>更换主题
             </a>
-          <DropdownMenu slot="list" style="magin-left:20px;">
+            <DropdownMenu slot="list" style="magin-left:20px;">
               <DropdownItem>驴打滚</DropdownItem>
               <DropdownItem>炸酱面</DropdownItem>
               <DropdownItem>豆汁儿</DropdownItem>
@@ -75,8 +75,8 @@
               {{this.$store.state.user.name}}
             </a>
             <DropdownMenu slot="list">
-               <DropdownItem>修改密码</DropdownItem>
-               <DropdownItem>退出</DropdownItem>
+              <DropdownItem>修改密码</DropdownItem>
+              <DropdownItem>退出</DropdownItem>
             </DropdownMenu>
           </Dropdown>
         </div>
@@ -87,18 +87,18 @@
         <!-- body-left -->
         <Sider hide-trigger width="200" :style="{background: '#fff'}">
           <Menu class="left-menu" active-name="1-2" theme="light" width="auto" :open-names="['1']">
-            <MenuGroup class="menu-group" title="摘要">
-              <MenuItem name="1-1">resource rate</MenuItem>
-            </MenuGroup>
+            <MenuItem name="1-1">
+              <Icon type="ios-pulse" :size="22"/>摘要
+            </MenuItem>
 
             <!-- services manageinit all service by given serviceGroups[group{[service]}] -->
             <Submenu class="menu-group" name="2">
               <template slot="title">
-                <Icon type="ios-cloud" :size="24"></Icon>Api管理
+                <Icon type="ios-cloud" :size="22"></Icon>Api管理
               </template>
               <Submenu v-for="(group,g_index) in this.$store.state.groups" v-bind:key="group.Name">
                 <template slot="title">
-                  <Icon type="ios-navigate" :size="24"></Icon>
+                  <Icon type="ios-navigate" :size="22"></Icon>
                   {{group.Name}}
                 </template>
                 <MenuItem
@@ -111,22 +111,17 @@
             </Submenu>
 
             <!-- sys api -->
-            <MenuGroup class="menu-group" title="系统服務">
-              <MenuItem name="3-1">Restful</MenuItem>
-              <MenuItem name="3-2">Option2</MenuItem>
-            </MenuGroup>
-
+            <MenuItem name="3-1">
+              <Icon type="ios-infinite" :size="22"></Icon>系统服务
+            </MenuItem>
             <!-- user manage-->
-            <MenuGroup class="menu-group" title="管理">
-              <MenuItem name="4-1">
-                <Icon type="ios-people" :size="22"/>用戶管理
-              </MenuItem>
-            </MenuGroup>
-
+            <MenuItem name="4-1">
+              <Icon type="ios-people" :size="22"/>用戶管理
+            </MenuItem>
             <!-- about -->
-            <MenuGroup class="menu-group" title="帮助">
-              <MenuItem name="5-1">关于</MenuItem>
-            </MenuGroup>
+            <MenuItem name="5-1">
+              <Icon type="ios-bulb" :size="22"></Icon>关于
+            </MenuItem>
           </Menu>
         </Sider>
 
@@ -136,7 +131,7 @@
             <BreadcrumbItem>Home</BreadcrumbItem>
             <BreadcrumbItem>Components</BreadcrumbItem>
             <BreadcrumbItem>Layout</BreadcrumbItem>
-          </Breadcrumb> -->
+          </Breadcrumb>-->
 
           <!-- content -->
           <Content :style="{padding: '24px', minHeight: '280px', background: '#fff'}">

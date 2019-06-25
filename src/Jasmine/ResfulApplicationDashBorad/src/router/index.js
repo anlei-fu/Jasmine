@@ -35,7 +35,7 @@ export default new Router({
         },
 
         {
-          path: 'abt',
+          path: 'about',
           component: () => import("@/components/About")
         },
 

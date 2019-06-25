@@ -23,7 +23,7 @@ namespace Jasmine.Rpc.Server
             {
                 var processor = new RpcRequestProcessor(1000,item.Key);
 
-                foreach (var before in item.Value.BeforeFilters)
+                foreach (var before in item.Value.BeforeInterceptors)
                 {
                     var filter = _aopProvider.GetFilter(before);
 
@@ -34,7 +34,7 @@ namespace Jasmine.Rpc.Server
 
                 }
 
-                foreach (var around in item.Value.AroundFilters)
+                foreach (var around in item.Value.AroundInterceptors)
                 {
                     var filter = _aopProvider.GetFilter(around);
 
@@ -48,7 +48,7 @@ namespace Jasmine.Rpc.Server
 
                 processor.Pipeline.AddLast(proxy);
 
-                foreach (var around in item.Value.AroundFilters)
+                foreach (var around in item.Value.AroundInterceptors)
                 {
                     var filter = _aopProvider.GetFilter(around);
 
@@ -58,7 +58,7 @@ namespace Jasmine.Rpc.Server
                     processor.Pipeline.AddLast(filter);
                 }
 
-                foreach (var after in item.Value.AfterFilters)
+                foreach (var after in item.Value.AfterInterceptors)
                 {
                     var filter = _aopProvider.GetFilter(after);
 
@@ -68,7 +68,7 @@ namespace Jasmine.Rpc.Server
                     processor.Pipeline.AddLast(filter);
                 }
 
-                foreach (var error in item.Value.ErrorFilters)
+                foreach (var error in item.Value.ErrorInterceptors)
                 {
                     var filter = _aopProvider.GetFilter(error);
 

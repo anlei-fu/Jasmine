@@ -16,7 +16,7 @@ namespace Jasmine.Restful
       
         public int TotalServiceCount { get; set; }
         public int TotalServiceGroupCount { get; set; }
-        public string TotalVisiteCount { get; set; }
+        public string TotalVisitCount { get; set; }
         public string TotalFailedCount { get; set; }
         public float CupUsage { get; set; }
         public long MemoryUsage { get; set; }
@@ -25,5 +25,7 @@ namespace Jasmine.Restful
         public string SystemVersion => RuntimeEnvironment.GetSystemVersion();
         public string ApplicationVersion => "Jasmine restful application v1.0.0.0";
         public string Archtecture =>RuntimeInformation.OSArchitecture.ToString();
+
+
     }
 }

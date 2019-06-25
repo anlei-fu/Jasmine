@@ -28,6 +28,14 @@ namespace Jasmine.Common
         {
              var node= ensureFilterExistsAndGetFilterNode(name);
 
+            var next = node.Next;
+
+            if (next != null)
+                filter.Next = next.Value;
+
+            node.Value.Next = filter;
+
+
             _list.AddAfter(node, filter);
 
             return this;
@@ -38,6 +46,13 @@ namespace Jasmine.Common
         {
             var node = ensureFilterExistsAndGetFilterNode(name);
 
+            var pre = node.Previous;
+
+            if (pre != null)
+                pre.Next.Value = filter;
+
+            filter.Next = node.Value;
+
             _list.AddBefore(node, filter);
 
             return this;
@@ -46,6 +61,9 @@ namespace Jasmine.Common
         public IFilterPiplelineBuilder<T> AddFirst(IFilter<T> filter)
         {
             ensureFilterNotExists(filter.Name);
+
+            if (_list.First != null)
+                filter.Next = _list.First.Value;
 
             _nameMap.Add(filter.Name, _list.AddFirst(filter));
 
@@ -57,7 +75,10 @@ namespace Jasmine.Common
         {
             ensureFilterNotExists(filter.Name);
 
-            _nameMap.Add(filter.Name, _list.AddFirst(filter));
+            if (_list.Last != null)
+                _list.Last.Value.Next = filter;
+
+            _nameMap.Add(filter.Name, _list.AddLast(filter));
 
             return this;
         }
