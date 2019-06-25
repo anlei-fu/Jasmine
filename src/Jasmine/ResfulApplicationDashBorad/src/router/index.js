@@ -15,12 +15,12 @@ export default new Router({
       children: [
 
         {
-          path: 'srv',
+          path: 'service',
           component: () => import("@/components/Service")
         },
 
         {
-          path: 'grp',
+          path: 'group',
           component: () => import("@/components/Group")
         },
 
@@ -30,7 +30,7 @@ export default new Router({
         },
 
         {
-          path: 'sysapi',
+          path: 'systemapi',
           component: () => import("@/components/SystemService")
         },
 
@@ -40,7 +40,7 @@ export default new Router({
         },
 
         {
-          path: 'usermng',
+          path: 'usermanage',
           component: () => import("@/components/UserManager")
         }
       ]
