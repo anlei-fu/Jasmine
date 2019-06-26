@@ -42,7 +42,12 @@ export default new Router({
         {
           path: 'usermanage',
           component: () => import("@/components/UserManager")
+        },
+        {
+          path: 'debug',
+          component: () => import('@/components/RestfulClient')
         }
+
       ]
     },
 

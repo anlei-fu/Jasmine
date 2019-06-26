@@ -9,7 +9,6 @@
 .layout-logo {
   width: 100px;
   height: 30px;
-  background: #5b6270;
   border-radius: 3px;
   float: left;
   position: relative;
@@ -40,7 +39,11 @@
     <Layout style="min-height:1000px">
       <!-- top header -->
       <Header>
-        <div class="layout-logo"><img src="https://ss0.bdstatic.com/5aV1bjqh_Q23odCf/static/superman/img/logo_top_86d58ae1.png"/></div>
+        <div class="layout-logo">
+          <img
+            src="https://ss0.bdstatic.com/5aV1bjqh_Q23odCf/static/superman/img/logo_top_86d58ae1.png"
+          >
+        </div>
 
         <div class="layout-nav">
           <Dropdown>
@@ -119,8 +122,12 @@
             <MenuItem name="4">
               <Icon type="ios-people" :size="22"/>用戶管理
             </MenuItem>
+            <!-- user manage-->
+            <MenuItem name="5">
+              <Icon type="ios-bug" :size="22"/>测试
+            </MenuItem>
             <!-- about -->
-            <MenuItem name="5" @click="showAbout">
+            <MenuItem name="6" @click="showAbout">
               <Icon type="ios-bulb" :size="22"></Icon>关于
             </MenuItem>
           </Menu>
@@ -158,7 +165,7 @@ export default {
       else if (name === "2") this.$router.push({ path: "/main/service" });
       else if (name === "3") this.$router.push({ path: "/main/systemapi" });
       else if (name === "4") this.$router.push({ path: "/main/group" });
-      else if (name === "5") this.$router.push({ path: "/main/service" });
+      else if (name === "5") this.$router.push({ path: "/main/debug" });
     },
     showServiceDetail(service) {
       this.$store.state.updateCurrentService(service);

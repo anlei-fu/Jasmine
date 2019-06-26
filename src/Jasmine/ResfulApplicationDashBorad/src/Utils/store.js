@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 import ajax from './request';
+import restfulClient from './restfulClient'
 
 Vue.use(Vuex)
 
@@ -11,6 +12,7 @@ const state = {
         name: 'fal',
         description: 'this is a restful service'
  },
+    client : restfulClient,
     currentGroup: {},
     theme: '',
     languge: '',

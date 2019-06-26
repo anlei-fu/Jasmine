@@ -19,9 +19,7 @@ namespace Jasmine.Reflection
         {
             if (_keyMap.TryAdd(info, new Method()))
             {
-                _keyMap[info].Name = info.Name;
                 _keyMap[info].MethodInfo = info;
-                _keyMap[info].ReturnType = info.ReturnType;
                 _keyMap[info].FullName = info.GetMethodName();
 
                 _nameMap.TryAdd(_keyMap[info].Name, new List<Method>());
@@ -36,7 +34,6 @@ namespace Jasmine.Reflection
                 foreach (var item in info.GetCustomAttributes(true))
                     _keyMap[info].Attributes.Cache((Attribute)item);
 
-                _keyMap[info].Name = info.Name;
 
             }
         }

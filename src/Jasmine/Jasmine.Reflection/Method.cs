@@ -8,10 +8,10 @@ namespace Jasmine.Reflection
     {
         public MethodInfo MethodInfo { get; set; }
         public Func<object,object[],object> Invoker { get; set; }
-        public string Name { get; set; }
+        public string Name => MethodInfo.Name;
         public string FullName { get; set; }
-        public Type ReturnType { get; set; }
-        public Type OwnerType { get; set; }
+        public Type ReturnType => MethodInfo.ReturnType;
+        public Type OwnerType => MethodInfo.DeclaringType;
         public bool HasReturn => ReturnType != null;
         public IParameterCache Parameters { get; set; } = new DefaultParameterCache();
         public Type[] ParamerTypies { get; set; }

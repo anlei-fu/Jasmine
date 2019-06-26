@@ -75,7 +75,13 @@ namespace Jasmine.Restful
                 processor.Pipeline = new RestfulFilterPipeline();
                 processor.ErrorPileline = new RestfulFilterPipeline();
 
-                foreach (var before in buildFilters(RestfulApplicationGlobalConfig.GlobalIntercepterConfig.GetBeforeFilters().Union(item.Value.BeforeInterceptors).Union(metaData.BeforeInterceptors)))
+                /*
+                 *before intercepter, global interceptor + group interceptor +  self interceptor
+                 * 
+                 * the intercepter may do recursive mount
+                 * 
+                 */
+                foreach (var before in buildFilters(RestfulApplicationGlobalConfig.GlobalIntercepterConfig.GetBeforeFilters().Union(metaData.BeforeInterceptors).Union(item.Value.BeforeInterceptors)))
                 {
                     processor.Pipeline.AddLast(before);
                 }
