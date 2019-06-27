@@ -16,7 +16,7 @@ namespace Jasmine.Restful.DefaultFilters
     {
         private ConcurrentDictionary<string, JasmineFifoCache<long,RestfulTraceItem>> _traces = new ConcurrentDictionary<string, JasmineFifoCache<long,RestfulTraceItem>>();
         [RestfulIgnore]
-        public override Task FiltsAsync(HttpFilterContext context)
+        public override Task<bool> FiltsAsync(HttpFilterContext context)
         {
            if(!context.PipelineDatas.ContainsKey("RestfulTrace"))
             {
@@ -36,7 +36,7 @@ namespace Jasmine.Restful.DefaultFilters
                 }
             }
 
-            return HasNext ? Next.FiltsAsync(context) : Task.CompletedTask;
+            return  Task.FromResult(true);
         }
         [Description("get service trace log at latest")]
         [Path("/api/gettrace")]

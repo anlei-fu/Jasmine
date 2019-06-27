@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Threading.Tasks;
 using Jasmine.Common;
 using Jasmine.Serialization;
@@ -21,10 +22,18 @@ namespace Jasmine.Restful
              */
             if (_processorManager.ContainsProcessor(path))
             {
+                /***begin stat*****/
+                var stat = new StatItem();
+                var watch = Stopwatch.StartNew();
+                watch.Start();
+
+                if (RestfulApplicationGlobalConfig.DebugMode)
+                    RestfulApplicationBaseComponents.Tracer.BeginTrace(context);
+
                 var processor = (RestfulRequestProcessor)_processorManager.GetProcessor(path);
                 /*
                  * is method  match
-                 */ 
+                 */
                 if (processor.HttpMethod == context.HttpContext.Request.Method.ToLower())
                 {
                     /*
@@ -62,6 +71,16 @@ namespace Jasmine.Restful
                     else if (processor.HasAlternativeService)
                     {
                         await DispatchAsync(processor.AlternativeServicePath, context);
+
+                        stat.Sucessed = false;
+                        stat.Elapsed = watch.ElapsedMilliseconds;
+                        processor.Metric.Add(stat);
+
+                        if (RestfulApplicationGlobalConfig.DebugMode)
+                            RestfulApplicationBaseComponents.Tracer.EndTrace(context);
+
+                        // should return  cause alternative service already flushed
+                        return;
                     }
                     else
                     {
@@ -72,6 +91,16 @@ namespace Jasmine.Restful
                 {
                     context.HttpContext.Response.StatusCode = HttpStatusCodes.INCORRECT_HTTP_METHOD;
                 }
+
+                if (context.HttpContext.Response.StatusCode != HttpStatusCodes.SUCESSED)
+                    stat.Sucessed = false;
+
+                stat.Elapsed = watch.ElapsedMilliseconds;
+
+                processor.Metric.Add(stat);
+
+                if (RestfulApplicationGlobalConfig.DebugMode)
+                    RestfulApplicationBaseComponents.Tracer.EndTrace(context);
             }
             /*
              *  static file enabled 

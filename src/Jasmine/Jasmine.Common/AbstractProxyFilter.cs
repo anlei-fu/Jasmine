@@ -9,6 +9,7 @@ namespace Jasmine.Common
     /// </summary>
     /// <typeparam name="TContext"> context type</typeparam>
     public abstract class AbstractInvokationProxyFilter<TContext> : AbstractFilter<TContext>
+        where TContext:IFilterContext
     {
         public AbstractInvokationProxyFilter(Method method, IRequestParamteterResolver<TContext> resolver, object instance) 
         {
@@ -21,7 +22,7 @@ namespace Jasmine.Common
         private IRequestParamteterResolver<TContext> _resolver;
 
 
-        public override Task FiltsAsync(TContext context)
+        public override Task<bool> FiltsAsync(TContext context)
         {
 
             var parameters =_method.HasParameter?_resolver.Resolve(context)
@@ -31,7 +32,7 @@ namespace Jasmine.Common
           
             afterInvoke(context, result);
 
-            return HasNext ? Next.FiltsAsync(context) : Task.CompletedTask;
+            return  Task.FromResult(true);
         }
 
         /// <summary>

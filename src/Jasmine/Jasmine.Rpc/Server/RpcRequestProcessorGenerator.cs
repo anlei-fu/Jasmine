@@ -8,6 +8,7 @@ using System.Collections.Generic;
 namespace Jasmine.Rpc.Server
 {
     public class RpcRequestProcessorGenerator : IRequestProcessorGenerator<RpcFilterContext, RpcServiceMetaData>
+   
     {
         private IAopFilterProvider<RpcFilterContext> _aopProvider => RpcAopFilterProvider.Instance;
         private IParameterResolverFactory<RpcFilterContext, RpcRequestMetaData> _parameterResolverFactory => RpcParameterResolverFactory.Instance;

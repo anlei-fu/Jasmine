@@ -224,7 +224,7 @@ namespace Jasmine.Serialization
 
                 return true;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
 
                 result = null;

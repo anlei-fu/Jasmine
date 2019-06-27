@@ -154,7 +154,7 @@ namespace Jasmine.Restful
                 RestfulApplicationBaseComponents.ServicePovider.AddSigleton(typeof(XmlStoreUserManager), userManager);
 
 
-                RestfulApplicationBaseComponents.ServicePovider.AddSigleton(typeof(LoginAfterInterceptor), new LoginAfterInterceptor(sessionManager,userManager));
+                RestfulApplicationBaseComponents.ServicePovider.AddSigleton(typeof(AfterLoginFilter), new AfterLoginFilter(sessionManager,userManager));
 
                 RestfulApplicationBaseComponents.ServicePovider.AddSigleton(typeof(SessionValidateFilter), new SessionValidateFilter(sessionManager));
                 RestfulApplicationBaseComponents.ServicePovider.AddSigleton(typeof(LoginService), new LoginService(userManager));

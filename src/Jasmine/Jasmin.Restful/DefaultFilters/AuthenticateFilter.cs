@@ -15,7 +15,7 @@ namespace Jasmine.Restful.DefaultServices
         }
 
         private AuthenticateLevel _level;
-        public override Task FiltsAsync(HttpFilterContext context)
+        public override Task<bool> FiltsAsync(HttpFilterContext context)
         {
             bool pass = false;
 
@@ -25,16 +25,7 @@ namespace Jasmine.Restful.DefaultServices
                     pass = true;
             }
 
-            if (!pass)
-            {
-                context.HttpContext.Response.StatusCode = HttpStatusCodes.FORBIDDEN;
-
-                return Task.CompletedTask;
-            }
-            else
-            {
-                return HasNext ? Next.FiltsAsync(context) : Task.CompletedTask;
-            }
+            return Task.FromResult(pass);
         }
     }
 }

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Jasmine.Common.Attributes
+namespace Jasmine.Restful.Attributes
 {
     public class RestfulIgnoreAttribute:Attribute
     {

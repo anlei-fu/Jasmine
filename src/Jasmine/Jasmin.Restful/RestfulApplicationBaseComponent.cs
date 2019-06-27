@@ -1,5 +1,6 @@
 ﻿using Jasmine.Common;
 using Jasmine.Ioc;
+using Jasmine.Restful.DefaultFilters;
 using Jasmine.Restful.Implement;
 using Microsoft.AspNetCore.Http;
 using System;
@@ -17,7 +18,7 @@ namespace Jasmine.Restful
         public static IRequestProcessorGenerator<HttpFilterContext, RestfulServiceMetaData> ProcessorGenerator => RestfulRequestProcessorGenerator.Instance;
         public static RestfulFilterMetaDataManager FilterMetaDataManager => RestfulFilterMetaDataManager.Instance;
         public static IAopFilterProvider<HttpFilterContext> FilterManager => RestfulAopFilterProvider.Instance;
-
+        public static RestfulTracer Tracer { get; set; }
 
 
     }

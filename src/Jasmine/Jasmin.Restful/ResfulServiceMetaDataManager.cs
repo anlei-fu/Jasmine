@@ -1,5 +1,5 @@
 ﻿using Jasmine.Common;
-using Jasmine.Common.Attributes;
+using Jasmine.Restful.Attributes;
 using System;
 using System.Collections.Generic;
 using System.Reflection;

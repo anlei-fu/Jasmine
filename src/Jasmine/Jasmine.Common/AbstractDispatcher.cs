@@ -3,6 +3,7 @@
 namespace Jasmine.Common
 {
     public abstract class AbstractDispatcher<T> : IDispatcher<T>
+        where T:IFilterContext
     {
         public AbstractDispatcher(string name,IRequestProcessorManager<T> processorManager)
         {

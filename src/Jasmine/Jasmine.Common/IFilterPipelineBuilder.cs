@@ -5,6 +5,7 @@
     /// </summary>
     /// <typeparam name="TContext"></typeparam>
     public interface IFilterPiplelineBuilder<TContext>
+        where TContext:IFilterContext
     {
         /// <summary>
         /// attach a error filter at error pipeline first

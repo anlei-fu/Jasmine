@@ -3,6 +3,7 @@
 namespace Jasmine.Common
 {
     public  interface IRequestProcessorManager<T>:INameFearture,IReadOnlyCollection<IServiceGroup>
+        where T:IFilterContext
     {
         void AddProcessor(string path, IRequestProcessor<T> processor);
         void RemoveProcessor(string path);

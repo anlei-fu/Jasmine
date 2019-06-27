@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace Jasmine.Restful
 {
-    public class HttpFilterContext
+    public class HttpFilterContext:IFilterContext
     {
         public HttpContext HttpContext { get; set; }
         public Exception Error { get; set; }

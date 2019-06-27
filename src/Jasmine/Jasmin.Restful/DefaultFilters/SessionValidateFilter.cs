@@ -11,7 +11,7 @@ namespace Jasmine.Restful
             _manager = manager;
         }
         private ISessionManager _manager;
-        public override Task FiltsAsync(HttpFilterContext context)
+        public override Task<bool> FiltsAsync(HttpFilterContext context)
         {
             context.HttpContext.Request.Cookies.TryGetValue("session", out var session);
 
@@ -22,15 +22,15 @@ namespace Jasmine.Restful
 
             if (user != null)
             {
-                context.PipelineDatas.Add("level", user);
+                context.PipelineDatas.Add("level", user.Group.Level);
 
-                return HasNext ? Next.FiltsAsync(context) : Task.CompletedTask;
+                return Task.FromResult(true);
             }
             else
             {
                 context.HttpContext.Response.StatusCode = HttpStatusCodes.VALIDATE_FAILED;
 
-                return Task.CompletedTask;
+                return Task.FromResult(false);
             }
 
         }

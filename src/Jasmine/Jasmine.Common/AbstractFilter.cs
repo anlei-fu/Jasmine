@@ -3,6 +3,7 @@
 namespace Jasmine.Common
 {
     public abstract class AbstractFilter<T> : IFilter<T>
+        where T:IFilterContext
     {
         public AbstractFilter()
         {
@@ -10,13 +11,9 @@ namespace Jasmine.Common
         }
         public  string Name => GetType().FullName;
 
-        public IFilter<T> Next { get; set; }
-
-        public bool HasNext => Next != null;
-
         public IFilterPipeline<T> Pipeline { get; set; }
 
-        public abstract Task FiltsAsync(T context);
+        public abstract Task<bool> FiltsAsync(T context);
        
     }
 }

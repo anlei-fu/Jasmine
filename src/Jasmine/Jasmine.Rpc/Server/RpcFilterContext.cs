@@ -1,9 +1,10 @@
-﻿using System;
+﻿using Jasmine.Common;
+using System;
 using System.Collections.Generic;
 
 namespace Jasmine.Rpc
 {
-    public   class RpcFilterContext
+    public   class RpcFilterContext:IFilterContext
     {
         public RpcContext RpcContext { get; set; }
         public IDictionary<string, object> Datas { get; set; } = new Dictionary<string, object>();

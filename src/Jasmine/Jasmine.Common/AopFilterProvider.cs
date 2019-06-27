@@ -7,6 +7,7 @@ using System.Collections.Generic;
 namespace Jasmine.Common
 {
     public abstract class AbstractAopFilterProvider<TContext> : IAopFilterProvider<TContext>
+        where TContext:IFilterContext
     {
       
         protected ConcurrentDictionary<Type, IFilter<TContext>> _map = new ConcurrentDictionary<Type, IFilter<TContext>>();

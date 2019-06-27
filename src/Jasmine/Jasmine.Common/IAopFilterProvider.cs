@@ -4,6 +4,7 @@ using System.Collections.Generic;
 namespace Jasmine.Common
 {
     public  interface IAopFilterProvider<TContext>:IReadOnlyCollection<IFilter<TContext>>
+        where TContext:IFilterContext
     {
    
         IFilter<TContext> GetFilter<T>();

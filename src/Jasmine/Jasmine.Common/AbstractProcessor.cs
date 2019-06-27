@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 namespace Jasmine.Common
 {
     public abstract class AbstractProcessor<T> : IRequestProcessor<T>
+        where T : IFilterContext
     {
         public AbstractProcessor(int maxConcurrency, string name)
         {
@@ -24,15 +25,15 @@ namespace Jasmine.Common
 
         public int CurrentConcurrency => _currentConcurrency;
 
-        private bool _available=true;
+        private bool _available = true;
 
         private readonly object _locker = new object();
 
         public string Name { get; set; }
         [JsonIgnore]
-        public IFilterPipeline<T> ErrorPileline { get;  set; }
+        public IFilterPipeline<T> ErrorPileline { get; set; }
         [JsonIgnore]
-        public IFilterPipeline<T> Pipeline { get;  set; }
+        public IFilterPipeline<T> Pipeline { get; set; }
 
         public IMetric Metric { get; } = new Metric();
 
@@ -42,7 +43,7 @@ namespace Jasmine.Common
         {
             get
             {
-               return  _available && _currentConcurrency < MaxConcurrency;
+                return _available && _currentConcurrency < MaxConcurrency;
             }
         }
 
@@ -59,36 +60,33 @@ namespace Jasmine.Common
 
         public async Task FiltsAsysnc(T context)
         {
-
             Interlocked.Increment(ref _currentConcurrency);
-
-            var timeStart = DateTime.Now;
-
-            var item = new StatItemBase();
-
             try
             {
-
-                await Pipeline.First.FiltsAsync(context).ConfigureAwait(false);
-
-                item.Sucessed = true;
-
+                foreach (var filter in Pipeline)
+                {
+                    if (!await filter.FiltsAsync(context).ConfigureAwait(false))
+                    {
+                        break;
+                    }
+                }
             }
             catch (Exception ex)
             {
-                item.Sucessed = false;
                 _logger?.Error(ex);
 
-                await ErrorPileline.First.FiltsAsync(context).ConfigureAwait(false);
+                context.Error = ex;
 
-
+                foreach (var filter in ErrorPileline)
+                {
+                    if (!await filter.FiltsAsync(context).ConfigureAwait(false))
+                    {
+                        break;
+                    }
+                }
             }
             finally
             {
-                item.Elapsed = (int)(DateTime.Now - timeStart).TotalMilliseconds;
-                item.Time = timeStart.ToString();
-                Metric.Add(item);
-
                 Interlocked.Decrement(ref _currentConcurrency);
             }
         }

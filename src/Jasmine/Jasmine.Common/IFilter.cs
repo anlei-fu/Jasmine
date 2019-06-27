@@ -2,19 +2,17 @@
 
 namespace Jasmine.Common
 {
-    public interface IFilter<T>:INameFearture
+    public interface IFilter<TContext>:INameFearture
+        where TContext:IFilterContext
     {
         /// <summary>
         ///  do filt
         /// </summary>
         /// <param name="context">filter context</param>
-        /// <returns></returns>
-        Task FiltsAsync(T context);
-        /// <summary>
-        /// attached next filter
-        /// </summary>
-        IFilter<T> Next { get; set; }
+        /// <returns> decide does run next filter</returns>
+        Task<bool> FiltsAsync(TContext context);
+    
 
-        IFilterPipeline<T> Pipeline { get; set; }
+        IFilterPipeline<TContext> Pipeline { get; set; }
     }
 }

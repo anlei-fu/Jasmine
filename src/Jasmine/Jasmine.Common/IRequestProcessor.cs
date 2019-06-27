@@ -7,6 +7,7 @@ namespace Jasmine.Common
     /// </summary>
     /// <typeparam name="T"></typeparam>
     public interface IRequestProcessor<T> : IPathFearture, IServiceItem
+        where T:IFilterContext
     {
         IDispatcher<T> Dispatcher { get; set; }
         /// <summary>
