@@ -12,7 +12,7 @@ npm<style>
   margin: auto;
   width: 450px;
   height: 300px;
-  background-color: rgb(235, 235, 235);
+  background-color: rgb(242, 242, 242);
   position: relative;
 
   top: 25%;

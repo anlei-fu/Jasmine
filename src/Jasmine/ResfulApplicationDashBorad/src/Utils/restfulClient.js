@@ -13,10 +13,10 @@ client.interceptors.request.use((config) => {
 })
 
 client.interceptors.response.use(response => {
-    iview.LoadingBar.start();
+    iview.LoadingBar.finish();
     return response;
 }, _err => {
-        iview.LoadingBar.finish();
+        iview.LoadingBar.error();
         return _err;
     })
 
