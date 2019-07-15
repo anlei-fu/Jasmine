@@ -393,7 +393,7 @@ namespace Jasmine.Orm
 
                 if(t>1000)
                 {
-                    ls.Add(builder.RemoveLastComa().ToString());
+                    ls.Add(builder.RemoveLastChar().ToString());
                     t = 0;
                     builder.Clear();
                 }
@@ -401,7 +401,7 @@ namespace Jasmine.Orm
             }
 
             if (builder.Length != 0)
-                ls.Add(builder.RemoveLastComa().ToString());
+                ls.Add(builder.RemoveLastChar().ToString());
 
 
             return ls;
@@ -545,11 +545,6 @@ namespace Jasmine.Orm
 
                 return command.ExecuteNonQuery();
             }
-            catch (Exception ex)
-            {
-                
-                throw;
-            }
             finally
             {
                 _connectionProvider.Recycle(connection);
@@ -584,11 +579,6 @@ namespace Jasmine.Orm
                 command.CommandText = sql;
 
                 return await command.ExecuteNonQueryAsync();
-            }
-            catch (Exception ex)
-            {
-
-                throw ex;
             }
             finally
             {
@@ -1832,7 +1822,7 @@ namespace Jasmine.Orm
                 //   builder.Append($"{item.Name}={DefaultBaseTypeConvertor.Instance.ConvertToSqlString(item.PropertyType, item.Getter.Invoke(parameter))},");
             }
 
-            builder.RemoveLastComa();
+            builder.RemoveLastChar();
 
             if (condition != null)
                 builder.Append($"Where {condition}");

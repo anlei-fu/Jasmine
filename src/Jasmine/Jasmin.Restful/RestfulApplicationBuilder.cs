@@ -173,8 +173,6 @@ namespace Jasmine.Restful
 
             }
 
-
-
             return new RestfulApplication();
         }
         public RestfulApplicationBuilder LoadConfigFile(string xmlConfigFilePath)

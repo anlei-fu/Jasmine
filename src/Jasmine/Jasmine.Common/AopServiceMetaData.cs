@@ -3,11 +3,11 @@ using System.Collections.Generic;
 
 namespace Jasmine.Common
 {
-    public  class AopServiceMetaData:ServiceMetaDataBase
+    public  class AopServiceMetaData:ServiceMetaDataBase,IAop
     {
-        public IList<Type> BeforeInterceptors { get; set; } = new List<Type>();
-        public IList<Type> AfterInterceptors { get; set; } = new List<Type>();
-        public IList<Type> AroundInterceptors { get; set; } = new List<Type>();
-        public IList<Type> ErrorInterceptors { get; set; } = new List<Type>();
+        public List<Type> BeforeInterceptors { get; set; } = new List<Type>();
+        public List<Type> AfterInterceptors { get; set; } = new List<Type>();
+        public List<Type> AroundInterceptors { get; set; } = new List<Type>();
+        public List<Type> ErrorInterceptors { get; set; } = new List<Type>();
     }
 }

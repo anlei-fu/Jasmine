@@ -12,9 +12,12 @@ namespace Jasmine.Scheduling
         {
             Capacity = capacity;
         }
+
         private const int DEFAULT_WAKEUP_TIMEOUT = 100*1000;//100s
 
-        private ConcurrentDictionary<long, AvlTree<TimeoutJob>.Node> _jobs = new ConcurrentDictionary<long, AvlTree<TimeoutJob>.Node>();
+        private ConcurrentDictionary<long, AvlTree<TimeoutJob>.Node> _jobs =
+                                    new ConcurrentDictionary<long, AvlTree<TimeoutJob>.Node>();
+
         private AvlTree<TimeoutJob> _tree = new AvlTree<TimeoutJob>(new TimeoutJobCompare());
         private readonly object _locker = new object();
         public int Capacity { get; }
@@ -31,7 +34,8 @@ namespace Jasmine.Scheduling
             {
                 var node = _tree.MinNode;
 
-                if(node!=null&&node.Data.ScheduledExcutingTime<DateTime.Now)
+                if(node!=null
+                   &&node.Data.ScheduledExcutingTime<DateTime.Now)
                 {
                     _tree.Remove(node);
                     _jobs.TryRemove(node.Data.Id, out var _);
@@ -64,6 +68,7 @@ namespace Jasmine.Scheduling
            lock(_locker)
             {
                 var node = _tree.Add(job);
+
                 _jobs.TryAdd(job.Id, node);
 
                 return true;
@@ -82,11 +87,11 @@ namespace Jasmine.Scheduling
         {
             lock (_locker)
             {
-                if (_jobs.TryGetValue(jobId, out var value))
+                if (_jobs.TryGetValue(jobId, out var node))
                 {
-                    value.Data.ScheduledExcutingTime.AddMilliseconds(millionSeconds);
-                    _tree.Remove(value);
-                    _jobs[jobId] = _tree.Add(value.Data);
+                    node.Data.ScheduledExcutingTime.AddMilliseconds(millionSeconds);
+                    _tree.Remove(node);
+                    _jobs[jobId] = _tree.Add(node.Data);
 
                     return true;
                 }
@@ -99,9 +104,9 @@ namespace Jasmine.Scheduling
         {
             lock (_locker)
             {
-                if (_jobs.TryRemove(jobId, out var value))
+                if (_jobs.TryRemove(jobId, out var node))
                 {
-                    _tree.Remove(value);
+                    _tree.Remove(node);
                     return true;
                 }
             }
@@ -131,9 +136,11 @@ namespace Jasmine.Scheduling
                 if (min == null)
                     return DEFAULT_WAKEUP_TIMEOUT;
 
-                var tiemout =min.Data.ScheduledExcutingTime<DateTime.Now?0: (min.Data.ScheduledExcutingTime - DateTime.Now).TotalMilliseconds;
+                var tiemout =min.Data.ScheduledExcutingTime<DateTime.Now
+                                   ?0: (min.Data.ScheduledExcutingTime - DateTime.Now).TotalMilliseconds;
 
-                return tiemout>DEFAULT_WAKEUP_TIMEOUT?DEFAULT_WAKEUP_TIMEOUT:(int)tiemout;
+                return tiemout>DEFAULT_WAKEUP_TIMEOUT
+                              ?DEFAULT_WAKEUP_TIMEOUT:(int)tiemout;
             }
         }
 

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System;
 using System.Linq;
+using System.Collections.Concurrent;
 
 namespace Jasmine.DataStructure
 {
@@ -9,12 +10,13 @@ namespace Jasmine.DataStructure
         where T : ILongId
     {
 
+        private readonly object _locker = new object();
 
-        private Node _head;
-        private Node _tail;
+        private readonly Node _head;
+        private readonly Node _tail;
         private Node _current;
 
-        private Dictionary<long, List<Node>> _dic = new Dictionary<long,List<Node>>();
+        private readonly ConcurrentDictionary<long, List<Node>> _dic = new ConcurrentDictionary<long, List<Node>>();
 
         public int Capacity { get; }
 
@@ -26,7 +28,7 @@ namespace Jasmine.DataStructure
                 return false;
 
             if (weight < 1)
-                throw new ArgumentOutOfRangeException();
+                throw new ArgumentOutOfRangeException(nameof(weight));
 
             var nodes = new Node[weight];
 

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Jasmine.Serialization
 {
@@ -56,6 +57,26 @@ namespace Jasmine.Serialization
             throw new NotImplementedException();
         }
 
+        public Task<object> DeserializeAsync(Stream stream, Type type)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<object> DeserializeAsync(Stream stream, Type type, Encoding encoding)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<T> DeserializeAsync<T>(Stream stream)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<T> DeserializeAsync<T>(Stream stream, Encoding encoding)
+        {
+            throw new NotImplementedException();
+        }
+
         public string Serialize(object obj)
         {
             throw new NotImplementedException();
@@ -67,6 +88,16 @@ namespace Jasmine.Serialization
         }
 
         public void Serialize(object obj, Stream stream, Encoding encoding)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task SerializeAsync(object obj, Stream stream, Encoding encoding)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task SerializeAync(object obj, Stream stream)
         {
             throw new NotImplementedException();
         }
@@ -131,6 +162,26 @@ namespace Jasmine.Serialization
             throw new NotImplementedException();
         }
 
+        public Task<bool> TryDeserializeAsync(Stream stream, Type type, out object result)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<bool> TryDeserializeAsync(Stream stream, Type type, Encoding encoding, out object result)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<bool> TryDeserializeAsync<T>(Stream stream, out T result)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<bool> TryDeserializeAsync<T>(Stream stream, Encoding encoding, out T result)
+        {
+            throw new NotImplementedException();
+        }
+
         public bool TrySerialize(object obj, out byte[] result)
         {
             throw new NotImplementedException();
@@ -152,6 +203,16 @@ namespace Jasmine.Serialization
         }
 
         public bool TrySerialize(object obj, Stream stream, Encoding encoding)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<bool> TrySerializeAsync(object obj, Stream stream)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<bool> TrySerializeAsync(object obj, Stream stream, Encoding encoding)
         {
             throw new NotImplementedException();
         }

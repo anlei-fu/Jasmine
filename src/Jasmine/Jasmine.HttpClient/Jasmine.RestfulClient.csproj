@@ -7,8 +7,20 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Castle.Core" Version="4.4.0" />
     <PackageReference Include="log4net" Version="2.0.8" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Jasmine.Common\Jasmine.Commom.csproj" />
+    <ProjectReference Include="..\Jasmine.Ioc\Jasmine.Ioc.csproj" />
+    <ProjectReference Include="..\Jasmine.Serialization\Jasmine.Serialization.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Attributes\" />
+    <Folder Include="Exceptions\" />
   </ItemGroup>
 
 </Project>

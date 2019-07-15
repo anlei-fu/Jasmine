@@ -15,13 +15,11 @@ namespace Jasmine.Restful
 
         }
 
-        internal static readonly IMetaDataReflectResolver<RestfulServiceMetaData> Instance = new RestfulServiceMetaDataReflectResolver();
+        internal static readonly RestfulServiceMetaDataReflectResolver Instance = new RestfulServiceMetaDataReflectResolver();
 
         private ITypeCache _typeCache => JasmineReflectionCache.Instance;
         public RestfulServiceMetaData Resolve(Type type)
         {
-            if (!_typeCache.GetItem(type).Attributes.Contains(typeof(RestfulAttribute)))
-                return null;
 
             var metaData = new RestfulServiceMetaData();
 

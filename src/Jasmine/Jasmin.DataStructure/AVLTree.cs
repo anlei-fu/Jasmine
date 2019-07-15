@@ -45,21 +45,21 @@ namespace Jasmine.DataStructure
 
             return tree;
         }
-        private static Node fromArray(T[] arr)
+        private static Node fromArray(T[] array)
         {
-            return fromArray(arr, 0, arr.Length);
+            return fromArray(array, 0, array.Length);
         }
-        private static Node fromArray(T[] arr, int index, int len)
+        private static Node fromArray(T[] array, int index, int length)
         {
-            if (len == 0)
+            if (length == 0)
                 return null;
 
-            Node re = new Node(arr[index + (len >> 1)]) { Size = len };
+            Node re = new Node(array[index + (length >> 1)]) { Size = length };
 
-            if ((re.Left = fromArray(arr, index, len >> 1)) != null)
+            if ((re.Left = fromArray(array, index, length >> 1)) != null)
                 re.Left.Parent = re;
 
-            if ((re.Right = fromArray(arr, index + (len >> 1) + 1, len - (len >> 1) - 1)) != null)
+            if ((re.Right = fromArray(array, index + (length >> 1) + 1, length - (length >> 1) - 1)) != null)
                 re.Right.Parent = re;
 
             return re;

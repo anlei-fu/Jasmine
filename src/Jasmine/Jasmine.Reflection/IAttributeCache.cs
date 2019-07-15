@@ -6,7 +6,7 @@ namespace Jasmine.Reflection
     /// <summary>
     /// cache  attributes  mark on  related type
     /// </summary>
-    public   interface IAttributeCache:IEnumerable<Attribute[]>
+    public   interface IAttributeCache:IReadOnlyCollection<Attribute[]>
     {
         /// <summary>
         /// get attr by name
@@ -26,8 +26,12 @@ namespace Jasmine.Reflection
         /// <param name="attrType"></param>
         /// <returns></returns>
         bool Contains(Type attrType);
-
-        bool Contains<T>();
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <returns></returns>
+        bool Contains<T>() where T : Attribute;
         /// <summary>
         /// get attr by type
         /// </summary>
@@ -40,6 +44,12 @@ namespace Jasmine.Reflection
         /// </summary>
         /// <param name="attr"></param>
         void Cache(Attribute attr);
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="attrs"></param>
+        /// <returns></returns>
+        bool ContainsAny(params Type[] attrs);
 
     }
 }

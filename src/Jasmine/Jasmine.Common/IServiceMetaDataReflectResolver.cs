@@ -2,8 +2,8 @@
 
 namespace Jasmine.Common
 {
-    public   interface IMetaDataReflectResolver< out T>
+    public   interface IMetaDataReflectResolver< out TMetaData>
     {
-        T Resolve(Type type);
+        TMetaData Resolve(Type type);
     }
 }

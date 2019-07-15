@@ -5,19 +5,19 @@ namespace Jasmine.Common
     /// <summary>
     ///  a whole  request processor
     /// </summary>
-    /// <typeparam name="T"></typeparam>
-    public interface IRequestProcessor<T> : IPathFearture, IServiceItem
-        where T:IFilterContext
+    /// <typeparam name="TContext"></typeparam>
+    public interface IRequestProcessor<TContext> : IPathFearture, IServiceItem
+        where TContext:IFilterContext
     {
-        IDispatcher<T> Dispatcher { get; set; }
+        IDispatcher<TContext> Dispatcher { get; set; }
         /// <summary>
-        /// attached error filter
+        /// error work flow
         /// </summary>
-        IFilterPipeline<T> ErrorPileline { get; }
+        IFilterPipeline<TContext> ErrorPileline { get; }
         /// <summary>
-        ///  filter pipeline
+        ///  work flow
         /// </summary>
-        IFilterPipeline<T> Pipeline { get; }
+        IFilterPipeline<TContext> Pipeline { get; }
         /// <summary>
         /// service metric
         /// </summary>
@@ -31,11 +31,11 @@ namespace Jasmine.Common
         /// </summary>
         bool Available { get; }
 
-        Task FiltsAsysnc(T context);
+        Task ProcessAsysnc(TContext context);
 
         void SetAvailable(bool available);
 
-        void ResetMaxConcurrency(int concurrency);
+        void ResetMaxConcurrency(int maxConcurrency);
 
         string AlternativeServicePath { get; set; }
 

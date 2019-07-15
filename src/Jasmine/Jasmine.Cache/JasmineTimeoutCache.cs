@@ -17,13 +17,15 @@ namespace Jasmine.Cache
             _scheduler.Start();
         }
 
-        private ConcurrentDictionary<Tkey, Tvalue> _innerCache = new ConcurrentDictionary<Tkey, Tvalue>();
+        private readonly ConcurrentDictionary<Tkey, Tvalue> _innerCache
+                                             = new ConcurrentDictionary<Tkey, Tvalue>();
 
-        private ConcurrentDictionary<Tkey, TimeoutCacheJob> _jobMap = new ConcurrentDictionary<Tkey, TimeoutCacheJob>();
+        private readonly ConcurrentDictionary<Tkey, TimeoutCacheJob> _jobMap 
+                                            = new ConcurrentDictionary<Tkey, TimeoutCacheJob>();
 
-        private JasmineTimeoutScheduler _scheduler;
+        private readonly  JasmineTimeoutScheduler _scheduler;
 
-        private Action<Tkey, Tvalue> _itemRemovedCallback;
+        private readonly  Action<Tkey, Tvalue> _itemRemovedCallback;
 
         public int Capacity { get; }
 

@@ -4,10 +4,6 @@ namespace Jasmine.Reflection
 {
     public class JasmineReflectionCache : AbstractReflectionCache<TypeMetaData, Type>, ITypeCache
     {
-        private JasmineReflectionCache() : base()
-        {
-
-        }
 
         public static readonly ITypeCache Instance = new JasmineReflectionCache();
 
@@ -24,7 +20,7 @@ namespace Jasmine.Reflection
             if (_keyMap.TryAdd(type, new TypeMetaData()))
             {
 
-                var attrs = type.GetCustomAttributes(false);
+                var attrs = type.GetCustomAttributes(true);
 
                 _nameMap.TryAdd(type.Name, _keyMap[type]);
 

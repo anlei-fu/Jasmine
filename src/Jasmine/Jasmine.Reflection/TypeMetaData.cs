@@ -7,6 +7,10 @@ namespace Jasmine.Reflection
     {
         public string Name => DeclareType.Name;
         public string FullName => DeclareType.FullName;
+        public bool IsAbstract=> DeclareType.IsAbstract;
+        public bool IsPublic => DeclareType.IsPublic;
+        public bool IsGeneric => DeclareType.IsGenericType;
+        public Type[] GenericTypes { get; set; }
         public Type DeclareType { get; set; }
         public IFieldCache Fileds { get; set; } = new DefaultFieldCache();
         public IMethodCache Methods { get; set; } = new DefaultMethodCache();

@@ -14,20 +14,30 @@ namespace Jasmine.Parsers.Html
         {
 
         }
-        public string Name { get; set; }
-        public ElementType ElementType { get; set; }
+        /// <summary>
+        /// use by  parser only
+        /// </summary>
+        internal SingleOrDouble SingleOrDouble { get; set; }
+        /// <summary>
+        /// use by parser only
+        /// </summary>
+        internal StartOrEnd StartOrEnd { get; set; }
+        /// <summary>
+        /// tag name
+        /// </summary>
+        public string TagName { get; set; }
+        public ElementType HtmlElementType { get; set; }
         public AtrrributeCollection Attributes { get; set; } = new AtrrributeCollection();
-        public int Count { get => Children.Count; }
+        public int Count => Children.Count;
         public string InnerHtml => ToString();
         public string InnerText { get; set; }
-        internal SingleOrDouble SingleOrDouble { get; set; }
-        internal StartOrEnd StartOrEnd { get; set; }
-        public Element Parent { get; set; }
-        public Element Left { get; set; }
+        public Element Parent { get;private set; }
+        public bool HasParent => Parent != null;
+        public Element Left { get;private set; }
         public bool HasLeft => Left != null;
-        public Element Right { get; set; }
+        public Element Right { get;private set; }
         public bool HasRight => Right != null;
-        public List<Element> Children { get; set; } = new List<Element>();
+        public List<Element> Children { get;private set; } = new List<Element>();
         public bool HasChildren => Children.Count != 0;
        
         public Element this[int index]
@@ -39,10 +49,6 @@ namespace Jasmine.Parsers.Html
         }
         public static ElementType GetElemnetType(string Name)
         {
-            if(Name=="h3")
-            {
-                int t = 0;
-            }
             switch (Name)
             {
                 case "!doctype": return ElementType.Doctype;
@@ -169,7 +175,6 @@ namespace Jasmine.Parsers.Html
                 case "rt": return ElementType.Rt;
                 case "section": return ElementType.Section;
                 default: return ElementType.Unknow;
-
             }
         }
 
@@ -199,9 +204,7 @@ namespace Jasmine.Parsers.Html
 
                 default:
                     return SingleOrDouble.Double;
-
             }
-
         }
 
 
@@ -219,217 +222,75 @@ namespace Jasmine.Parsers.Html
 
         public void Remove(int index)
         {
-
             Children.RemoveAt(index);
         }
-      
-        public void Remove(string name)
-        {
-            for (int i = 0; i < Count; i++)
-                if (Children[i].Name == name)
-                {
-                    Children.RemoveAt(i);
-                    --i;
-                }
-        }
-      
-        public void Remove(ElementType type)
-        {
-            for (int i = 0; i < Count; i++)
-                if (Children[i].ElementType == type)
-                {
-                    Children.RemoveAt(i);
-                    --i;
-                }
 
-        }
-       
-        public void Remove(Attribute AttributeItem)
-        {
-            for (int i = 0; i < Count; i++)
-                if (Children[i].Attributes.Contains(AttributeItem.Key))
-                    if (Children[i].Attributes[AttributeItem.Key] == AttributeItem.Value)
-                    {
-                        Children.RemoveAt(i);
-                        --i;
-                    }
-
-        }
-       
         public void RemoveRange(int start, int length)
         {
-            Children.RemoveRange(start, length);
+            for (int i = start; i < length; i++)
+                Remove(i);
         }
-        
-        public void RemoveAll(string name)
+        public void RemoveAll(Func<Element,bool> matcher)
         {
-            if (Children.Count != 0)
-                foreach (var item in Children)
-                    item.RemoveAll(name);
-
-            Remove(name);
-        }
-       
-        public void RemoveAll(ElementType type)
-        {
-            if (Children.Count != 0)
-                foreach (var item in Children)
-                    item.RemoveAll(type);
-
-            Remove(type);
-        }
-       
-        public void RemoveAll(Attribute AttributeItem)
-        {
-            if (Children.Count != 0)
-                foreach (var item in Children)
-                    item.RemoveAll(AttributeItem);
-
-            Remove(AttributeItem);
+            for (int i = 0; i < Count; i++)
+            {
+                if (matcher(Children[i]))
+                {
+                    Children[i].Parent = null;
+                    Children.RemoveAt(i);
+                    --i;
+                }
+                else
+                {
+                    Children[i].RemoveAll(matcher);
+                }
+            }
         }
       
         public void Insert(int index, Element element)
         {
-            Children.Insert(index, element);
+            Insert(index, element);
         }
       
-        public void InsertRange(int start, IEnumerable<Element> input)
+        public void InsertRange(int start, IEnumerable<Element> elements)
         {
-            Children.InsertRange(start, input);
+            var t = start;
+
+            foreach (var element in elements)
+            {
+                Insert(t,element);
+                t++;
+            }
         }
        
-        public List<Element> GetDirectChildrenByElementType(ElementType type)
+        public  List<Element> GetDirect(Func<Element, bool> matcher)
         {
             var ls = new List<Element>();
-            foreach (var item in Children)
-                if (item.ElementType == type)
-                    ls.Add(item);
-            return ls;
-        }
-        
-        public List<Element> GetDirectChildrenByAttirbute(Attribute AttributeItem)
-        {
-            var ls = new List<Element>();
+
             foreach (var item in Children)
             {
-                if (item.Attributes == null)
-                    continue;
-                if (item.Attributes.GetAttribute(AttributeItem) == null)
-                    continue;
-                ls.Add(item);
-            }
-            return ls;
-        }
-     
-
-        public List<Element> GetDirectChildrenByAttirbuteKey(string key)
-        {
-            var ls = new List<Element>();
-            foreach (var item in Children)
-            {
-                if (item.Attributes == null)
-                    continue;
-                if (item.Attributes.Contains(key))
+                if (matcher(item))
                     ls.Add(item);
             }
+
             return ls;
         }
-      
-        public List<Element> GetDirectChildrenByName(string name)
+
+        public List<Element> GetAll(Func<Element, bool> matcher)
         {
             var ls = new List<Element>();
 
             foreach (var item in Children)
-                if (item.Name == name)
+            {
+                if (matcher(item))
                     ls.Add(item);
 
-            return ls;
-        }
-
-
-        public List<Element> GetAllChildren(Func<Element,bool> matcher)
-        {
-            var ls = new List<Element>();
-
-            if (Children.Count != 0)
-                foreach (var item in Children)
-                {
-                    ls.AddRange(item.GetAllChildren(matcher));
-
-
-                    if (matcher(item))
-                        ls.Add(item);
-
-                }
-
-
-
-            return ls;
-        }
-        public List<Element> GetAllChildrenByElementType(ElementType type)
-        {
-            var ls = new List<Element>();
-
-            if (Children.Count != 0)
-                foreach (var item in Children)
-                {
-                    ls.AddRange(item.GetAllChildrenByElementType(type));
-
-            
-
-                    if (item.ElementType == type)
-                        ls.Add(item);
-                }
-
-          
+                ls.AddRange(item.GetAll(matcher));
+            }
 
             return ls;
         }
         
-        public List<Element> GetAllChildrenByAttirbute(Attribute AttributeItem)
-        {
-            var ls = new List<Element>();
-            if (Children.Count != 0)
-                foreach (var item in Children)
-                    foreach (var item1 in item.GetAllChildrenByAttirbute(AttributeItem))
-                        ls.Add(item1);
-
-            if (Attributes == null)
-                return ls;
-            if (Attributes.GetAttribute(AttributeItem) != null)
-                ls.Add(this);
-
-            return ls;
-        }
-        
-        public List<Element> GetAllChildrenByAttirbuteKey(string key)
-        {
-            var ls = new List<Element>();
-
-            if (Children.Count != 0)
-                foreach (var item in Children)
-                    foreach (var item1 in item.GetAllChildrenByAttirbuteKey(key)) ls.Add(item1);
-
-            if (Attributes == null)
-                return ls;
-            if (Attributes.GetAttribute(key) != null)
-                ls.Add(this);
-            return ls;
-        }
-       
-        public List<Element> GetAllChildrenByName(string name)
-        {
-            var ls = new List<Element>();
-
-            if (Children.Count != 0)
-                foreach (var item in Children)
-                    foreach (var item1 in item.GetAllChildrenByName(name))
-                        ls.Add(item1);
-
-            if (Name == name)
-                ls.Add(this);
-            return ls;
-        }
 
        
         public override string ToString()
@@ -444,13 +305,13 @@ namespace Jasmine.Parsers.Html
             var prefix = repeat("  ", t);
             var sb = new StringBuilder();
             if (SingleOrDouble == SingleOrDouble.Double)
-                sb.Append($"{prefix}<{Name} {Attributes.ToString()}>\r\n{prefix + "    "}{InnerText}\r\n");
+                sb.Append($"{prefix}<{TagName} {Attributes.ToString()}>\r\n{prefix + "    "}{InnerText}\r\n");
             else
-                sb.Append($"{prefix}<{Name} {Attributes.ToString()}/>\r\n");
+                sb.Append($"{prefix}<{TagName} {Attributes.ToString()}/>\r\n");
             foreach (var item in Children)
                 sb.Append(item.ToString());
             if (SingleOrDouble == SingleOrDouble.Double)
-                sb.Append($"{prefix}</{Name} >\r\n");
+                sb.Append($"{prefix}</{TagName} >\r\n");
             return sb.ToString();
         }
 

@@ -61,7 +61,7 @@ namespace Jasmine.Orm
 
         public static readonly ISqlTypeConvertor Instance = new DefaultBaseTypeConvertor();
 
-        public object FromSqlFiledValue(object value, Type type)
+        public object ConverSqlRawValue(object value, Type type)
         {
 
             if(value is DBNull)

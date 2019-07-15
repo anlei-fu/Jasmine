@@ -151,7 +151,7 @@ namespace Jasmine.Orm
                 builder.Append(", ");
             }
 
-            builder.RemoveLastComa();
+            builder.RemoveLastChar();
 
             builder.Append(")");
 
@@ -324,7 +324,7 @@ namespace Jasmine.Orm
                         builder.Append(item.ColumnName.Replace(".", "_") + ",");
                     }
 
-                    builder.RemoveLastComa();
+                    builder.RemoveLastChar();
 
                     builder.Append($"){VALUES}( ");
 
@@ -381,7 +381,7 @@ namespace Jasmine.Orm
                 builder.Append(item.ColumnName.Replace(".", "_") + ",");
             }
 
-            builder.RemoveLastComa();
+            builder.RemoveLastChar();
 
             builder.Append($"){VALUES}( ");
 
@@ -449,7 +449,7 @@ namespace Jasmine.Orm
             foreach (var item in columns)
                 builder.Append(item.Replace(".", "_") + ",");
 
-            builder.RemoveLastComa();
+            builder.RemoveLastChar();
 
             builder.Append($"){VALUES}( ");
 
@@ -487,7 +487,7 @@ namespace Jasmine.Orm
             foreach (var item in columns)
                 builder.Append(item.Replace(".", "_") + ",");
 
-            builder.RemoveLastComa();
+            builder.RemoveLastChar();
 
             builder.Append($"){VALUES}( ");
 
@@ -531,7 +531,7 @@ namespace Jasmine.Orm
                         builder.Append(item.ColumnName.Replace(".", "_") + ",");
                     }
 
-                    builder.RemoveLastComa();
+                    builder.RemoveLastChar();
 
                     builder.Append($"){VALUES}( ");
 
@@ -765,7 +765,7 @@ namespace Jasmine.Orm
             if (column == null)
                 throw new ArgumentNullException("column can not be null!");
 
-            var segs = column.Splite1(".");
+            var segs = column.Splite1WithCount(".");
 
             // search columns
             if (segs.Count == 1)
@@ -837,7 +837,7 @@ namespace Jasmine.Orm
             foreach (var item in columns)
                 builder.Append($"{requireColumnExistAndFormat(item)},");
 
-            return builder.RemoveLastComa().ToString();
+            return builder.RemoveLastChar().ToString();
         }
 
         /// <summary>

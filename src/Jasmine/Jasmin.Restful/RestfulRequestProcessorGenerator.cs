@@ -15,11 +15,13 @@ namespace Jasmine.Restful
         }
 
         private IAopFilterProvider<HttpFilterContext> _aopProvider=>RestfulAopFilterProvider.Instance;
-        private IParameterResolverFactory<HttpFilterContext,RestfulRequestMetaData> _parameterResolverFactory=>RestfulParameterResolverFactory.Instance;
+        private IParameterResolverFactory<HttpFilterContext,RestfulRequestMetaData> _parameterResolverFactory
+                                                                               =>RestfulParameterResolverFactory.Instance;
         private IServiceProvider _serviceProvider => IocServiceProvider.Instance;
 
 
-        public static readonly IRequestProcessorGenerator<HttpFilterContext, RestfulServiceMetaData> Instance = new RestfulRequestProcessorGenerator();
+        public static readonly IRequestProcessorGenerator<HttpFilterContext, RestfulServiceMetaData> Instance 
+                                                                                                 = new RestfulRequestProcessorGenerator();
 
         private IList<IFilter<HttpFilterContext>> buildFilters(IEnumerable<Type> filterTypes)
         {

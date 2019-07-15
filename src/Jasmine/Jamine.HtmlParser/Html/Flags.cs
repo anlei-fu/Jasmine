@@ -3,7 +3,7 @@
     /// <summary>
     /// use to mark an element is start-part or end-part
     /// </summary>
-    public enum StartOrEnd
+    internal enum StartOrEnd
     {
         End,
         Start,
@@ -13,7 +13,7 @@
     /// <summary>
     /// use to mark an elemnt is single tag of double tag
     /// </summary>
-    public enum SingleOrDouble
+    internal enum SingleOrDouble
     {
         Double, Single, Unknow,
     }

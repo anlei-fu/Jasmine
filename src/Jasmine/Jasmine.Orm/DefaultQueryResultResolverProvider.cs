@@ -13,7 +13,7 @@ namespace Jasmine.Orm
         }
         public static readonly IQueryResultResolverProvider Instance = new DefaultQueryResultResolverProvider();
 
-        private ConcurrentDictionary<Type, IQueryResultResolver> _resolvers = new ConcurrentDictionary<Type, IQueryResultResolver>();
+        private readonly ConcurrentDictionary<Type, IQueryResultResolver> _resolvers = new ConcurrentDictionary<Type, IQueryResultResolver>();
 
         public int Count => _resolvers.Count;
 
@@ -24,8 +24,8 @@ namespace Jasmine.Orm
 
         public IQueryResultResolver GetResolver(Type type)
         {
-            return _resolvers.TryGetValue(type, out var result) ?
-                                                               result : DefaultQueryResultResolver.Instance;
+            return _resolvers.TryGetValue(type, out var result)
+                         ?result : DefaultQueryResultResolver.Instance;
         }
 
         public void Remove<T>()

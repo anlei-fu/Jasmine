@@ -43,7 +43,7 @@ namespace Jasmine.Restful
                     {
                         try
                         {
-                            await processor.FiltsAsysnc(context);
+                            await processor.ProcessAsysnc(context);
 
                             //handle processor output
 

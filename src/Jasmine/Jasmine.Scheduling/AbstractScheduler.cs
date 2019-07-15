@@ -1,9 +1,10 @@
 ﻿using Jasmine.Scheduling.Exceptions;
 using System;
 using System.Collections;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
-using System.Threading.Tasks;
 
 namespace Jasmine.Scheduling
 {
@@ -13,29 +14,33 @@ namespace Jasmine.Scheduling
         public AbstractScheduler(IJobManager<T> jobmanager, int maxConcurrency =0)
         {
             MaxConcurrency = maxConcurrency==0?DEFAULT_CONCURRENCY:maxConcurrency;
-            _concurrencyControlLock = new SemaphoreSlim(MaxConcurrency);
             _jobManager = jobmanager;
 
         }
-        protected IJobManager<T> _jobManager;
 
         private static readonly int DEFAULT_CONCURRENCY = Environment.ProcessorCount * 2;
-
-        private SemaphoreSlim _concurrencyControlLock;
         private readonly object _locker = new object();
-        private int _jobExcuted;
-        private int _jobScheduled;
-        private int _jobExcuting;
-        private int _jobUnExcute;
-        private int _jobFailed;
-        private int _jobSuccessed;
-        private bool _isSleeping;
+        private volatile int _jobExcuted;
+        private volatile int _jobScheduled;
+        private volatile int _jobExcuting;
+        private volatile int _jobUnExcute;
+        private volatile int _jobFailed;
+        private volatile int _jobSuccessed;
+        private volatile int _threadRunning;
 
+        private ConcurrentDictionary<long, Job> _currentExcutingJobs = new ConcurrentDictionary<long, Job>();
+
+        private  bool _isSleeping;
+
+        protected IJobManager<T> _jobManager;
+
+        /// <summary>
+        /// cacapcity
+        /// </summary>
         public int Capacity => _jobManager.Capacity;
-        public int MaxConcurrency { get; }
-        public SchedulerState State { get; private set; } = SchedulerState.Stopped;
-        public DateTime? StartTime { get; private set; }
-        public TimeSpan? RunningTime => StartTime == null ? null : (TimeSpan?)(DateTime.Now - (DateTime)StartTime);
+        /// <summary>
+        /// count of job excuted
+        /// </summary>
         public int JobExcuted => _jobExcuted;
         public int JobScheduled => _jobScheduled;
         public int JobExcuting => _jobExcuting;
@@ -43,7 +48,11 @@ namespace Jasmine.Scheduling
         public int JobFailed => _jobFailed;
         public int JobSuccessed => _jobSuccessed;
         public int Count => _jobManager.Count;
-
+        public int MaxConcurrency { get; }
+        public SchedulerState State { get; private set; } = SchedulerState.Stopped;
+        public DateTime? StartTime { get; private set; }
+        public TimeSpan? RunningTime => StartTime == null 
+                                        ? null : (TimeSpan?)(DateTime.Now - (DateTime)StartTime);
         public ISchedulerEventListener Listener { get; set; }
 
         public bool Start()
@@ -56,9 +65,14 @@ namespace Jasmine.Scheduling
                 }
                 else
                 {
-                    //a long run task ,use a thread which use by iteself only ,do not get the thread from default-task-scheduler's thread pool
+                    for (int i = 0; i < MaxConcurrency; i++)
+                    {
+                        var tr = new Thread(doWorkLoop);
 
-                    Task.Factory.StartNew(doWorkLoop, TaskCreationOptions.LongRunning);
+                        tr.Start();
+
+                        Interlocked.Increment(ref _threadRunning);
+                    }
                   
                     return true;
                 }
@@ -85,7 +99,6 @@ namespace Jasmine.Scheduling
             }
 
             State = SchedulerState.Stopped;
-
             Listener?.OnSchedulerStopped();
 
             return true;
@@ -108,7 +121,6 @@ namespace Jasmine.Scheduling
         public void Clear()
         {
             _jobManager.Clear();
-
             _jobUnExcute = 0;
         }
         /// <summary>
@@ -120,32 +132,33 @@ namespace Jasmine.Scheduling
            return _jobManager.GetJob();
         }
 
+        public IEnumerable<Job> GetExcutingJobs()
+        {
+            return _currentExcutingJobs.Values.ToArray();
+        }
+
         public bool Schedule(T job)
         {
             if (_jobManager.Schedule(job))
             {
                 job.State = JobState.Scheduled;
                 
-                // set job's scheduler by sub-class ,to solve cast exception
-                setScheduler(job);
-
-                job.ScheduledTime = DateTime.Now;
-
-                Interlocked.Increment(ref _jobScheduled);
-                Interlocked.Increment(ref _jobUnExcute);
-
-                Listener?.OnJobScheduled(job.Id);
              
                 lock(_locker)
                 {
-                    if(_isSleeping)
+                    if(_isSleeping)//会唤醒所有线程,有点浪费,这里还要优化，只需要唤醒一个
                     {
                         _isSleeping = false;
-                        
-                        //  awake  work-loop thread
+                      
                         Monitor.PulseAll(_locker);
                     }
                 }
+
+                setScheduler(job);
+                job.ScheduledTime = DateTime.Now;
+                Interlocked.Increment(ref _jobScheduled);
+                Interlocked.Increment(ref _jobUnExcute);
+                Listener?.OnJobScheduled(job);
 
                 return true;
             }
@@ -153,9 +166,12 @@ namespace Jasmine.Scheduling
             return false;
         }
 
-        protected abstract void setScheduler(T job);
-     
+       
 
+        public int GetNextJobExcutingTimeout()
+        {
+            return _jobManager.GetNextJobExcutingTimeout();
+        }
         public IEnumerator<T> GetEnumerator()
         {
             foreach (var item in _jobManager)
@@ -168,33 +184,27 @@ namespace Jasmine.Scheduling
         {
             return _jobManager.GetEnumerator();
         }
+        protected abstract void setScheduler(T job);
+
         private void doWorkLoop()
         {
-            lock (_locker)
-                State = SchedulerState.Running;
 
             while (State == SchedulerState.Running)
             {
                 var job = GetJob();
-
-                if (job == null)//no job to run 
+                //no job to run 
+                if (job == null)
                 {
                     lock (_locker)
                     {
                         _isSleeping = true;
 
-                        Monitor.Wait(_locker, GetNextJobExcutingTimeout());//block some time, the thread will keep running when wait timeout or new job scheduled
+                        //block some time, the thread will keep running when wait timeout or new job scheduled
+                        Monitor.Wait(_locker, GetNextJobExcutingTimeout());
                     }
                 }
                 else
                 {
-                   // need to design a thread pool or use default task scheduler's pool? when it blocked may cause default task sheduler available threads  not enough
-
-                    Task.Run(() =>
-                    {
-                        //control max cocurrency
-                        _concurrencyControlLock.Wait();
-
                         try
                         {
                             Interlocked.Decrement(ref _jobUnExcute);
@@ -203,7 +213,9 @@ namespace Jasmine.Scheduling
 
                             Interlocked.Increment(ref _jobExcuting);
 
-                            Listener?.OnJobBeginExcuting(job.Id);
+                            Listener?.OnJobBeginExcuting(job);
+
+                           _currentExcutingJobs.TryAdd(job.Id, job);
 
                             job.Excute();
 
@@ -211,7 +223,7 @@ namespace Jasmine.Scheduling
 
                             Interlocked.Increment(ref _jobSuccessed);
 
-                            Listener?.OnJobExcuteSusccefully(job.Id);
+                            Listener?.OnJobExcuteSusccefully(job);
                         }
                         catch (Exception ex)
                         {
@@ -221,28 +233,25 @@ namespace Jasmine.Scheduling
 
                             job.Error = new JobExcuteException(job.Id, ex);
 
-                            Listener?.OnJobEcuteFailed(job.Id, ex);
+                            Listener?.OnJobEcuteFailed(job);
                         }
                         finally
                         {
 
+                        _currentExcutingJobs.TryRemove(job.Id, out var _);
                             Interlocked.Decrement(ref _jobExcuting);
 
                             Interlocked.Increment(ref _jobExcuted);
 
-                            _concurrencyControlLock.Release();
                         }
-
-                    });
                 }
 
             }
 
+
+            Interlocked.Decrement(ref _threadRunning);
         }
 
-        public int GetNextJobExcutingTimeout()
-        {
-            return _jobManager.GetNextJobExcutingTimeout();
-        }
+       
     }
 }

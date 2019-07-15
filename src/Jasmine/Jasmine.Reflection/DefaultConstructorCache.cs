@@ -12,15 +12,13 @@ namespace Jasmine.Reflection
             {
                
                 _keyMap[info].ConstructorInfo = info;
-                _keyMap[info].Name = info.Name;
-                _keyMap[info].FullName = info.GetMethodName();
                 _nameMap.TryAdd(_keyMap[info].FullName, _keyMap[info]);
                 _keyMap[info].ParamerTypies = info.GetParameterTypes();
 
                 if (_keyMap[info].ParamerTypies.Length == 0)
                 {
                   _keyMap[info].DefaultInvoker= DynamicMethodDelegateFatory.CreateDefaultConstructor(info.DeclaringType);
-                    _defaultContructor = _keyMap[info];
+                  _defaultContructor = _keyMap[info];
                 }
                 else
                 {
@@ -45,6 +43,11 @@ namespace Jasmine.Reflection
         }
 
         public Constructor FindConstructor(Type[] parameterTypes)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Constructor FindConstructor(string[] names)
         {
             throw new NotImplementedException();
         }

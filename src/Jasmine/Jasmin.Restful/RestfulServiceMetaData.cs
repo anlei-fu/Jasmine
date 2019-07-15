@@ -6,6 +6,7 @@ namespace Jasmine.Restful
 {
     public  class RestfulServiceMetaData:AopServiceMetaData
     {
+        public string IgnorePattern { get; set; }
         public string Description { get; set; }
         public int MaxConcurrency { get; set; }
         public SerializeMode SerializeMode { get; set; }

@@ -6,7 +6,7 @@ namespace Jasmine.Scheduling
         where T:Job
     {
         /// <summary>
-        /// 
+        /// the time which scheduler should  block
         /// </summary>
         /// <returns></returns>
         int GetNextJobExcutingTimeout();

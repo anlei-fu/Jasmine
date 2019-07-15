@@ -70,13 +70,14 @@ namespace OrmTest
 
 
 
+          
             var provider = new SqlServerConnectionProvider("Server=HW09;Database=Test;Trusted_Connection=True;");
 
             var excutor = new JasmineSqlExcutor(provider);
 
+            excutor.Create<Animal>();
             excutor.DeleteAll<Animal>();
 
-            excutor.Create<Animal>();
 
             int dataSize =1000;
 
@@ -109,9 +110,10 @@ namespace OrmTest
                 connetion.Execute("insert into animal(name,age,canfly) values (@Name,@Age,@CanFly)", item);
 
             PrintDapper();
-           
 
-            excutor.Excute("delete from animal ");
+
+            excutor.DeleteAll<Animal>();
+
 
             startWatch();
 
@@ -125,7 +127,8 @@ namespace OrmTest
 
 
 
-            excutor.Excute("delete from animal ");
+            excutor.DeleteAll<Animal>();
+
 
 
 
@@ -141,9 +144,10 @@ namespace OrmTest
                 connetion.Execute("insert into animal(name,age) values (@Name,@Age)", item);
 
             PrintDapper();
-            
 
-            excutor.Excute("delete from animal ");
+
+            excutor.DeleteAll<Animal>();
+
 
             startWatch();
 
@@ -160,6 +164,7 @@ namespace OrmTest
             startWatch();
           
             var result = connetion.Query<Animal>("select * from animal");
+
             PrintDapper();
 
             startWatch();
@@ -168,7 +173,8 @@ namespace OrmTest
             End();
 
 
-            excutor.Excute("delete from animal ");
+            excutor.DeleteAll<Animal>();
+
 
 
 
@@ -177,24 +183,29 @@ namespace OrmTest
             startWatch();
             connetion.Execute("insert into animal(name,age,canfly) values(@Name,@Age,@CanFly)", datas);
             PrintDapper();
-            excutor.Excute("delete from animal ");
+            excutor.DeleteAll<Animal>();
+
 
             startWatch();
+
             excutor.BatchInsert<Animal>(datas);
+
             PrintExcutor();
             End();
 
 
 
 
-            excutor.Excute("delete from animal ");
+            excutor.DeleteAll<Animal>();
+
 
             Start("test batch insert partial....");
             startWatch();
             connetion.Execute("insert into animal(name,age) values(@Name,@Age)", datas);
             PrintDapper();
 
-            excutor.Excute("delete from animal ");
+            excutor.DeleteAll<Animal>();
+
 
             startWatch();
             excutor.BatchInsertPartial<Animal>(new string[] {"Name","Age" },datas);
@@ -331,43 +342,44 @@ namespace OrmTest
         }
 
    
-        public class Animal
-        {
-       
-            [PrimaryKey]
-            [SqlColumnType("varchar(100)")]
+      
+    }
+    public class Animal
+    {
 
-            public string Name { get; set; } = "cog";
+        [PrimaryKey]
+        [SqlColumnType("varchar(100)")]
 
-            public int Age { get; set; } = 14;
+        public string Name { get; set; } = "cog";
 
-            public bool CanFly { get; set; } = true;
+        public int Age { get; set; } = 14;
 
-         
-            //[JoinColumns()]
-            //public Fearture Fearture { get; set; } = new Fearture();
+        public bool CanFly { get; set; } = true;
 
-            //[JoinTable("Age", "Max")]
-            //public Number Number { get; set; } = new Number();
-        }
 
-        public class Number
-        {
-            public int Age { get; set; } = 14;
-            public int Max { get; set; } = 1;
-            public int Min { get; set; } = 2;
-        }
-        public class Fearture
-        {
-            public string Food { get; set; } = "apple";
-            public int MaxAge { get; set; } = 100;
-            [JoinColumns]
-            public Sleep Sleep { get; set; } = new Sleep();
-        }
+        //[JoinColumns()]
+        //public Fearture Fearture { get; set; } = new Fearture();
 
-        public class Sleep
-        {
-            public int Length { get; set; } = 25;
-        }
+        //[JoinTable("Age", "Max")]
+        //public Number Number { get; set; } = new Number();
+    }
+
+    public class Number
+    {
+        public int Age { get; set; } = 14;
+        public int Max { get; set; } = 1;
+        public int Min { get; set; } = 2;
+    }
+    public class Fearture
+    {
+        public string Food { get; set; } = "apple";
+        public int MaxAge { get; set; } = 100;
+        [JoinColumns]
+        public Sleep Sleep { get; set; } = new Sleep();
+    }
+
+    public class Sleep
+    {
+        public int Length { get; set; } = 25;
     }
 }

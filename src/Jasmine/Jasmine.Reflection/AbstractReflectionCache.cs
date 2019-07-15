@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,6 +18,15 @@ namespace Jasmine.Reflection
 
         public bool Contains(string name) => _nameMap.ContainsKey(name);
 
+        public IEnumerable<TContent> Get(Predicate<TContent> matcher)
+        {
+            foreach (var item in _keyMap.Values)
+            {
+                if (matcher(item))
+                    yield return item;
+            }
+        }
+
         public IEnumerable<TContent> GetAll() => _nameMap.Values.ToArray();
 
         public string[] GetAllNames() => _nameMap.Keys.ToArray();
@@ -29,9 +39,13 @@ namespace Jasmine.Reflection
             }
         }
 
-        public virtual TContent GetItem(TRelated info) => _keyMap.TryGetValue(info, out var result) ? result : default(TContent);
+        public virtual TContent GetItem(TRelated info) 
+                                             => _keyMap.TryGetValue(info, out var result) 
+                                                                   ? result : default(TContent);
 
-        public TContent GetItemByName(string name) => _nameMap.TryGetValue(name, out var result) ? result : default(TContent);
+        public TContent GetItemByName(string name) 
+                                          => _nameMap.TryGetValue(name, out var result) 
+                                                                 ? result : default(TContent);
 
         IEnumerator IEnumerable.GetEnumerator()
         {

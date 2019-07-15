@@ -19,6 +19,6 @@ namespace Jasmine.Orm.Interfaces
         /// <param name="index"></param>
         /// <param name="convertTo"></param>
         /// <returns></returns>
-        object FromSqlFiledValue(object value, Type convertTo);
+        object ConverSqlRawValue(object value, Type convertTo);
     }
 }

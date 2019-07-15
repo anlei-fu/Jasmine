@@ -136,7 +136,7 @@ namespace Jasmine.Orm
             {
                 var temp = obj;
 
-                foreach (var item in name.Splite1("."))
+                foreach (var item in name.Splite1WithCount("."))
                 {
                     var property = JasmineReflectionCache.Instance.GetItem(obj.GetType()).Properties.GetItemByName(item);
 
@@ -165,7 +165,7 @@ namespace Jasmine.Orm
                                    .Append(",");
                         }
 
-                        builder.RemoveLastComa();
+                        builder.RemoveLastChar();
                         builder.Append(")");
 
                         return builder.ToString();
@@ -173,7 +173,7 @@ namespace Jasmine.Orm
                     }
                     else
                     {
-                        throw new Exception("parameter after keyword 'in' , must implement IEnumerable and element type is basetype ");
+                        throw new Exception("parameter after keyword 'in' , must implement interface IEnumerable and element type is basetype ");
                     }
                 }
 
@@ -288,7 +288,7 @@ namespace Jasmine.Orm
                 builder.Append(item.Replace(".", "_")).Append(",");
             }
 
-            builder.RemoveLastComa();
+            builder.RemoveLastChar();
 
             builder.Append(") Values ");
 
@@ -350,7 +350,7 @@ namespace Jasmine.Orm
         private const string TEMPLATE = "template";
         private const string NAME = "name";
 
-        private ConcurrentDictionary<string, SqlTemplate> _map = new ConcurrentDictionary<string, SqlTemplate>();
+        private readonly ConcurrentDictionary<string, SqlTemplate> _map = new ConcurrentDictionary<string, SqlTemplate>();
         public int Count => _map.Count;
 
 
@@ -398,7 +398,8 @@ namespace Jasmine.Orm
         }
         public SqlTemplate GetTemplate(string name)
         {
-            return _map.TryGetValue(name, out var result) ? result : null;
+            return _map.TryGetValue(name, out var result) 
+                                                  ? result : null;
         }
 
         public void Add(string name, string templateStr)
@@ -413,7 +414,7 @@ namespace Jasmine.Orm
         {
             if (!_map.TryAdd(template.Name, template))
             {
-                throw new TemplateAlreadyExistsException($"{template.Name} alrady exists!");
+                throw new TemplateAlreadyExistsException($"{template.Name} already exists!");
             }
         }
 

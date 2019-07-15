@@ -126,9 +126,9 @@ namespace Jamine.Parser.Html
                         {
                             if (!_hasNameBeenSet)
                             {
-                                _currentElement.Name = _nameBuilder.ToString();
-                                _currentElement.SingleOrDouble = Element.GetSingleOrDouble(Element.GetElemnetType(_currentElement.Name));
-                                _currentElement.ElementType = Element.GetElemnetType(_currentElement.Name);
+                                _currentElement.TagName = _nameBuilder.ToString();
+                                _currentElement.SingleOrDouble = Element.GetSingleOrDouble(Element.GetElemnetType(_currentElement.TagName));
+                                _currentElement.HtmlElementType = Element.GetElemnetType(_currentElement.TagName);
                             }
 
                             pushIntoStack(_currentElement);
@@ -198,9 +198,9 @@ namespace Jamine.Parser.Html
 
                         if (!_hasNameBeenSet)
                         {
-                            _currentElement.Name = _nameBuilder.ToString().ToLower();
+                            _currentElement.TagName = _nameBuilder.ToString().ToLower();
                             _hasNameBeenSet = true;
-                            _currentElement.SingleOrDouble = Element.GetSingleOrDouble(Element.GetElemnetType(_currentElement.Name));
+                            _currentElement.SingleOrDouble = Element.GetSingleOrDouble(Element.GetElemnetType(_currentElement.TagName));
                         }
 
                         skeepWhiteSpice();
@@ -236,7 +236,7 @@ namespace Jamine.Parser.Html
         {
             bool isScript = false;
 
-            switch (_currentElement.Name)
+            switch (_currentElement.TagName)
             {
                 case "noscript":
                 case "script":
@@ -299,11 +299,11 @@ namespace Jamine.Parser.Html
                                 case '>':
 
                                     //is match
-                                    if (_scriptEndPartBuilder.ToString().Trim().ToLower() == _currentElement.Name)//inner text parse end
+                                    if (_scriptEndPartBuilder.ToString().Trim().ToLower() == _currentElement.TagName)//inner text parse end
                                     {
                                         var element = new Element()
                                         {
-                                            Name = _currentElement.Name,
+                                            TagName = _currentElement.TagName,
                                             StartOrEnd = StartOrEnd.End,
                                         };
 
@@ -382,7 +382,7 @@ namespace Jamine.Parser.Html
                 }
                 else
                 {
-                    recordError($"empty stack and push into a single element :{element.Name}!");
+                    recordError($"empty stack and push into a single element :{element.TagName}!");
                 }
             }
             else
@@ -408,12 +408,12 @@ namespace Jamine.Parser.Html
                     else
                     {
                         //is the same type element
-                        if (element.Name == peek.Name)
+                        if (element.TagName == peek.TagName)
                         {
                             //meas  after poping root will be clear
                             if (_stack.Count == 1)
                             {
-                                recordError($" set root {peek.Name}");
+                                recordError($" set root {peek.TagName}");
                                 _root = peek;//keep the root not empty
                                 _stack.Pop();
                                 _currentElement = peek;//reset _current element
@@ -426,7 +426,7 @@ namespace Jamine.Parser.Html
                         }
                         else
                         {
-                            recordError($" unmatched element ${peek.Name} and {element.Name}");
+                            recordError($" unmatched element ${peek.TagName} and {element.TagName}");
                         }
                     }
                 }
@@ -438,7 +438,7 @@ namespace Jamine.Parser.Html
                     }
                     else
                     {
-                        recordError($"empty stack and push into a single element :{element.Name}!");
+                        recordError($"empty stack and push into a single element :{element.TagName}!");
                     }
                 }
             }

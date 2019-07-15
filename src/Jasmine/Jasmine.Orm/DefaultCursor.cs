@@ -4,7 +4,6 @@ using Jasmine.Orm.Interfaces;
 using Jasmine.Reflection;
 using System;
 using System.Collections.Generic;
-using System.Data.Common;
 using System.Threading.Tasks;
 
 namespace Jasmine.Orm.Implements
@@ -17,13 +16,12 @@ namespace Jasmine.Orm.Implements
         }
 
         private readonly object _locker = new object();
-    
      
         private ITableMetaDataProvider _tableProvider => DefaultTableMetaDataProvider.Instance;
         private ITypeCache _reflectionProvider => JasmineReflectionCache.Instance;
         private ISqlTypeConvertor _baseTypeConvertor => DefaultBaseTypeConvertor.Instance;
 
-        private QueryResultContext _context;
+        private readonly QueryResultContext _context;
 
         public bool Closed { get; private set; }
 
@@ -56,7 +54,6 @@ namespace Jasmine.Orm.Implements
 
         public IEnumerable<T> Read<T>(int count, bool doAssociateQuery = false)
         {
-            var ls = new List<T>();
 
             var table = _tableProvider.GetTable(typeof(T));
 
@@ -75,24 +72,32 @@ namespace Jasmine.Orm.Implements
                 foreach (var item in resolveItems)
                 {
                     if (!instanceMap.ContainsKey(item.Parent))
-                        createInstanceChain(item.Parent, instanceMap);
+                        createInstanceTree(item.Parent, instanceMap);
 
                     var result = _context.Reader.IsDBNull(item.ColumnIndex);
 
+                    // let default constructor set the init value of property,if current row field is db null
                     if (!result)
                     {
                         var rawValue = _context.Reader.GetValue(item.ColumnIndex);
 
-                        item.Setter.Invoke(instanceMap[item.Parent], _baseTypeConvertor.FromSqlFiledValue(rawValue, item.PropertyType));
+                        item.Setter.Invoke(instanceMap[item.Parent],
+                                         _baseTypeConvertor.ConverSqlRawValue(rawValue, item.PropertyType));
                     }
+
+                    yield return (T)instance;
                 }
 
-                ls.Add((T)instance);
             }
 
-            return ls;
         }
-
+        /// <summary>
+        /// async stream is not supported at this version
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="count"></param>
+        /// <param name="doAssociateQuery"></param>
+        /// <returns></returns>
         public async Task<IEnumerable<T>> ReadAsync<T>(int count, bool doAssociateQuery = false)
         {
             var ls = new List<T>();
@@ -114,7 +119,7 @@ namespace Jasmine.Orm.Implements
                 foreach (var item in resolveItems)
                 {
                     if (!instanceMap.ContainsKey(item.Parent))
-                        createInstanceChain(item.Parent, instanceMap);
+                        createInstanceTree(item.Parent, instanceMap);
 
                     var result = _context.Reader.IsDBNull(item.ColumnIndex);
 
@@ -122,7 +127,8 @@ namespace Jasmine.Orm.Implements
                     {
                         var rawValue = _context.Reader.GetValue(item.ColumnIndex);
 
-                        item.Setter.Invoke(instanceMap[item.Parent], _baseTypeConvertor.FromSqlFiledValue(rawValue, item.PropertyType));
+                        item.Setter.Invoke(instanceMap[item.Parent], 
+                                          _baseTypeConvertor.ConverSqlRawValue(rawValue, item.PropertyType));
                     }
                 }
 
@@ -151,7 +157,7 @@ namespace Jasmine.Orm.Implements
                 foreach (var item in resolveItems)
                 {
                     if (!instanceMap.ContainsKey(item.Parent))
-                        createInstanceChain(item.Parent, instanceMap);
+                        createInstanceTree(item.Parent, instanceMap);
 
                     var result = _context.Reader.IsDBNull(item.ColumnIndex);
 
@@ -159,7 +165,8 @@ namespace Jasmine.Orm.Implements
                     {
                         var rawValue = _context.Reader.GetValue(item.ColumnIndex);
 
-                        item.Setter.Invoke(instanceMap[item.Parent], _baseTypeConvertor.FromSqlFiledValue(rawValue, item.PropertyType));
+                        item.Setter.Invoke(instanceMap[item.Parent],
+                                          _baseTypeConvertor.ConverSqlRawValue(rawValue, item.PropertyType));
                     }
                 }
 
@@ -188,7 +195,7 @@ namespace Jasmine.Orm.Implements
                 foreach (var item in resolveItems)
                 {
                     if (!instanceMap.ContainsKey(item.Parent))
-                        createInstanceChain(item.Parent, instanceMap);
+                        createInstanceTree(item.Parent, instanceMap);
 
                     var result = _context.Reader.IsDBNull(item.ColumnIndex);
 
@@ -196,7 +203,8 @@ namespace Jasmine.Orm.Implements
                     {
                         var rawValue = _context.Reader.GetValue(item.ColumnIndex);
 
-                        item.Setter.Invoke(instanceMap[item.Parent], _baseTypeConvertor.FromSqlFiledValue(rawValue, item.PropertyType));
+                        item.Setter.Invoke(instanceMap[item.Parent],
+                                           _baseTypeConvertor.ConverSqlRawValue(rawValue, item.PropertyType));
                     }
                 }
 
@@ -311,7 +319,7 @@ namespace Jasmine.Orm.Implements
                     foreach (var item in resolveItems)
                     {
                         if (!instanceMap.ContainsKey(item.Parent))
-                            createInstanceChain(item.Parent, instanceMap);
+                            createInstanceTree(item.Parent, instanceMap);
 
                         var result = _context.Reader.IsDBNull(item.ColumnIndex);
 
@@ -319,7 +327,8 @@ namespace Jasmine.Orm.Implements
                         {
                             var rawValue = _context.Reader.GetValue(item.ColumnIndex);
 
-                            item.Setter.Invoke(instanceMap[item.Parent], _baseTypeConvertor.FromSqlFiledValue(rawValue, item.PropertyType));
+                            item.Setter.Invoke(instanceMap[item.Parent], 
+                                              _baseTypeConvertor.ConverSqlRawValue(rawValue, item.PropertyType));
                         }
                     }
 
@@ -357,7 +366,7 @@ namespace Jasmine.Orm.Implements
                 foreach (var item in resolveItems)
                 {
                     if (!instanceMap.ContainsKey(item.Parent))
-                        createInstanceChain(item.Parent, instanceMap);
+                        createInstanceTree(item.Parent, instanceMap);
 
                     var result = _context.Reader.IsDBNull(item.ColumnIndex);
 
@@ -365,7 +374,8 @@ namespace Jasmine.Orm.Implements
                     {
                         var rawValue = _context.Reader.GetValue(item.ColumnIndex);
 
-                        item.Setter.Invoke(instanceMap[item.Parent], _baseTypeConvertor.FromSqlFiledValue(rawValue, item.PropertyType));
+                        item.Setter.Invoke(instanceMap[item.Parent], 
+                                          _baseTypeConvertor.ConverSqlRawValue(rawValue, item.PropertyType));
                     }
                 }
 
@@ -401,7 +411,7 @@ namespace Jasmine.Orm.Implements
                 foreach (var item in resolveItems)
                 {
                     if (!instanceMap.ContainsKey(item.Parent))
-                        createInstanceChain(item.Parent, instanceMap);
+                        createInstanceTree(item.Parent, instanceMap);
 
                     var result = _context.Reader.IsDBNull(item.ColumnIndex);
 
@@ -409,10 +419,10 @@ namespace Jasmine.Orm.Implements
                     {
                         var rawValue = _context.Reader.GetValue(item.ColumnIndex);
 
-                        item.Setter.Invoke(instanceMap[item.Parent], _baseTypeConvertor.FromSqlFiledValue(rawValue, item.PropertyType));
+                        item.Setter.Invoke(instanceMap[item.Parent], 
+                                          _baseTypeConvertor.ConverSqlRawValue(rawValue, item.PropertyType));
                     }
                 }
-
 
                 if (doAssociateQuery)
                 {
@@ -436,7 +446,7 @@ namespace Jasmine.Orm.Implements
             foreach (var item in resolveItems)
             {
                 if (!instanceMap.ContainsKey(item.Parent))
-                    createInstanceChain(item.Parent, instanceMap);
+                    createInstanceTree(item.Parent, instanceMap);
 
                 var result = _context.Reader.IsDBNull(item.ColumnIndex);
 
@@ -444,16 +454,17 @@ namespace Jasmine.Orm.Implements
                 {
                     var rawValue = _context.Reader.GetValue(item.ColumnIndex);
 
-                    item.Setter.Invoke(instanceMap[item.Parent], _baseTypeConvertor.FromSqlFiledValue(rawValue, item.PropertyType));
+                    item.Setter.Invoke(instanceMap[item.Parent], 
+                                      _baseTypeConvertor.ConverSqlRawValue(rawValue, item.PropertyType));
                 }
             }
 
             return instance;
         }
 
-        private void createInstanceChain(string parent, Dictionary<string, object> map)
+        private void createInstanceTree(string parent, Dictionary<string, object> map)
         {
-            var segs = parent.Splite1("_");
+            var segs = parent.Splite1WithCount("_");
 
             var obj = map[""];
 
@@ -465,14 +476,20 @@ namespace Jasmine.Orm.Implements
 
                 if (!map.ContainsKey(temp))
                 {
-                    var type = _reflectionProvider.GetItem(obj.GetType()).Properties.GetItemByName(item)?.PropertyType;
+                    var type = _reflectionProvider.GetItem(obj.GetType())
+                                                  .Properties.GetItemByName(item)
+                                                  ?.PropertyType;
 
                     if (type == null)
                     {
                         throw new PropertyNotExistsException("");
                     }
 
-                    var instance = _reflectionProvider.GetItem(type).Constructors.GetDefaultConstructor()?.DefaultInvoker?.Invoke();
+                    var instance = _reflectionProvider.GetItem(type)
+                                                      .Constructors
+                                                      .GetDefaultConstructor()
+                                                      ?.DefaultInvoker
+                                                      ?.Invoke();
 
                     if (instance == null)
                     {
@@ -506,7 +523,7 @@ namespace Jasmine.Orm.Implements
             // iterate all column in result table
             foreach (var item in context.ResultTable.Columns.Values)
             {
-                var segs = item.Name.Splite1("_");
+                var segs = item.Name.Splite1WithCount("_");
                 //may be self column or join table 's column
                 if (segs.Count == 1)
                 {

@@ -3,6 +3,7 @@ using Jasmine.Serialization.Exceptions;
 using System;
 using System.IO;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Jasmine.Serialization
 {
@@ -22,8 +23,7 @@ namespace Jasmine.Serialization
 
         public object Deserialize(byte[] buffer, Type type, Encoding encoding)
         {
-            if (encoding == null)
-                throw new ArgumentNullException(nameof(encoding));
+            encoding = encoding ?? Encoding.UTF8;
 
             return Deserialize(encoding.GetString(buffer), type);
         }
@@ -31,7 +31,7 @@ namespace Jasmine.Serialization
         public object Deserialize(string input, Type type)
         {
             return TryDeserialize(input, type, out var result) ? result :
-                                                                 throw new DeserializeException();
+                                                         throw new DeserializeException();
         }
 
         public object Deserialize(Stream stream, Type type)
@@ -41,8 +41,8 @@ namespace Jasmine.Serialization
 
         public object Deserialize(Stream stream, Type type, Encoding encoding)
         {
-            return TryDeserialize(stream, type, encoding, out var result) ? result :
-                                                                       throw new DeserializeException();
+            using (var reader=new StreamReader(stream,encoding))
+                return Newtonsoft.Json.JsonConvert.DeserializeObject(reader.ReadToEnd(), type);
         }
 
         public T Deserialize<T>(byte[] buffer)
@@ -52,13 +52,14 @@ namespace Jasmine.Serialization
 
         public T Deserialize<T>(byte[] buffer, Encoding encoding)
         {
+            encoding = encoding ?? Encoding.UTF8;
+
             return Deserialize<T>(encoding.GetString(buffer));
         }
 
-        public T Deserialize<T>(string input)
+        public T Deserialize<T>(string raw)
         {
-            return TryDeserialize<T>(input, out var result) ? result :
-                                                           throw new DeserializeException();
+            return Newtonsoft.Json.JsonConvert.DeserializeObject<T>(raw);
         }
 
         public T Deserialize<T>(Stream stream)
@@ -68,15 +69,12 @@ namespace Jasmine.Serialization
 
         public T Deserialize<T>(Stream stream, Encoding encoding)
         {
-            return TryDeserialize<T>(stream, encoding, out var result) ? result :
-                                                                      throw new DeserializeException();
+            return (T)Deserialize(stream,typeof(T), encoding);
         }
 
         public string Serialize(object obj)
         {
-            return TrySerialize(obj, out string result) ? result :
-                                                    throw new SerializeException();
-
+            return Newtonsoft.Json.JsonConvert.SerializeObject(obj);
         }
 
         public void Serialize(object obj, Stream stream)
@@ -86,10 +84,11 @@ namespace Jasmine.Serialization
 
         public void Serialize(object obj, Stream stream, Encoding encoding)
         {
-            if (!TrySerialize(obj, stream, encoding))
-            {
-                throw new SerializeException();
-            }
+
+
+
+            stream.Write(SerializeToBytes(obj,encoding));
+
         }
 
         public byte[] SerializeToBytes(object obj)
@@ -117,8 +116,9 @@ namespace Jasmine.Serialization
         {
             try
             {
-                result = BaseTypes.Base.Contains(type)? JasmineStringValueConvertor.GetValue(input,type)
-                                                       : Newtonsoft.Json.JsonConvert.DeserializeObject(input, type);
+                result = BaseTypes.Base.Contains(type)
+                         ? JasmineStringValueConvertor.GetValue(input, type) 
+                         : Newtonsoft.Json.JsonConvert.DeserializeObject(input, type);
 
                 return true;
             }
@@ -224,7 +224,7 @@ namespace Jasmine.Serialization
 
                 return true;
             }
-            catch (Exception ex)
+            catch
             {
 
                 result = null;
@@ -258,6 +258,66 @@ namespace Jasmine.Serialization
             {
                 return false;
             }
+        }
+
+        public Task SerializeAync(object obj, Stream stream)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task SerializeAsync(object obj, Stream stream, Encoding encoding)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<object> DeserializeAsync(Stream stream, Type type)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<object> DeserializeAsync(Stream stream, Type type, Encoding encoding)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<T> DeserializeAsync<T>(Stream stream)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<T> DeserializeAsync<T>(Stream stream, Encoding encoding)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<bool> TrySerializeAsync(object obj, Stream stream)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<bool> TrySerializeAsync(object obj, Stream stream, Encoding encoding)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<bool> TryDeserializeAsync(Stream stream, Type type, out object result)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<bool> TryDeserializeAsync(Stream stream, Type type, Encoding encoding, out object result)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<bool> TryDeserializeAsync<T>(Stream stream, out T result)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<bool> TryDeserializeAsync<T>(Stream stream, Encoding encoding, out T result)
+        {
+            throw new NotImplementedException();
         }
     }
 }

@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Jasmine.HttpClient
+namespace OrmTest
 {
-    class ServiceNotFoundException
+    class SqlServerTest
     {
     }
 }

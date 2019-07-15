@@ -143,15 +143,15 @@ namespace Jasmine.Common
             switch (type.FullName)
             {
                 case BaseTypes.NSByte:
-                    return SByte.TryParse(source, out var sbvalue) ? (sbyte?)sbvalue : null;
+                    return sbyte.TryParse(source, out var sbvalue) ? (sbyte?)sbvalue : null;
                 case BaseTypes.SByte:
                     return sbyte.Parse(source);
                 case BaseTypes.NByte:
-                    return Byte.TryParse(source, out var bvalue) ? (byte?)bvalue : null;
+                    return byte.TryParse(source, out var bvalue) ? (byte?)bvalue : null;
                 case BaseTypes.Byte:
                     return byte.Parse(source);
                 case BaseTypes.NChar:
-                    return SByte.TryParse(source, out var cvalue) ? (char?)cvalue : null;
+                    return sbyte.TryParse(source, out var cvalue) ? (char?)cvalue : null;
                 case BaseTypes.Char:
                     return source[0];
                 case BaseTypes.NShort:

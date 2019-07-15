@@ -58,7 +58,7 @@ namespace Jasmine.Common
         public IDispatcher<T> Dispatcher { get; set; }
         public string Description { get; set; }
 
-        public async Task FiltsAsysnc(T context)
+        public async Task ProcessAsysnc(T context)
         {
             Interlocked.Increment(ref _currentConcurrency);
             try

@@ -22,7 +22,7 @@ namespace CodeFormatter
         {
             var source = textBox1.Text.Trim();
 
-            var items = StringExtensions.Splite1(source, "\r\n");
+            var items = StringExtensions.Splite1WithCount(source, "\r\n");
 
             var temp = new string[items.Count];
 

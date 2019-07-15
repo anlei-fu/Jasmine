@@ -7,8 +7,11 @@ using System.Collections.Generic;
 
 namespace Jasmine.Restful
 {
+
+
     public class RestfulRequestMetaData : IAop
     {
+        public bool InheritePath { get; set; }
         public string Description { get; set; }
         public int MaxConcurrency { get; set; } = 1000;
         public string AlternativeService { get; set; }

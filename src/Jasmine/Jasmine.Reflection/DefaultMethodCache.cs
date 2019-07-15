@@ -139,5 +139,10 @@ namespace Jasmine.Reflection
         {
             return _nameMap.TryGetValue(name, out var result) ? result.ToArray() : null;
         }
+
+        public IEnumerable<Method> Get(Predicate<Method> predict)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

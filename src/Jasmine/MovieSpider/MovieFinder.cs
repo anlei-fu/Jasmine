@@ -51,11 +51,11 @@ namespace MovieSpider
 
             var ls = new List<string>();
 
-            foreach (var item in root.GetAllChildren(x=>x.Name=="h3"))
+            foreach (var item in root.GetAll(x=>x.TagName=="h3"))
             {
                 if(item.Attributes.Contains("class")&&item.Attributes["class"]=="t")
                 {
-                    var a = item.GetAllChildren(x1=>x1.Name=="a");
+                    var a = item.GetAll(x1=>x1.TagName=="a");
 
                     if (a.Count != 0)
                     {
@@ -404,9 +404,9 @@ namespace MovieSpider
             {
                 var data = result[0].Replace("var downurls=\"", "").Replace("\";", "");
 
-                foreach (var item in StringExtensions.Splite1(data,"#"))
+                foreach (var item in StringExtensions.Splite1WithCount(data,"#"))
                 {
-                    var pair = StringExtensions.Splite1(item, "$");
+                    var pair = StringExtensions.Splite1WithCount(item, "$");
 
                     if(pair.Count==2)
                     {
@@ -442,9 +442,9 @@ namespace MovieSpider
             if (titles.Count != 0)
                 title = titles[0].InnerText.Replace("迅雷下载-LOL电影天堂", "");
 
-            foreach (var ul in root.GetAllChildren(x=>x.Name=="ul"&&x.Attributes.Contains("class")&&x.Attributes["class"]=="downurl"))
+            foreach (var ul in root.GetAll(x=>x.TagName=="ul"&&x.Attributes.Contains("class")&&x.Attributes["class"]=="downurl"))
             {
-                foreach (var item in ul.GetAllChildren(x=>x.Name=="a"&&x.Attributes.Contains("href")))
+                foreach (var item in ul.GetAll(x=>x.TagName=="a"&&x.Attributes.Contains("href")))
                 {
                     ls.Add(new Movie() {Name=title,Link=item.Attributes["href"],Site= "www.loldyttw.com" });
                 }
@@ -468,10 +468,10 @@ namespace MovieSpider
             if (titles.Count != 0)
                 title = titles[0].InnerText.Replace("下载_迅雷下载_免费下载_飘花电影网", "");
 
-            foreach (var div in root.GetAllChildren(x=>x.Name=="tbody"))
+            foreach (var div in root.GetAll(x=>x.TagName=="tbody"))
             {
                
-                    foreach (var item in div.GetAllChildren(x=>x.Name=="a"&&x.Attributes.Contains("href")))
+                    foreach (var item in div.GetAll(x=>x.TagName=="a"&&x.Attributes.Contains("href")))
                     {
                         ls.Add(new Movie() { Name = title, Site = "www.piaohua.com", Link = item.Attributes["href"]});
                     }
@@ -508,9 +508,9 @@ namespace MovieSpider
             if (titles.Count != 0)
                 title = titles[0].InnerText.Replace("迅雷下载_电影天堂","");
 
-            foreach (var item in root.GetAllChildren(x=>x.Name=="tbody"))
+            foreach (var item in root.GetAll(x=>x.TagName=="tbody"))
             {
-                foreach (var a in item.GetAllChildren(x=>x.Name=="a"))
+                foreach (var a in item.GetAll(x=>x.TagName=="a"))
                 {
                     if (a.Attributes.Contains("href") /*item.Attributes["href"]=="#"&&*//*item.Attributes.Contains("target")*//*&&item.Attributes["target"]=="self"*/)
                     {

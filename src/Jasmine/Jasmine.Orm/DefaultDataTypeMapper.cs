@@ -517,7 +517,7 @@ namespace Jasmine.Orm
 
         public object FromSqlFiledValue(Type destination, object source)
         {
-            return DefaultBaseTypeConvertor.Instance.FromSqlFiledValue(source, destination);
+            return DefaultBaseTypeConvertor.Instance.ConverSqlRawValue(source, destination);
         }
     }
 }

@@ -7,5 +7,6 @@ namespace Jasmine.Reflection
     {
         Method FindMethod(string name,Type[] parameterTypes);
         Method[] GetMethodsByName(string name);
+        Method FindMethod(string name, string[] parameterNames);
     }
 }

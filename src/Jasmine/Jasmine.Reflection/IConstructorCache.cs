@@ -7,5 +7,6 @@ namespace Jasmine.Reflection
     {
         Constructor GetDefaultConstructor();
         Constructor FindConstructor(Type[] parameterTypes);
+        Constructor FindConstructor(string[] names);
     }
 }

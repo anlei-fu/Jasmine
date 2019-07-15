@@ -17,7 +17,7 @@ namespace Jasmine.Restful
         }
 
         public event Action BeforeServerStart;
-        public event Action AfterServerStart;
+        public event Action AfterServerStarted;
         public event Action BeforeServerStop;
         public event Action AfterServerStop;
 
@@ -87,7 +87,7 @@ namespace Jasmine.Restful
 
             await _server.RunAsync();
 
-            AfterServerStart();
+            AfterServerStarted();
 
             return true;
 
