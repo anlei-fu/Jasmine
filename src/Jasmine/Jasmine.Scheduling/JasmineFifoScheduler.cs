@@ -1,15 +1,8 @@
 ﻿namespace Jasmine.Scheduling
 {
-    public class JasmineFifoScheduler<T> : AbstractScheduler<T>
-         where T : Job
+    public class JasmineFifoScheduler<T>
     {
-        public JasmineFifoScheduler(FifoJobManager<T> jobmanager, int maxConcurrency = 0) : base(jobmanager, maxConcurrency)
-        {
-        }
-
-        protected override void setScheduler(T job)
-        {
-            throw new System.NotImplementedException();
-        }
+      
+        public void Add(T content,int weight)
     }
 }
